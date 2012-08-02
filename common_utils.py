@@ -17,231 +17,6 @@ import shutil
 import time
 import tempfile
 
-"""
-ENUM implementation for python (from the vdsm team)
-usage:
-    #define
-    enum = Enum(Key1=1, Key2=2)
-
-    #use
-    type = enum.Key1
-    print type => (prints 1)
-    # reverse lookup
-    print enum[2] => (prints Key2)
-    # value lookup
-    print enum.parse("Key1") => (prints 1)
-"""
-class Enum(object):
-    """
-    A nice class to handle Enums gracefullly.
-    """
-    def __init__(self, **pairs):
-        #Generate reverse dict
-        self._reverse = dict([(b, a) for a, b in pairs.iteritems()])
-
-
-
-        #Generate attributes
-        for key, value in pairs.iteritems():
-            setattr(self, key, value)
-
-    def __getitem__(self, index):
-        return self._reverse[index]
-
-    def __iter__(self):
-        return self._reverse.itervalues()
-
-    def parse(self, value):
-        #If value is enum name convert to value
-        if isinstance(value, str):
-            if hasattr(self, value):
-                return getattr(self, value)
-            #If value is a number assume parsing meant converting the value to int
-            #if you can think of a more generic way feel free to change
-            if value.isdigit():
-                value = int(value)
-
-        #If not check if value is a value of the enum
-        if value in self._reverse:
-            return value
-
-        #Enum doesn't know this value
-        raise ValueError(output_messages.ERR_EXP_VALUE_ERR%(value))
-
-class ConfigFileHandler:
-    def __init__(self, filepath):
-        self.filepath = filepath
-    def open(self):
-        pass
-    def close(self):
-        pass
-    def editParams(self, paramsDict):
-        pass
-    def delParams(self, paramsDict):
-        pass
-
-class TextConfigFileHandler(ConfigFileHandler):
-    def __init__(self, filepath, sep="="):
-        ConfigFileHandler.__init__(self, filepath)
-        self.data = []
-        self.sep = sep
-
-    def open(self):
-        fd = file(self.filepath)
-        self.data = fd.readlines()
-        fd.close()
-
-    def close(self):
-        fd = file(self.filepath, 'w')
-        for line in self.data:
-            fd.write(line)
-        fd.close()
-
-    def getParam(self, param):
-        value = None
-        for line in self.data:
-            if not re.match("\s*#", line):
-                found = re.match("\s*%s\s*\%s\s*(.+)$" % (param, self.sep), line)
-                if found:
-                    value = found.group(1)
-        return value
-
-    def editParam(self, param, value):
-        changed = False
-        for i, line in enumerate(self.data[:]):
-            if not re.match("\s*#", line):
-                if re.match("\s*%s"%(param), line):
-                    self.data[i] = "%s%s%s\n"%(param, self.sep, value)
-                    changed = True
-                    break
-        if not changed:
-            self.data.append("%s%s%s\n"%(param, self.sep, value))
-
-    def editLine(self, regexp, newLine, failOnError=False, errMsg=output_messages.ERR_FAILURE):
-        changed = False
-        for i, line in enumerate(self.data[:]):
-            if not re.match("\s*#", line):
-                if re.match(regexp, line):
-                    self.data[i] = newLine
-                    changed = True
-                    break
-        if not changed:
-            if failOnError:
-                raise Exception(errMsg)
-            else:
-                logging.warn(errMsg)
-
-    def delParams(self, paramsDict):
-        pass
-
-class XMLConfigFileHandler(ConfigFileHandler):
-    def __init__(self, filepath):
-        ConfigFileHandler.__init__(self, filepath)
-        self.content = []
-
-    def open(self):
-        with open(self.filepath, 'r') as f:
-            self.content = f.readlines()
-
-        libxml2.keepBlanksDefault(0)
-        self.doc = libxml2.parseFile(self.filepath)
-        self.ctxt = self.doc.xpathNewContext()
-
-    def close(self):
-        self.doc.saveFormatFile(self.filepath,1)
-        self.doc.freeDoc()
-        self.ctxt.xpathFreeContext()
-
-    def xpathEval(self, xpath):
-        return self.ctxt.xpathEval(xpath)
-
-    def registerNs(self, nsPrefix, uri):
-        return self.ctxt.xpathRegisterNs(nsPrefix, uri)
-
-    def getNs(self, ns):
-        for line in self.content:
-            # Match line includes xmlns=NS:X:X
-            match = re.match("(.*)xmlns=\"(%s:\d\.\d*)(.*)" % (ns), line)
-            if match:
-                return match.group(2)
-
-        raise Exception(output_messages.ERR_EXP_UPD_XML_FILE % self.filepath)
-
-    def editParams(self, paramsDict):
-        editAllOkFlag = True
-        if type(paramsDict) != types.DictType:
-            raise Exception(output_messages.ERR_EXP_ILLG_PARAM_TYPE)
-        for key in paramsDict.iterkeys():
-            editOkFlag = False
-            nodeList = self.ctxt.xpathEval(key)
-            if len(nodeList) == 1:
-                nodeList[0].setContent(paramsDict[key])
-                editOkFlag = True
-            elif len(nodeList) == 0:
-                parentNode = os.path.dirname(key)
-                parentNodeList = self.ctxt.xpathEval(parentNode)
-                if len(parentNodeList) == 1:
-                    newNode = libxml2.newNode(os.path.basename(key))
-                    newNode.setContent(paramsDict[key])
-                    parentNodeList[0].addChild(newNode)
-                    editOkFlag = True
-            if not editOkFlag:
-                logging.error("Failed editing %s" %(key))
-                editAllOkFlag = False
-        if not editAllOkFlag:
-            return -1
-
-    def delParams(self, paramsDict):
-        pass
-
-    def removeNodes(self, xpath):
-        nodes = self.xpathEval(xpath)
-
-       #delete the node
-        for node in nodes:
-            node.unlinkNode()
-            node.freeNode()
-
-    def addNodes(self, xpath, xml):
-        """
-        Add a given xml into a specific point specified by the given xpath path into the xml object
-        xml can be either a libxml2 instance or a string which contains a valid xml
-        """
-        parentNode = self.xpathEval(xpath)[0]
-        if not parentNode:
-            raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(parentNode)))
-
-        if isinstance(xml, str):
-            newNode = libxml2.parseDoc(xml)
-        elif isinstance(xml, libxml2.xmlDoc):
-            newNode = xml
-        else:
-            raise Exception(output_messages.ERR_EXP_UNKN_XML_OBJ)
-
-        # Call xpathEval to strip the metadata string from the top of the new xml node
-        parentNode.addChild(newNode.xpathEval('/*')[0])
-
-
-def getXmlNode(xml, xpath):
-    nodes = xml.xpathEval(xpath)
-    if len(nodes) != 1:
-        raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(nodes)))
-    return nodes[0]
-
-def setXmlContent(xml, xpath,content):
-    node = xml.xpathEval(xpath)
-    if len(node) == 0:
-        parentNode = xml.xpathEval(os.path.dirname(xpath))
-        if len(parentNode) == 1:
-            parentNode[0].newChild(None, os.path.basename(xpath), content)
-        else:
-            raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(parentNode)))
-    elif len(xml.xpathEval(xpath)) == 1:
-        node = getXmlNode(xml, xpath)
-        node.setContent(content)
-    else:
-        raise Exception(output_messages.ERR_EXP_UPD_XML_CONTENT%(xpath, len(node)))
-
 def getColoredText (text, color):
     ''' gets text string and color
         and returns a colored text.
@@ -251,34 +26,6 @@ def getColoredText (text, color):
         we use the NO_COLOR chars.
     '''
     return color + text + basedefs.NO_COLOR
-
-def isTcpPortOpen(port):
-    """
-    checks using lsof that a given tcp port is not open
-    and being listened upon.
-    if port is open, returns the process name & pid that use it
-    """
-    answer = False
-    process = False
-    pid = False
-    logging.debug("Checking if TCP port %s is open by any process" % port)
-    cmd = [
-        basedefs.EXEC_LSOF,
-        "-i", "-n", "-P",
-    ]
-    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_EXP_LSOF)
-	#regex catches:
-	#java      17564    jboss   90u  IPv4 1251444      0t0  TCP *:3873 (LISTEN)
-    pattern=re.compile("^(\w+)\s+(\d+)\s+.+TCP\s\*\:(%s)\s\(LISTEN\)$" % (port))
-    list = output.split("\n")
-    for line in list:
-        result = re.match(pattern, line)
-        if result:
-            process = result.group(1)
-            pid = result.group(2)
-            answer = True
-            logging.debug("TCP port %s is open by process %s, PID %s" % (port, process, pid))
-    return (answer, process, pid)
 
 def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_CODE, maskList=[], useShell=False, usePipeFiles=False):
     """
@@ -323,80 +70,6 @@ def execCmd(cmdList, cwd=None, failOnError=False, msg=output_messages.ERR_RC_COD
     if failOnError and proc.returncode != 0:
         raise Exception(msg)
     return ("".join(output.splitlines(True)), proc.returncode)
-
-def execSqlCommand(userName, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
-    logging.debug("running sql query \'%s\' on db." % sqlQuery)
-    cmd = [
-        basedefs.EXEC_PSQL,
-        "-U", userName,
-        "-d", dbName,
-        "-c", sqlQuery,
-    ]
-    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg)
-
-#TODO: refactor this and previous functions into same execution.
-def execRemoteSqlCommand(userName, dbHost, dbPort, dbName, sqlQuery, failOnError=False, errMsg=output_messages.ERR_SQL_CODE):
-    logging.debug("running sql query '%s' on db server: \'%s\'." % (sqlQuery, dbHost))
-    cmd = [
-        basedefs.EXEC_PSQL,
-        "-h", dbHost,
-        "-p", dbPort,
-        "-U", userName,
-        "-d", dbName,
-        "-c", sqlQuery,
-    ]
-    return execCmd(cmdList=cmd, failOnError=failOnError, msg=errMsg)
-
-def replaceWithLink(target, link):
-    """
-    replace link with a symbolic link to source
-    if link does not exist, simply create the link
-    """
-    try:
-        #TODO: export create symlink to utils and reuse in all rhevm-setup
-        if os.path.exists(link):
-            if os.path.islink(link):
-                logging.debug("removing link %s" % link)
-                os.unlink(link)
-            elif os.path.isdir(link):
-                #remove dir using shutil.rmtree
-                logging.debug("removing directory %s" % link)
-                shutil.rmtree(link)
-            else:
-                logging.debug("removing file %s" % link)
-                os.remove(link)
-
-        logging.debug("Linking %s to %s" % (target, link))
-        os.symlink(target, link)
-
-    except:
-        logging.error(traceback.format_exc())
-        raise
-
-def getUsernameId(username):
-    return pwd.getpwnam(username)[2]
-
-def getGroupId(groupName):
-    return grp.getgrnam(groupName)[2]
-
-def findAndReplace(path, oldstr, newstr):
-    regex = '(%s)'%(oldstr)
-    p = re.compile(regex)
-    try:
-        # Read file content
-        fd = file(path)
-        fileText = fd.readlines()
-        fd.close()
-
-        # Change content
-        fd = file(path, 'w')
-        for line in fileText:
-            line = p.sub(newstr, line)
-            fd.write(line)
-        fd.close()
-    except:
-        logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_FIND_AND_REPLACE%(path))
 
 def byLength(word1, word2):
     """
@@ -460,24 +133,6 @@ def verifyStringFormat(str, matchRegex):
     else:
         return True
 
-def getAvailableSpace(path):
-    logging.debug("Checking available space on %s" % (path))
-    stat = os.statvfs(path)
-    #block size * available blocks = available space in bytes, we devide by
-    #1024 ^ 2 in order to get the size in megabytes
-    availableSpace = (stat.f_bsize * stat.f_bavail) / pow(1024, 2)
-    logging.debug("Available space on %s is %s" % (path, availableSpace))
-    return int(availableSpace)
-
-def transformUnits(size):
-    """ Transform the number of size param (received in MB)
-    into an appropriate units string (MB/GB)"""
-
-    if size > 1024:
-        return "%.02f" % (float(size) / 1024.0) + " Gb"
-    else:
-        return str(size) + " Mb"
-
 def compareStrIgnoreCase(str1, str2):
     ''' compare 2 strings and ignore case
         if one of the input is not str (bool for e.g) - return normal comapre
@@ -502,264 +157,6 @@ def parseStrRegex(string, regex, errMsg):
     else:
         raise Exception(errMsg)
 
-def copyFile(filename, destination, uid=-1, gid=-1, filemod=-1):
-    """
-    copy filename to
-    the destDir path
-    give the target file uid:gid ownership
-    and file mod
-
-    filename     - full path to src file (not directories!)
-    destination  - full path to target dir or filename
-    uid          - integer with user id (default -1 leaves the original uid)
-    gid          - integer with group id (default -1 leaves the original gid)
-    filemod      - integer with file mode (default -1 keeps original mode)
-    """
-    # If the source is a directory, throw an exception since this func handles only files
-    if (os.path.isdir(filename)):
-        raise Exception(output_messages.ERR_SOURCE_DIR_NOT_SUPPORTED)
-
-    # In case the src file is a symbolic link, we'll get the origin filename
-    fileSrc = os.path.realpath(filename)
-
-    # In default, assume the destination is a file
-    targetFile = destination
-
-    # Copy file to destination
-    shutil.copy2(fileSrc, destination)
-    logging.debug("successfully copied file %s to target destination %s"%(fileSrc, destination))
-
-    # Get the file basename, if the destination is a directory
-    if (os.path.isdir(destination)):
-        fileBasename = os.path.basename(fileSrc)
-        targetFile = os.path.join(destination, fileBasename)
-
-    # Set file mode, uid and gid to the file
-    logging.debug("setting file %s uid/gid ownership"%(targetFile))
-    os.chown(targetFile, uid, gid)
-
-    logging.debug("setting file %s mode to %d"%(targetFile, filemod))
-    os.chmod(targetFile, filemod)
-
-def getDbAdminUser():
-    """
-    Retrieve Admin user from .pgpass file on the system.
-    Use default settings if file is not found.
-    """
-    admin_user = getDbConfig("admin")
-    if admin_user:
-        return admin_user
-    return basedefs.DB_ADMIN
-
-def getDbUser():
-    """
-    Retrieve Admin user from .pgpass file on the system.
-    Use default settings if file is not found.
-    """
-    db_user = getDbConfig("user")
-    if db_user:
-        return db_user
-    return basedefs.DB_USER
-
-def getDbHostName():
-    """
-    Retrieve DB Host name from .pgpass file on the system.
-    Use default settings if file is not found, or '*' was used.
-    """
-
-    host = getDbConfig("host")
-    if host and host != "*":
-        return host
-    return basedefs.DB_HOST
-
-def getDbPort():
-    """
-    Retrieve DB port number from .pgpass file on the system.
-    Use default settings if file is not found, or '*' was used.
-    """
-    port = getDbConfig("port")
-    if port:
-        return port
-    return basedefs.DB_PORT
-
-def getDbPassword(user):
-    password = getDbConfig("password", user)
-    if password:
-        return password.rstrip("\n")
-
-    return False
-
-def getDbConfig(param, user=None):
-    """
-    Generic function to retrieve values from admin line in .pgpass
-    """
-    # 'user' and 'admin' are the same fields, just different lines
-    # and for different cases
-    field = {'password' : 4, 'user' : 3, 'admin' : 3, 'host' : 0, 'port' : 1}
-    if param not in field.keys():
-        return False
-
-    inDbAdminSection = False
-    inDbUserSection = False
-    if (os.path.exists(basedefs.DB_PASS_FILE)):
-        logging.debug("found existing pgpass file, fetching DB %s value" % param)
-        with open (basedefs.DB_PASS_FILE) as pgPassFile:
-            for line in pgPassFile:
-
-                # find the line with "DB ADMIN"
-                if basedefs.PGPASS_FILE_ADMIN_LINE in line:
-                    inDbAdminSection = True
-                    continue
-
-                if inDbAdminSection and param == "admin" and \
-                   not line.startswith("#"):
-                    # Means we're on DB ADMIN line, as it's for all DBs
-                    dbcreds = line.split(":", 4)
-                    return dbcreds[field[param]]
-
-                # Fetch the password if needed
-                if param == "password" \
-                   and user \
-                   and not line.startswith("#"):
-                    dbcreds = line.split(":", 4)
-                    if dbcreds[3] == user:
-                        return dbcreds[field[param]]
-
-                # find the line with "DB USER"
-                if basedefs.PGPASS_FILE_USER_LINE in line:
-                    inDbUserSection = True
-                    continue
-
-                # fetch the values
-                if inDbUserSection:
-                    # Means we're on DB USER line, as it's for all DBs
-                    dbcreds = line.split(":", 4)
-                    return dbcreds[field[param]]
-
-    return False
-
-def backupDB(db, user, backupFile, host="localhost", port="5432"):
-    """
-    Backup postgres db
-    using pgdump
-    Args:  file - a target file to backup to
-           db - db name to backup
-           user - db user to use for backup
-           host - db host where postgresql server runs
-           port - db connection port
-    """
-    logging.debug("%s DB Backup started"%(db))
-    cmd = [
-        basedefs.EXEC_PGDUMP,
-        "-C", "-E",
-        "UTF8",
-        "--column-inserts",
-        "--disable-dollar-quoting",
-        "--disable-triggers",
-        "--format=p",
-        "-f", backupFile,
-        "-U", user,
-        "-h", host,
-        "-p", port,
-        db,
-    ]
-    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_BACKUP)
-    logging.debug("%s DB Backup completed successfully"%(db))
-
-def restoreDB(user, host, port, backupFile):
-    """
-    Restore postgres db
-    using pgrestore
-    Args:  file - a db backup file to restore from
-           user - db user to use for backup
-           host - db host where postgresql server runs
-           port - db connection port
-    """
-
-    # Restore
-    logging.debug("DB Restore started")
-    cmd = [
-        basedefs.EXEC_PSQL,
-        "-h", host,
-        "-p", port,
-        "-U", user,
-        "-d", basedefs.DB_POSTGRES,
-        "-f", backupFile,
-    ]
-    output, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_RESTORE)
-    logging.debug("DB Restore completed successfully")
-
-def renameDB(oldname, newname):
-    """docstring for renameDb"""
-
-    if oldname == newname:
-        return
-
-    logging.info("Renaming '%s' to '%s'..." % (oldname, newname))
-    sqlQuery="ALTER DATABASE %s RENAME TO %s" % (oldname, newname)
-    execRemoteSqlCommand(getDbUser(), getDbHostName(), getDbPort(),
-                               basedefs.DB_POSTGRES, sqlQuery, True,
-                               output_messages.ERR_DB_RENAME % (oldname, newname))
-
-def updateVDCOption(key, value, maskList=[], keyType='text'):
-    """
-    Update vdc_option value in db
-    using rhevm-config
-
-    maskList is received to allow
-    masking passwords in logging
-
-    keyType can be 'text' or 'pass' for password
-    """
-
-    # Mask passwords
-    logValue = _maskString(value, maskList)
-    logging.debug("updating vdc option %s to: %s"%(key, logValue))
-    msg = output_messages.ERR_EXP_UPD_VDC_OPTION%(key, logValue)
-
-    # The first part of the command is really simple:
-    cmd = [
-        basedefs.FILE_RHEVM_CONFIG_BIN,
-    ]
-
-    # For text options we just provide the name of the option and the value in
-    # the command line, but for password options we have to put the password in
-    # an external file and provide the name of that file:
-    passFile = None
-    if keyType == 'pass':
-        passFile = mkTempPassFile(value)
-        cmd.extend([
-            '-s',
-            key,
-            '--admin-pass-file=%s' % passFile,
-        ])
-    else:
-        cmd.extend([
-            '-s',
-            '%s=%s' % (key, value),
-        ])
-
-    # The rest of the arguments for engine-config are the same for all kind of
-    # options:
-    cmd.extend([
-        '--cver=' + basedefs.VDC_OPTION_CVER,
-        '-p',
-        basedefs.FILE_RHEVM_EXTENDED_CONF,
-    ])
-
-    # Execute the command, and always remember to remove the password file:
-    try:
-        output, rc = execCmd(cmdList=cmd, failOnError=True, msg=msg, maskList=maskList)
-    finally:
-        if passFile:
-            os.remove(passFile)
-
-def mkTempPassFile(value):
-    t = tempfile.NamedTemporaryFile(delete=False)
-    t.file.write(value)
-    t.file.close()
-    return t.name
-
 def _maskString(string, maskList=[]):
     """
     private func to mask passwords
@@ -770,27 +167,6 @@ def _maskString(string, maskList=[]):
         maskedStr = maskedStr.replace(maskItem, "*"*8)
 
     return maskedStr
-
-def getRpmVersion(rpmName=basedefs.ENGINE_RPM_NAME):
-    """
-    extracts rpm version
-    from a given rpm package name
-    default rpm is 'rhevm'
-
-    returns version (string)
-    """
-    # Update build number on welcome page
-    logging.debug("retrieving build number for %s rpm"%(rpmName))
-    cmd = [
-        basedefs.EXEC_RPM,
-        "-q",
-        "--queryformat", "'%{VERSION}-%{RELEASE}'",
-        rpmName,
-    ]
-    rpmVersion, rc = execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_READ_RPM_VER % rpmName)
-
-    # Return rpm version
-    return rpmVersion
 
 def retry(func, expectedException=Exception, tries=None, timeout=None, sleep=1):
     """
@@ -825,16 +201,6 @@ def retry(func, expectedException=Exception, tries=None, timeout=None, sleep=1):
 
             time.sleep(sleep)
 
-def checkIfDbIsUp():
-    """
-    func to test is db is up
-
-    will throw exception on error
-    and not return a value
-    """
-    logging.debug("checking if db is already installed and running..")
-    execRemoteSqlCommand(getDbUser(), getDbHostName(), getDbPort(), basedefs.DB_NAME, "select 1", True)
-
 def localHost(hostname):
     # Create an ip set of possible IPs on the machine. Set has only unique values, so
     # there's no problem with union.
@@ -843,81 +209,6 @@ def localHost(hostname):
     if hostname in ipset:
         return True
     return False
-
-def clearDbConnections(dbName):
-    """ Lock local DB and clear active connections """
-    # Block new connections first
-    logging.info("Closing DB '%s' for new connections" % dbName)
-    query = "update pg_database set datallowconn = 'false' where datname = '%s';" % dbName
-    cmd = [
-        basedefs.EXEC_PSQL,
-        "-U", getDbAdminUser(),
-        "-c", query,
-    ]
-    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_BLOCK)
-
-    # Disconnect active connections
-    logging.info("Disconnect active connections from DB '%s'" % dbName)
-    query = "SELECT pg_terminate_backend(procpid) FROM pg_stat_activity WHERE datname = '%s'" % dbName
-    cmd = [
-        basedefs.EXEC_PSQL,
-        "-U", getDbAdminUser(),
-        "-c", query,
-    ]
-    execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_DB_CONNECTIONS_CLEAR)
-
-def listTempDbs():
-    """ Create a list of temp DB's on the server with regex 'engine_*' """
-
-    dbListRemove = [basedefs.DB_NAME]
-    cmd = [
-        basedefs.EXEC_PSQL,
-        "-U", getDbAdminUser(),
-        "-h", getDbHostName(),
-        "-p", getDbPort(),
-        "--list",
-    ]
-    output, rc = execCmd(cmdList=cmd, msg=output_messages.ERR_DB_TEMP_LIST)
-    if rc:
-        logging.error(output_messages.ERR_DB_TEMP_LIST)
-        raise Exception ("\n" + output_messages.ERR_DB_TEMP_LIST + "\n")
-
-    # if there are temp DB that need to be removed, add them to DB list
-    tempDbs = re.findall("^engine_\w*", output)
-    if len(tempDbs) > 0:
-        dbListRemove.extend(tempDbs)
-
-    return dbListRemove
-
-def getHostParams():
-    """
-    get hostname & secured port from /etc/ovirt-engine/web-conf.js
-    """
-
-    logging.debug("looking for configuration from %s", basedefs.FILE_JBOSS_HTTP_PARAMS)
-    if not os.path.exists(basedefs.FILE_JBOSS_HTTP_PARAMS):
-        raise Exception("Could not find %s" % basedefs.FILE_JBOSS_HTTP_PARAMS)
-
-    handler = TextConfigFileHandler(basedefs.FILE_JBOSS_HTTP_PARAMS)
-    handler.open()
-
-    pattern = "\"(.+)\";"
-    values = {
-                "fqdn" : handler.getParam("var host_fqdn"),
-                "httpPort" : handler.getParam("var http_port"),
-                "httpsPort" : handler.getParam("var https_port"),
-             }
-
-    for name, value in values.items():
-        found = re.match(pattern, value)
-        if found:
-            values[name] = found.group(1)
-            logging.debug("%s is: %s", name, value)
-        else:
-            logging.error("Could not find the %s value in %s", name, basedefs.FILE_JBOSS_HTTP_PARAMS)
-            raise Exception(output_messages.ERR_EXP_PARSE_WEB_CONF % (name, basedefs.FILE_JBOSS_HTTP_PARAMS))
-
-    return (values["fqdn"], values["httpPort"], values["httpsPort"])
 
 # TODO: Support SystemD services
 class Service():
@@ -989,11 +280,6 @@ def chown(target,uid, gid):
     logging.debug("chown %s to %s:%s" % (target, uid, gid))
     os.chown(target, uid, gid)
 
-def chownToEngine(target):
-    uid = getUsernameId(basedefs.ENGINE_USER_NAME)
-    gid = getGroupId(basedefs.ENGINE_GROUP_NAME)
-    chown(target, uid, gid)
-
 def installed(rpm):
     cmd = [
         basedefs.EXEC_RPM,
@@ -1003,9 +289,50 @@ def installed(rpm):
     output, rc = execCmd(cmd)
     return rc == 0
 
-def setHttpPortsToNonProxyDefault(controller):
-    logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default non-proxy values (8080 & 8443)")
-    httpParam = controller.getParamByName("HTTP_PORT")
-    httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTP_PORT)
-    httpParam = controller.getParamByName("HTTPS_PORT")
-    httpParam.setKey("DEFAULT_VALUE", basedefs.JBOSS_HTTPS_PORT)
+def returnYes(controller):
+    return "yes"
+
+class ScriptRunner(object):
+    def __init__(self, ip=None):
+        self.script = []
+        self.ip = ip
+
+    def append(self, s):
+        self.script.append(s)
+
+    def execute(self):
+        script = "\n".join(self.script)
+        logging.debug("# ============ ssh : %r =========="%self.ip)
+        if not False: #config.justprint:
+            _PIPE = subprocess.PIPE  # pylint: disable=E1101
+            if self.ip:
+                obj = subprocess.Popen(["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "root@%s"%self.ip, "bash -x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE, 
+                                        close_fds=True, shell=False)
+            else:
+                obj = subprocess.Popen(["bash", "-x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE, 
+                                        close_fds=True, shell=False)
+
+            logging.debug(script)
+            script = "function t(){ exit $? ; } \n trap t ERR \n" + script
+            stdoutdata, stderrdata = obj.communicate(script)
+            logging.debug("============ STDOUT ==========")
+            logging.debug(stdoutdata)
+            _returncode = obj.returncode
+            if _returncode:
+                logging.error("============= STDERR ==========")
+                logging.error(stderrdata)
+                raise Exception("Error running remote script")
+        else:
+            logging.debug(script)
+
+    def template(self, src, dst, varsdict):
+        with open(src) as fp:
+            self.append("cat > %s <<- EOF\n%s\nEOF\n"%(dst, fp.read()%varsdict))
+
+    def ifnotexists(self, fn, s):
+        self.append("[ -e %s ] || %s"%(fn, s))
+
+    def ifexists(self, fn, s):
+        self.append("[ -e %s ] && %s"%(fn, s))
+
+

@@ -14,31 +14,6 @@ import tempfile
 import cracklib
 from setup_controller import Controller
 
-def validateNFSMountPoint(param, options=[]):
-    """ Validates the correct mount point for NFS local storage """
-
-    if validateMountPoint(param) and validateDirSize(param, basedefs.CONST_MINIMUM_SPACE_ISODOMAIN):
-            return True
-
-    return False
-
-def validateMountPoint(path):
-    logging.info("validating %s as a valid mount point" % (path))
-    if not utils.verifyStringFormat(path, "^\/[\w\_\-\s]+(\/[\w\_\-\s]+)*\/?$"):
-        print output_messages.INFO_VAL_PATH_NAME_INVALID
-        return False
-    if _isPathInExportFs(path):
-        print output_messages.INFO_VAL_PATH_NAME_IN_EXPORTS
-        return False
-    if os.path.exists(path) and len(os.listdir(path)):
-        print output_messages.INFO_VAR_PATH_NOT_EMPTY % path
-        return False
-    if not _isPathWriteable(_getBasePath(path)):
-        print output_messages.INFO_VAL_PATH_NOT_WRITEABLE
-        return False
-
-    return True
-
 def validateDirSize(path, size):
     availableSpace = utils.getAvailableSpace(_getBasePath(path))
     if availableSpace < size:
@@ -71,10 +46,6 @@ def validatePort(param, options = []):
     if not (port > minVal and port < 65535) :
         logging.warn(output_messages.INFO_VAL_PORT_NOT_RANGE %(minVal))
         print output_messages.INFO_VAL_PORT_NOT_RANGE %(minVal)
-        return False
-    if isProxyEnabled and param in[basedefs.JBOSS_HTTP_PORT, basedefs.JBOSS_HTTPS_PORT, basedefs.JBOSS_AJP_PORT]:
-        logging.warn(output_messages.INFO_VAL_PORT_OCCUPIED_BY_JBOSS %(param))
-        print output_messages.INFO_VAL_PORT_OCCUPIED_BY_JBOSS %(param)
         return False
     (portOpen, process, pid) = utils.isTcpPortOpen(param)
     if portOpen:
@@ -179,24 +150,6 @@ def validateOptions(param, options=[]):
     print output_messages.INFO_VAL_NOT_IN_OPTIONS % (", ".join(options))
     return False
 
-def validateOverrideHttpdConfAndChangePortsAccordingly(param, options=[]):
-    """
-    This validation function is specific for the OVERRIDE_HTTPD_CONF param and it does more than validating the answer.
-    It actually changes the default HTTP/S ports in case the user choose not to override the httpd configuration.
-    """
-    logging.info("validateOverrideHttpdConfAndChangePortsAccordingly %s as part of %s"%(param, options))
-    retval = validateOptions(param, options)
-    if retval and param.lower() == "no":
-        logging.debug("Changing HTTP_PORT & HTTPS_PORT to the default jboss values (8080 & 8443)")
-        controller = Controller()
-        utils.setHttpPortsToNonProxyDefault(controller)
-    elif retval:
-        #stopping httpd service (in case it's up) when the configuration can be overridden
-        logging.debug("stopping httpd service")
-        utils.Service(basedefs.HTTPD_SERVICE_NAME).stop()
-    return retval
-
-
 def validateDomain(param, options=[]):
     """
     Validate domain name
@@ -237,62 +190,6 @@ def validateRemoteHost(param, options=[]):
         return True
     else:
         return False
-
-def validateRemoteDB(param={}, options=[]):
-    """ Ensure, that params provided for the remote DB are
-     working, and if not, issue the correct error.
-    """
-
-    logging.info("Validating %s as a RemoteDb" % param["DB_HOST"])
-    if utils.localHost(param["DB_HOST"]):
-        logging.info("%s is a local host, no connection checks needed" % param["DB_HOST"])
-        return True
-
-    if "DB_ADMIN" not in param.keys():
-        param["DB_ADMIN"] = basedefs.DB_ADMIN
-        param["DB_PORT"] = basedefs.DB_PORT
-        param["DB_PASS"] = param["DB_LOCAL_PASS"]
-    else:
-        param["DB_PASS"] = param["DB_REMOTE_PASS"]
-
-    # Create a new pgpass, store previous in backupFile
-    backupFile = _createTempPgPass(param["DB_ADMIN"], param["DB_HOST"],
-                                   param["DB_PORT"], param["DB_PASS"])
-
-    # Now, let's check credentials:
-    try:
-        # Connection check
-        _checkDbConnection(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
-
-        # DB Create check
-        _checkCreateDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
-
-        # UUID extention check.
-        _checkUUIDExtension(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
-
-        # Delete DB check
-        _checkDropDbPrivilege(param["DB_ADMIN"], param["DB_HOST"], param["DB_PORT"])
-
-        # Everything is fine, return True
-        return True
-
-    except Exception,e:
-        # Something failed, print the error on screen and return False
-        print e
-        return False
-
-    finally:
-        # if the test DB was created, drop it
-        sqlQuery = "DROP DATABASE IF EXISTS ovirt_engine_test;"
-        utils.execRemoteSqlCommand(param["DB_ADMIN"],
-                                   param["DB_HOST"],
-                                   param["DB_PORT"],
-                                   basedefs.DB_POSTGRES, sqlQuery, False)
-
-        # restore the original pgpass file in all cases
-        if os.path.exists(backupFile):
-            os.rename(backupFile, basedefs.DB_PASS_FILE)
-
 
 def validateFQDN(param, options=[]):
     logging.info("Validating %s as a FQDN"%(param))
@@ -353,43 +250,18 @@ def validateFQDN(param, options=[]):
         logging.error(traceback.format_exc())
         raise
 
-def validateIsoDomainName(param, options=[]):
+def validateFile(param, options=[]):
     """
-    Validate ISO domain name against
-    the required schema (allowed chars)
-    and max allowed length
+    Check that provided param is a file
     """
-    logging.info("validating iso domain name")
-    (errMsg, rc) = _validateString(param, 1, basedefs.CONST_STORAGE_DOMAIN_NAME_SIZE_LIMIT, "^[a-zA-Z0-9_-]+$")
-    if rc == 3:
-        # We want to print a specific error
-        print output_messages.INFO_VAL_ISO_DOMAIN_ILLEGAL_CHARS
-        return False
-    elif rc != 0:
-        print errMsg
-        return False
-    else:
-        return True
+    if validateStringNotEmpty(param):
+        cmd = ["test", "-f", param]
+        out, rc = utils.execCmd(cmdList=cmd)
+        if rc == 0:
+            return True
 
-def validateOrgName(param, options=[]):
-    """
-    Organization name length must be limited
-    otherwise CA creation fails
-    """
-    logging.info("validating organization name")
-
-    # Filter out special chars: "," "%" "$" "@" "#", "&" "*" "!"
-    (errMsg, rc) = _validateString(param, 1, basedefs.CONST_ORG_NAME_SIZE_LIMIT, "^[^,\+\%\$\@\#&\*\!]+$")
-
-    if rc == 3:
-        # We want to print a specific error
-        print output_messages.INFO_VAL_ORG_NAME_ILLEGAL_CHARS
-        return False
-    elif rc != 0:
-        print errMsg
-        return False
-    else:
-        return True
+    print "\n" + output_messages.ERR_FILE + ".\n"
+    return False
 
 def validatePing(param, options=[]):
     """
@@ -407,85 +279,6 @@ def validatePing(param, options=[]):
 
     print "\n" + output_messages.ERR_PING + ".\n"
     return False
-
-def _checkDbConnection(dbAdminUser, dbHost, dbPort):
-    """ _checkDbConnection checks connection to the DB"""
-
-    # Connection check
-    logging.info("Trying to connect to the remote database with provided credentials.")
-    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
-                                           basedefs.DB_POSTGRES, "select 1")
-
-    # It error is in "SELECT 1" it means that we have a problem with simple DB connection.
-    if rc:
-        logging.error(output_messages.ERR_DB_CONNECTION % dbHost)
-        raise Exception("\n" + output_messages.ERR_DB_CONNECTION % dbHost + "\n")
-    else:
-        logging.info("Successfully connected to the DB host %s." % dbHost)
-
-def _checkCreateDbPrivilege(dbAdminUser, dbHost, dbPort):
-    """ _checkCreateDbPrivilege checks CREATE DB privilege on DB server"""
-
-    logging.info("Creating database 'ovirt_engine_test' on remote server.")
-    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
-                                           basedefs.DB_POSTGRES, "CREATE DATABASE ovirt_engine_test")
-
-    # Error in "CREATE DATABASE", meaning we don't have enough privileges to create database.
-    if rc:
-        logging.error(output_messages.ERR_DB_CREATE_PRIV, dbHost)
-        raise Exception("\n" + output_messages.ERR_DB_CREATE_PRIV % dbHost + "\n")
-    else:
-        logging.info("Successfully created temp database on server %s." % dbHost)
-
-def _checkDropDbPrivilege(dbAdminUser, dbHost, dbPort):
-    """ _checkCreateDbPrivilege checks CREATE DB privilege on DB server"""
-
-    logging.info("Deleting the test database from the remote server")
-    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
-                                           basedefs.DB_POSTGRES, "DROP DATABASE ovirt_engine_test")
-
-    # Error in "DROP DATABASE", meaning we don't have enough privileges to drop database.
-    if rc:
-        logging.error(output_messages.ERR_DB_DROP_PRIV % dbHost)
-        raise Exception("\n" + output_messages.ERR_DB_DROP_PRIV % dbHost + ".\n")
-    else:
-        logging.info("Successfully deleted database on server %s." % dbHost)
-
-def _checkUUIDExtension(dbAdminUser, dbHost, dbPort):
-    """ Check that UUID extension is already loaded and raise Exception if not"""
-    logging.info("Checking that uuid extension is loaded by default on the remote server")
-    out, rc = utils.execRemoteSqlCommand(dbAdminUser, dbHost, dbPort,
-                                         "ovirt_engine_test",
-                                         "SELECT uuid_generate_v1();")
-
-    # Extension was found
-    if not rc and out and "1 row" in out:
-        logging.info("Successfully passed UUID check")
-    else:
-        logging.error(output_messages.ERR_DB_UUID)
-        raise Exception(output_messages.ERR_DB_UUID)
-
-def _createTempPgPass(dbAdminUser, dbHost, dbPort, dbPass):
-    """docstring for _createTempPgPass"""
-
-    #backup existing .pgpass
-    backupFile = "%s.%s" % (basedefs.DB_PASS_FILE, utils.getCurrentDateTime())
-    try:
-        if (os.path.exists(basedefs.DB_PASS_FILE)):
-            logging.debug("found existing pgpass file, backing current to %s for validation" % (backupFile))
-            os.rename(basedefs.DB_PASS_FILE, backupFile)
-
-        with open(basedefs.DB_PASS_FILE, "w") as pgPassFile:
-            pgPassFile.write("%s:%s:*:%s:%s" %
-                            (dbHost, dbPort, dbAdminUser, dbPass))
-        #make sure the file has still 0600 mod
-        os.chmod(basedefs.DB_PASS_FILE, 0600)
-        return backupFile
-    except:
-        # Restore original file
-        if os.path.exists(backupFile):
-            os.rename(backupFile, basedefs.DB_PASS_FILE)
-        raise Exception(output_messages.ERR_BACKUP_PGPASS % backupFile)
 
 def _validateString(string, minLen, maxLen, regex=".*"):
     """
@@ -532,18 +325,6 @@ def _getPatternFromNslookup(address, pattern):
             addresses.add(foundAddress)
     return addresses
 
-def _isPathInExportFs(path):
-    if not os.path.exists(basedefs.FILE_ETC_EXPORTS):
-        return False
-    file = open(basedefs.FILE_ETC_EXPORTS)
-    fileContent = file.readlines()
-    file.close()
-
-    for line in fileContent:
-        if utils.verifyStringFormat(line, "^%s\s+.+" % (path)):
-            return True
-    return False
-
 def _getBasePath(path):
     if os.path.exists(path):
         return path
@@ -562,54 +343,3 @@ def _isPathWriteable(path):
         logging.warning("%s is not writeable" % path)
         return False
 
-def validateIpaAndHttpdStatus(conf):
-    """"
-    This function serve as a pre-condition to the ports group. This function will always return True,
-    Therefore the ports group will always be handled, but this function may changes the flow dynamically
-    according to http & ipa rpm status.
-    So, there are two purposes for this function:
-    1. check whether the relevant httpd configuration files were changed,
-    As it's an indication for the setup that the httpd application is being actively used,
-    Therefore we may need to ask (dynamic change) the user whether to override this configuration.
-    2. Check if IPA is installed and drop port 80/443 support.
-    """
-    controller = Controller()
-
-    # Check if IPA installed
-    if utils.installed(basedefs.IPA_RPM) or utils.installed(basedefs.FREEIPA_RPM):
-        # Change default ports
-        logging.debug("IPA rpms detected, disabling http proxy")
-        print output_messages.WARN_IPA_INSTALLED
-        utils.setHttpPortsToNonProxyDefault(controller)
-
-        # Don't use http proxy
-        paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
-        paramToChange.setKey("DEFAULT_VALUE", "no")
-    else:
-        if wereHttpdConfFilesChanged:
-            # If conf files were changed, the user should be asked if he really wants to use ports 80/443
-            paramToChange = controller.getParamByName("OVERRIDE_HTTPD_CONFIG")
-            paramToChange.setKey("USE_DEFAULT", False)
-
-    # This validator must return true, so ports will always be handled
-    return True
-
-def wereHttpdConfFilesChanged():
-    logging.debug("checking whether HTTPD config files were changed")
-    conf_files = [basedefs.FILE_HTTPD_SSL_CONFIG, basedefs.FILE_HTTPD_CONF]
-    cmd = [
-        basedefs.EXEC_RPM,
-        "-V",
-        "--nomtime",
-        "httpd",
-        "mod_ssl",
-    ]
-
-    (output, rc) = utils.execCmd(cmdList=cmd)
-    for line in output.split(os.linesep):
-        if len(line) > 0:
-            changed_file = line.split()[-1]
-            if changed_file in conf_files:
-                logging.debug("HTTPD config file %s was changed" %(changed_file))
-                return True
-    return False
