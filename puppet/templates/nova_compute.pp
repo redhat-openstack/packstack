@@ -20,7 +20,3 @@ if "%(CONFIG_LIBVIRT_TYPE)s" == "qemu" {
     } 
 }
 
-class {"vlan":
-    interface => "em1",
-    vlan => "16"
-}
