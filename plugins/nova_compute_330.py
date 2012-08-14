@@ -10,6 +10,7 @@ import uuid
 import engine_validators as validate
 import basedefs
 import common_utils as utils
+import ospluginutils
 
 # Controller object will be initialized from main flow
 controller = None
@@ -52,6 +53,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novacompute-privif",
+                   "USAGE"           : "Private interface for Flat DHCP on the Nova compute servers",
+                   "PROMPT"          : "Private interface for Flat DHCP on the Nova compute servers",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : "eth1",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVACOMPUTE_PRIVIF",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                  ]
 
     groupDict = { "GROUP_NAME"            : "NOVACOMPUTE",
@@ -83,7 +96,17 @@ def createmanifest():
         if manifestfile not in controller.CONF['CONFIG_MANIFESTFILES']:
             controller.CONF['CONFIG_MANIFESTFILES'].append(manifestfile)
 
+        server = utils.ScriptRunner(host)
+        nova_config_options = ospluginutils.NovaConfig()
+
+        if host != controller.CONF["CONFIG_NOVANETWORK_HOST"]:
+            nova_config_options.addOption("flat_interface", controller.CONF['CONFIG_NOVACOMPUTE_PRIVIF'])
+            validate.r_validateMultiPing(server, controller.CONF['CONFIG_NOVACOMPUTE_PRIVIF'])
+
+        server.execute()
+
         with open(manifestfile, 'a') as fp:
             fp.write("\n")
             fp.write(manifestdata)
+            fp.write("\n" + nova_config_options.getManifestEntry())
 
