@@ -40,6 +40,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novanetwork-privif",
+                   "USAGE"           : "Private interface for Flat DHCP on the Nova network server",
+                   "PROMPT"          : "Private interface for Flat DHCP on the Nova network server",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : "eth1",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVANETWORK_PRIVIF",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                  ]
 
     groupDict = { "GROUP_NAME"            : "NOVANETWORK",
@@ -59,13 +71,19 @@ def initSequences(controller):
     controller.addSequence("Installing Nova Network", [], [], novanetworksteps)
 
 def createmanifest():
+    hostname = controller.CONF['CONFIG_NOVANETWORK_HOST']
+
+    server = utils.ScriptRunner(hostname)
+    validate.r_validateMultiPing(server, controller.CONF['CONFIG_NOVANETWORK_PRIVIF'])
+    server.execute()
+
     with open(PUPPET_MANIFEST_TEMPLATE) as fp:
         manifestdata = fp.read()
     manifestdata = manifestdata%controller.CONF
 
     if not os.path.exists(PUPPET_MANIFEST_DIR):
         os.mkdir(PUPPET_MANIFEST_DIR)
-    manifestfile = os.path.join(PUPPET_MANIFEST_DIR, "%s_nova.pp"%controller.CONF['CONFIG_NOVANETWORK_HOST'])
+    manifestfile = os.path.join(PUPPET_MANIFEST_DIR, "%s_nova.pp"%hostname)
     if manifestfile not in controller.CONF['CONFIG_MANIFESTFILES']:
         controller.CONF['CONFIG_MANIFESTFILES'].append(manifestfile)
 
