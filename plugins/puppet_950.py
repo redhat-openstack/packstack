@@ -71,7 +71,7 @@ def initSequences(controller):
     puppetpresteps = [
              {'title': 'Clean Up', 'functions':[runCleanup]},
     ]
-    controller.insertSequenceBeforeSequence("Initial Steps", "Clean Up", [], [], puppetpresteps)
+    controller.insertSequence("Clean Up", [], [], puppetpresteps, index=0)
 
     puppetsteps = [
              {'title': 'Getting Puppet modules', 'functions':[getPuppetModules]},
