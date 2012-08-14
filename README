@@ -1,0 +1,19 @@
+Standalone install utility to install openstack on RHEL 6.3 
+
+This utility can be used to install openstack on a single or 
+group of hosts (over ssh)
+
+This utility is still in the early stages, a lot of the configuration
+options have yet to be added
+
+Installation 
+Option 1 (prompts for configuration options)
+> python openstack-setup.py
+
+Option 2 (using answer file)
+> python openstack-setup.py --gen-answer-file=answers.txt
+# edit answers.txt as appropriate
+> python openstack-setup.py --answer-file=answers.txt
+
+The origional install script on which this is based can be found 
+in the oVirt git repository git://gerrit.ovirt.org/ovirt-engine
