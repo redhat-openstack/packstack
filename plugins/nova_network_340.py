@@ -52,6 +52,19 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novanetwork-pubif",
+                   "USAGE"           : "Public interface on the Nova network server",
+                   "PROMPT"          : "Public interface on the Nova network server",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : "eth0",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVANETWORK_PUBIF",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+
                  ]
 
     groupDict = { "GROUP_NAME"            : "NOVANETWORK",
@@ -75,6 +88,7 @@ def createmanifest():
 
     server = utils.ScriptRunner(hostname)
     validate.r_validateMultiPing(server, controller.CONF['CONFIG_NOVANETWORK_PRIVIF'])
+    validate.r_validateMultiPing(server, controller.CONF['CONFIG_NOVANETWORK_PUBIF'])
     server.execute()
 
     with open(PUPPET_MANIFEST_TEMPLATE) as fp:
