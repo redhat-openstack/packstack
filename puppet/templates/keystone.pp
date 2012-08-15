@@ -16,7 +16,7 @@ class {"keystone::roles::admin":
 class {"openstack::auth_file":
     admin_password => "%(CONFIG_KEYSTONE_ADMINPASSWD)s",
     admin_tenant => "admin",
-    keystone_admin_token => $ksadmintoken
+    keystone_admin_token => "%(CONFIG_KEYSTONE_ADMINTOKEN)s"
 }
 
 class {"keystone::endpoint":
