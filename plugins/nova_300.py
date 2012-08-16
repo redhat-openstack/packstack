@@ -7,15 +7,12 @@ import os
 
 import engine_validators as validate
 import common_utils as utils
-import ospluginutils
+from ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile
 
 # Controller object will be initialized from main flow
 controller = None
 
 PLUGIN_NAME = "OS-NOVA"
-PUPPET_DIR = "puppet"
-PUPPET_MANIFEST_DIR = os.path.join(PUPPET_DIR, "manifests")
-PUPPET_TEMPLATE_DIR = os.path.join(PUPPET_DIR, "templates")
 
 logging.debug("plugin %s loaded", __name__)
 
@@ -169,18 +166,6 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing Nova API", [], [], novaapisteps)
 
-def getManifestTemplate(template_name):
-    with open(os.path.join(PUPPET_TEMPLATE_DIR, template_name)) as fp:
-        return fp.read()%controller.CONF
-
-def appendManifestFile(manifest_name, data):
-    manifestfile = os.path.join(PUPPET_MANIFEST_DIR, manifest_name)
-    if manifestfile not in controller.CONF['CONFIG_MANIFESTFILES']:
-        controller.CONF['CONFIG_MANIFESTFILES'].append(manifestfile)
-    with open(manifestfile, 'a') as fp:
-        fp.write("\n")
-        fp.write(data)
-    
 def createapimanifest():
     manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVAAPI_HOST']
     manifestdata = getManifestTemplate("nova_api.pp")
@@ -202,7 +187,7 @@ def createcomputemanifest():
         manifestfile = "%s_nova.pp"%host
 
         server = utils.ScriptRunner(host)
-        nova_config_options = ospluginutils.NovaConfig()
+        nova_config_options = NovaConfig()
 
         if host != controller.CONF["CONFIG_NOVANETWORK_HOST"]:
             nova_config_options.addOption("flat_interface", controller.CONF['CONFIG_NOVACOMPUTE_PRIVIF'])
