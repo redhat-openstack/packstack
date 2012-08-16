@@ -31,12 +31,6 @@ class {"glance::keystone::auth":
     internal_address => "%(CONFIG_GLANCE_HOST)s",
 }
 
-class {"nova::keystone::auth":
-    public_address => "%(CONFIG_NOVAAPI_HOST)s",
-    admin_address => "%(CONFIG_NOVAAPI_HOST)s",
-    internal_address => "%(CONFIG_NOVAAPI_HOST)s",
-}
-
 firewall { '001 keystone incomming':
     proto    => 'tcp',
     dport    => ['5000', '35357'],
