@@ -20,6 +20,18 @@ def initConfig(controllerObject):
     controller = controllerObject
 
     paramsList = [
+                  {"CMD_OPTION"      : "os-glance-install",
+                   "USAGE"           : "Install Glance?",
+                   "PROMPT"          : "Install Glance?",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATION_FUNC" : validate.validateOptions,
+                   "DEFAULT_VALUE"   : "y",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_OS_GLANCE_INSTALL",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "os-nova-install",
                    "USAGE"           : "Install Nova?",
                    "PROMPT"          : "Install Nova?",

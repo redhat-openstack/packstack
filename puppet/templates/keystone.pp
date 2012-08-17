@@ -25,12 +25,6 @@ class {"keystone::endpoint":
     internal_address  => "%(CONFIG_KEYSTONE_HOST)s",
 }
 
-class {"glance::keystone::auth":
-    public_address => "%(CONFIG_GLANCE_HOST)s",
-    admin_address => "%(CONFIG_GLANCE_HOST)s",
-    internal_address => "%(CONFIG_GLANCE_HOST)s",
-}
-
 firewall { '001 keystone incomming':
     proto    => 'tcp',
     dport    => ['5000', '35357'],

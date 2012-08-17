@@ -10,6 +10,7 @@ import uuid
 import engine_validators as validate
 import basedefs
 import common_utils as utils
+from ospluginutils import getManifestTemplate, appendManifestFile
 
 # Controller object will be initialized from main flow
 controller = None
@@ -44,8 +45,8 @@ def initConfig(controllerObject):
 
     groupDict = { "GROUP_NAME"            : "GLANCE",
                   "DESCRIPTION"           : "Glance Config paramaters",
-                  "PRE_CONDITION"         : utils.returnYes,
-                  "PRE_CONDITION_MATCH"   : "yes",
+                  "PRE_CONDITION"         : "CONFIG_OS_GLANCE_INSTALL",
+                  "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
 
@@ -54,22 +55,18 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     glancesteps = [
+             {'title': 'Adding Glance Keystone Manifest entries', 'functions':[createkeystonemanifest]},
              {'title': 'Creating Galnce Manifest', 'functions':[createmanifest]}
     ]
     controller.addSequence("Installing Glance", [], [], glancesteps)
 
+def createkeystonemanifest():
+    manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
+    manifestdata = getManifestTemplate("keystone_glance.pp")
+    appendManifestFile(manifestfile, manifestdata)
+
 def createmanifest():
-    with open(PUPPET_MANIFEST_TEMPLATE) as fp:
-        manifestdata = fp.read()
-    manifestdata = manifestdata%controller.CONF
-
-    if not os.path.exists(PUPPET_MANIFEST_DIR):
-        os.mkdir(PUPPET_MANIFEST_DIR)
-    manifestfile = os.path.join(PUPPET_MANIFEST_DIR, "%s_glance.pp"%controller.CONF['CONFIG_GLANCE_HOST'])
-    if manifestfile not in controller.CONF['CONFIG_MANIFESTFILES']:
-        controller.CONF['CONFIG_MANIFESTFILES'].append(manifestfile)
-
-    with open(manifestfile, 'a') as fp:
-        fp.write("\n")
-        fp.write(manifestdata)
+    manifestfile = "%s_glance.pp"%controller.CONF['CONFIG_GLANCE_HOST']
+    manifestdata = getManifestTemplate("glance.pp")
+    appendManifestFile(manifestfile, manifestdata)
 
