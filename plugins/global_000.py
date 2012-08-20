@@ -56,6 +56,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-swift-install",
+                   "USAGE"           : "Install Swift?",
+                   "PROMPT"          : "Install Swift?",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATION_FUNC" : validate.validateOptions,
+                   "DEFAULT_VALUE"   : "n",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_OS_SWIFT_INSTALL",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
 
                  ]
     groupDict = { "GROUP_NAME"            : "GLOBAL",
