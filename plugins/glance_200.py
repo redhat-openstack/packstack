@@ -54,6 +54,9 @@ def initConfig(controllerObject):
 
 
 def initSequences(controller):
+    if controller.CONF['CONFIG_OS_GLANCE_INSTALL'] != 'y':
+        return
+
     glancesteps = [
              {'title': 'Adding Glance Keystone Manifest entries', 'functions':[createkeystonemanifest]},
              {'title': 'Creating Galnce Manifest', 'functions':[createmanifest]}
