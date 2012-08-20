@@ -27,13 +27,17 @@ PUPPET_MODULES = [
     ('https://github.com/puppetlabs/puppetlabs-keystone.git', 'keystone', None),
     ('https://github.com/puppetlabs/puppetlabs-nova.git', 'nova', None),
     ('https://github.com/puppetlabs/puppetlabs-openstack.git', 'openstack', None),
+    ('https://github.com/derekhiggins/puppetlabs-swift.git', 'swift', 'devel'),
     ('https://github.com/puppetlabs/puppetlabs-stdlib.git', 'stdlib', None),
     ('https://github.com/puppetlabs/puppetlabs-sysctl.git', 'sysctl', None),
     ('https://github.com/puppetlabs/puppetlabs-mysql.git', 'mysql', None),
     ('https://github.com/puppetlabs/puppetlabs-concat.git', 'concat', None),
     ('https://github.com/puppetlabs/puppetlabs-create_resources.git', 'create_resources', None),
+    ('https://github.com/puppetlabs/puppetlabs-rsync.git', 'rsync', None),
+    ('https://github.com/puppetlabs/puppetlabs-xinetd.git', 'xinetd', None),
     ('https://github.com/lstanden/puppetlabs-firewall.git', 'firewall', None),
     ('https://github.com/saz/puppet-memcached.git', 'memcached', None),
+    ('https://github.com/saz/puppet-ssh.git', 'ssh', None),
     ('https://github.com/derekhiggins/puppet-qpid.git', 'qpid', None),
     ('https://github.com/derekhiggins/puppet-vlan.git', 'vlan', None)
 ]
