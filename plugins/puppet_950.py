@@ -102,7 +102,7 @@ def getPuppetModules():
         directory = os.path.join(MODULEDIR, directory)
         localserver.append('[ -d %s ] || git clone %s %s'%(directory, repository, directory))
         if branch:
-            localserver.append('cd %s ;  git checkout %s'%(directory, branch))
+            localserver.append('cd %s ;  git checkout %s ; cd -'%(directory, branch))
     localserver.execute()
 
 def installpuppet():
