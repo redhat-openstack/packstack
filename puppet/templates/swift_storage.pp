@@ -10,6 +10,7 @@ class role_swift_storage {
     base_dir     => '/srv/loopback-device',
     mnt_base_dir => '/srv/node',
     require      => Class['swift'],
+    fstype       => 'ext4',
   }
 
   # install all swift storage servers together
