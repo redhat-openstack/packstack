@@ -27,7 +27,7 @@ PUPPET_MODULES = [
     ('https://github.com/puppetlabs/puppetlabs-keystone.git', 'keystone', None),
     ('https://github.com/puppetlabs/puppetlabs-nova.git', 'nova', None),
     ('https://github.com/puppetlabs/puppetlabs-openstack.git', 'openstack', None),
-    ('https://github.com/derekhiggins/puppetlabs-swift.git', 'swift', 'devel'),
+    ('https://github.com/puppetlabs/puppetlabs-swift.git', 'swift', None),
     ('https://github.com/puppetlabs/puppetlabs-stdlib.git', 'stdlib', None),
     ('https://github.com/puppetlabs/puppetlabs-sysctl.git', 'sysctl', None),
     ('https://github.com/puppetlabs/puppetlabs-mysql.git', 'mysql', None),
