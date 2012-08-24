@@ -49,6 +49,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-swift-storage-fstype",
+                   "USAGE"           : "FileSystem type for storage nodes",
+                   "PROMPT"          : "FileSystem type for storage nodes",
+                   "OPTION_LIST"     : ['xfs','ext4'],
+                   "VALIDATION_FUNC" : validate.validateOptions,
+                   "DEFAULT_VALUE"   : "ext4",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_SWIFT_STORAGE_FSTYPE",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                  ]
 
     groupDict = { "GROUP_NAME"            : "OSSWIFT",
