@@ -54,10 +54,6 @@ class { 'swift::proxy::authtoken':
     auth_host         => $controller_node_public,
 }
 
-swift::ringsync{["account","container","object"]:
-    ring_server => '%(CONFIG_SWIFT_BUILDER_HOST)s'
-}   
-
 firewall { '001 swift proxy incomming':
     proto    => 'tcp',
     dport    => ['8080'],

@@ -139,6 +139,9 @@ def createbuildermanifest():
 def createproxymanifest():
     manifestfile = "%s_swift.pp"%controller.CONF['CONFIG_SWIFT_PROXY_HOSTS']
     manifestdata = getManifestTemplate("swift_proxy.pp")
+    # If the proxy server is also a storage server then swift::ringsync will be included for the storage server
+    if controller.CONF['CONFIG_SWIFT_PROXY_HOSTS'] not in controller.CONF["CONFIG_SWIFT_STORAGE_HOSTS"].split(","):
+        manifestdata += 'swift::ringsync{["account","container","object"]:\n    ring_server => "%(CONFIG_SWIFT_BUILDER_HOST)s"\n}'
     appendManifestFile(manifestfile, manifestdata)
 
 def createstoragemanifest():
