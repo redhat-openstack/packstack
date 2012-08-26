@@ -89,7 +89,7 @@ def initConfig(controllerObject):
 
     groupDict = { "GROUP_NAME"            : "OSSWIFT",
                   "DESCRIPTION"           : "OpenStack Swift Config paramaters",
-                  "PRE_CONDITION"         : "CONFIG_OS_SWIFT_INSTALL",
+                  "PRE_CONDITION"         : "CONFIG_SWIFT_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
@@ -98,7 +98,7 @@ def initConfig(controllerObject):
 
 
 def initSequences(controller):
-    if controller.CONF['CONFIG_OS_SWIFT_INSTALL'] != 'y':
+    if controller.CONF['CONFIG_SWIFT_INSTALL'] != 'y':
         return
 
     steps = [

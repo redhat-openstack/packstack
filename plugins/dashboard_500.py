@@ -33,7 +33,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "localhost",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_OSDASHBOARD_HOST",
+                   "CONF_NAME"       : "CONFIG_DASHBOARD_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -45,7 +45,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : uuid.uuid4().hex,
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "DASHBOARD_SECRET_KEY",
+                   "CONF_NAME"       : "CONFIG_DASHBOARD_SECRET_KEY",
                    "USE_DEFAULT"     : True,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -53,7 +53,7 @@ def initConfig(controllerObject):
 
     groupDict = { "GROUP_NAME"            : "OSDASHBOARD",
                   "DESCRIPTION"           : "OpenStack Dashboard Config paramaters",
-                  "PRE_CONDITION"         : "CONFIG_OS_DASHBOARD_INSTALL",
+                  "PRE_CONDITION"         : "CONFIG_DASHBOARD_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
@@ -62,7 +62,7 @@ def initConfig(controllerObject):
 
 
 def initSequences(controller):
-    if controller.CONF['CONFIG_OS_DASHBOARD_INSTALL'] != 'y':
+    if controller.CONF['CONFIG_DASHBOARD_INSTALL'] != 'y':
         return
 
     steps = [
@@ -71,6 +71,6 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Dashboard", [], [], steps)
 
 def createmanifest():
-    manifestfile = "%s_dashboard.pp"%controller.CONF['CONFIG_OSDASHBOARD_HOST']
+    manifestfile = "%s_dashboard.pp"%controller.CONF['CONFIG_DASHBOARD_HOST']
     manifestdata = getManifestTemplate("dashboard.pp")
     appendManifestFile(manifestfile, manifestdata)

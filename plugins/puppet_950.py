@@ -50,9 +50,9 @@ def initConfig(controllerObject):
                   {"CMD_OPTION"      : "remove-puppetmodules",
                    "USAGE"           : "Causes the Puppet modules to be removed (if present), and as a result re-cloned from git",
                    "PROMPT"          : "Should we remove the Puppet modules",
-                   "OPTION_LIST"     : ["yes", "no"],
+                   "OPTION_LIST"     : ["y", "n"],
                    "VALIDATION_FUNC" : validate.validateOptions,
-                   "DEFAULT_VALUE"   : "no",
+                   "DEFAULT_VALUE"   : "n",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_PUPPET_REMOVEMODULES",
@@ -90,7 +90,7 @@ def initSequences(controller):
 def runCleanup():
     localserver = utils.ScriptRunner()
     localserver.append("rm -rf %s/*pp"%MANIFESTDIR)
-    if controller.CONF["CONFIG_PUPPET_REMOVEMODULES"] == 'yes':
+    if controller.CONF["CONFIG_PUPPET_REMOVEMODULES"] == 'y':
         localserver.append("rm -rf %s"%MODULEDIR)
     localserver.execute()
 

@@ -45,7 +45,7 @@ def initConfig(controllerObject):
 
     groupDict = { "GROUP_NAME"            : "GLANCE",
                   "DESCRIPTION"           : "Glance Config paramaters",
-                  "PRE_CONDITION"         : "CONFIG_OS_GLANCE_INSTALL",
+                  "PRE_CONDITION"         : "CONFIG_GLANCE_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
@@ -54,7 +54,7 @@ def initConfig(controllerObject):
 
 
 def initSequences(controller):
-    if controller.CONF['CONFIG_OS_GLANCE_INSTALL'] != 'y':
+    if controller.CONF['CONFIG_GLANCE_INSTALL'] != 'y':
         return
 
     glancesteps = [

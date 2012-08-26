@@ -1,6 +1,6 @@
 
 nova_config{
-    "network_host": value => "%(CONFIG_NOVANETWORK_HOST)s";
+    "network_host": value => "%(CONFIG_NOVA_NETWORK_HOST)s";
     "libvirt_inject_partition": value => "-1";
 }
 

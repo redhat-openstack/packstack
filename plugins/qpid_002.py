@@ -44,7 +44,7 @@ def initConfig(controllerObject):
 
     groupDict = { "GROUP_NAME"            : "QPIDLANCE",
                   "DESCRIPTION"           : "QPID Config paramaters",
-                  "PRE_CONDITION"         : "CONFIG_OS_NOVA_INSTALL",
+                  "PRE_CONDITION"         : "CONFIG_NOVA_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
@@ -54,7 +54,7 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     # If we don't want Nova we don't need qpid
-    if controller.CONF['CONFIG_OS_NOVA_INSTALL'] != 'y':
+    if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
         return
     qpidsteps = [
              {'title': 'Creating QPID Manifest', 'functions':[createmanifest]}

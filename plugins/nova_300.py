@@ -29,7 +29,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "localhost",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVAAPI_HOST",
+                   "CONF_NAME"       : "CONFIG_NOVA_API_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -41,7 +41,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "localhost",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVACERT_HOST",
+                   "CONF_NAME"       : "CONFIG_NOVA_CERT_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -53,7 +53,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "localhost",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVACOMPUTE_HOSTS",
+                   "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_HOSTS",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -77,7 +77,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "eth1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVACOMPUTE_PRIVIF",
+                   "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_PRIVIF",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -89,7 +89,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "localhost",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVANETWORK_HOST",
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -101,7 +101,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "eth0",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVANETWORK_PUBIF",
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_PUBIF",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -113,7 +113,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "eth1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVANETWORK_PRIVIF",
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_PRIVIF",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -125,7 +125,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "192.168.32.0/22",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVANETWORK_FIXEDRANGE",
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_FIXEDRANGE",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -137,7 +137,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "10.3.4.0/22",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVANETWORK_FLOATINGRANGE",
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_FLOATINGRANGE",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -149,7 +149,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "localhost",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVASCHED_HOST",
+                   "CONF_NAME"       : "CONFIG_NOVA_SCHED_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -161,21 +161,21 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "localhost",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVAVOLUME_HOST",
+                   "CONF_NAME"       : "CONFIG_NOVA_VOLUME_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                  ]
     groupDict = { "GROUP_NAME"            : "NOVA",
                   "DESCRIPTION"           : "Nova Options",
-                  "PRE_CONDITION"         : "CONFIG_OS_NOVA_INSTALL",
+                  "PRE_CONDITION"         : "CONFIG_NOVA_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
     controller.addGroup(groupDict, paramsList)
 
 def initSequences(controller):
-    if controller.CONF['CONFIG_OS_NOVA_INSTALL'] != 'y':
+    if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
         return
 
     novaapisteps = [
@@ -191,7 +191,7 @@ def initSequences(controller):
     controller.addSequence("Installing Nova API", [], [], novaapisteps)
 
 def createapimanifest():
-    manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVAAPI_HOST']
+    manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVA_API_HOST']
     manifestdata = getManifestTemplate("nova_api.pp")
     appendManifestFile(manifestfile, manifestdata)
 
@@ -201,31 +201,31 @@ def createkeystonemanifest():
     appendManifestFile(manifestfile, manifestdata)
 
 def createcertmanifest():
-    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVACERT_HOST']
+    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_CERT_HOST']
     manifestdata = getManifestTemplate("nova_cert.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 def createcomputemanifest():
     manifestdata = getManifestTemplate("nova_compute.pp")
-    for host in controller.CONF["CONFIG_NOVACOMPUTE_HOSTS"].split(","):
+    for host in controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(","):
         manifestfile = "%s_nova.pp"%host
 
         server = utils.ScriptRunner(host)
         nova_config_options = NovaConfig()
 
-        if host != controller.CONF["CONFIG_NOVANETWORK_HOST"]:
-            nova_config_options.addOption("flat_interface", controller.CONF['CONFIG_NOVACOMPUTE_PRIVIF'])
-            validate.r_validateIF(server, controller.CONF['CONFIG_NOVACOMPUTE_PRIVIF'])
+        if host != controller.CONF["CONFIG_NOVA_NETWORK_HOST"]:
+            nova_config_options.addOption("flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+            validate.r_validateIF(server, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
 
         server.execute()
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
 def createnetworkmanifest():
-    hostname = controller.CONF['CONFIG_NOVANETWORK_HOST']
+    hostname = controller.CONF['CONFIG_NOVA_NETWORK_HOST']
 
     server = utils.ScriptRunner(hostname)
-    validate.r_validateIF(server, controller.CONF['CONFIG_NOVANETWORK_PRIVIF'])
-    validate.r_validateIF(server, controller.CONF['CONFIG_NOVANETWORK_PUBIF'])
+    validate.r_validateIF(server, controller.CONF['CONFIG_NOVA_NETWORK_PRIVIF'])
+    validate.r_validateIF(server, controller.CONF['CONFIG_NOVA_NETWORK_PUBIF'])
     server.execute()
 
     manifestfile = "%s_nova.pp"%hostname
@@ -233,12 +233,12 @@ def createnetworkmanifest():
     appendManifestFile(manifestfile, manifestdata)
 
 def createschedmanifest():
-    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVASCHED_HOST']
+    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_SCHED_HOST']
     manifestdata = getManifestTemplate("nova_sched.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 def createvolumemanifest():
-    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVAVOLUME_HOST']
+    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_VOLUME_HOST']
     manifestdata = getManifestTemplate("nova_volume.pp")
     appendManifestFile(manifestfile, manifestdata)
 
