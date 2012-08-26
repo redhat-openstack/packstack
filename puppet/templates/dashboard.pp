@@ -12,3 +12,7 @@ firewall { '001 horizon incomming':
     action   => 'accept',
 }
 
+selboolean{'httpd_can_network_connect':
+    value => on,
+    persistent => true,
+}
