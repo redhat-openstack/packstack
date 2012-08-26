@@ -5,3 +5,10 @@ class {'horizon':
 }
 
 class {'memcached':}
+
+firewall { '001 horizon incomming':
+    proto    => 'tcp',
+    dport    => ['80'],
+    action   => 'accept',
+}
+
