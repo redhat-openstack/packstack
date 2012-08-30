@@ -51,9 +51,10 @@ def initSequences(controller):
 
 def installepel():
     for hostname in utils.gethostlist(controller.CONF):
+        if '/' in hostname:
+            hostname = hostname.split('/')[0]
         server = utils.ScriptRunner(hostname)
 
         server.append("rpm -q epel-release-6-7 || rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm")
-        server.append("setenforce 0")
         server.execute()
 

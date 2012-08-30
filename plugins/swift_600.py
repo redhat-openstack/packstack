@@ -38,10 +38,10 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "os-swift-storage",
-                   "USAGE"           : "Hostname of the Swift Storage servers (comma seperated)",
-                   "PROMPT"          : "Hostname of the Swift Storage servers (comma seperated)",
+                   "USAGE"           : "Hostname of the Swift Storage servers e.g. host/dev,host/dev",
+                   "PROMPT"          : "Hostname of the Swift Storage servers e.g. host/dev,host/dev",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateMultiPing,
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
                    "DEFAULT_VALUE"   : "localhost",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -116,6 +116,18 @@ def createkeystonemanifest():
     manifestdata = getManifestTemplate("keystone_swift.pp")
     appendManifestFile(manifestfile, manifestdata)
 
+devices = []
+def parseDevices(config_swift_storage_hosts):
+    device_number = 0
+    for host in config_swift_storage_hosts.split(","):
+        device_number += 1
+        device = None
+        if '/' in host:
+            host, device = host.split('/')[0:2]
+        zone = (device_number % int(controller.CONF["CONFIG_SWIFT_STORAGE_ZONES"]))+1
+        devices.append({'host':host, 'device':device, 'device_name':'device%s'%device_number, 'zone':str(zone)})
+    return devices
+
 # The ring file should be built and distributed befor the storage services 
 # come up. Specifically the replicator crashes if the ring isn't present
 def createbuildermanifest():
@@ -126,10 +138,11 @@ def createbuildermanifest():
 
     # Add each device to the ring
     devicename = 0
-    for host in controller.CONF["CONFIG_SWIFT_STORAGE_HOSTS"].split(","):
-        # the zone number wraps around one it meets the nunber of zones
-        zone = devicename % int(controller.CONF["CONFIG_SWIFT_STORAGE_ZONES"]) + 1
-        devicename += 1
+    for device in parseDevices(controller.CONF["CONFIG_SWIFT_STORAGE_HOSTS"]):
+        host = device['host']
+        devicename = device['device_name']
+        zone = device['zone']
+        
         manifestdata = manifestdata + '\n@@ring_object_device { "%s:6000/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
         manifestdata = manifestdata + '\n@@ring_container_device { "%s:6001/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
         manifestdata = manifestdata + '\n@@ring_account_device { "%s:6002/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
@@ -141,21 +154,34 @@ def createproxymanifest():
     manifestdata = getManifestTemplate("swift_proxy.pp")
     # If the proxy server is also a storage server then swift::ringsync will be included for the storage server
     if controller.CONF['CONFIG_SWIFT_PROXY_HOSTS'] not in controller.CONF["CONFIG_SWIFT_STORAGE_HOSTS"].split(","):
-        manifestdata += 'swift::ringsync{["account","container","object"]:\n    ring_server => "%(CONFIG_SWIFT_BUILDER_HOST)s"\n}'
+        manifestdata += 'swift::ringsync{["account","container","object"]:\n    ring_server => "%s"\n}'%controller.CONF['CONFIG_SWIFT_BUILDER_HOST']
     appendManifestFile(manifestfile, manifestdata)
 
 def createstoragemanifest():
-    # we need to get a count for each host
-    host_counts = {}
-    for host in controller.CONF["CONFIG_SWIFT_STORAGE_HOSTS"].split(","):
-        host = host.strip()
-        host_counts[host] = host_counts.get(host, 0) + 1
 
-    for host, count in host_counts.items():
+    # this need to happen once per storage host
+    for host in set([device['host'] for device in devices]):
         controller.CONF["CONFIG_SWIFT_STORAGE_CURRENT"] = host
-        controller.CONF["SWIFT_STORAGE_DEVICES"] = ','.join(["'%s'"%n for n in range(1,count+1)])
         manifestfile = "%s_swift.pp"%host
         manifestdata = getManifestTemplate("swift_storage.pp")
+        appendManifestFile(manifestfile, manifestdata)
+
+    # this need to happen once per storage device
+    for device in devices:
+        host = device['host']
+        devicename = device['device_name']
+        device = device['device']
+       
+        server = utils.ScriptRunner(host)
+        validate.r_validateDevice(server, device)
+        server.execute()
+
+        manifestfile = "%s_swift.pp"%host
+        if device:
+            manifestdata = "\n" + 'swift::storage::%s{"%s":\n  device => "/dev/%s",\n}'% (controller.CONF["CONFIG_SWIFT_STORAGE_FSTYPE"], devicename, device)
+        else:
+            controller.CONF["SWIFT_STORAGE_DEVICES"] = "'%s'"%devicename
+            manifestdata = "\n" + getManifestTemplate("swift_loopback.pp")
         appendManifestFile(manifestfile, manifestdata)
 
 def createcommonmanifest():

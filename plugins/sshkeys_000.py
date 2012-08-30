@@ -61,6 +61,8 @@ def installKeys():
         sshkeydata = fp.read().strip()
 
     for hostname in utils.gethostlist(controller.CONF):
+        if '/' in hostname:
+            hostname = hostname.split('/')[0]
         server = utils.ScriptRunner(hostname)
 
         server.append("mkdir -p ~/.ssh")

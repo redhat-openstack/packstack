@@ -22,3 +22,7 @@ firewall { '001 rsync incomming':
     action   => 'accept',
 }
 
+selboolean{'rsync_export_all_ro':
+    value => on,
+    persistent => true,
+}
