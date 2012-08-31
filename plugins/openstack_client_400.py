@@ -44,8 +44,8 @@ def initConfig(controllerObject):
 
     groupDict = { "GROUP_NAME"            : "NOVACLIENT",
                   "DESCRIPTION"           : "NOVACLIENT Config paramaters",
-                  "PRE_CONDITION"         : utils.returnYes,
-                  "PRE_CONDITION_MATCH"   : "yes",
+                  "PRE_CONDITION"         : "CONFIG_CLIENT_INSTALL",
+                  "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
 
@@ -53,6 +53,9 @@ def initConfig(controllerObject):
 
 
 def initSequences(controller):
+    if controller.CONF['CONFIG_CLIENT_INSTALL'] != 'y':
+        return
+
     osclientsteps = [
              {'title': 'Creating OS Client Manifest', 'functions':[createmanifest]}
     ]
