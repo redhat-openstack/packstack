@@ -51,7 +51,7 @@ class { 'swift::proxy::authtoken':
     admin_tenant_name => 'services',
     admin_password    => $swift_user_password,
     # assume that the controller host is the swift api server
-    auth_host         => $controller_node_public,
+    auth_host         => '%(CONFIG_KEYSTONE_HOST)s',
 }
 
 firewall { '001 swift proxy incomming':
