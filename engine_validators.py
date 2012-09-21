@@ -32,6 +32,13 @@ def validateInteger(param, options=[]):
         print output_messages.INFO_VAL_NOT_INTEGER
         return False
 
+def validateRe(param, options=[]):
+    for regex in options:
+        if re.search(regex, param):
+            return True
+    logging.warn("validateRe('%s') - failed" %(param))
+    return False
+
 def validatePort(param, options = []):
     #TODO: add actual port check with socket open
     logging.debug("Validating %s as a valid TCP Port" % (param))
@@ -277,6 +284,16 @@ def validatePing(param, options=[]):
         if rc == 0:
             return True
 
+    print "\n" + output_messages.ERR_PING + " %s .\n"%param
+    return False
+
+def validateMultiPing(param, options=[]):
+    if validateStringNotEmpty(param):
+        hosts = param.split(",")
+        for host in hosts:
+            if validatePing(host.strip()) == False:
+                return False
+        return True
     print "\n" + output_messages.ERR_PING + ".\n"
     return False
 
@@ -342,4 +359,23 @@ def _isPathWriteable(path):
         logging.warning(traceback.format_exc())
         logging.warning("%s is not writeable" % path)
         return False
+
+def r_validateIF(server, device):
+    """ Validate that a network interface exists on a remote host """
+    server.append("ifconfig %s || ( echo Device %s does not exist && exit 1 )"%(device, device))
+
+def r_validateDevice(server, device=None):
+    if device:
+        # the device MUST exist
+        server.append('ls -l /dev/%s'%device)
+
+        # if it is not mounted then we can use it
+        server.append('grep "/dev/%s " /proc/self/mounts || exit 0'%device)
+
+        # if it is mounted then the mount point has to be in /srv/node
+        server.append('grep "/dev/%s /srv/node" /proc/self/mounts && exit 0'%device)
+        
+        # if we got here without exiting then we can't use this device
+        server.append('exit 1')
+    return False
 
