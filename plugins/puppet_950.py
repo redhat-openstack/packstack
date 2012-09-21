@@ -9,6 +9,9 @@ import engine_validators as validate
 import basedefs
 import common_utils as utils
 
+from ospluginutils import gethostlist
+
+
 # Controller object will be initialized from main flow
 controller = None
 
@@ -18,7 +21,7 @@ PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 logging.debug("plugin %s loaded", __name__)
 
-PUPPETDIR = "puppet"
+PUPPETDIR      = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet')
 MODULEDIR = os.path.join(PUPPETDIR, "modules")
 MANIFESTDIR = os.path.join(PUPPETDIR, "manifests")
 PUPPET_MODULES = [
@@ -106,7 +109,7 @@ def getPuppetModules():
     localserver.execute()
 
 def installpuppet():
-    for hostname in utils.gethostlist(controller.CONF):
+    for hostname in gethostlist(controller.CONF):
         server = utils.ScriptRunner(hostname)
         server.append("rpm -q puppet || yum install -y puppet")
         server.append("sed -i -e 's/enabled=1/enabled=0/g' /etc/yum.repos.d/epel.repo ")
@@ -114,14 +117,15 @@ def installpuppet():
 
 def copyPuppetModules():
     server = utils.ScriptRunner()
-    for hostname in utils.gethostlist(controller.CONF):
+    for hostname in gethostlist(controller.CONF):
+        server.append("cd %s"%basedefs.DIR_PROJECT_DIR,)
         server.append("tar -czf - puppet/manifests puppet/modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc -xzf -"%(hostname))
     server.execute()
 
 def applyPuppetManifest():
     print
     for manifest in controller.CONF['CONFIG_MANIFESTFILES']:
-        for hostname in utils.gethostlist(controller.CONF):
+        for hostname in gethostlist(controller.CONF):
             if "/%s_"%hostname not in manifest: continue
 
             print "Applying "+ manifest

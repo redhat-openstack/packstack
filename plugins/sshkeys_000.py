@@ -10,6 +10,8 @@ import engine_validators as validate
 import basedefs
 import common_utils as utils
 
+from ospluginutils import gethostlist
+
 # Controller object will be initialized from main flow
 controller = None
 
@@ -60,7 +62,7 @@ def installKeys():
     with open(controller.CONF["CONFIG_SSH_KEY"]) as fp:
         sshkeydata = fp.read().strip()
 
-    for hostname in utils.gethostlist(controller.CONF):
+    for hostname in gethostlist(controller.CONF):
         if '/' in hostname:
             hostname = hostname.split('/')[0]
         server = utils.ScriptRunner(hostname)

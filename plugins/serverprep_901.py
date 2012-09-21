@@ -10,6 +10,8 @@ import engine_validators as validate
 import basedefs
 import common_utils as utils
 
+from ospluginutils import gethostlist
+
 # Controller object will be initialized from main flow
 controller = None
 
@@ -50,7 +52,7 @@ def initSequences(controller):
 
 
 def installepel():
-    for hostname in utils.gethostlist(controller.CONF):
+    for hostname in gethostlist(controller.CONF):
         if '/' in hostname:
             hostname = hostname.split('/')[0]
         server = utils.ScriptRunner(hostname)

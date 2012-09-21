@@ -20,8 +20,9 @@ PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 logging.debug("plugin %s loaded", __name__)
 
-PUPPET_MANIFEST_DIR      = 'puppet/manifests'
-PUPPET_MANIFEST_TEMPLATE = 'puppet/templates/keystone.pp'
+PUPPET_MANIFEST_DIR      = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet/manifests')
+PUPPET_MANIFEST_TEMPLATE = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet/templates/keystone.pp')
+
 
 def initConfig(controllerObject):
     global controller
