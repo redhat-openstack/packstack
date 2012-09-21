@@ -1,4 +1,4 @@
-Standalone install utility to install openstack on RHEL 6.3 
+Utility to install openstack on RHEL 6.3 
 
 This utility can be used to install openstack on a single or 
 group of hosts (over ssh)
@@ -7,13 +7,30 @@ This utility is still in the early stages, a lot of the configuration
 options have yet to be added
 
 Installation 
-Option 1 (prompts for configuration options)
-> python openstack-setup.py
+$ yum install -y git cracklib-python
+$ git clone git://github.com/derekhiggins/os-installer.git
+$ git clone git://github.com/derekhiggins/installer.git
+$ cd installer
 
-Option 2 (using answer file)
-> python openstack-setup.py --gen-answer-file=answers.txt
-# edit answers.txt as appropriate
-> python openstack-setup.py --answer-file=answers.txt
+# Edit the file basedefs.py to point to os-installer
+DIR_PROJECT_DIR = "../os-installer"
 
-The origional install script on which this is based can be found 
-in the oVirt git repository git://gerrit.ovirt.org/ovirt-engine
+Option 1 (using answer file)
+$ python run_setup.py --gen-answer-file=ans.txt
+
+# then edit answers.txt as appropriate e.g.
+o set CONFIG_SSH_KEY to a public ssh key to be installed to remote machines
+o Edit localhost to anywhere you want to install a piece of openstack on another server
+o Edit the 3 network interfaces to whatever makes sense in your setup 
+o If your testing on a vm then set CONFIG_LIBVIRT_TYPE=qemu
+
+$ python run_setup.py --answer-file=ans.txt
+
+Option 2 (prompts for configuration options)
+$ python run_setup.py
+
+thats it, if everything went well you can now start using openstack
+$ cd
+$ . keystonerc_admin
+$ nova list
+$ swift list  # if you have installed swift
