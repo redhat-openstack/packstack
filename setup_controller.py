@@ -46,6 +46,9 @@ class Controller(object):
     def addSequence(self, desc, cond, cond_match, steps):
         self.__SEQUENCES.append(Sequence(desc, cond, cond_match, steps))
 
+    def insertSequence(self, desc, cond, cond_match, steps, index=0):
+        self.__SEQUENCES.insert(index, Sequence(desc, cond, cond_match, steps))
+
     def getAllSequences(self):
         return self.__SEQUENCES
 
