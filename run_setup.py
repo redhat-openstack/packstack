@@ -649,6 +649,7 @@ def loadPlugins():
     Load All plugins from ./plugins
     """
     sys.path.append(basedefs.DIR_PLUGINS)
+    sys.path.append(basedefs.DIR_MODULES)
     fileList = sorted(os.listdir(basedefs.DIR_PLUGINS), cmp=plugin_compare)
     for item in fileList:
         # Looking for files that end with ###.py, example: a_plugin_100.py
