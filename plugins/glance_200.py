@@ -34,7 +34,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Hostname of the Glance server",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
-                   "DEFAULT_VALUE"   : "localhost",
+                   "DEFAULT_VALUE"   : "127.0.0.1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_GLANCE_HOST",
