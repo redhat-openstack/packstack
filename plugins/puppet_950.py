@@ -112,7 +112,8 @@ def installpuppet():
     for hostname in gethostlist(controller.CONF):
         server = utils.ScriptRunner(hostname)
         server.append("rpm -q puppet || yum install -y puppet")
-        server.append("sed -i -e 's/enabled=1/enabled=0/g' /etc/yum.repos.d/epel.repo ")
+        # disable epel if on rhel
+        server.append("grep 'Red Hat Enterprise Linux' /etc/redhat-release && sed -i -e 's/enabled=1/enabled=0/g' /etc/yum.repos.d/epel.repo || echo -n ''")
         server.execute()
 
 def copyPuppetModules():

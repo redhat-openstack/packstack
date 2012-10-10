@@ -57,6 +57,7 @@ def installepel():
             hostname = hostname.split('/')[0]
         server = utils.ScriptRunner(hostname)
 
-        server.append("rpm -q epel-release-6-7 || rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm")
+        # install epel if on rhel
+        server.append("grep 'Red Hat Enterprise Linux' /etc/redhat-release && ( rpm -q epel-release-6-7 || rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm ) || echo -n ''")
         server.execute()
 
