@@ -287,7 +287,8 @@ def removeMaskString(maskedString):
 def maskString(str):
     # Iterate sorted list, so we won't mask only part of a password
     for password in sorted(masked_value_set, utils.byLength, None, True):
-        str = str.replace(password, '*'*8)
+        if password:
+            str = str.replace(password, '*'*8)
     return str
 
 def _validateParamValue(param, paramValue):
