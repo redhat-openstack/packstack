@@ -25,24 +25,24 @@ PUPPETDIR      = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet')
 MODULEDIR = os.path.join(PUPPETDIR, "modules")
 MANIFESTDIR = os.path.join(PUPPETDIR, "manifests")
 PUPPET_MODULES = [
-    ('https://github.com/puppetlabs/puppetlabs-glance.git', 'glance', None),
-    ('https://github.com/puppetlabs/puppetlabs-horizon.git', 'horizon', None),
-    ('https://github.com/puppetlabs/puppetlabs-keystone.git', 'keystone', None),
-    ('https://github.com/puppetlabs/puppetlabs-nova.git', 'nova', None),
-    ('https://github.com/puppetlabs/puppetlabs-openstack.git', 'openstack', None),
-    ('https://github.com/puppetlabs/puppetlabs-swift.git', 'swift', None),
-    ('https://github.com/puppetlabs/puppetlabs-stdlib.git', 'stdlib', None),
-    ('https://github.com/puppetlabs/puppetlabs-sysctl.git', 'sysctl', None),
-    ('https://github.com/derekhiggins/puppetlabs-mysql.git', 'mysql', None),
-    ('https://github.com/puppetlabs/puppetlabs-concat.git', 'concat', None),
-    ('https://github.com/puppetlabs/puppetlabs-create_resources.git', 'create_resources', None),
-    ('https://github.com/puppetlabs/puppetlabs-rsync.git', 'rsync', None),
-    ('https://github.com/puppetlabs/puppetlabs-xinetd.git', 'xinetd', None),
-    ('https://github.com/lstanden/puppetlabs-firewall.git', 'firewall', None),
-    ('https://github.com/saz/puppet-memcached.git', 'memcached', None),
-    ('https://github.com/saz/puppet-ssh.git', 'ssh', None),
-    ('https://github.com/derekhiggins/puppet-qpid.git', 'qpid', None),
-    ('https://github.com/derekhiggins/puppet-vlan.git', 'vlan', None)
+    ('https://github.com/puppetlabs/puppetlabs-glance.git', 'glance', "98770e6080288e958a4ef569c10855547ad71e16"),
+    ('https://github.com/puppetlabs/puppetlabs-horizon.git', 'horizon', "1596b6515bd79a6d89c565924a9420717e78185f"),
+    ('https://github.com/puppetlabs/puppetlabs-keystone.git', 'keystone', "823a40ea5d53aa8da2c7cc13529987660e4ec5b9"),
+    ('https://github.com/puppetlabs/puppetlabs-nova.git', 'nova', "6e899cd211ec8544ef6c68a98ce2310b337383c3"),
+    ('https://github.com/puppetlabs/puppetlabs-openstack.git', 'openstack', "9c72fa0d25828a918beb0593bab6ae6c0b42da09"),
+    ('https://github.com/puppetlabs/puppetlabs-swift.git', 'swift', "05d44d8e784f6d649086504e2d53ff1dde17bd3f"),
+    ('https://github.com/puppetlabs/puppetlabs-stdlib.git', 'stdlib', "6961179007dce76d7fb9bd1fc361273acb4129a7"),
+    ('https://github.com/puppetlabs/puppetlabs-sysctl.git', 'sysctl', "c4486acc2d66de857dbccd8b4b945ea803226705"),
+    ('https://github.com/puppetlabs/puppetlabs-mysql.git', 'mysql', "832783040ac30413fd7c0b583b94faaedb7aea95"),
+    ('https://github.com/puppetlabs/puppetlabs-concat.git', 'concat', "031bf261289dcbb32e63b053ed5b3a82117698c0"),
+    ('https://github.com/puppetlabs/puppetlabs-create_resources.git', 'create_resources', "28584b0ed187fda119b3c44d468cafe7d3e1e980"),
+    ('https://github.com/puppetlabs/puppetlabs-rsync.git', 'rsync', "357d51f3a6a22bc3da842736176c3510e507b4fb"),
+    ('https://github.com/puppetlabs/puppetlabs-xinetd.git', 'xinetd', "e06e82ecc035d1cb12140ad381ae03c70ac17f66"),
+    ('https://github.com/lstanden/puppetlabs-firewall.git', 'firewall', "6106fb5404480ac7c883bddd503e0fc9f2698750"),
+    ('https://github.com/saz/puppet-memcached.git', 'memcached', "811822306b3db89d16d68a566683beb622c3a83f"),
+    ('https://github.com/saz/puppet-ssh.git', 'ssh', "c77376c20830bdd0049b4c6c410fb9e5880e6ef5"),
+    ('https://github.com/derekhiggins/puppet-qpid.git', 'qpid', "4ada31cbfc99b28dfb5eed449ff609d19a5b90ec"),
+    ('https://github.com/derekhiggins/puppet-vlan.git', 'vlan', "e4ec0e0fa3ac2b93e65ae7501ce431a02f0da132")
 ]
 
 def initConfig(controllerObject):

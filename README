@@ -1,4 +1,4 @@
-Utility to install openstack on RHEL 6.3 
+Utility to install openstack on RHEL 6.3  (Openstack Essex)
 
 This utility can be used to install openstack on a single or 
 group of hosts (over ssh)
