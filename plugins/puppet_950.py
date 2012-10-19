@@ -33,7 +33,7 @@ PUPPET_MODULES = [
     ('https://github.com/puppetlabs/puppetlabs-swift.git', 'swift', None),
     ('https://github.com/puppetlabs/puppetlabs-stdlib.git', 'stdlib', None),
     ('https://github.com/puppetlabs/puppetlabs-sysctl.git', 'sysctl', None),
-    ('https://github.com/derekhiggins/puppetlabs-mysql.git', 'mysql', None),
+    ('https://github.com/puppetlabs/puppetlabs-mysql.git', 'mysql', None),
     ('https://github.com/puppetlabs/puppetlabs-concat.git', 'concat', None),
     ('https://github.com/puppetlabs/puppetlabs-create_resources.git', 'create_resources', None),
     ('https://github.com/puppetlabs/puppetlabs-rsync.git', 'rsync', None),
