@@ -1,4 +1,5 @@
-Utility to install openstack on RHEL 6.3 
+Utility to install openstack on RHEL 6.3 (Openstack Folsom)
+See other branches for older openstack versions
 
 This utility can be used to install openstack on a single or 
 group of hosts (over ssh)
