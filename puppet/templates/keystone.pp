@@ -1,10 +1,6 @@
-
 class {"keystone":
-    admin_token => "%(CONFIG_KEYSTONE_ADMINTOKEN)s"
-}
-
-class {"keystone::config::mysql":
-    host => "%(CONFIG_MYSQL_HOST)s"
+    admin_token => "%(CONFIG_KEYSTONE_ADMINTOKEN)s",
+    sql_connection => "mysql://keystone_admin:keystone_default_password@%(CONFIG_MYSQL_HOST)s/keystone",
 }
 
 class {"keystone::roles::admin":

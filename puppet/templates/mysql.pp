@@ -4,6 +4,7 @@ class {"mysql::server":
 } 
 
 class {"keystone::db::mysql": 
+    password      => "keystone_default_password",
     allowed_hosts => "%%",
 } 
 
@@ -14,7 +15,7 @@ class {"glance::db::mysql":
    
 class {"nova::db::mysql":
     allowed_hosts => "%%",
-    password      => "nova_password",
+    password      => "nova_default_password",
 }
 
 firewall { '001 mysql incomming':
