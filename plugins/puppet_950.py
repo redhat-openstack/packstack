@@ -25,11 +25,11 @@ PUPPETDIR      = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet')
 MODULEDIR = os.path.join(PUPPETDIR, "modules")
 MANIFESTDIR = os.path.join(PUPPETDIR, "manifests")
 PUPPET_MODULES = [
-    ('https://github.com/puppetlabs/puppetlabs-glance.git', 'glance', None),
-    ('https://github.com/puppetlabs/puppetlabs-horizon.git', 'horizon', None),
-    ('https://github.com/puppetlabs/puppetlabs-keystone.git', 'keystone', None),
-    ('https://github.com/puppetlabs/puppetlabs-nova.git', 'nova', None),
-    ('https://github.com/puppetlabs/puppetlabs-openstack.git', 'openstack', None),
+    ('https://github.com/puppetlabs/puppetlabs-glance.git', 'glance', 'folsom'),
+    ('https://github.com/puppetlabs/puppetlabs-horizon.git', 'horizon', 'folsom'),
+    ('https://github.com/puppetlabs/puppetlabs-keystone.git', 'keystone', 'folsom'),
+    ('https://github.com/puppetlabs/puppetlabs-nova.git', 'nova', 'folsom'),
+    ('https://github.com/puppetlabs/puppetlabs-openstack.git', 'openstack', 'folsom'),
     ('https://github.com/puppetlabs/puppetlabs-swift.git', 'swift', None),
     ('https://github.com/puppetlabs/puppetlabs-stdlib.git', 'stdlib', None),
     ('https://github.com/puppetlabs/puppetlabs-sysctl.git', 'sysctl', None),
@@ -41,6 +41,7 @@ PUPPET_MODULES = [
     ('https://github.com/lstanden/puppetlabs-firewall.git', 'firewall', None),
     ('https://github.com/saz/puppet-memcached.git', 'memcached', None),
     ('https://github.com/saz/puppet-ssh.git', 'ssh', None),
+    ('https://github.com/cprice-puppet/puppetlabs-inifile.git', 'inifile', None),
     ('https://github.com/derekhiggins/puppet-qpid.git', 'qpid', None),
     ('https://github.com/derekhiggins/puppet-vlan.git', 'vlan', None)
 ]
