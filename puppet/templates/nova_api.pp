@@ -6,6 +6,8 @@ class {"nova::api":
     admin_password => "nova_default_password",
 }
 
+Package<| title == 'nova-common' |> -> Class['nova::api']
+
 firewall { '001 novaapi incomming':
     proto    => 'tcp',
     dport    => ['8773', '8774', '8776'],
