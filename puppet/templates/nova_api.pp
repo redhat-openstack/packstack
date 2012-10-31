@@ -3,7 +3,7 @@ require 'keystone::python'
 class {"nova::api":
     enabled => true,
     auth_host => "%(CONFIG_KEYSTONE_HOST)s",
-    admin_password => "nova_password",
+    admin_password => "nova_default_password",
 }
 
 # the notify in the nova:api class doesn't work, so need to set these ones
