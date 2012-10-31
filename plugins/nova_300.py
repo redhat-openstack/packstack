@@ -217,6 +217,11 @@ def createcomputemanifest():
             nova_config_options.addOption("flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
             validate.r_validateIF(server, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
 
+        # if on a vm we need to set libvirt_cpu_mode to "none"
+        # see https://bugzilla.redhat.com/show_bug.cgi?id=858311
+        if controller.CONF["CONFIG_LIBVIRT_TYPE"] == "qemu":
+            nova_config_options.addOption("libvirt_cpu_mode", "none")
+
         server.execute()
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
