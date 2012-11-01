@@ -6,6 +6,10 @@ class {'horizon':
 
 class {'memcached':}
 
+class {'apache':}
+class {'apache::mod::wsgi':}
+file { '/etc/httpd/conf.d/openstack-dashboard.conf':}
+
 firewall { '001 horizon incomming':
     proto    => 'tcp',
     dport    => ['80'],
