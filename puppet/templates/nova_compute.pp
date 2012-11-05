@@ -16,6 +16,7 @@ if "%(CONFIG_LIBVIRT_TYPE)s" == "qemu" {
     file { "/usr/bin/qemu-system-x86_64":
         ensure => link,
         target => "/usr/libexec/qemu-kvm",
+        notify => Service["nova-compute"],
     } 
 }
 
