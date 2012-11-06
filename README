@@ -9,12 +9,12 @@ options have yet to be added
 
 Installation 
 $ yum install -y git cracklib-python
-$ git clone git://github.com/derekhiggins/os-installer.git
+$ git clone git://github.com/derekhiggins/packstack.git
 $ git clone git://github.com/derekhiggins/installer.git
 $ cd installer
 
-# Edit the file basedefs.py to point to os-installer
-DIR_PROJECT_DIR = "../os-installer"
+# Edit the file basedefs.py to point to packstack
+DIR_PROJECT_DIR = "../packstack"
 
 Option 1 (using answer file)
 $ python run_setup.py --gen-answer-file=ans.txt
