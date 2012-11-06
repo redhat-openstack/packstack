@@ -26,6 +26,18 @@ def initConfig(controllerObject):
     controller = controllerObject
     logging.debug("Adding SERVERPREPARE KEY configuration")
     conf_params = {"SERVERPREPARE": [
+                  {"CMD_OPTION"      : "use-epel",
+                   "USAGE"           : "Install openstack from epel",
+                   "PROMPT"          : "Install openstack from epel",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATION_FUNC" : validate.validateOptions,
+                   "DEFAULT_VALUE"   : "y",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_USE_EPEL",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
             ]
         }
 
