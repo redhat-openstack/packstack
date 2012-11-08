@@ -153,18 +153,6 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "novavolume-host",
-                   "USAGE"           : "Hostname of the Nova Volume server",
-                   "PROMPT"          : "Hostname of the Nova Volume server",
-                   "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validatePing,
-                   "DEFAULT_VALUE"   : "127.0.0.1",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_VOLUME_HOST",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
                  ]
     groupDict = { "GROUP_NAME"            : "NOVA",
                   "DESCRIPTION"           : "Nova Options",
@@ -185,7 +173,6 @@ def initSequences(controller):
              {'title': 'Adding Nova Compute Manifest entries', 'functions':[createcomputemanifest]},
              {'title': 'Adding Nova Network Manifest entries', 'functions':[createnetworkmanifest]},
              {'title': 'Adding Nova Scheduler Manifest entries', 'functions':[createschedmanifest]},
-             {'title': 'Adding Nova Volume Manifest entries', 'functions':[createvolumemanifest]},
              {'title': 'Adding Nova Common Manifest entries', 'functions':[createcommonmanifest]},
     ]
     controller.addSequence("Installing Nova API", [], [], novaapisteps)
@@ -240,11 +227,6 @@ def createnetworkmanifest():
 def createschedmanifest():
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_SCHED_HOST']
     manifestdata = getManifestTemplate("nova_sched.pp")
-    appendManifestFile(manifestfile, manifestdata)
-
-def createvolumemanifest():
-    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_VOLUME_HOST']
-    manifestdata = getManifestTemplate("nova_volume.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 def createcommonmanifest():

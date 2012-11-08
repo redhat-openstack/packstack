@@ -31,7 +31,7 @@ PUPPET_MODULES = [
     ('https://github.com/puppetlabs/puppetlabs-nova.git', 'nova', 'folsom'),
     ('https://github.com/puppetlabs/puppetlabs-openstack.git', 'openstack', 'folsom'),
     ('https://github.com/puppetlabs/puppetlabs-swift.git', 'swift', None),
-    ('https://github.com/puppetlabs/puppetlabs-cinder.git', 'cinder', None),
+    ("https://github.com/puppetlabs/puppetlabs-cinder.git", "cinder", "folsom"),
     ('https://github.com/puppetlabs/puppetlabs-stdlib.git', 'stdlib', None),
     ('https://github.com/puppetlabs/puppetlabs-sysctl.git', 'sysctl', None),
     ('https://github.com/puppetlabs/puppetlabs-mysql.git', 'mysql', None),

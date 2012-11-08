@@ -18,6 +18,10 @@ class {"nova::db::mysql":
     password      => "nova_default_password",
 }
 
+class {"cinder::db::mysql":
+    password      => "cinder_default_password",
+}
+   
 firewall { '001 mysql incomming':
     proto    => 'tcp',
     dport    => ['3306'],

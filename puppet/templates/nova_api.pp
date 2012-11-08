@@ -10,6 +10,6 @@ Package<| title == 'nova-common' |> -> Class['nova::api']
 
 firewall { '001 novaapi incomming':
     proto    => 'tcp',
-    dport    => ['8773', '8774', '8776'],
+    dport    => ['8773', '8774'],
     action   => 'accept',
 }
