@@ -9,7 +9,7 @@ options have yet to be added
 
 Installation 
 $ yum install -y git cracklib-python
-$ git clone git://github.com/derekhiggins/packstack.git
+$ git clone git://github.com/fedora-openstack/packstack.git
 $ git clone git://github.com/derekhiggins/installer.git
 $ cd installer
 
@@ -35,3 +35,14 @@ $ cd
 $ . keystonerc_admin
 $ nova list
 $ swift list  # if you have installed swift
+
+
+Config options 
+CONFIG_LIBVIRT_TYPE :
+        set to kvm if on baremetal or qemu if testing on a vm
+CONFIG_NOVA_COMPUTE_HOSTS : 
+        a comma seperated list of ip addresses on which to install nova compute
+CONFIG_SWIFT_STORAGE_HOSTS : 
+        a comma seperate list of swift storage devices 
+        1.1.1.1  : create a testing loopback device and use this for storage
+        1.1.1.1/sdb : use /dev/sdb on 1.1.1.1 as a storage device 
