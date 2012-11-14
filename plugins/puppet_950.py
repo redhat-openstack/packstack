@@ -21,7 +21,7 @@ PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 logging.debug("plugin %s loaded", __name__)
 
-PUPPETDIR      = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet')
+PUPPETDIR      = os.path.abspath(os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet'))
 MODULEDIR = os.path.join(PUPPETDIR, "modules")
 MANIFESTDIR = os.path.join(PUPPETDIR, "manifests")
 PUPPET_MODULES = [
