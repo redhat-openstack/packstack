@@ -11,7 +11,6 @@ import traceback
 import os
 import os.path
 import tempfile
-import cracklib
 from setup_controller import Controller
 
 def validateDirSize(path, size):
@@ -130,19 +129,6 @@ def validateStringNotEmpty(param, options=[]):
         return False
     else:
         return True
-
-def validatePassword(param, options=[]):
-    logging.debug("Validating password")
-    if not validateStringNotEmpty(param, options):
-        return False
-    try:
-        cracklib.FascistCheck(param)
-    except:
-        logging.warn("Password failed check")
-        logging.warn(traceback.format_exc())
-        print output_messages.WARN_WEAK_PASS
-
-    return True
 
 def validateOptions(param, options=[]):
     logging.info("Validating %s as part of %s"%(param, options))
