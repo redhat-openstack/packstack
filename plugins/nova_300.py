@@ -62,7 +62,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Libvirt Type to use",
                    "OPTION_LIST"     : ["qemu", "kvm"],
                    "VALIDATION_FUNC" : validate.validateOptions,
-                   "DEFAULT_VALUE"   : "kvm",
+                   "DEFAULT_VALUE"   : __get_libvirt_type_default(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
                    "CONF_NAME"       : "CONFIG_LIBVIRT_TYPE",
@@ -235,3 +235,6 @@ def createcommonmanifest():
             data = getManifestTemplate("nova_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
 
+def __get_libvirt_type_default():
+    with open('/proc/cpuinfo','r') as f:
+        return ('kvm', 'qemu')['hypervisor' in f.read()]
