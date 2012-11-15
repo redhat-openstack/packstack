@@ -125,7 +125,7 @@ def copyPuppetModules():
     server = utils.ScriptRunner()
     for hostname in gethostlist(controller.CONF):
         server.append("cd %s"%basedefs.DIR_PROJECT_DIR,)
-        server.append("tar -czf - puppet/manifests puppet/modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc -xzf -"%(hostname))
+        server.append("tar --dereference -czf - puppet/manifests puppet/modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc -xzf -"%(hostname))
     server.execute()
 
 def applyPuppetManifest():
