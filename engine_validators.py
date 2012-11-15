@@ -125,7 +125,7 @@ def validateRemotePort(param, options = []):
 def validateStringNotEmpty(param, options=[]):
     if type(param) != types.StringType or len(param) == 0:
         logging.warn("validateStringNotEmpty('%s') - failed" %(param))
-        print output_messages.INFO_VAL_STRING_EMPTY
+        print output_messages.INFO_VAL_STRING_EMPTY %(param)
         return False
     else:
         return True
