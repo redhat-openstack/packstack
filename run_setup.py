@@ -612,7 +612,7 @@ def initCmdLineParser():
     parser.add_option("--answer-file", help="Runs the configuration in none-interactive mode, extracting all information from the \
                                             configuration file. using this option excludes all other option")
 
-    parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file")
+    parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file(rst format)")
 
     # For each group, create a group option
     for group in controller.getAllGroups():
@@ -636,18 +636,21 @@ def initCmdLineParser():
 
 def printOptions():
     """
-    print and document the available options to the answer file
+    print and document the available options to the answer file (rst format)
     """
 
     # For each group, create a group option
     for group in controller.getAllGroups():
-        print "  %s"%group.getKey("DESCRIPTION")
+        print "%s"%group.getKey("DESCRIPTION")
+        print "-"*len(group.getKey("DESCRIPTION"))
+        print
 
         for param in group.getAllParams():
             cmdOption = param.getKey("CONF_NAME")
             paramUsage = param.getKey("USAGE")
             optionsList = param.getKey("OPTION_LIST") or ""
-            print "    %s : %s %r"%(cmdOption, paramUsage, optionsList)
+            print "%s : %s %s"%(("**%s**"%str(cmdOption)).ljust(30), paramUsage, optionsList)
+            print
 
 def plugin_compare(x, y):
     """
