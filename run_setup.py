@@ -611,7 +611,8 @@ def initCmdLineParser():
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other option")
     parser.add_option("--answer-file", help="Runs the configuration in none-interactive mode, extracting all information from the \
                                             configuration file. using this option excludes all other option")
-    parser.add_option("--no-mem-check", help="Disable minimum memory check", action="store_true", default=False)
+
+    parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file")
 
     # For each group, create a group option
     for group in controller.getAllGroups():
@@ -633,6 +634,20 @@ def initCmdLineParser():
 
     return parser
 
+def printOptions():
+    """
+    print and document the available options to the answer file
+    """
+
+    # For each group, create a group option
+    for group in controller.getAllGroups():
+        print "  %s"%group.getKey("DESCRIPTION")
+
+        for param in group.getAllParams():
+            cmdOption = param.getKey("CONF_NAME")
+            paramUsage = param.getKey("USAGE")
+            optionsList = param.getKey("OPTION_LIST") or ""
+            print "    %s : %s %r"%(cmdOption, paramUsage, optionsList)
 
 def plugin_compare(x, y):
     """
@@ -734,6 +749,10 @@ if __name__ == "__main__":
         # Do the actual command line parsing
         # Try/Except are here to catch the silly sys.exit(0) when calling rhevm-setup --help
         (options, args) = optParser.parse_args()
+
+        if options.options:
+            printOptions()
+            raise SystemExit
 
         # If --gen-answer-file was supplied, do not run main
         if options.gen_answer_file:
