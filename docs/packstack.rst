@@ -72,18 +72,8 @@ OPTIONS
     CONFIG_PUPPET_REMOVEMODULES : Causes the Puppet modules to be removed (if present), and as a result re-cloned from git ['y', 'n']
 
 
-
-SEE ALSO
-========
-
+SOURCE
+======
 * `packstack      https://github.com/fedora-openstack/packstack`
 * `installer      https://github.com/derekhiggins/installer`
 * `puppet modules https://github.com/puppetlabs`
-
-
-SOURCE
-======
-
-* Keystone source is managed in GitHub `Keystone <http://github.com/openstack/keystone>`__
-* Keystone bugs are managed at Launchpad `Keystone <https://bugs.launchpad.net/keystone>`__
-
