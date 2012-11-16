@@ -247,14 +247,14 @@ def validateFile(param, options=[]):
     """
     Check that provided param is a file
     """
-    if validateStringNotEmpty(param):
-        cmd = ["test", "-f", param]
-        out, rc = utils.execCmd(cmdList=cmd)
-        if rc == 0:
-            return True
+    if not validateStringNotEmpty(param):
+        return False
 
-    print "\n" + output_messages.ERR_FILE + ".\n"
-    return False
+    if not os.path.isfile(param):
+        print "\n" + output_messages.ERR_FILE + ".\n"
+        return False
+
+    return True
 
 def validatePing(param, options=[]):
     """
