@@ -1,5 +1,5 @@
 """
-Installs and configures an openstack dashboard
+Installs and configures an openstack horizon
 """
 
 import logging
@@ -15,7 +15,7 @@ from ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile
 controller = None
 
 # Plugin name
-PLUGIN_NAME = "OS-DASHBOARD"
+PLUGIN_NAME = "OS-HORIZON"
 PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 logging.debug("plugin %s loaded", __name__)
@@ -23,9 +23,9 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack dashboard configuration")
+    logging.debug("Adding Openstack horizon configuration")
     paramsList = [
-                  {"CMD_OPTION"      : "os-dashboard-host",
+                  {"CMD_OPTION"      : "os-horizon-host",
                    "USAGE"           : "The IP address of the server on which to install Horizon",
                    "PROMPT"          : "The IP address of the server on which to install Horizon",
                    "OPTION_LIST"     : [],
@@ -33,11 +33,11 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "127.0.0.1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_DASHBOARD_HOST",
+                   "CONF_NAME"       : "CONFIG_HORIZON_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "os-dashboard-secretkey",
+                  {"CMD_OPTION"      : "os-horizon-secretkey",
                    "USAGE"           : "Keystone Secret Encryption Key",
                    "PROMPT"          : "Keystone Secret Encryption Key",
                    "OPTION_LIST"     : [],
@@ -45,15 +45,15 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : uuid.uuid4().hex,
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_DASHBOARD_SECRET_KEY",
+                   "CONF_NAME"       : "CONFIG_HORIZON_SECRET_KEY",
                    "USE_DEFAULT"     : True,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                  ]
 
-    groupDict = { "GROUP_NAME"            : "OSDASHBOARD",
-                  "DESCRIPTION"           : "OpenStack Dashboard Config paramaters",
-                  "PRE_CONDITION"         : "CONFIG_DASHBOARD_INSTALL",
+    groupDict = { "GROUP_NAME"            : "OSHORIZON",
+                  "DESCRIPTION"           : "OpenStack Horizon Config paramaters",
+                  "PRE_CONDITION"         : "CONFIG_HORIZON_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
@@ -62,15 +62,15 @@ def initConfig(controllerObject):
 
 
 def initSequences(controller):
-    if controller.CONF['CONFIG_DASHBOARD_INSTALL'] != 'y':
+    if controller.CONF['CONFIG_HORIZON_INSTALL'] != 'y':
         return
 
     steps = [
-             {'title': 'Creating OS Dashboard Manifest', 'functions':[createmanifest]}
+             {'title': 'Creating OS Horizon Manifest', 'functions':[createmanifest]}
     ]
-    controller.addSequence("Installing OpenStack Dashboard", [], [], steps)
+    controller.addSequence("Installing OpenStack Horizon", [], [], steps)
 
 def createmanifest():
-    manifestfile = "%s_dashboard.pp"%controller.CONF['CONFIG_DASHBOARD_HOST']
-    manifestdata = getManifestTemplate("dashboard.pp")
+    manifestfile = "%s_horizon.pp"%controller.CONF['CONFIG_HORIZON_HOST']
+    manifestdata = getManifestTemplate("horizon.pp")
     appendManifestFile(manifestfile, manifestdata)

@@ -1,5 +1,5 @@
 """
-Installs and configures an openstack dashboard
+Installs and configures an openstack swift
 """
 
 import logging
@@ -15,7 +15,7 @@ from ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile
 controller = None
 
 # Plugin name
-PLUGIN_NAME = "OS-DASHBOARD"
+PLUGIN_NAME = "OS-SWIFT"
 PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 logging.debug("plugin %s loaded", __name__)
@@ -23,7 +23,7 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack dashboard configuration")
+    logging.debug("Adding Openstack swift configuration")
     paramsList = [
                   {"CMD_OPTION"      : "os-swift-proxy",
                    "USAGE"           : "A comma seperated list of IP addresses on which to install the Swift proxy services",
@@ -108,7 +108,7 @@ def initSequences(controller):
              {'title': 'Creating OS Swift storage Manifests', 'functions':[createstoragemanifest]},
              {'title': 'Creating OS Swift Common Manifests', 'functions':[createcommonmanifest]},
     ]
-    controller.addSequence("Installing OpenStack Dashboard", [], [], steps)
+    controller.addSequence("Installing OpenStack Swift", [], [], steps)
 
 def createkeystonemanifest():
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
