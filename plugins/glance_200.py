@@ -30,8 +30,8 @@ def initConfig(controllerObject):
     logging.debug("Adding Openstack Glance configuration")
     paramsList = [
                   {"CMD_OPTION"      : "glance-host",
-                   "USAGE"           : "Hostname of the Glance server",
-                   "PROMPT"          : "Hostname of the Glance server",
+                   "USAGE"           : "The IP address of the server on which to install Glance",
+                   "PROMPT"          : "The IP address of the server on which to install Glance",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",

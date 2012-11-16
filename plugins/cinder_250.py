@@ -30,8 +30,8 @@ def initConfig(controllerObject):
     logging.debug("Adding Openstack Cinder configuration")
     paramsList = [
                   {"CMD_OPTION"      : "cinder-host",
-                   "USAGE"           : "Hostname of the Cinder server",
-                   "PROMPT"          : "Hostname of the Cinder server",
+                   "USAGE"           : "The IP address of the server on which to install Cinder",
+                   "PROMPT"          : "The IP address of the server on which to install Cinder",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",

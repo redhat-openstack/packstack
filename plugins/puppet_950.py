@@ -54,8 +54,8 @@ def initConfig(controllerObject):
     logging.debug("Adding Openstack Puppet configuration")
     paramsList = [
                   {"CMD_OPTION"      : "remove-puppetmodules",
-                   "USAGE"           : "Causes the Puppet modules to be removed (if present), and as a result re-cloned from git",
-                   "PROMPT"          : "Should we remove the Puppet modules",
+                   "USAGE"           : "Causes the Puppet modules to be removed (if present), and recloned from git (NOTE : may clone a untested version)",
+                   "PROMPT"          : "Causes the Puppet modules to be removed (if present), and recloned from git (NOTE : may clone a untested version)",
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATION_FUNC" : validate.validateOptions,
                    "DEFAULT_VALUE"   : "n",

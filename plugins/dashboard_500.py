@@ -26,8 +26,8 @@ def initConfig(controllerObject):
     logging.debug("Adding Openstack dashboard configuration")
     paramsList = [
                   {"CMD_OPTION"      : "os-dashboard-host",
-                   "USAGE"           : "Hostname of the Dashoard",
-                   "PROMPT"          : "Hostname of the Dashoard",
+                   "USAGE"           : "The IP address of the server on which to install Horizon",
+                   "PROMPT"          : "The IP address of the server on which to install Horizon",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",

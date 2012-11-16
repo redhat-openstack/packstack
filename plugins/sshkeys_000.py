@@ -27,8 +27,8 @@ def initConfig(controllerObject):
     logging.debug("Adding SSH KEY configuration")
     paramsList = [
                   {"CMD_OPTION"      : "ssh-public-key",
-                   "USAGE"           : "Public key to install on servers",
-                   "PROMPT"          : "Public key to install on servers",
+                   "USAGE"           : "Public key to install on servers, if a usable key has not been installed on remote servers the user will be prompted for a password and this key will be installed so the password will not be required again",
+                   "PROMPT"           : "Public key to install on servers, if a usable key has not been installed on remote servers the user will be prompted for a password and this key will be installed so the password will not be required again",
                    "OPTION_LIST"     : glob.glob(os.path.join(os.environ["HOME"], ".ssh/*.pub")),
                    "VALIDATION_FUNC" : validate.validateFile,
                    "DEFAULT_VALUE"   : (glob.glob(os.path.join(os.environ["HOME"], ".ssh/*.pub"))+[""])[0],

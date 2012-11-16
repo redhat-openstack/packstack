@@ -29,8 +29,8 @@ def initConfig(controllerObject):
     logging.debug("Adding Openstack QPID configuration")
     paramsList = [
                   {"CMD_OPTION"      : "qpid-host",
-                   "USAGE"           : "Hostname of the QPID server",
-                   "PROMPT"          : "Hostname of the QPID server",
+                   "USAGE"           : "The IP address of the server on which to install the QPID service",
+                   "PROMPT"          : "The IP address of the server on which to install the QPID service",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",

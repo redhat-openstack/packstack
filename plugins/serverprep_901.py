@@ -27,8 +27,8 @@ def initConfig(controllerObject):
     logging.debug("Adding SERVERPREPARE KEY configuration")
     conf_params = {"SERVERPREPARE": [
                   {"CMD_OPTION"      : "use-epel",
-                   "USAGE"           : "Install openstack from epel",
-                   "PROMPT"          : "Install openstack from epel",
+                   "USAGE"           : "Install openstack from epel, If set to \"n\" this causes EPEL to be permanently disabled before installing openstack, i.e. you should have alternative openstack repositories in place",
+                   "PROMPT"          : "Install openstack from epel, If set to \"n\" this causes EPEL to be permanently disabled before installing openstack, i.e. you should have alternative openstack repositories in place",
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATION_FUNC" : validate.validateOptions,
                    "DEFAULT_VALUE"   : "y",

@@ -27,8 +27,8 @@ def initConfig(controllerObject):
     logging.debug("Adding MySQL Openstack configuration")
     paramsList = [
                   {"CMD_OPTION"      : "mysql-host",
-                   "USAGE"           : "Hostname of the MySQL server",
-                   "PROMPT"          : "Hostname of the MySQL server",
+                   "USAGE"           : "The IP address of the server on which to install MySQL",
+                   "PROMPT"          : "The IP address of the server on which to install MySQL",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",

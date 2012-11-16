@@ -30,8 +30,8 @@ def initConfig(controllerObject):
     logging.debug("Adding Openstack client configuration")
     paramsList = [
                   {"CMD_OPTION"      : "osclient-host",
-                   "USAGE"           : "Hostname of the OpenStack client",
-                   "PROMPT"          : "Hostname of the OpenStack client",
+                   "USAGE"           : "The IP address of the server on which to install the openstack client packages, an admin \"rc\" file will also be installed",
+                   "PROMPT"          : "The IP address of the server on which to install the openstack client packages, an admin \"rc\" file will also be installed",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",
