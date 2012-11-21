@@ -9,17 +9,18 @@ class {"keystone::db::mysql":
 } 
 
 class {"glance::db::mysql":
-    allowed_hosts => "%%",
     password      => "glance_default_password",
+    allowed_hosts => "%%",
 }
    
 class {"nova::db::mysql":
-    allowed_hosts => "%%",
     password      => "nova_default_password",
+    allowed_hosts => "%%",
 }
 
 class {"cinder::db::mysql":
     password      => "cinder_default_password",
+    allowed_hosts => "%%",
 }
    
 firewall { '001 mysql incomming':
