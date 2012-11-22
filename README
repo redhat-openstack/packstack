@@ -1,34 +1,30 @@
 Utility to install openstack on RHEL 6.3 (Openstack Folsom)
 See other branches for older openstack versions
 
-This utility can be used to install openstack on a single or 
+This utility can be used to install openstack on a single or
 group of hosts (over ssh)
 
 This utility is still in the early stages, a lot of the configuration
 options have yet to be added
 
-Installation 
-$ yum install -y git cracklib-python
+Installation
+$ yum install -y git
 $ git clone git://github.com/fedora-openstack/packstack.git
-$ git clone git://github.com/derekhiggins/installer.git
-$ cd installer
-
-# Edit the file basedefs.py to point to packstack
-DIR_PROJECT_DIR = "../packstack"
+$ cd packstack
 
 Option 1 (using answer file)
-$ python run_setup.py --gen-answer-file=ans.txt
+$ ./packstack --gen-answer-file=ans.txt
 
 # then edit answers.txt as appropriate e.g.
 o set CONFIG_SSH_KEY to a public ssh key to be installed to remote machines
 o Edit 127.0.0.1 to anywhere you want to install a piece of openstack on another server
-o Edit the 3 network interfaces to whatever makes sense in your setup 
+o Edit the 3 network interfaces to whatever makes sense in your setup
 o If your testing on a vm then set CONFIG_LIBVIRT_TYPE=qemu
 
-$ python run_setup.py --answer-file=ans.txt
+$ ./packstack --answer-file=ans.txt
 
 Option 2 (prompts for configuration options)
-$ python run_setup.py
+$ ./packstack
 
 thats it, if everything went well you can now start using openstack
 $ cd
@@ -37,12 +33,12 @@ $ nova list
 $ swift list  # if you have installed swift
 
 
-Config options 
+Config options
 CONFIG_LIBVIRT_TYPE :
         set to kvm if on baremetal or qemu if testing on a vm
-CONFIG_NOVA_COMPUTE_HOSTS : 
+CONFIG_NOVA_COMPUTE_HOSTS :
         a comma seperated list of ip addresses on which to install nova compute
-CONFIG_SWIFT_STORAGE_HOSTS : 
-        a comma seperate list of swift storage devices 
+CONFIG_SWIFT_STORAGE_HOSTS :
+        a comma seperate list of swift storage devices
         1.1.1.1  : create a testing loopback device and use this for storage
-        1.1.1.1/sdb : use /dev/sdb on 1.1.1.1 as a storage device 
+        1.1.1.1/sdb : use /dev/sdb on 1.1.1.1 as a storage device
