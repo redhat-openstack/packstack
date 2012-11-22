@@ -1,7 +1,7 @@
 """
 provides all the predefined variables for engine-setup
 """
-import os
+import os, sys
 
 APP_NAME = "Installer"
 
@@ -10,7 +10,7 @@ FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"
 DIR_LOG = "./var"
 FILE_INSTALLER_LOG = "setup.log"
 
-DIR_PROJECT_DIR = "./sample-project"
+DIR_PROJECT_DIR = os.environ.get('INSTALLER_PROJECT_DIR', os.path.join(os.path.split(sys.argv[0])[0], 'sample-project'))
 DIR_PLUGINS = os.path.join(DIR_PROJECT_DIR, "plugins")
 DIR_MODULES = os.path.join(DIR_PROJECT_DIR, "modules")
 

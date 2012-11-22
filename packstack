@@ -1,0 +1,6 @@
+
+export INSTALLER_PROJECT_DIR=$(dirname "${BASH_SOURCE[0]}")
+
+python $INSTALLER_PROJECT_DIR/installer/run_setup.py $@
+
+
