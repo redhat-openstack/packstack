@@ -7,3 +7,5 @@ class {"nova::network":
     floating_range => '%(CONFIG_NOVA_NETWORK_FLOATRANGE)s',
     config_overrides => {force_dhcp_release => false}
 }
+
+package { 'dnsmasq': ensure => present }
