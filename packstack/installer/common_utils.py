@@ -11,9 +11,7 @@ import traceback
 import os
 import basedefs
 import datetime
-import libxml2
 import types
-import shutil
 import time
 import tempfile
 

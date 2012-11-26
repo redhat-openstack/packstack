@@ -1,63 +1,63 @@
-[submodule "puppet/modules/glance"]
-	path = puppet/modules/glance
+[submodule "packstack/puppet/modules/glance"]
+	path = packstack/puppet/modules/glance
 	url = https://github.com/puppetlabs/puppetlabs-glance.git
-[submodule "puppet/modules/horizon"]
-	path = puppet/modules/horizon
+[submodule "packstack/puppet/modules/horizon"]
+	path = packstack/puppet/modules/horizon
 	url = https://github.com/puppetlabs/puppetlabs-horizon.git
-[submodule "puppet/modules/keystone"]
-	path = puppet/modules/keystone
+[submodule "packstack/puppet/modules/keystone"]
+	path = packstack/puppet/modules/keystone
 	url = https://github.com/puppetlabs/puppetlabs-keystone.git
-[submodule "puppet/modules/nova"]
-	path = puppet/modules/nova
+[submodule "packstack/puppet/modules/nova"]
+	path = packstack/puppet/modules/nova
 	url = https://github.com/puppetlabs/puppetlabs-nova.git
-[submodule "puppet/modules/openstack"]
-	path = puppet/modules/openstack
+[submodule "packstack/puppet/modules/openstack"]
+	path = packstack/puppet/modules/openstack
 	url = https://github.com/puppetlabs/puppetlabs-openstack.git
-[submodule "puppet/modules/swift"]
-	path = puppet/modules/swift
+[submodule "packstack/puppet/modules/swift"]
+	path = packstack/puppet/modules/swift
 	url = https://github.com/puppetlabs/puppetlabs-swift.git
-[submodule "puppet/modules/cinder"]
-	path = puppet/modules/cinder
+[submodule "packstack/puppet/modules/cinder"]
+	path = packstack/puppet/modules/cinder
 	url = https://github.com/puppetlabs/puppetlabs-cinder.git
-[submodule "puppet/modules/stdlib"]
-	path = puppet/modules/stdlib
+[submodule "packstack/puppet/modules/stdlib"]
+	path = packstack/puppet/modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
-[submodule "puppet/modules/sysctl"]
-	path = puppet/modules/sysctl
+[submodule "packstack/puppet/modules/sysctl"]
+	path = packstack/puppet/modules/sysctl
 	url = https://github.com/puppetlabs/puppetlabs-sysctl.git
-[submodule "puppet/modules/mysql"]
-	path = puppet/modules/mysql
+[submodule "packstack/puppet/modules/mysql"]
+	path = packstack/puppet/modules/mysql
 	url = https://github.com/puppetlabs/puppetlabs-mysql.git
-[submodule "puppet/modules/concat"]
-	path = puppet/modules/concat
+[submodule "packstack/puppet/modules/concat"]
+	path = packstack/puppet/modules/concat
 	url = https://github.com/puppetlabs/puppetlabs-concat.git
-[submodule "puppet/modules/create_resources"]
-	path = puppet/modules/create_resources
+[submodule "packstack/puppet/modules/create_resources"]
+	path = packstack/puppet/modules/create_resources
 	url = https://github.com/puppetlabs/puppetlabs-create_resources.git
-[submodule "puppet/modules/rsync"]
-	path = puppet/modules/rsync
+[submodule "packstack/puppet/modules/rsync"]
+	path = packstack/puppet/modules/rsync
 	url = https://github.com/puppetlabs/puppetlabs-rsync.git
-[submodule "puppet/modules/xinetd"]
-	path = puppet/modules/xinetd
+[submodule "packstack/puppet/modules/xinetd"]
+	path = packstack/puppet/modules/xinetd
 	url = https://github.com/puppetlabs/puppetlabs-xinetd.git
-[submodule "puppet/modules/apache"]
-	path = puppet/modules/apache
+[submodule "packstack/puppet/modules/apache"]
+	path = packstack/puppet/modules/apache
 	url = https://github.com/puppetlabs/puppetlabs-apache.git
-[submodule "puppet/modules/firewall"]
-	path = puppet/modules/firewall
+[submodule "packstack/puppet/modules/firewall"]
+	path = packstack/puppet/modules/firewall
 	url = https://github.com/lstanden/puppetlabs-firewall.git
-[submodule "puppet/modules/memcached"]
-	path = puppet/modules/memcached
+[submodule "packstack/puppet/modules/memcached"]
+	path = packstack/puppet/modules/memcached
 	url = https://github.com/saz/puppet-memcached.git
-[submodule "puppet/modules/ssh"]
-	path = puppet/modules/ssh
+[submodule "packstack/puppet/modules/ssh"]
+	path = packstack/puppet/modules/ssh
 	url = https://github.com/saz/puppet-ssh.git
-[submodule "puppet/modules/inifile"]
-	path = puppet/modules/inifile
+[submodule "packstack/puppet/modules/inifile"]
+	path = packstack/puppet/modules/inifile
 	url = https://github.com/cprice-puppet/puppetlabs-inifile.git
-[submodule "puppet/modules/qpid"]
-	path = puppet/modules/qpid
+[submodule "packstack/puppet/modules/qpid"]
+	path = packstack/puppet/modules/qpid
 	url = https://github.com/derekhiggins/puppet-qpid.git
-[submodule "puppet/modules/vlan"]
-	path = puppet/modules/vlan
+[submodule "packstack/puppet/modules/vlan"]
+	path = packstack/puppet/modules/vlan
 	url = https://github.com/derekhiggins/puppet-vlan.git

@@ -1,0 +1,5 @@
+include docs/*
+recursive-include packstack/puppet *
+recursive-include packstack/templates *
+prune packstack/puppet/modules/*/.git
+

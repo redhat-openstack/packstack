@@ -6,10 +6,11 @@ import logging
 import os
 import uuid
 
-import engine_validators as validate
-import basedefs
-import common_utils as utils
-from ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile
+import packstack.installer.engine_validators as validate
+from packstack.installer import basedefs
+import packstack.installer.common_utils as utils
+
+from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
 
 # Controller object will be initialized from main flow
 controller = None

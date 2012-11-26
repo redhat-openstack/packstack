@@ -4,8 +4,8 @@ Plugin responsible for setting Openstack global options
 
 import logging
 
-import engine_validators as validate
-import common_utils as utils
+import packstack.installer.engine_validators as validate
+import packstack.installer.common_utils as utils
 
 # Controller object will be initialized from main flow
 controller = None

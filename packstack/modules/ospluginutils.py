@@ -1,8 +1,8 @@
 
 import os
 
-import basedefs
-from setup_controller import Controller
+from packstack.installer import basedefs
+from packstack.installer.setup_controller import Controller
 
 controller = Controller()
 

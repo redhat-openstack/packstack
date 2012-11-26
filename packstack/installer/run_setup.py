@@ -548,7 +548,7 @@ def _summaryParamsToLog():
 def runSequences():
     controller.runAllSequences()
 
-def main(configFile=None):
+def _main(configFile=None):
     try:
         logging.debug("Entered main(configFile='%s')"%(configFile))
         print output_messages.INFO_HEADER
@@ -669,7 +669,9 @@ def loadPlugins():
     """
     sys.path.append(basedefs.DIR_PLUGINS)
     sys.path.append(basedefs.DIR_MODULES)
-    fileList = sorted(os.listdir(basedefs.DIR_PLUGINS), cmp=plugin_compare)
+    
+    fileList = [f for f in os.listdir(basedefs.DIR_PLUGINS) if f[0] != "_"]
+    fileList = sorted(fileList, cmp=plugin_compare)
     for item in fileList:
         # Looking for files that end with ###.py, example: a_plugin_100.py
         match = re.search("^(.+\_\d\d\d)\.py$", item)
@@ -740,7 +742,7 @@ def initMain():
     initPluginsConfig()
 
 
-if __name__ == "__main__":
+def main():
     try:
         initMain()
 
@@ -778,7 +780,7 @@ if __name__ == "__main__":
                         if len(param) > 0 and value:
                             commandLineValues[param[0].getKey("CONF_NAME")] = value
 
-            main(confFile)
+            _main(confFile)
 
     except SystemExit:
         raise
@@ -789,3 +791,5 @@ if __name__ == "__main__":
         print output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO%(logFile)
         sys.exit(1)
 
+if __name__ == "__main__":
+    main()
