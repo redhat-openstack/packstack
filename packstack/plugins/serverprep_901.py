@@ -31,7 +31,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Install openstack from epel, If set to \"n\" this causes EPEL to be permanently disabled before installing openstack, i.e. you should have alternative openstack repositories in place",
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATION_FUNC" : validate.validateOptions,
-                   "DEFAULT_VALUE"   : "y",
+                   "DEFAULT_VALUE"   : "n",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_USE_EPEL",
