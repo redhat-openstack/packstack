@@ -3,6 +3,7 @@ Installs and configures puppet
 """
 import logging
 import os
+import platform
 import uuid
 
 import packstack.installer.engine_validators as validate
@@ -72,9 +73,12 @@ def installpuppet():
 
 def copyPuppetModules():
     server = utils.ScriptRunner()
+    tar_opts = ""
+    if platform.linux_distribution()[0] == "Fedora":
+        tar_opts += "--exclude create_resources "
     for hostname in gethostlist(controller.CONF):
         server.append("cd %s"%basedefs.DIR_PROJECT_DIR,)
-        server.append("tar --dereference -czf - puppet/manifests puppet/modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc -xzf -"%(hostname))
+        server.append("tar %s --dereference -czf - puppet/manifests puppet/modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc -xzf -"%(tar_opts, hostname))
     server.execute()
 
 def applyPuppetManifest():
