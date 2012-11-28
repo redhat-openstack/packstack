@@ -12,7 +12,7 @@ class { 'nova::compute::libvirt':
   libvirt_type                => "%(CONFIG_LIBVIRT_TYPE)s",
 }
 
-if "%(CONFIG_LIBVIRT_TYPE)s" == "qemu" {
+if "%(CONFIG_LIBVIRT_TYPE)s" == "qemu" and $::operatingsystem == "RedHat" {
     file { "/usr/bin/qemu-system-x86_64":
         ensure => link,
         target => "/usr/libexec/qemu-kvm",
