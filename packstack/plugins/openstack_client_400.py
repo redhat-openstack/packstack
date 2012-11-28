@@ -3,9 +3,6 @@ Installs and configures an openstack client
 """
 
 import logging
-import os
-import uuid
-
 
 import packstack.installer.engine_validators as validate
 from packstack.installer import basedefs

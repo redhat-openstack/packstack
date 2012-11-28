@@ -3,7 +3,6 @@ Installs and configures an openstack horizon
 """
 
 import logging
-import os
 import uuid
 
 import packstack.installer.engine_validators as validate

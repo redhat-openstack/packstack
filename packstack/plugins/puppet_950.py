@@ -4,9 +4,7 @@ Installs and configures puppet
 import logging
 import os
 import platform
-import uuid
 
-import packstack.installer.engine_validators as validate
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 

@@ -6,7 +6,6 @@ import logging
 import os
 
 import packstack.installer.engine_validators as validate
-from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
 from packstack.modules.ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile

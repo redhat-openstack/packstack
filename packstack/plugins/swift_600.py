@@ -4,7 +4,6 @@ Installs and configures an openstack swift
 
 import logging
 import os
-import uuid
 
 import packstack.installer.engine_validators as validate
 from packstack.installer import basedefs

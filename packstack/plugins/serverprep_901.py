@@ -2,9 +2,7 @@
 prepare server
 """
 
-import glob
 import logging
-import os
 
 import packstack.installer.engine_validators as validate
 from packstack.installer import basedefs
@@ -53,8 +51,6 @@ def initConfig(controllerObject):
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, paramList)
-
-
 
 def initSequences(controller):
     preparesteps = [
