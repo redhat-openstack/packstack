@@ -1,13 +1,16 @@
 """
 provides all the predefined variables for engine-setup
 """
-import os, sys
+import os, sys, uuid
 
 APP_NAME = "Installer"
 
 FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"
 
-DIR_LOG = "/var/tmp"
+VAR_DIR = os.path.join("/var/tmp", str(uuid.uuid4()))
+DIR_LOG = VAR_DIR
+PUPPET_MANIFEST_DIR = os.path.join(VAR_DIR, "manifests")
+
 FILE_INSTALLER_LOG = "setup.log"
 
 DIR_PROJECT_DIR = os.environ.get('INSTALLER_PROJECT_DIR', os.path.join(os.path.split(sys.argv[0])[0], 'sample-project'))

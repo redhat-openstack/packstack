@@ -20,7 +20,6 @@ PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 logging.debug("plugin %s loaded", __name__)
 
-PUPPET_MANIFEST_DIR      = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet/manifests')
 PUPPET_MANIFEST_TEMPLATE = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet/templates/mysql.pp')
 
 def initConfig(controllerObject):
@@ -88,9 +87,9 @@ def createmanifest():
         manifestdata = fp.read()
     manifestdata = manifestdata%controller.CONF
 
-    if not os.path.exists(PUPPET_MANIFEST_DIR):
-        os.mkdir(PUPPET_MANIFEST_DIR)
-    manifestfile = os.path.join(PUPPET_MANIFEST_DIR, "%s_mysql.pp"%controller.CONF['CONFIG_MYSQL_HOST'])
+    if not os.path.exists(basedefs.PUPPET_MANIFEST_DIR):
+        os.mkdir(basedefs.PUPPET_MANIFEST_DIR)
+    manifestfile = os.path.join(basedefs.PUPPET_MANIFEST_DIR, "%s_mysql.pp"%controller.CONF['CONFIG_MYSQL_HOST'])
     if manifestfile not in controller.CONF['CONFIG_MANIFESTFILES']:
         controller.CONF['CONFIG_MANIFESTFILES'].append(manifestfile)
 

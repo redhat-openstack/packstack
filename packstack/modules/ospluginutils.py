@@ -7,7 +7,6 @@ from packstack.installer.setup_controller import Controller
 controller = Controller()
 
 PUPPET_DIR = os.path.join(basedefs.DIR_PROJECT_DIR, "puppet")
-PUPPET_MANIFEST_DIR = os.path.join(PUPPET_DIR, "manifests")
 PUPPET_TEMPLATE_DIR = os.path.join(PUPPET_DIR, "templates")
 
 class NovaConfig(object):
@@ -34,7 +33,7 @@ def getManifestTemplate(template_name):
         return fp.read()%controller.CONF
 
 def appendManifestFile(manifest_name, data):
-    manifestfile = os.path.join(PUPPET_MANIFEST_DIR, manifest_name)
+    manifestfile = os.path.join(basedefs.PUPPET_MANIFEST_DIR, manifest_name)
     if manifestfile not in controller.CONF['CONFIG_MANIFESTFILES']:
         controller.CONF['CONFIG_MANIFESTFILES'].append(manifestfile)
     with open(manifestfile, 'a') as fp:

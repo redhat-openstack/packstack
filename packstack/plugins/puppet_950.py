@@ -23,7 +23,6 @@ logging.debug("plugin %s loaded", __name__)
 
 PUPPETDIR      = os.path.abspath(os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet'))
 MODULEDIR = os.path.join(PUPPETDIR, "modules")
-MANIFESTDIR = os.path.join(PUPPETDIR, "manifests")
 
 def initConfig(controllerObject):
     global controller
@@ -59,7 +58,7 @@ def initSequences(controller):
 
 def runCleanup():
     localserver = utils.ScriptRunner()
-    localserver.append("rm -rf %s/*pp"%MANIFESTDIR)
+    localserver.append("rm -rf %s/*pp"%basedefs.PUPPET_MANIFEST_DIR)
     localserver.execute()
 
 def installpuppet():
@@ -78,7 +77,9 @@ def copyPuppetModules():
         tar_opts += "--exclude create_resources "
     for hostname in gethostlist(controller.CONF):
         server.append("cd %s"%basedefs.DIR_PROJECT_DIR,)
-        server.append("tar %s --dereference -czf - puppet/manifests puppet/modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc -xzf -"%(tar_opts, hostname))
+        server.append("tar %s --dereference -czf - puppet/modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc -xzf -"%(tar_opts, hostname))
+        server.append("cd %s"%basedefs.PUPPET_MANIFEST_DIR)
+        server.append("tar %s --dereference -czf - ../manifests | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc/puppet -xzf -"%(tar_opts, hostname))
     server.execute()
 
 def applyPuppetManifest():
