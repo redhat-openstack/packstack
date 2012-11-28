@@ -127,11 +127,6 @@ Server Prepare Configs
 
 **CONFIG_USE_EPEL**            : Install openstack from epel, If set to "n" this causes EPEL to be permanently disabled before installing openstack, i.e. you should have alternative openstack repositories in place ['y', 'n']
 
-Puppet Config paramaters
-------------------------
-
-**CONFIG_PUPPET_REMOVEMODULES** : Causes the Puppet modules to be removed (if present), and recloned from git (NOTE : may clone a untested version) ['y', 'n']
-
 
 SOURCE
 ======

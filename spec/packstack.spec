@@ -1,5 +1,5 @@
 
-%global git_revno 186
+%global git_revno 188
 
 Name:           openstack-packstack
 Version:        2012.2.1
@@ -14,8 +14,10 @@ Source0:        https://github.com/downloads/fedora-openstack/packstack/packstac
 
 BuildArch:      noarch
 
+BuildRequires:  make
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
+BuildRequires:  python-sphinx
 
 Requires:       openssh-clients
 
@@ -41,14 +43,21 @@ mv packstack/puppet %{_builddir}/puppet
 
 %{__python} setup.py build
 
+cd docs
+make man
+
 %install
 %{__python} setup.py install --skip-build --root %{buildroot}
 mv %{_builddir}/puppet %{buildroot}/%{python_sitelib}/packstack/puppet
+
+mkdir -p %{buildroot}%{_mandir}/man1
+install -p -D -m 644 docs/_build/man/*.1 %{buildroot}%{_mandir}/man1/
 
 %files
 %{_bindir}/packstack
 %{python_sitelib}/packstack
 %{python_sitelib}/packstack-%{version}*.egg-info
+%{_mandir}/man1/packstack.1.gz
 
 %changelog
 
