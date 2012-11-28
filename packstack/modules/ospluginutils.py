@@ -33,6 +33,8 @@ def getManifestTemplate(template_name):
         return fp.read()%controller.CONF
 
 def appendManifestFile(manifest_name, data):
+    if not os.path.exists(basedefs.PUPPET_MANIFEST_DIR):
+        os.mkdir(basedefs.PUPPET_MANIFEST_DIR)
     manifestfile = os.path.join(basedefs.PUPPET_MANIFEST_DIR, manifest_name)
     if manifestfile not in controller.CONF['CONFIG_MANIFESTFILES']:
         controller.CONF['CONFIG_MANIFESTFILES'].append(manifestfile)

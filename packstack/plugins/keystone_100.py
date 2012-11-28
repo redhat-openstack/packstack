@@ -11,6 +11,8 @@ import packstack.installer.engine_validators as validate
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
+from packstack.modules.ospluginutils import gethostlist, getManifestTemplate, appendManifestFile
+
 # Controller object will be initialized from main flow
 controller = None
 
@@ -19,9 +21,6 @@ PLUGIN_NAME = "OS-Keystone"
 PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 logging.debug("plugin %s loaded", __name__)
-
-PUPPET_MANIFEST_TEMPLATE = os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet/templates/keystone.pp')
-
 
 def initConfig(controllerObject):
     global controller
@@ -83,17 +82,6 @@ def initSequences(controller):
     controller.addSequence("Installing Keystone", [], [], keystonesteps)
 
 def createmanifest():
-    with open(PUPPET_MANIFEST_TEMPLATE) as fp:
-        manifestdata = fp.read()
-    manifestdata = manifestdata%controller.CONF
-
-    if not os.path.exists(basedefs.PUPPET_MANIFEST_DIR):
-        os.mkdir(basedefs.PUPPET_MANIFEST_DIR)
-    manifestfile = os.path.join(basedefs.PUPPET_MANIFEST_DIR, "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST'])
-    if manifestfile not in controller.CONF['CONFIG_MANIFESTFILES']:
-        controller.CONF['CONFIG_MANIFESTFILES'].append(manifestfile)
-
-    with open(manifestfile, 'a') as fp:
-        fp.write("\n")
-        fp.write(manifestdata)
-
+    manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
+    manifestdata = getManifestTemplate("keystone.pp")
+    appendManifestFile(manifestfile, manifestdata)
