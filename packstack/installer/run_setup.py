@@ -39,7 +39,6 @@ def initLogging():
         if not os.path.isdir(os.path.dirname(logFile)):
             os.makedirs(os.path.dirname(logFile))
         level = logging.INFO
-        level = logging.DEBUG
         hdlr = logging.FileHandler(filename = logFile, mode='w')
         fmts='%(asctime)s::%(levelname)s::%(module)s::%(lineno)d::%(name)s:: %(message)s'
         dfmt='%Y-%m-%d %H:%M:%S'
