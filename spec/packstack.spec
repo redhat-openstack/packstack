@@ -1,5 +1,5 @@
 
-%global git_revno 188
+%global git_revno %GIT_REVNO%
 
 Name:           openstack-packstack
 Version:        2012.2.1
