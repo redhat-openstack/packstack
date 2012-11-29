@@ -17,7 +17,11 @@ BuildArch:      noarch
 BuildRequires:  make
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
+%if 0%{?rhel}
+BuildRequires:  python-sphinx10
+%else
 BuildRequires:  python-sphinx
+%endif
 
 Requires:       openssh-clients
 
@@ -44,7 +48,11 @@ mv packstack/puppet %{_builddir}/puppet
 %{__python} setup.py build
 
 cd docs
+%if 0%{?rhel}
+make man SPHINXBUILD=sphinx-1.0-build
+%else
 make man
+%endif
 
 %install
 %{__python} setup.py install --skip-build --root %{buildroot}
