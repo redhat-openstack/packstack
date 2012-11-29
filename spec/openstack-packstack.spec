@@ -14,7 +14,6 @@ Source0:        https://github.com/downloads/fedora-openstack/packstack/packstac
 
 BuildArch:      noarch
 
-BuildRequires:  make
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 %if 0%{?rhel}
@@ -27,7 +26,7 @@ Requires:       openssh-clients
 
 %description
 Packstack is a utility that uses puppet modules to install openstack
-packstack can be used to deploy variouse parts of openstack on multiple
+packstack can be used to deploy various parts of openstack on multiple
 pre installed servers over ssh. It does this be using puppet manifests to 
 apply puppetlabs modules (https://github.com/puppetlabs/)
 
