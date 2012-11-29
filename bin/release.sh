@@ -1,4 +1,4 @@
-
+#!/usr/bin/env bash
 # 
 if [ "$1" = "release" ] ; then
     sed -i -e 's/FINAL=False/FINAL=True/g' packstack/version.py
