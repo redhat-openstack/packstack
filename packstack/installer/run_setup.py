@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import ConfigParser
 import copy
 import getpass

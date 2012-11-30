@@ -7,6 +7,7 @@ Version:        2012.2.1
 Release:        1dev%{git_revno}%{?dist}
 Summary:        Openstack Install Utility
 
+Group:          Applications/System
 License:        ASL 2.0
 URL:            https://github.com/fedora-openstack/packstack
 #Source0:        https://github.com/downloads/fedora-openstack/packstack/packstack-%{version}.tar.gz
@@ -27,18 +28,23 @@ Requires:       openssh-clients
 %description
 Packstack is a utility that uses puppet modules to install openstack
 packstack can be used to deploy various parts of openstack on multiple
-pre installed servers over ssh. It does this be using puppet manifests to 
-apply puppetlabs modules (https://github.com/puppetlabs/)
+pre installed servers over ssh. It does this be using puppet manifests to
+apply puppet labs modules (https://github.com/puppetlabs/)
 
 %prep
 #%setup -n packstack-%{version}
 %setup -n packstack-%{version}dev%{git_revno}
 
-%build
+# Sanitizing a lot of the files in the puppet modules, they come from seperate upstream projects
+find packstack/puppet/modules \( -name .fixtures.yml -o -name .gemfile -o -name ".travis.yml" -o -name .rspec \) -exec rm {} \;
+find packstack/puppet/modules \( -name "*.py" -o -name "*.rb" -o -name "*.sh" -o -name "*.pl" \) -exec sed -i '/^#!/{d;q}' {} \; -exec chmod -x {} \;
+find packstack/puppet/modules -name site.pp -size 0 -exec rm {} \;
 
 # Moving this data directory out temporarily as it causes setup.py to throw errors
+rm -rf %{_builddir}/puppet
 mv packstack/puppet %{_builddir}/puppet
 
+%build
 # puppet on fedora already has this module, using this one causes problems
 %if 0%{?fedora}
     rm -rf %{_builddir}/puppet/modules/create_resources
@@ -61,12 +67,17 @@ mkdir -p %{buildroot}%{_mandir}/man1
 install -p -D -m 644 docs/_build/man/*.1 %{buildroot}%{_mandir}/man1/
 
 %files
+%doc LICENSE
 %{_bindir}/packstack
 %{python_sitelib}/packstack
 %{python_sitelib}/packstack-%{version}*.egg-info
 %{_mandir}/man1/packstack.1.gz
 
 %changelog
+
+* Fri Nov 30 2012 Derek Higgins <derekh@redhat.com> - 2012.2.1-1dev197
+- cleaning up spec file
+- updated to version 2012.2.1-1dev197
 
 * Wed Nov 28 2012 Derek Higgins <derekh@redhat.com> - 2012.2.1-1dev186
 - example packaging for Fedora / Redhat

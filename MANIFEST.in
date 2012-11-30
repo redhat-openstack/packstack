@@ -1,5 +1,8 @@
 include docs/*
+include LICENSE
 recursive-include packstack/puppet *
 recursive-include packstack/templates *
+global-exclude .gitignore
+global-exclude .gitmodules
+global-exclude .git
 prune packstack/puppet/modules/*/.git
-
