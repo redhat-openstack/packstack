@@ -74,10 +74,10 @@ def copyPuppetModules():
     if platform.linux_distribution()[0] == "Fedora":
         tar_opts += "--exclude create_resources "
     for hostname in gethostlist(controller.CONF):
-        server.append("cd %s"%basedefs.DIR_PROJECT_DIR,)
-        server.append("tar %s --dereference -czf - puppet/modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc -xzf -"%(tar_opts, hostname))
+        server.append("cd %s/puppet"%basedefs.DIR_PROJECT_DIR)
+        server.append("tar %s --dereference -czf - modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C %s -xzf -"%(tar_opts, hostname, basedefs.VAR_DIR))
         server.append("cd %s"%basedefs.PUPPET_MANIFEST_DIR)
-        server.append("tar %s --dereference -czf - ../manifests | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C /etc/puppet -xzf -"%(tar_opts, hostname))
+        server.append("tar %s --dereference -czf - ../manifests | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C %s -xzf -"%(tar_opts, hostname, basedefs.VAR_DIR))
     server.execute()
 
 def applyPuppetManifest():
@@ -88,6 +88,6 @@ def applyPuppetManifest():
 
             print "Applying "+ manifest
             server = utils.ScriptRunner(hostname)
-            server.append("puppet apply /etc/puppet/manifests/%s"%os.path.split(manifest)[1])
+            server.append("puppet apply --modulepath %s/modules %s"%(basedefs.VAR_DIR, manifest))
             server.execute()
 

@@ -54,12 +54,12 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     preparesteps = [
-             {'title': 'Installing EPEL', 'functions':[installepel]}
+             {'title': 'Preparing Servers', 'functions':[serverprep]}
     ]
     controller.addSequence("Prepare Server", [], [], preparesteps)
 
 
-def installepel():
+def serverprep():
     for hostname in gethostlist(controller.CONF):
         if '/' in hostname:
             hostname = hostname.split('/')[0]
@@ -67,5 +67,6 @@ def installepel():
 
         # install epel if on rhel
         server.append("grep 'Red Hat Enterprise Linux' /etc/redhat-release && ( rpm -q epel-release-6-7 || rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm ) || echo -n ''")
+        server.append("mkdir -p %s"%basedefs.PUPPET_MANIFEST_DIR)
         server.execute()
 
