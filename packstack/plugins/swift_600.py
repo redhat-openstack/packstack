@@ -9,7 +9,7 @@ import packstack.installer.engine_validators as validate
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
-from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
+from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile, manifestfiles
 
 # Controller object will be initialized from main flow
 controller = None
@@ -147,7 +147,7 @@ def createbuildermanifest():
         manifestdata = manifestdata + '\n@@ring_container_device { "%s:6001/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
         manifestdata = manifestdata + '\n@@ring_account_device { "%s:6002/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
 
-    appendManifestFile(manifestfile, manifestdata)
+    appendManifestFile(manifestfile, manifestdata, 'swiftbuilder')
 
 def createproxymanifest():
     manifestfile = "%s_swift.pp"%controller.CONF['CONFIG_SWIFT_PROXY_HOSTS']
@@ -185,7 +185,7 @@ def createstoragemanifest():
         appendManifestFile(manifestfile, manifestdata)
 
 def createcommonmanifest():
-    for manifestfile in controller.CONF['CONFIG_MANIFESTFILES']:
+    for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_swift.pp"):
             data = getManifestTemplate("swift_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)

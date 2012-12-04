@@ -4,11 +4,12 @@ Installs and configures puppet
 import logging
 import os
 import platform
+import time
 
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
-from packstack.modules.ospluginutils import gethostlist
+from packstack.modules.ospluginutils import gethostlist, manifestfiles
 
 # Controller object will be initialized from main flow
 controller = None
@@ -52,8 +53,6 @@ def initSequences(controller):
     ]
     controller.addSequence("Puppet", [], [], puppetsteps)
 
-    controller.CONF.setdefault('CONFIG_MANIFESTFILES', [])
-
 def runCleanup():
     localserver = utils.ScriptRunner()
     localserver.append("rm -rf %s/*pp"%basedefs.PUPPET_MANIFEST_DIR)
@@ -80,14 +79,40 @@ def copyPuppetModules():
         server.append("tar %s --dereference -czf - ../manifests | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C %s -xzf -"%(tar_opts, hostname, basedefs.VAR_DIR))
     server.execute()
 
+def waitforpuppet(currently_running):
+    while currently_running:
+        for hostname, log in currently_running:
+            server = utils.ScriptRunner(hostname)
+            server.append("test -e %s"%log)
+            print "Testing if puppet apply is finished : %s"%os.path.split(log)[1],
+            try:
+                server.execute()
+                currently_running.remove((hostname,log))
+                print "OK"
+            except Exception, e:
+                # the test raises an exception if the file doesn't exist yet
+                time.sleep(3)
+                print
+
 def applyPuppetManifest():
     print
-    for manifest in controller.CONF['CONFIG_MANIFESTFILES']:
+    currently_running = []
+    lastmarker = None
+    for manifest, marker in manifestfiles.getFiles():
+        # if the marker has changed then we don't want to proceed until
+        # all of the previous puppet runs have finished
+        if lastmarker != None and lastmarker != marker:
+            waitforpuppet(currently_running)
+        lastmarker = marker
+        
         for hostname in gethostlist(controller.CONF):
             if "/%s_"%hostname not in manifest: continue
 
             print "Applying "+ manifest
             server = utils.ScriptRunner(hostname)
-            server.append("puppet apply --modulepath %s/modules %s"%(basedefs.VAR_DIR, manifest))
-            server.execute()
 
+            logfile = "%s.log"%manifest
+            currently_running.append((hostname, logfile))
+            command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s_ 2>&1 < /dev/null ; mv %s_ %s ) > /dev/null 2>&1 < /dev/null &"%(basedefs.VAR_DIR, basedefs.VAR_DIR, manifest, logfile, logfile, logfile)
+            server.append(command)
+            server.execute()

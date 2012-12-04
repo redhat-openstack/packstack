@@ -8,7 +8,7 @@ import os
 import packstack.installer.engine_validators as validate
 import packstack.installer.common_utils as utils
 
-from packstack.modules.ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile
+from packstack.modules.ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile, manifestfiles
 
 # Controller object will be initialized from main flow
 controller = None
@@ -181,7 +181,7 @@ def initSequences(controller):
 def createapimanifest():
     manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVA_API_HOST']
     manifestdata = getManifestTemplate("nova_api.pp")
-    appendManifestFile(manifestfile, manifestdata)
+    appendManifestFile(manifestfile, manifestdata, 'novaapi')
 
 def createkeystonemanifest():
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
@@ -231,7 +231,7 @@ def createschedmanifest():
     appendManifestFile(manifestfile, manifestdata)
 
 def createcommonmanifest():
-    for manifestfile in controller.CONF['CONFIG_MANIFESTFILES']:
+    for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
             data = getManifestTemplate("nova_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)

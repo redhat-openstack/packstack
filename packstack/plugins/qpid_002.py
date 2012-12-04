@@ -60,4 +60,4 @@ def initSequences(controller):
 def createmanifest():
     manifestfile = "%s_qpid.pp"%controller.CONF['CONFIG_QPID_HOST']
     manifestdata = getManifestTemplate("qpid.pp")
-    appendManifestFile(manifestfile, manifestdata)
+    appendManifestFile(manifestfile, manifestdata, 'pre')

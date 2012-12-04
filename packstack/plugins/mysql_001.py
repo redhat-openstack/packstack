@@ -82,5 +82,5 @@ def initSequences(controller):
 def createmanifest():
     manifestfile = "%s_mysql.pp"%controller.CONF['CONFIG_MYSQL_HOST']
     manifestdata = getManifestTemplate("mysql.pp")
-    appendManifestFile(manifestfile, manifestdata)
+    appendManifestFile(manifestfile, manifestdata, 'pre')
 
