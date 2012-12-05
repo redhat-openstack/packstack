@@ -53,13 +53,17 @@ def initSequences():
                       { 'description'     : 'Initial Steps',
                         'condition'       : [],
                         'condition_match' : [],
-                        'steps'           : [ { 'title'     : "Noop",
-                                                'functions' : [] },]
+                        'steps'           : [ { 'title'     : "Pre Plugin Setup",
+                                                'functions' : [setDebug] },]
                        },
                      ]
 
     for item in sequences_conf:
         controller.addSequence(item['description'], item['condition'], item['condition_match'], item['steps'])
+
+def setDebug():
+    if controller.CONF['CONFIG_DEBUG'] == 'y':
+        logging.root.setLevel(logging.DEBUG)
 
 def initConfig():
     """
@@ -82,6 +86,20 @@ def initConfig():
     CONDITION        - (True/False) is this a condition for a group?
     """
     conf_params = {
+        "INSTALLER": [
+            {"CMD_OPTION"      : "debug",
+             "USAGE"           : "Should we turn on debug in logging",
+             "PROMPT"          : "Should we turn on debug in logging",
+             "OPTION_LIST"     : ["y", "n"],
+             "VALIDATION_FUNC" : validate.validateOptions,
+             "DEFAULT_VALUE"   : "n",
+             "MASK_INPUT"      : False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME"       : "CONFIG_DEBUG",
+             "USE_DEFAULT"     : False,
+             "NEED_CONFIRM"    : False,
+             "CONDITION"       : False },
+        ]
     }
     """
     Group fields:
@@ -93,7 +111,14 @@ def initConfig():
     POST_CONDITION_MATCH - Value to match condition with
     """
     conf_groups = (
+        { "GROUP_NAME"            : "INSTALLER",
+          "DESCRIPTION"           : "Installer Config paramaters",
+          "PRE_CONDITION"         : utils.returnYes,
+          "PRE_CONDITION_MATCH"   : "yes",
+          "POST_CONDITION"        : False,
+          "POST_CONDITION_MATCH"  : True},
     )
+
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, paramList)
