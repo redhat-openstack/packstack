@@ -2,9 +2,9 @@
 %global git_revno %GIT_REVNO%
 
 Name:           openstack-packstack
-Version:        2012.2.1
+Version:        2012.2.2
 #Release:       1%{?dist}
-Release:        1dev%{git_revno}%{?dist}
+Release:        0.1.dev%{git_revno}%{?dist}
 Summary:        Openstack Install Utility
 
 Group:          Applications/System
