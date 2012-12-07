@@ -65,8 +65,9 @@ def serverprep():
             hostname = hostname.split('/')[0]
         server = utils.ScriptRunner(hostname)
 
-        # install epel if on rhel
-        server.append("grep 'Red Hat Enterprise Linux' /etc/redhat-release && ( rpm -q epel-release-6-7 || rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm ) || echo -n ''")
+        # install epel if on rhel and epel is configured
+        if controller.CONF["CONFIG_USE_EPEL"] == 'y':
+            server.append("grep 'Red Hat Enterprise Linux' /etc/redhat-release && ( rpm -q epel-release || rpm -Uvh http://download.fedoraproject.org/pub/epel/6/i386/epel-release-6-7.noarch.rpm ) || echo -n ''")
         server.append("mkdir -p %s"%basedefs.PUPPET_MANIFEST_DIR)
         server.execute()
 
