@@ -37,7 +37,8 @@ apply puppet labs modules (https://github.com/puppetlabs/)
 
 # Sanitizing a lot of the files in the puppet modules, they come from seperate upstream projects
 find packstack/puppet/modules \( -name .fixtures.yml -o -name .gemfile -o -name ".travis.yml" -o -name .rspec \) -exec rm {} \;
-find packstack/puppet/modules \( -name "*.py" -o -name "*.rb" -o -name "*.sh" -o -name "*.pl" \) -exec sed -i '/^#!/{d;q}' {} \; -exec chmod -x {} \;
+find packstack/puppet/modules \( -name "*.py" -o -name "*.rb" -o -name "*.pl" \) -exec sed -i '/^#!/{d;q}' {} \; -exec chmod -x {} \;
+find packstack/puppet/modules \( -name "*.sh" \) -exec sed -i 's/^#!.*/#!\/bin\/bash/g' {} \; -exec chmod +x {} \;
 find packstack/puppet/modules -name site.pp -size 0 -exec rm {} \;
 
 # Moving this data directory out temporarily as it causes setup.py to throw errors
@@ -75,10 +76,6 @@ install -p -D -m 644 docs/_build/man/*.1 %{buildroot}%{_mandir}/man1/
 
 %changelog
 
-* Fri Nov 30 2012 Derek Higgins <derekh@redhat.com> - 2012.2.1-1dev197
-- cleaning up spec file
-- updated to version 2012.2.1-1dev197
-
-* Wed Nov 28 2012 Derek Higgins <derekh@redhat.com> - 2012.2.1-1dev186
-- example packaging for Fedora / Redhat
+* Thu Dec 06 2012 Derek Higgins <derekh@redhat.com>
+- Not keeping change log here, see downstream distributions for actual packaging
 
