@@ -46,6 +46,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novavncproxy-hosts",
+                   "USAGE"           : "The IP address of the server on which to install the Nova VNC proxy",
+                   "PROMPT"          : "The IP address of the server on which to install the Nova VNC proxy",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateMultiPing,
+                   "DEFAULT_VALUE"   : "127.0.0.1",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_VNCPROXY_HOST",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "novacompute-hosts",
                    "USAGE"           : "A comma seperated list of IP addresses on which to install the Nova Compute services",
                    "PROMPT"          : "A comma seperated list of IP addresses on which to install the Nova Compute services",
@@ -174,6 +186,7 @@ def initSequences(controller):
              {'title': 'Adding Nova Compute Manifest entries', 'functions':[createcomputemanifest]},
              {'title': 'Adding Nova Network Manifest entries', 'functions':[createnetworkmanifest]},
              {'title': 'Adding Nova Scheduler Manifest entries', 'functions':[createschedmanifest]},
+             {'title': 'Adding Nova VNC Proxy Manifest entries', 'functions':[createvncproxymanifest]},
              {'title': 'Adding Nova Common Manifest entries', 'functions':[createcommonmanifest]},
     ]
     controller.addSequence("Installing Nova API", [], [], novaapisteps)
@@ -194,8 +207,9 @@ def createcertmanifest():
     appendManifestFile(manifestfile, manifestdata)
 
 def createcomputemanifest():
-    manifestdata = getManifestTemplate("nova_compute.pp")
     for host in controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(","):
+        controller.CONF["CONFIG_NOVA_COMPUTE_HOST"] = host
+        manifestdata = getManifestTemplate("nova_compute.pp")
         manifestfile = "%s_nova.pp"%host
 
         server = utils.ScriptRunner(host)
@@ -228,6 +242,11 @@ def createnetworkmanifest():
 def createschedmanifest():
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_SCHED_HOST']
     manifestdata = getManifestTemplate("nova_sched.pp")
+    appendManifestFile(manifestfile, manifestdata)
+
+def createvncproxymanifest():
+    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_VNCPROXY_HOST']
+    manifestdata = getManifestTemplate("nova_vncproxy.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 def createcommonmanifest():
