@@ -6,6 +6,9 @@ class {'cinder::base':
 
 class {'cinder::api':
     keystone_password => 'cinder_default_password',
+    keystone_tenant => "services",
+    keystone_user => "cinder",
+    keystone_auth_host => "%(CONFIG_KEYSTONE_HOST)s",
 }
 
 class {'cinder::scheduler':
