@@ -113,3 +113,6 @@ def applyPuppetManifest():
             command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s_ 2>&1 < /dev/null ; mv %s_ %s ) > /dev/null 2>&1 < /dev/null &"%(basedefs.VAR_DIR, basedefs.VAR_DIR, manifest, logfile, logfile, logfile)
             server.append(command)
             server.execute()
+
+    # wait for outstanding puppet runs befor exiting
+    waitforpuppet(currently_running)
