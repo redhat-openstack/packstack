@@ -13,7 +13,9 @@ class NovaConfig(object):
     """ 
     Helper class to create puppet manifest entries for nova_config
     """
-    options = {}
+    def __init__(self):
+        self.options = {}
+
     def addOption(self, n, v):
         self.options[n] = v
 
