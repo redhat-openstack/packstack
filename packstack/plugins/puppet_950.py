@@ -81,9 +81,11 @@ def waitforpuppet(currently_running):
         for hostname, log in currently_running:
             server = utils.ScriptRunner(hostname)
             server.append("test -e %s"%log)
+            server.append("cat %s"%log)
             print "Testing if puppet apply is finished : %s"%os.path.split(log)[1],
             try:
-                server.execute()
+                # Errors are expected here if the puppet run isn't finished so we suppress their logging
+                server.execute(logerrors=False)
                 currently_running.remove((hostname,log))
                 print "OK"
             except Exception, e:

@@ -298,7 +298,7 @@ class ScriptRunner(object):
     def append(self, s):
         self.script.append(s)
 
-    def execute(self):
+    def execute(self, logerrors=True):
         script = "\n".join(self.script)
         logging.debug("# ============ ssh : %r =========="%self.ip)
         if not False: #config.justprint:
@@ -317,8 +317,12 @@ class ScriptRunner(object):
             logging.debug(stdoutdata)
             _returncode = obj.returncode
             if _returncode:
-                logging.error("============= STDERR ==========")
-                logging.error(stderrdata)
+                if logerrors:
+                    logging.error("============= STDERR ==========")
+                    logging.error(stderrdata)
+		else:
+                    logging.debug("============= STDERR ==========")
+                    logging.debug(stderrdata)
                 raise Exception("Error running remote script")
         else:
             logging.debug(script)
