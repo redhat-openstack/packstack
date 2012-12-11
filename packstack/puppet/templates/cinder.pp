@@ -4,6 +4,9 @@ class {'cinder::base':
     sql_connection => "mysql://cinder:cinder_default_password@%(CONFIG_MYSQL_HOST)s/cinder"
 }
 
+package {'python-keystone':
+    notify => Class['cinder::api'],
+}
 class {'cinder::api':
     keystone_password => 'cinder_default_password',
     keystone_tenant => "services",
