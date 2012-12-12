@@ -54,9 +54,19 @@ def initSequences(controller):
 
     cindersteps = [
              {'title': 'Adding Cinder Keystone Manifest entries', 'functions':[createkeystonemanifest]},
+             {'title': 'Checking if the Cinder server has a cinder-volumes vg', 'functions':[checkcindervg]},
              {'title': 'Creating Cinder Manifest', 'functions':[createmanifest]}
     ]
     controller.addSequence("Installing Cinder", [], [], cindersteps)
+
+def checkcindervg():
+    server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
+    server.append('vgdisplay cinder-volumes')
+    try:
+        server.execute()
+    except:
+        print "The cinder server should contain a cinder-volumes volume group"
+        raise
 
 def createkeystonemanifest():
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
