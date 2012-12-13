@@ -5,7 +5,7 @@ import os, sys, uuid
 
 APP_NAME = "Installer"
 
-FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"
+FILE_YUM_VERSION_LOCK = "/etc/yum/pluginconf.d/versionlock.list"
 
 VAR_DIR = os.path.join("/var/tmp", str(uuid.uuid4()))
 DIR_LOG = VAR_DIR
@@ -17,24 +17,24 @@ DIR_PROJECT_DIR = os.environ.get('INSTALLER_PROJECT_DIR', os.path.join(os.path.s
 DIR_PLUGINS = os.path.join(DIR_PROJECT_DIR, "plugins")
 DIR_MODULES = os.path.join(DIR_PROJECT_DIR, "modules")
 
-EXEC_RPM="rpm"
-EXEC_SEMANAGE="semanage"
-EXEC_NSLOOKUP="nslookup"
-EXEC_CHKCONFIG="chkconfig"
-EXEC_SERVICE="service"
-
+EXEC_RPM = "rpm"
+EXEC_SEMANAGE = "semanage"
+EXEC_NSLOOKUP = "nslookup"
+EXEC_CHKCONFIG = "chkconfig"
+EXEC_SERVICE = "service"
+EXEC_IP = "ip"
 
 #text colors
-RED="\033[0;31m"
-GREEN="\033[92m"
-BLUE="\033[94m"
-YELLOW="\033[93m" 
-NO_COLOR="\033[0m" 
+RED = "\033[0;31m"
+GREEN = "\033[92m"
+BLUE = "\033[94m"
+YELLOW = "\033[93m"
+NO_COLOR = "\033[0m"
 
 COLORS = (RED, GREEN, BLUE, YELLOW, NO_COLOR)
 
 #space len size for color print
-SPACE_LEN=70
+SPACE_LEN = 70
 
 RPM_LOCK_LIST = """
 """
