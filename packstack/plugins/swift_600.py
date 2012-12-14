@@ -9,7 +9,7 @@ import packstack.installer.engine_validators as validate
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
-from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile, manifestfiles
+from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile, manifestfiles, getIP
 
 # Controller object will be initialized from main flow
 controller = None
@@ -26,8 +26,8 @@ def initConfig(controllerObject):
     logging.debug("Adding Openstack swift configuration")
     paramsList = [
                   {"CMD_OPTION"      : "os-swift-proxy",
-                   "USAGE"           : "A comma seperated list of IP addresses on which to install the Swift proxy services",
-                   "PROMPT"          : "A comma seperated list of IP addresses on which to install the Swift proxy services",
+                   "USAGE"           : "The IP addresses on which to install the Swift proxy service",
+                   "PROMPT"          : "The IP addresses on which to install the Swift proxy service",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",
@@ -138,14 +138,15 @@ def createbuildermanifest():
 
     # Add each device to the ring
     devicename = 0
+    
     for device in parseDevices(controller.CONF["CONFIG_SWIFT_STORAGE_HOSTS"]):
         host = device['host']
         devicename = device['device_name']
         zone = device['zone']
         
-        manifestdata = manifestdata + '\n@@ring_object_device { "%s:6000/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
-        manifestdata = manifestdata + '\n@@ring_container_device { "%s:6001/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
-        manifestdata = manifestdata + '\n@@ring_account_device { "%s:6002/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
+        manifestdata = manifestdata + '\n@@ring_object_device { "%s:6000/%s":\n zone        => %s,\n weight      => 10, }'%(getIP(host), devicename, zone)
+        manifestdata = manifestdata + '\n@@ring_container_device { "%s:6001/%s":\n zone        => %s,\n weight      => 10, }'%(getIP(host), devicename, zone)
+        manifestdata = manifestdata + '\n@@ring_account_device { "%s:6002/%s":\n zone        => %s,\n weight      => 10, }'%(getIP(host), devicename, zone)
 
     appendManifestFile(manifestfile, manifestdata, 'swiftbuilder')
 
@@ -161,7 +162,7 @@ def createstoragemanifest():
 
     # this need to happen once per storage host
     for host in set([device['host'] for device in devices]):
-        controller.CONF["CONFIG_SWIFT_STORAGE_CURRENT"] = host
+        controller.CONF["CONFIG_SWIFT_STORAGE_CURRENT"] = getIP(host)
         manifestfile = "%s_swift.pp"%host
         manifestdata = getManifestTemplate("swift_storage.pp")
         appendManifestFile(manifestfile, manifestdata)

@@ -7,6 +7,8 @@ import logging
 import packstack.installer.engine_validators as validate
 import packstack.installer.common_utils as utils
 
+from packstack.modules.ospluginutils import gethostlist, PackStackException, getIP
+
 # Controller object will be initialized from main flow
 controller = None
 
@@ -102,4 +104,40 @@ def initConfig(controllerObject):
     controller.addGroup(groupDict, paramsList)
 
 def initSequences(controller):
-    pass
+    preparesteps = [
+             {'title': 'Sanitizing config variable', 'functions':[sanitize]}
+    ]
+    controller.addSequence("Global", [], [], preparesteps)
+
+# If either of localhost or 127.0.0.1 are anywhere in the list of hosts
+# then this MUST be an all in one and all hosts MUST be loopback addresses
+def dontMixloopback():
+    hosts =  gethostlist(controller.CONF)
+
+    loopback = [h for h in hosts if h in ['127.0.0.1','localhost']]
+    if loopback:
+        if len(loopback) != len(hosts):
+            msg = "You must use 127.0.0.1 or localhost for All in One installs Only"
+            print msg
+            raise PackStackException(msg)
+
+# Parts of the puppet modules MUST have IP addresses, we translate them here
+# availableto templates so they are 
+def translateIPs():
+    hosts = []
+    for key,value in controller.CONF.items():
+        if key.endswith("_HOST"):
+            host = value.split('/')[0] # some host have devices in the name eg 1.1.1.1/vdb
+            controller.CONF[key.replace('_HOST','_IP')] = value.replace(host, getIP(host))
+                
+        if key.endswith("_HOSTS"):
+            ips = []
+            for host_dev in value.split(","):
+                host_dev = host_dev.strip()
+                host = host_dev.split('/')[0]
+                ips.append(host_dev.replace(host, getIP(host)))
+            controller.CONF[key.replace('_HOSTS','_IPS')] = ','.join(ips)
+
+def sanitize():
+    dontMixloopback()
+    translateIPs()

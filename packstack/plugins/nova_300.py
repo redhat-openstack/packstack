@@ -207,8 +207,10 @@ def createcertmanifest():
     appendManifestFile(manifestfile, manifestdata)
 
 def createcomputemanifest():
-    for host in controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(","):
+    compute_ip_list = controller.CONF["CONFIG_NOVA_COMPUTE_IPS"].split(",")
+    for i, host in enumerate(controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(",")):
         controller.CONF["CONFIG_NOVA_COMPUTE_HOST"] = host
+        controller.CONF["CONFIG_NOVA_COMPUTE_IP"] = compute_ip_list[i]
         manifestdata = getManifestTemplate("nova_compute.pp")
         manifestfile = "%s_nova.pp"%host
 

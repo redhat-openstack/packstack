@@ -1,5 +1,5 @@
 nova_config{
-    "metadata_host": value => "%(CONFIG_NOVA_API_HOST)s";
+    "metadata_host": value => "%(CONFIG_NOVA_API_IP)s";
     "qpid_hostname": value => "%(CONFIG_QPID_HOST)s";
     "rpc_backend": value => "nova.rpc.impl_qpid";
 }

@@ -1,5 +1,5 @@
 
-import os
+import os, socket
 
 from packstack.installer import basedefs
 from packstack.installer.setup_controller import Controller
@@ -73,3 +73,16 @@ def gethostlist(CONF):
                 if host not in hosts:
                     hosts.append(host)
     return hosts
+
+class PackStackException(BaseException):
+    def __init__(self, msg):
+        self.msg = msg
+
+# return the ip address correcponding to a hostname
+_ips = {}
+def getIP(h):
+    if _ips.get(h):
+        return _ips.get(h)
+    _ips[h] = socket.gethostbyname(h)
+    return _ips[h]
+
