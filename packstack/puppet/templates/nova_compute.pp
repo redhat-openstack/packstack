@@ -1,6 +1,6 @@
 
 nova_config{
-    "network_host": value => "%(CONFIG_NOVA_NETWORK_IP)s";
+    "network_host": value => "%(CONFIG_NOVA_NETWORK_HOST)s";
     "libvirt_inject_partition": value => "-1";
 }
 
@@ -12,7 +12,7 @@ class {"nova::compute":
 
 class { 'nova::compute::libvirt':
   libvirt_type                => "%(CONFIG_LIBVIRT_TYPE)s",
-  vncserver_listen            => "%(CONFIG_NOVA_COMPUTE_IP)s",
+  vncserver_listen            => "%(CONFIG_NOVA_COMPUTE_HOST)s",
 }
 
 if "%(CONFIG_LIBVIRT_TYPE)s" == "qemu" and $::operatingsystem == "RedHat" {

@@ -80,11 +80,6 @@ def initSequences(controller):
     controller.addSequence("Installing MySQL", [], [], mysqlsteps)
 
 def createmanifest():
-    # If localhost is used for the MySQL server, then mysql makes a socket connection
-    # we change this to a IP to force it to use TCP
-    if controller.CONF.get('CONFIG_MYSQL_HOST') == 'localhost':
-        controller.CONF['CONFIG_MYSQL_HOST'] = '127.0.0.1'
-
     manifestfile = "%s_mysql.pp"%controller.CONF['CONFIG_MYSQL_HOST']
     manifestdata = getManifestTemplate("mysql.pp")
     appendManifestFile(manifestfile, manifestdata, 'pre')
