@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 contains all common and re-usable code for rhevm-setup and sub packages
 """
@@ -6,14 +8,24 @@ import pwd
 import logging
 import subprocess
 import re
-import output_messages
 import traceback
 import os
-import basedefs
 import datetime
 import types
 import time
+import socket
 import tempfile
+
+import basedefs
+import output_messages
+
+
+
+class UtilsError(Exception):
+    pass
+class UtilsNetworkError(UtilsError):
+    pass
+
 
 def getColoredText (text, color):
     ''' gets text string and color
@@ -290,6 +302,71 @@ def installed(rpm):
 def returnYes(controller):
     return "yes"
 
+def getLocalhostIP():
+    """
+    Returns IP address of localhost.
+    """
+    # TO-DO: Will probably need to find better way to find out localhost
+    #        address.
+
+    # find nameservers
+    ns_regex = re.compile('nameserver\s*(?P<ns_ip>[\d\.\:])')
+    resolv, rc = execCmd(['cat /etc/resolv.conf | grep nameserver',],
+                         failOnError=False, useShell=True)
+    nsrvs = []
+    for line in resolv.split('\n'):
+        match = ns_regex.match(line.strip())
+        if match:
+            nsrvs.append(match.group('ns_ip'))
+
+    # try to connect to nameservers and return own IP address
+    nsrvs.append('8.8.8.8') # default to google dns
+    for i in nsrvs:
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            s.connect((i, 0))
+            loc_ip = s.getsockname()[0]
+        except socket.error:
+            continue
+        else:
+            return loc_ip
+
+def host2ip(hostname, allow_localhost=False):
+    """
+    Converts given hostname to IP address. Raises HostnameConvertError
+    if conversion failed.
+    """
+    try:
+        ip_list = socket.gethostbyaddr(hostname)[2]
+        if allow_localhost:
+            return ip_list[0]
+        else:
+            local_ips = ('127.0.0.1', '::1')
+            for ip in ip_list:
+                if ip not in local_ips:
+                    break
+            else:
+                raise NameError()
+            return ip
+    except NameError:
+        # given hostname is localhost, return appropriate IP address
+        ip = getLocalhostIP()
+        if not ip:
+            raise UtilsNetworkError('Failed to get local IP address.')
+        return ip
+    except socket.error:
+        raise UtilsNetworkError('Unknown hostname %s.' % hostname)
+    except Exception, ex:
+        raise UtilsNetworkError('Unknown error appeared: %s' % repr(ex))
+
+def forceIP(host, allow_localhost=False):
+    host = host.strip()
+    ipv4_regex = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
+    ipv6_regex = re.compile('[abcdef\d\:]+')
+    if not ipv4_regex.match(host) or not ipv6_regex.match(host):
+        host = host2ip(host, allow_localhost=allow_localhost)
+    return host
+
 class ScriptRunner(object):
     def __init__(self, ip=None):
         self.script = []
@@ -304,10 +381,10 @@ class ScriptRunner(object):
         if not False: #config.justprint:
             _PIPE = subprocess.PIPE  # pylint: disable=E1101
             if self.ip:
-                obj = subprocess.Popen(["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "root@%s"%self.ip, "bash -x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE, 
+                obj = subprocess.Popen(["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "root@%s"%self.ip, "bash -x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
                                         close_fds=True, shell=False)
             else:
-                obj = subprocess.Popen(["bash", "-x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE, 
+                obj = subprocess.Popen(["bash", "-x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
                                         close_fds=True, shell=False)
 
             logging.debug(script)
@@ -320,7 +397,7 @@ class ScriptRunner(object):
                 if logerrors:
                     logging.error("============= STDERR ==========")
                     logging.error(stderrdata)
-		else:
+                else:
                     logging.debug("============= STDERR ==========")
                     logging.debug(stderrdata)
                 raise Exception("Error running remote script")
@@ -336,5 +413,3 @@ class ScriptRunner(object):
 
     def ifexists(self, fn, s):
         self.append("[ -e %s ] && %s"%(fn, s))
-
-

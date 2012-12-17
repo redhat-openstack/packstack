@@ -13,6 +13,12 @@ import os.path
 import tempfile
 from setup_controller import Controller
 
+
+
+# XXX: Validators should probably only validate (pass on success,
+#      raise appropriate exception on failure). We should move logging
+#      and printing probably to run_setup (preferably to single place)
+
 def validateDirSize(path, size):
     availableSpace = utils.getAvailableSpace(_getBasePath(path))
     if availableSpace < size:
@@ -360,8 +366,7 @@ def r_validateDevice(server, device=None):
 
         # if it is mounted then the mount point has to be in /srv/node
         server.append('grep "/dev/%s /srv/node" /proc/self/mounts && exit 0'%device)
-        
+
         # if we got here without exiting then we can't use this device
         server.append('exit 1')
     return False
-

@@ -16,6 +16,7 @@ from optparse import OptionParser, OptionGroup
 import basedefs
 import common_utils as utils
 import engine_validators as validate
+import engine_processors as process
 import output_messages
 
 from setup_controller import Controller
@@ -28,7 +29,15 @@ commandLineValues = {}
 #TODO: read default values from conf_param?
 masked_value_set = set()
 
-def initLogging():
+
+
+class InstallError(Exception):
+    pass
+class FlagValidationError(InstallError):
+    pass
+
+
+def initLogging(level='INFO'):
     global logFile
     try:
         #in order to use UTC date for the log file, send True to getCurrentDateTime(True)
@@ -36,7 +45,7 @@ def initLogging():
         logFile = os.path.join(basedefs.DIR_LOG,logFilename)
         if not os.path.isdir(os.path.dirname(logFile)):
             os.makedirs(os.path.dirname(logFile))
-        level = logging.INFO
+        level = getattr(logging, level)
         hdlr = logging.FileHandler(filename = logFile, mode='w')
         fmts='%(asctime)s::%(levelname)s::%(module)s::%(lineno)d::%(name)s:: %(message)s'
         dfmt='%Y-%m-%d %H:%M:%S'
@@ -63,7 +72,7 @@ def initSequences():
 
 def setDebug():
     if controller.CONF['CONFIG_DEBUG'] == 'y':
-        logging.root.setLevel(logging.DEBUG)
+        logging.root.setLevel(logging.DEBUG) # XXX: this doesn't work at all, will have to refactor
 
 def initConfig():
     """
@@ -161,6 +170,36 @@ def _getInputFromUser(param):
                 # If DEFAULT_VALUE is set and user did not input anything
                 if userInput == "" and len(param.getKey("DEFAULT_VALUE")) > 0:
                     userInput = param.getKey("DEFAULT_VALUE")
+
+                # Param processing
+                try:
+                    logging.debug("Processing value of parameter "
+                                  "%s." % param.getKey("CONF_NAME"))
+                    processFunc = param.getKey("PROCESSOR_FUNC")
+                    try:
+                        processArgs = param.getKey("PROCESSOR_ARGS")
+                    except KeyError:
+                        processArgs = None
+                    try:
+                        _userInput = processFunc(userInput, processArgs)
+                        if userInput != _userInput:
+                            msg = output_messages.INFO_VAL_IS_HOSTNAME
+                            print msg % (userInput, _userInput)
+                            userInput = _userInput
+                        else:
+                            logging.debug("Processor returned the original "
+                                          "value: %s" % _userInput)
+                    except process.ParamProcessingError, ex:
+                        try:
+                            cn = param.getKey("CONF_NAME")
+                            msg = param.getKey("PROCESSOR_MSG")
+                            print getattr(output_messages, msg) % cn
+                        except KeyError:
+                            logging.debug("Value processing of parameter "
+                                          "%s failed." % param.getKey("CONF_NAME"))
+                except KeyError:
+                    logging.debug("Parameter %s doesn't have value "
+                                  "processor." % param.getKey("CONF_NAME"))
 
                 # If param requires validation
                 if param.getKey("VALIDATION_FUNC")(userInput, param.getKey("OPTION_LIST")):
@@ -320,6 +359,29 @@ def _validateParamValue(param, paramValue):
     if not validateFunc(paramValue, optionsList):
         raise Exception(output_messages.ERR_EXP_VALIDATE_PARAM % param.getKey("CONF_NAME"))
 
+def _processParamValue(param, paramValue):
+    try:
+        processFunc = param.getKey("PROCESSOR_FUNC")
+    except KeyError:
+        return paramValue
+    try:
+        processArgs = param.getKey("PROCESSOR_ARGS")
+    except KeyError:
+        processArgs = None
+    logging.debug("processing param %s in answer file." % param.getKey("CONF_NAME"))
+    try:
+        return processFunc(paramValue, processArgs)
+    except process.ParamProcessingError, ex:
+        cn = param.getKey("CONF_NAME")
+        logging.debug("processing param %s failed, falling back to "
+                      "original, reason: %s" % (cn, ex))
+        try:
+            msg = param.getKey("PROCESSOR_MSG")
+            print getattr(output_messages, msg) % cn
+        except KeyError:
+            pass
+        return paramValue
+
 def _handleGroupCondition(config, conditionName, conditionValue):
     """
     handle params group pre/post condition
@@ -354,6 +416,7 @@ def _loadParamFromFile(config, section, paramName):
 
     # Validate param value using its validation func
     param = controller.getParamByName(paramName)
+    value = _processParamValue(param, value)
     _validateParamValue(param, value)
 
     # Keep param value in our never ending global conf
@@ -691,7 +754,7 @@ def loadPlugins():
     """
     sys.path.append(basedefs.DIR_PLUGINS)
     sys.path.append(basedefs.DIR_MODULES)
-    
+
     fileList = [f for f in os.listdir(basedefs.DIR_PLUGINS) if f[0] != "_"]
     fileList = sorted(fileList, cmp=plugin_compare)
     for item in fileList:
@@ -736,10 +799,9 @@ def countCmdLineFlags(options, flag):
 def validateSingleFlag(options, flag):
     counter = countCmdLineFlags(options, flag)
     if counter > 0:
-        optParser.print_help()
-        print
-        #replace _ with - for printing's sake
-        raise Exception(output_messages.ERR_ONLY_1_FLAG % "--%s" % flag.replace("_","-"))
+        flag = flag.replace("_","-")
+        msg = output_messages.ERR_ONLY_1_FLAG % ("--%s" % flag)
+        raise FlagValidationError(msg)
 
 
 def initPluginsConfig():
@@ -806,12 +868,15 @@ def main():
 
     except SystemExit:
         raise
-
+    except FlagValidationError, ex:
+        optParser.print_help()
+        print
     except BaseException as e:
         logging.error(traceback.format_exc())
         print e
         print output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO%(logFile)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

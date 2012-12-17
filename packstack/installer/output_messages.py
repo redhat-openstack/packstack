@@ -40,6 +40,13 @@ INFO_VAL_PORT_OCCUPIED="Error: TCP Port %s is already open by %s (pid: %s)"
 INFO_VAL_PORT_OCCUPIED_BY_JBOSS="Error: TCP Port %s is used by JBoss"
 INFO_VAL_PASSWORD_DONT_MATCH="Error: passwords don't match"
 
+INFO_VAL_IS_HOSTNAME = ("Packstack changed given hostname %s to IP "
+                        "address %s.")
+WARN_VAL_IS_HOSTNAME = ("Warning: Packstack failed to change given "
+                        "hostname %s to IP address. Note that some "
+                        "services might not run correctly when hostname"
+                        " is used.")
+
 INFO_STRING_LEN_LESS_THAN_MIN="String length is less than the minimum allowed: %s"
 INFO_STRING_EXCEEDS_MAX_LENGTH="String length exceeds the maximum length allowed: %s"
 INFO_STRING_CONTAINS_ILLEGAL_CHARS="String contains illegal characters"
@@ -70,7 +77,7 @@ ERR_EXP_FAILED_INIT_LOGGER="Unexpected error: Failed to initiate logger, please 
 ERR_RC_CODE="Return Code is not zero"
 ERR_FAILURE="General failure"
 ERR_NO_ANSWER_FILE="Error: Could not find file %s"
+ERR_ONLY_1_FLAG="Error: The %s flag is mutually exclusive to all other command line options"
 
-# 
+#
 INFO_KEYSTONERC="To use the command line tools simply source the keystonerc_* files created here"
-
