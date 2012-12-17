@@ -6,6 +6,7 @@ import logging
 import os
 
 import packstack.installer.engine_validators as validate
+import packstack.installer.engine_processors as process
 import packstack.installer.common_utils as utils
 
 from packstack.modules.ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile, manifestfiles
@@ -28,6 +29,9 @@ def initConfig(controllerObject):
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",
+                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
+                   "PROCESSOR_FUNC"  : process.processHost,
+                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_API_HOST",
@@ -40,6 +44,9 @@ def initConfig(controllerObject):
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",
+                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
+                   "PROCESSOR_FUNC"  : process.processHost,
+                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_CERT_HOST",
@@ -52,6 +59,9 @@ def initConfig(controllerObject):
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateMultiPing,
                    "DEFAULT_VALUE"   : "127.0.0.1",
+                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
+                   "PROCESSOR_FUNC"  : process.processHost,
+                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_VNCPROXY_HOST",
@@ -66,7 +76,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "127.0.0.1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_HOSTS",
+                   "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_HOSTS", # TO-DO: Create processor for CSV
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -100,6 +110,9 @@ def initConfig(controllerObject):
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",
+                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
+                   "PROCESSOR_FUNC"  : process.processHost,
+                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOST",
@@ -160,6 +173,9 @@ def initConfig(controllerObject):
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",
+                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
+                   "PROCESSOR_FUNC"  : process.processHost,
+                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_SCHED_HOST",

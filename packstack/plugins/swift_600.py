@@ -6,6 +6,7 @@ import logging
 import os
 
 import packstack.installer.engine_validators as validate
+import packstack.installer.engine_processors as process
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
@@ -33,7 +34,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "127.0.0.1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_SWIFT_PROXY_HOSTS",
+                   "CONF_NAME"       : "CONFIG_SWIFT_PROXY_HOSTS", # TO-DO: Create processor for CSV
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -45,7 +46,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "127.0.0.1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_SWIFT_STORAGE_HOSTS",
+                   "CONF_NAME"       : "CONFIG_SWIFT_STORAGE_HOSTS", # TO-DO: Create processor for CSV
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -128,7 +129,7 @@ def parseDevices(config_swift_storage_hosts):
         devices.append({'host':host, 'device':device, 'device_name':'device%s'%device_number, 'zone':str(zone)})
     return devices
 
-# The ring file should be built and distributed befor the storage services 
+# The ring file should be built and distributed befor the storage services
 # come up. Specifically the replicator crashes if the ring isn't present
 def createbuildermanifest():
     # TODO : put this on the proxy server, will need to change this later
@@ -142,7 +143,7 @@ def createbuildermanifest():
         host = device['host']
         devicename = device['device_name']
         zone = device['zone']
-        
+
         manifestdata = manifestdata + '\n@@ring_object_device { "%s:6000/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
         manifestdata = manifestdata + '\n@@ring_container_device { "%s:6001/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
         manifestdata = manifestdata + '\n@@ring_account_device { "%s:6002/%s":\n zone        => %s,\n weight      => 10, }'%(host, devicename, zone)
@@ -171,7 +172,7 @@ def createstoragemanifest():
         host = device['host']
         devicename = device['device_name']
         device = device['device']
-       
+
         server = utils.ScriptRunner(host)
         validate.r_validateDevice(server, device)
         server.execute()
