@@ -80,4 +80,4 @@ ERR_NO_ANSWER_FILE="Error: Could not find file %s"
 ERR_ONLY_1_FLAG="Error: The %s flag is mutually exclusive to all other command line options"
 
 #
-INFO_KEYSTONERC="To use the command line tools simply source the keystonerc_* files created here"
+INFO_KEYSTONERC="To use the command line tools source the file /root/keystonerc_admin created on the OSCLIENT host (if configured)"
