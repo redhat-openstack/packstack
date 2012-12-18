@@ -54,7 +54,7 @@ class { 'swift::proxy::authtoken':
     auth_host         => '%(CONFIG_KEYSTONE_HOST)s',
 }
 
-firewall { '001 swift proxy incomming':
+firewall { '001 swift proxy incoming':
     proto    => 'tcp',
     dport    => ['8080'],
     action   => 'accept',

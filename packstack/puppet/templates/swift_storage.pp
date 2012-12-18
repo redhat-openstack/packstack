@@ -10,7 +10,7 @@ swift::ringsync{["account","container","object"]:
     notify => Class['swift::storage::all']
 }
 
-firewall { '001 swift storage incomming':
+firewall { '001 swift storage incoming':
     proto    => 'tcp',
     dport    => ['6000', '6001', '6002', '873'],
     action   => 'accept',

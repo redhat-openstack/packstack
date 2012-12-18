@@ -8,7 +8,7 @@ class {"nova::api":
 
 Package<| title == 'nova-common' |> -> Class['nova::api']
 
-firewall { '001 novaapi incomming':
+firewall { '001 novaapi incoming':
     proto    => 'tcp',
     dport    => ['8773', '8774'],
     action   => 'accept',

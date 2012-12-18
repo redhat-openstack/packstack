@@ -23,7 +23,7 @@ if "%(CONFIG_LIBVIRT_TYPE)s" == "qemu" and $::operatingsystem == "RedHat" {
     }
 }
 
-firewall { '001 nove compute incomming':
+firewall { '001 nove compute incoming':
     proto    => 'tcp',
     dport    => '5900-5999',
     action   => 'accept',

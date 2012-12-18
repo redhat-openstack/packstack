@@ -6,7 +6,7 @@ class {"nova::consoleauth":
     enabled => true,
 }
 
-firewall { '001 novncproxy incomming':
+firewall { '001 novncproxy incoming':
     proto    => 'tcp',
     dport    => ['6080'],
     action   => 'accept',
