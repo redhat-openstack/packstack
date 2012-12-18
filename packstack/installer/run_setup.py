@@ -71,8 +71,8 @@ def initSequences():
         controller.addSequence(item['description'], item['condition'], item['condition_match'], item['steps'])
 
 def setDebug():
-    if controller.CONF['CONFIG_DEBUG'] == 'y':
-        logging.root.setLevel(logging.DEBUG) # XXX: this doesn't work at all, will have to refactor
+    if controller.CONF['CONFIG_DEBUG']:
+        logging.root.setLevel(logging.DEBUG)
 
 def initConfig():
     """
@@ -99,9 +99,9 @@ def initConfig():
             {"CMD_OPTION"      : "debug",
              "USAGE"           : "Should we turn on debug in logging",
              "PROMPT"          : "Should we turn on debug in logging",
-             "OPTION_LIST"     : ["y", "n"],
-             "VALIDATION_FUNC" : validate.validateOptions,
-             "DEFAULT_VALUE"   : "n",
+             "OPTION_LIST"     : [],
+             "VALIDATION_FUNC" : lambda a,b: True,
+             "DEFAULT_VALUE"   : False,
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME"       : "CONFIG_DEBUG",
@@ -476,6 +476,8 @@ def _handleAnswerFileParams(answerFile):
 
 def _handleInteractiveParams():
     try:
+        logging.debug("Groups: %s" % ', '.join([x.getKey("GROUP_NAME") for x in controller.getAllGroups()]))
+
         for group in controller.getAllGroups():
             preConditionValue = True
             logging.debug("going over group %s" % group.getKey("GROUP_NAME"))
@@ -569,8 +571,8 @@ def _displaySummary():
                     print "%s:" % (cmdOption) + " " * l + mask(controller.CONF[param.getKey("CONF_NAME")])
                 else:
                     # Otherwise, log & display it as it is
-                    logging.info("%s: %s" % (cmdOption, controller.CONF[param.getKey("CONF_NAME")]))
-                    print "%s:" % (cmdOption) + " " * l + controller.CONF[param.getKey("CONF_NAME")]
+                    logging.info("%s: %s" % (cmdOption, str(controller.CONF[param.getKey("CONF_NAME")])))
+                    print "%s:" % (cmdOption) + " " * l + str(controller.CONF[param.getKey("CONF_NAME")])
     logging.info("*** User input summary ***")
     answer = _askYesNo(output_messages.INFO_USE_PARAMS)
     if not answer:
@@ -707,11 +709,12 @@ def initCmdLineParser():
             paramUsage = param.getKey("USAGE")
             optionsList = param.getKey("OPTION_LIST")
             useDefault = param.getKey("USE_DEFAULT")
+
             if not useDefault:
                 if optionsList:
                     groupParser.add_option("--%s" % cmdOption, metavar=optionsList, help=paramUsage, choices=optionsList)
                 else:
-                    groupParser.add_option("--%s" % cmdOption, help=paramUsage)
+                    groupParser.add_option("--%s" % cmdOption, action="store_true", help=paramUsage)
 
         # Add group parser to main parser
         parser.add_option_group(groupParser)
