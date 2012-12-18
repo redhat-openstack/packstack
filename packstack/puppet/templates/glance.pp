@@ -5,6 +5,7 @@ class {"glance::api":
     keystone_tenant => "services",
     keystone_user => "glance",
     keystone_password => "glance_default_password",
+    sql_connection => "mysql://glance:glance_default_password@%(CONFIG_MYSQL_HOST)s/glance"
 }
 
 class { 'glance::backend::file': }
