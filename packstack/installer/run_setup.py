@@ -72,7 +72,7 @@ def initSequences():
 
 def setDebug():
     if controller.CONF['CONFIG_DEBUG']:
-        logging.root.setLevel(logging.DEBUG)
+        logging.root.setLevel(logging.DEBUG) # XXX: this doesn't work at all, will have to refactor
 
 def initConfig():
     """
