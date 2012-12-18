@@ -3,16 +3,21 @@ Container set for groups and parameters
 """
 class Param(object):
     allowed_keys = ('CMD_OPTION','USAGE','PROMPT','OPTION_LIST',
+                    'PROCESSOR_ARGS', 'PROCESSOR_FUNC', 'PROCESSOR_MSG',
                     'VALIDATION_FUNC','DEFAULT_VALUE','MASK_INPUT','LOOSE_VALIDATION',
                     'CONF_NAME','USE_DEFAULT','NEED_CONFIRM','CONDITION')
 
-    def __init__(self, attributes={}):
-        self.__ATTRIBUTES = {}
-        if attributes:
-            for key in self.allowed_keys:
-                self.__ATTRIBUTES[key] = attributes[key]
-        else:
+    def __init__(self, attributes=None):
+        if not attributes:
             self.__ATTRIBUTES = {}.fromkeys(self.allowed_keys)
+            return
+
+        self.__ATTRIBUTES = {}
+        for key, value in attributes.iteritems():
+            if key not in self.allowed_keys:
+                raise KeyError('Given attribute %s is '
+                               'not allowed' % key)
+            self.__ATTRIBUTES[key] = value
 
     def setKey(self, key, value):
         self.validateKey(key)
@@ -60,11 +65,11 @@ class Group(Param):
             if param.getKey("CONF_NAME") == name:
                 return self.__PARAMS.index(param)
         return None
-    
+
     def insertParamBeforeParam(self, paramName, param):
         """
         Insert a param before a named param.
-        i.e. if the specified param name is "update x", the new 
+        i.e. if the specified param name is "update x", the new
         param will be inserted BEFORE "update x"
         """
         index = self.__getParamIndexByDesc(paramName)

@@ -5,6 +5,7 @@ Installs and configures Cinder
 import logging
 
 import packstack.installer.engine_validators as validate
+import packstack.installer.engine_processors as process
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
@@ -30,6 +31,9 @@ def initConfig(controllerObject):
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validatePing,
                    "DEFAULT_VALUE"   : "127.0.0.1",
+                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
+                   "PROCESSOR_FUNC"  : process.processHost,
+                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_CINDER_HOST",
@@ -77,4 +81,3 @@ def createmanifest():
     manifestfile = "%s_cinder.pp"%controller.CONF['CONFIG_CINDER_HOST']
     manifestdata = getManifestTemplate("cinder.pp")
     appendManifestFile(manifestfile, manifestdata)
-
