@@ -1,4 +1,9 @@
 
+package {"horizon-packages":
+    name => ["python-memcached", "python-netaddr"],
+    notify => Class["horizon"],
+}
+
 class {'horizon':
    secret_key => '%(CONFIG_HORIZON_SECRET_KEY)s',
    keystone_host => '%(CONFIG_KEYSTONE_HOST)s',

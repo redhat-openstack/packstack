@@ -1,6 +1,6 @@
 
 package {"clientlibs":
-    name => ["python-novaclient", "python-keystoneclient", "openstack-glance", "openstack-swift"]
+    name => ["python-novaclient", "python-keystoneclient", "python-glanceclient", "python-swiftclient", "python-cinderclient"]
 }
 
 file {"/root/keystonerc_admin":
