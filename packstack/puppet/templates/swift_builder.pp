@@ -16,7 +16,7 @@ class { 'swift::ringserver':
 }
 
 
-firewall { '001 rsync incomming':
+firewall { '001 rsync incoming':
     proto    => 'tcp',
     dport    => ['873'],
     action   => 'accept',

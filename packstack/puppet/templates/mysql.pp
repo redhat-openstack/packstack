@@ -24,7 +24,7 @@ class {"cinder::db::mysql":
     allowed_hosts => "%%",
 }
 
-firewall { '001 mysql incomming':
+firewall { '001 mysql incoming':
     proto    => 'tcp',
     dport    => ['3306'],
     action   => 'accept',

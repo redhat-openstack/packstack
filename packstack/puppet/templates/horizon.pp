@@ -15,7 +15,7 @@ class {'apache':}
 class {'apache::mod::wsgi':}
 file { '/etc/httpd/conf.d/openstack-dashboard.conf':}
 
-firewall { '001 horizon incomming':
+firewall { '001 horizon incoming':
     proto    => 'tcp',
     dport    => ['80'],
     action   => 'accept',
