@@ -695,7 +695,7 @@ def initCmdLineParser():
     parser = OptionParser(usage)
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other options")
     parser.add_option("--answer-file", help="Runs the configuration in none-interactive mode, extracting all information from the \
-                                            configuration file. using this option excludes all other options)
+                                            configuration file. using this option excludes all other options")
 
     parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file(rst format)")
 
