@@ -19,7 +19,6 @@ $ ./bin/packstack --gen-answer-file=ans.txt
 o set CONFIG_SSH_KEY to a public ssh key to be installed to remote machines
 o Edit 127.0.0.1 to anywhere you want to install a piece of openstack on another server
 o Edit the 3 network interfaces to whatever makes sense in your setup
-o If your testing on a vm then set CONFIG_LIBVIRT_TYPE=qemu
 
 $ ./bin/packstack --answer-file=ans.txt
 
@@ -34,8 +33,6 @@ $ swift list  # if you have installed swift
 
 
 Config options
-CONFIG_LIBVIRT_TYPE :
-        set to kvm if on baremetal or qemu if testing on a vm
 CONFIG_NOVA_COMPUTE_HOSTS :
         a comma seperated list of ip addresses on which to install nova compute
 CONFIG_SWIFT_STORAGE_HOSTS :

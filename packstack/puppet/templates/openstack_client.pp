@@ -1,4 +1,8 @@
 
+package {"clientdeps":
+    name => ["python-iso8601"]
+}
+
 package {"clientlibs":
     name => ["python-novaclient", "python-keystoneclient", "python-glanceclient", "python-swiftclient", "python-cinderclient"]
 }

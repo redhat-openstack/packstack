@@ -1,5 +1,7 @@
 
+import logging
 import os
+import re
 
 from packstack.installer import basedefs
 from packstack.installer.setup_controller import Controller
@@ -9,8 +11,13 @@ controller = Controller()
 PUPPET_DIR = os.path.join(basedefs.DIR_PROJECT_DIR, "puppet")
 PUPPET_TEMPLATE_DIR = os.path.join(PUPPET_DIR, "templates")
 
+
+class PackStackError(Exception):
+    pass
+
+
 class NovaConfig(object):
-    """ 
+    """
     Helper class to create puppet manifest entries for nova_config
     """
     def __init__(self):
@@ -25,19 +32,20 @@ class NovaConfig(object):
             return entry
 
         entry += "nova_config{\n"
-        for k,v in self.options.items():
-            entry += '    "%s": value => "%s";\n'%(k,v)
+        for k, v in self.options.items():
+            entry += '    "%s": value => "%s";\n' % (k, v)
         entry += "}"
         return entry
+
 
 class ManifestFiles(object):
     def __init__(self):
         self.filelist = []
 
-    # continuous manifest file that have the same marker can be 
+    # continuous manifest file that have the same marker can be
     # installed in parallel, if on different servers
     def addFile(self, filename, marker):
-        for f,p in self.filelist:
+        for f, p in self.filelist:
             if f == filename:
                 return
         self.filelist.append((filename, marker,))
@@ -46,9 +54,11 @@ class ManifestFiles(object):
         return [f for f in self.filelist]
 manifestfiles = ManifestFiles()
 
+
 def getManifestTemplate(template_name):
     with open(os.path.join(PUPPET_TEMPLATE_DIR, template_name)) as fp:
-        return fp.read()%controller.CONF
+        return fp.read() % controller.CONF
+
 
 def appendManifestFile(manifest_name, data, marker=''):
     if not os.path.exists(basedefs.PUPPET_MANIFEST_DIR):
@@ -58,10 +68,11 @@ def appendManifestFile(manifest_name, data, marker=''):
     with open(manifestfile, 'a') as fp:
         fp.write("\n")
         fp.write(data)
-   
+
+
 def gethostlist(CONF):
     hosts = []
-    for key,value in CONF.items():
+    for key, value in CONF.items():
         if key.endswith("_HOST"):
             value = value.split('/')[0]
             if value not in hosts:
@@ -73,3 +84,47 @@ def gethostlist(CONF):
                 if host not in hosts:
                     hosts.append(host)
     return hosts
+
+
+_error_exceptions = [
+    # puppet preloads a provider using the mysql command before it is installed
+    re.compile('Command mysql is missing'),
+    # swift puppet module tries to install swift-plugin-s3, there is no such
+    # pakage on RHEL, fixed in the upstream puppet module
+    re.compile('yum.*?install swift-plugin-s3'),
+]
+
+
+def isErrorException(line):
+    for ee in _error_exceptions:
+        if ee.search(line):
+            return True
+    return False
+
+
+_re_errorline = re.compile('err: | Syntax error at')
+_re_color = re.compile('\x1b.*?\d\dm')
+def validate_puppet_logfile(logfile):
+    """
+    Check a puppet log file for errors and raise an error if we find any
+    """
+    fp = open(logfile)
+    data = fp.read()
+    fp.close()
+    manifestfile = os.path.splitext(logfile)[0]
+    for line in data.split('\n'):
+        line = line.strip()
+
+        if _re_errorline.search(line) == None:
+            continue
+
+        message = _re_color.sub('', line)  # remove colors
+        if isErrorException(line):
+            logging.info("Ignoring expected error during puppet run %s : %s" %
+                (manifestfile, message))
+            continue
+
+        message = "Error during puppet run : " + message
+        logging.error("Error  during remote puppet apply of " + manifestfile)
+        logging.error(data)
+        raise PackStackError(message)
