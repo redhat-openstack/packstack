@@ -6,7 +6,7 @@ import logging
 
 import packstack.installer.engine_validators as validate
 import packstack.installer.engine_processors as process
-from packstack.installer import basedefs
+from packstack.installer import basedefs, output_messages
 import packstack.installer.common_utils as utils
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
@@ -65,3 +65,4 @@ def createmanifest():
     manifestfile = "%s_osclient.pp"%controller.CONF['CONFIG_OSCLIENT_HOST']
     manifestdata = getManifestTemplate("openstack_client.pp")
     appendManifestFile(manifestfile, manifestdata)
+    controller.MESSAGES.append(output_messages.INFO_KEYSTONERC%controller.CONF['CONFIG_OSCLIENT_HOST'])
