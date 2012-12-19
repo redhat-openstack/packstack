@@ -30,7 +30,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "A comma seperated list of IP addresses on which to install the Swift proxy services",
                    "PROMPT"          : "A comma seperated list of IP addresses on which to install the Swift proxy services",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validatePing,
+                   "VALIDATION_FUNC" : validate.validateSSH,
                    "DEFAULT_VALUE"   : "127.0.0.1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,

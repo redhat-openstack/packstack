@@ -6,6 +6,7 @@ import re
 import logging
 import output_messages
 import basedefs
+import socket
 import types
 import traceback
 import os
@@ -287,6 +288,44 @@ def validateMultiPing(param, options=[]):
                 return False
         return True
     print "\n" + output_messages.ERR_PING + ".\n"
+    return False
+
+_testedPorts = []
+def validatePort(host, port):
+    """
+    Check that provided host is listening on provided port
+    """
+    key = "%s:%d"%(host, port)
+    # No need to keep checking the same port multiple times
+    if key in _testedPorts:
+        return True
+    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    try:
+        s.connect((host, port))
+        s.shutdown(socket.SHUT_RDWR)
+        s.close()
+    except socket.error as msg:
+        return False
+    _testedPorts.append(key)
+    return True
+
+def validateSSH(param, options=[]):
+    """
+    Check that provided host is listening on port 22
+    """
+    if validatePort(param.strip(), 22):
+        return True
+    print "\n" + output_messages.ERR_SSH%param
+    return False
+
+def validateMultiSSH(param, options=[]):
+    if validateStringNotEmpty(param):
+        hosts = param.split(",")
+        for host in hosts:
+            if validateSSH(host) == False:
+                return False
+        return True
+    print "\n" + output_messages.ERR_SSH%param + ".\n"
     return False
 
 def _validateString(string, minLen, maxLen, regex=".*"):
