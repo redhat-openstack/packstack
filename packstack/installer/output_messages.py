@@ -54,6 +54,7 @@ INFO_STRING_CONTAINS_ILLEGAL_CHARS="String contains illegal characters"
 WARN_WEAK_PASS="Warning: Weak Password."
 
 ERR_PING = "Error: the provided hostname is unreachable"
+ERR_SSH = "Error: could not connect to the ssh server: %s"
 ERR_FILE = "Error: the provided file is not present"
 ERR_CHECK_LOG_FILE_FOR_MORE_INFO="Please check log file %s for more information"
 ERR_YUM_LOCK="Internal Error: Can't edit versionlock "

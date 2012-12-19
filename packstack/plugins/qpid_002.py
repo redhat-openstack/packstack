@@ -29,7 +29,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the QPID service",
                    "PROMPT"          : "The IP address of the server on which to install the QPID service",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validatePing,
+                   "VALIDATION_FUNC" : validate.validateSSH,
                    "DEFAULT_VALUE"   : "127.0.0.1",
                    "PROCESSOR_ARGS"  : {"allow_localhost": True},
                    "PROCESSOR_FUNC"  : process.processHost,
