@@ -604,7 +604,6 @@ def _addFinalInfoMsg():
     successfull install of rhemv
     """
     controller.MESSAGES.append(output_messages.INFO_LOG_FILE_PATH%(logFile))
-    controller.MESSAGES.append(output_messages.INFO_KEYSTONERC)
 
 def _lockRpmVersion():
     """
