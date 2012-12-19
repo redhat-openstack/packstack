@@ -1,5 +1,7 @@
 
+import logging
 import os
+import re
 
 from packstack.installer import basedefs
 from packstack.installer.setup_controller import Controller
@@ -8,6 +10,11 @@ controller = Controller()
 
 PUPPET_DIR = os.path.join(basedefs.DIR_PROJECT_DIR, "puppet")
 PUPPET_TEMPLATE_DIR = os.path.join(PUPPET_DIR, "templates")
+
+
+class PackStackError(Exception):
+    pass
+
 
 class NovaConfig(object):
     """
@@ -77,3 +84,47 @@ def gethostlist(CONF):
                 if host not in hosts:
                     hosts.append(host)
     return hosts
+
+
+_error_exceptions = [
+    # puppet preloads a provider using the mysql command before it is installed
+    re.compile('Command mysql is missing'),
+    # swift puppet module tries to install swift-plugin-s3, there is no such
+    # pakage on RHEL, fixed in the upstream puppet module
+    re.compile('yum.*?install swift-plugin-s3'),
+]
+
+
+def isErrorException(line):
+    for ee in _error_exceptions:
+        if ee.search(line):
+            return True
+    return False
+
+
+_re_errorline = re.compile('err: | Syntax error at')
+_re_color = re.compile('\x1b.*?\d\dm')
+def validate_puppet_logfile(logfile):
+    """
+    Check a puppet log file for errors and raise an error if we find any
+    """
+    fp = open(logfile)
+    data = fp.read()
+    fp.close()
+    manifestfile = os.path.splitext(logfile)[0]
+    for line in data.split('\n'):
+        line = line.strip()
+
+        if _re_errorline.search(line) == None:
+            continue
+
+        message = _re_color.sub('', line)  # remove colors
+        if isErrorException(line):
+            logging.info("Ignoring expected error during puppet run %s : %s" %
+                (manifestfile, message))
+            continue
+
+        message = "Error during puppet run : " + message
+        logging.error("Error  during remote puppet apply of " + manifestfile)
+        logging.error(data)
+        raise PackStackError(message)

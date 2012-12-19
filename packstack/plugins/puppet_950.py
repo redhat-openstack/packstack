@@ -9,7 +9,9 @@ import time
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
-from packstack.modules.ospluginutils import gethostlist, manifestfiles
+from packstack.modules.ospluginutils import gethostlist,\
+                                            manifestfiles,\
+                                            validate_puppet_logfile
 
 # Controller object will be initialized from main flow
 controller = None
@@ -84,19 +86,28 @@ def copyPuppetModules():
 def waitforpuppet(currently_running):
     while currently_running:
         for hostname, log in currently_running:
-            server = utils.ScriptRunner(hostname)
-            server.append("test -e %s"%log)
-            server.append("cat %s"%log)
-            print "Testing if puppet apply is finished : %s"%os.path.split(log)[1],
+            print "Testing if puppet apply is finished : %s" % os.path.split(log)[1],
             try:
-                # Errors are expected here if the puppet run isn't finished so we suppress their logging
-                server.execute(logerrors=False)
-                currently_running.remove((hostname,log))
-                print "OK"
+                # Once a remote puppet run has finished, we retrieve the log
+                # file and check it for errors
+                local_server = utils.ScriptRunner()
+                local_server.append('scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s:%s %s' % (hostname, log, log))
+                # Errors are expected here if the puppet run isn't finished so we suppress logging them
+                local_server.execute(logerrors=False)
+
+                # If we got to this point the puppet apply has finished
+                currently_running.remove((hostname, log))
+
             except Exception, e:
                 # the test raises an exception if the file doesn't exist yet
                 time.sleep(3)
                 print
+                continue
+
+            # check the log file for errors
+            validate_puppet_logfile(log)
+            print "OK"
+
 
 def applyPuppetManifest():
     print
