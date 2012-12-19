@@ -1,4 +1,14 @@
 
+
+if $::is_virtual == "true" {
+    $libvirt_type = "qemu"
+    nova_config{
+        "libvirt_cpu_mode": value => "none";
+    }
+}else{
+    $libvirt_type = "kvm"
+}
+
 nova_config{
     "network_host": value => "%(CONFIG_NOVA_NETWORK_HOST)s";
     "libvirt_inject_partition": value => "-1";
@@ -11,11 +21,11 @@ class {"nova::compute":
 }
 
 class { 'nova::compute::libvirt':
-  libvirt_type                => "%(CONFIG_LIBVIRT_TYPE)s",
+  libvirt_type                => "$libvirt_type",
   vncserver_listen            => "%(CONFIG_NOVA_COMPUTE_HOST)s",
 }
 
-if "%(CONFIG_LIBVIRT_TYPE)s" == "qemu" and $::operatingsystem == "RedHat" {
+if $::is_virtual == "true" and $::operatingsystem == "RedHat" {
     file { "/usr/bin/qemu-system-x86_64":
         ensure => link,
         target => "/usr/libexec/qemu-kvm",

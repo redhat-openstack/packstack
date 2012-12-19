@@ -80,18 +80,6 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "libvirt-type",
-                   "USAGE"           : "The libvirt type to use, if your compute server is bare metal set to kvm, if testing on a vm set to qemu",
-                   "PROMPT"          : "The libvirt type to use, if your compute server is bare metal set to kvm, if testing on a vm set to qemu",
-                   "OPTION_LIST"     : ["qemu", "kvm"],
-                   "VALIDATION_FUNC" : validate.validateOptions,
-                   "DEFAULT_VALUE"   : __get_libvirt_type_default(),
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_LIBVIRT_TYPE",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "novacompute-privif",
                    "USAGE"           : "Private interface for Flat DHCP on the Nova compute servers",
                    "PROMPT"          : "Private interface for Flat DHCP on the Nova compute servers",
@@ -235,11 +223,6 @@ def createcomputemanifest():
             nova_config_options.addOption("flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
             validate.r_validateIF(server, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
 
-        # if on a vm we need to set libvirt_cpu_mode to "none"
-        # see https://bugzilla.redhat.com/show_bug.cgi?id=858311
-        if controller.CONF["CONFIG_LIBVIRT_TYPE"] == "qemu":
-            nova_config_options.addOption("libvirt_cpu_mode", "none")
-
         server.execute()
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
@@ -271,6 +254,3 @@ def createcommonmanifest():
             data = getManifestTemplate("nova_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
 
-def __get_libvirt_type_default():
-    with open('/proc/cpuinfo','r') as f:
-        return ('kvm', 'qemu')['hypervisor' in f.read()]
