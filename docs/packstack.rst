@@ -19,32 +19,37 @@ DESCRIPTION
 OPTIONS
 =======
 
-Global Options
---------------
+Installer Config paramaters
+---------------------------
 
-**CONFIG_GLANCE_INSTALL**      : Selects if packstack does or does not install Glance ['y', 'n']
-
-**CONFIG_CINDER_INSTALL**      : Selects if packstack does or does not install Cinder ['y', 'n']
-
-**CONFIG_NOVA_INSTALL**        : Selects if packstack does or does not install Nova ['y', 'n']
-
-**CONFIG_HORIZON_INSTALL**     : Selects if packstack does or does not install Horizon ['y', 'n']
-
-**CONFIG_SWIFT_INSTALL**       : Selects if packstack does or does not install swift ['y', 'n']
-
-**CONFIG_CLIENT_INSTALL**      : Selects if packstack does or does not install the openstack client packages, a admin "rc" file will also be installed ['y', 'n']
+**CONFIG_DEBUG**               : Should we turn on debug in logging ['y', 'n']
 
 SSH Configs
 ------------
 
-**CONFIG_SSH_KEY**             : Public key to install on servers, if a usable key has not been installed on remote servers the user will be prompted for a password and this key will be installed so the password will not be required again ['/home/derekh/.ssh/id_rsa.pub']
+**CONFIG_SSH_KEY**             : Path to a Public key to install on servers, if a usable key has not been installed on remote servers the user will be prompted for a password and this key will be installed so the password will not be required again
+
+Global Options
+--------------
+
+**CONFIG_GLANCE_INSTALL**      : Set to 'y' if you would like packstack to install Glance ['y', 'n']
+
+**CONFIG_CINDER_INSTALL**      : Set to 'y' if you would like packstack to install Cinder ['y', 'n']
+
+**CONFIG_NOVA_INSTALL**        : Set to 'y' if you would like packstack to install Nova ['y', 'n']
+
+**CONFIG_HORIZON_INSTALL**     : Set to 'y' if you would like packstack to install Horizon ['y', 'n']
+
+**CONFIG_SWIFT_INSTALL**       : Set to 'y' if you would like packstack to install swift ['y', 'n']
+
+**CONFIG_CLIENT_INSTALL**      : Set to 'y' if you would like packstack to install the openstack client packages, an admin "rc" file will also be installed ['y', 'n']
 
 MySQL Config paramaters
 -----------------------
 
 **CONFIG_MYSQL_HOST**          : The IP address of the server on which to install MySQL
 
-**CONFIG_MYSQL_USER**          : Username of the MySQL admin user
+**CONFIG_MYSQL_USER**          : Username for the MySQL admin user
 
 **CONFIG_MYSQL_PW**            : Password for the MySQL admin user
 
@@ -60,7 +65,7 @@ Keystone Config paramaters
 
 **CONFIG_KEYSTONE_ADMINTOKEN** : The token to use for the keystone service api
 
-**CONFIG_KEYSTONE_ADMINPASSWD** : The token password to use for the keystone admin user
+**CONFIG_KEYSTONE_ADMINPASSWD** : The password to use for the keystone admin user
 
 Glance Config paramaters
 ------------------------
@@ -79,9 +84,9 @@ Nova Options
 
 **CONFIG_NOVA_CERT_HOST**      : The IP address of the server on which to install the Nova Cert service
 
-**CONFIG_NOVA_COMPUTE_HOSTS**  : A comma seperated list of IP addresses on which to install the Nova Compute services
+**CONFIG_NOVA_VNCPROXY_HOST**  : The IP address of the server on which to install the Nova VNC proxy
 
-**CONFIG_LIBVIRT_TYPE**        : The libvirt type to use, if your compute server is bare metal set to kvm, if testing on a vm set to qemu ['qemu', 'kvm']
+**CONFIG_NOVA_COMPUTE_HOSTS**  : A comma seperated list of IP addresses on which to install the Nova Compute services
 
 **CONFIG_NOVA_COMPUTE_PRIVIF** : Private interface for Flat DHCP on the Nova compute servers
 
@@ -107,25 +112,31 @@ OpenStack Horizon Config paramaters
 
 **CONFIG_HORIZON_HOST**        : The IP address of the server on which to install Horizon
 
-**CONFIG_HORIZON_SECRET_KEY**  : Keystone Secret Encryption Key
+**CONFIG_HORIZON_SECRET_KEY**  : Horizon Secret Encryption Key
 
 OpenStack Swift Config paramaters
 ---------------------------------
 
-**CONFIG_SWIFT_PROXY_HOSTS**   : A comma seperated list of IP addresses on which to install the Swift proxy services
+**CONFIG_SWIFT_PROXY_HOSTS**   : The IP address on which to install the Swift proxy service
 
 **CONFIG_SWIFT_STORAGE_HOSTS** : A comma seperated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device, if /dev is ommited packstack will create a loopback device for a test setup
 
-**CONFIG_SWIFT_STORAGE_ZONES** : Number of swift storage zones, this number MUST be no bigger then number of storage devices configered
+**CONFIG_SWIFT_STORAGE_ZONES** : Number of swift storage zones, this number MUST be no bigger then number of storage devices configured
 
-**CONFIG_SWIFT_STORAGE_REPLICAS** : Number of swift storage replicas, this number MUST be no bigger then number of storage zones configered
+**CONFIG_SWIFT_STORAGE_REPLICAS** : Number of swift storage replicas, this number MUST be no bigger then number of storage zones configured
 
 **CONFIG_SWIFT_STORAGE_FSTYPE** : FileSystem type for storage nodes ['xfs', 'ext4']
 
 Server Prepare Configs
 -----------------------
 
-**CONFIG_USE_EPEL**            : Install openstack from epel, If set to "n" this causes EPEL to be permanently disabled before installing openstack, i.e. you should have alternative openstack repositories in place ['y', 'n']
+**CONFIG_USE_EPEL**            : Install openstack from epel, If set to "y" EPEL will be installed on each server ['y', 'n']
+
+**CONFIG_REPO**                : A comma seperated list of urls to any additional yum repositories to install
+
+**CONFIG_RH_USERNAME**         : To subscribe each server with redhat subscription manager, include this with CONFIG_RH_PASSWORD
+
+**CONFIG_RH_PASSWORD**         : To subscribe each server with redhat subscription manager, include this with CONFIG_RH_USERNAME
 
 
 SOURCE

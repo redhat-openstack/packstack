@@ -27,7 +27,7 @@ def initConfig(controllerObject):
     paramsList = [
                   {"CMD_OPTION"      : "osclient-host",
                    "USAGE"           : "The IP address of the server on which to install the openstack client packages, an admin \"rc\" file will also be installed",
-                   "PROMPT"          : "The IP address of the server on which to install the openstack client packages, an admin \"rc\" file will also be installed",
+                   "PROMPT"          : "Enter the IP address of the client server",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateSSH,
                    "DEFAULT_VALUE"   : "127.0.0.1",
