@@ -34,7 +34,7 @@ def initConfig(controllerObject):
                  ]
 
     groupDict = {"GROUP_NAME"            : "PUPPET",
-                 "DESCRIPTION"           : "Puppet Config paramaters",
+                 "DESCRIPTION"           : "Puppet Config parameters",
                  "PRE_CONDITION"         : utils.returnYes,
                  "PRE_CONDITION_MATCH"   : "yes",
                  "POST_CONDITION"        : False,

@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                  ]
 
     groupDict = { "GROUP_NAME"            : "GLANCE",
-                  "DESCRIPTION"           : "Glance Config paramaters",
+                  "DESCRIPTION"           : "Glance Config parameters",
                   "PRE_CONDITION"         : "CONFIG_GLANCE_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,
