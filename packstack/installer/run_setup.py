@@ -192,19 +192,25 @@ def input_param(param):
 
 def _askYesNo(question=None):
     message = StringIO()
-    askString = "%s? (yes|no): "%(question)
-    logging.debug("asking user: %s"%askString)
-    message.write(askString)
-    message.seek(0)
-    rawAnswer = raw_input(message.read())
-    logging.debug("user answered: %s"%(rawAnswer))
-    answer = rawAnswer.lower()
-    if answer == "yes" or answer == "y":
-        return True
-    elif answer == "no" or answer == "n":
-        return False
-    else:
-        return _askYesNo(question)
+
+    while True:
+        askString = "\r%s? (yes|no): "%(question)
+        logging.debug("asking user: %s"%askString)
+
+        message.write(askString)
+        message.seek(0)
+
+        raw = raw_input(message.read())
+        if not len(raw):
+            continue
+
+        answer = raw[0].lower()
+        logging.debug("user answered read: %s"%(answer))
+
+        if answer not in 'yn':
+            continue
+
+        return answer == 'y'
 
 def _addDefaultsToMaskedValueSet():
     """
