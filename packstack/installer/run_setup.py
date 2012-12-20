@@ -633,7 +633,7 @@ def initCmdLineParser():
                                             configuration file. using this option excludes all other options")
 
     parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file(rst format)")
-    parser.add_option("-d", "--debug", action="store_true", help="Enable debug in logging")
+    parser.add_option("-d", "--debug", action="store_true", default=False, help="Enable debug in logging")
 
     # For each group, create a group option
     for group in controller.getAllGroups():
@@ -649,7 +649,7 @@ def initCmdLineParser():
                 if optionsList:
                     groupParser.add_option("--%s" % cmdOption, metavar=optionsList, help=paramUsage, choices=optionsList)
                 else:
-                    groupParser.add_option("--%s" % cmdOption, action="store_true", help=paramUsage)
+                    groupParser.add_option("--%s" % cmdOption, help=paramUsage)
 
         # Add group parser to main parser
         parser.add_option_group(groupParser)
@@ -725,6 +725,9 @@ def countCmdLineFlags(options, flag):
     # make sure only flag was supplied
     for key, value  in options.__dict__.items():
         if key == flag:
+            next
+        # Do not count --debug
+        elif key == 'debug':
             next
         # If anything but flag was called, increment
         elif value:
