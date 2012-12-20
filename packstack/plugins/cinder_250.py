@@ -27,7 +27,7 @@ def initConfig(controllerObject):
     paramsList = [
                   {"CMD_OPTION"      : "cinder-host",
                    "USAGE"           : "The IP address of the server on which to install Cinder",
-                   "PROMPT"          : "The IP address of the server on which to install Cinder",
+                   "PROMPT"          : "Enter the IP address of the Cinder server",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateSSH,
                    "DEFAULT_VALUE"   : "127.0.0.1",

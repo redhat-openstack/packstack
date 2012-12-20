@@ -27,7 +27,7 @@ def initConfig(controllerObject):
     paramsList = [
                   {"CMD_OPTION"      : "glance-host",
                    "USAGE"           : "The IP address of the server on which to install Glance",
-                   "PROMPT"          : "The IP address of the server on which to install Glance",
+                   "PROMPT"          : "Enter the IP address of the Glance server",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateSSH,
                    "DEFAULT_VALUE"   : "127.0.0.1",
