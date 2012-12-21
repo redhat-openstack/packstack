@@ -121,7 +121,7 @@ def initConfig():
     """
     conf_groups = (
         { "GROUP_NAME"            : "INSTALLER",
-          "DESCRIPTION"           : "Installer Config paramaters",
+          "DESCRIPTION"           : "Installer Config parameters",
           "PRE_CONDITION"         : utils.returnYes,
           "PRE_CONDITION_MATCH"   : "yes",
           "POST_CONDITION"        : False,

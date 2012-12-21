@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                  ]
 
     groupDict = { "GROUP_NAME"            : "QPIDLANCE",
-                  "DESCRIPTION"           : "QPID Config paramaters",
+                  "DESCRIPTION"           : "QPID Config parameters",
                   "PRE_CONDITION"         : "CONFIG_NOVA_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,

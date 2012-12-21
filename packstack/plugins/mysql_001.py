@@ -68,7 +68,7 @@ def initConfig(controllerObject):
                  ]
 
     groupDict = { "GROUP_NAME"            : "MYSQL",
-                  "DESCRIPTION"           : "MySQL Config paramaters",
+                  "DESCRIPTION"           : "MySQL Config parameters",
                   "PRE_CONDITION"         : utils.returnYes,
                   "PRE_CONDITION_MATCH"   : "yes",
                   "POST_CONDITION"        : False,

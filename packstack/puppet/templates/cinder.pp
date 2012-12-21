@@ -4,6 +4,11 @@ class {'cinder::base':
     sql_connection => "mysql://cinder:cinder_default_password@%(CONFIG_MYSQL_HOST)s/cinder"
 }
 
+cinder_config{
+    "DEFAULT/rpc_backend": value => "cinder.openstack.common.rpc.impl_qpid";
+    "DEFAULT/qpid_hostname": value => "%(CONFIG_QPID_HOST)s";
+}
+
 package {'python-keystone':
     notify => Class['cinder::api'],
 }

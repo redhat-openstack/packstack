@@ -56,7 +56,7 @@ def initConfig(controllerObject):
                  ]
 
     groupDict = { "GROUP_NAME"            : "OSHORIZON",
-                  "DESCRIPTION"           : "OpenStack Horizon Config paramaters",
+                  "DESCRIPTION"           : "OpenStack Horizon Config parameters",
                   "PRE_CONDITION"         : "CONFIG_HORIZON_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,

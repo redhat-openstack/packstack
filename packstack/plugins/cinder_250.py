@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                  ]
 
     groupDict = { "GROUP_NAME"            : "CINDER",
-                  "DESCRIPTION"           : "Cinder Config paramaters",
+                  "DESCRIPTION"           : "Cinder Config parameters",
                   "PRE_CONDITION"         : "CONFIG_CINDER_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,

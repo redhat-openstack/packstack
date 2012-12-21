@@ -26,7 +26,7 @@ def initConfig(controllerObject):
     logging.debug("Adding Openstack client configuration")
     paramsList = [
                   {"CMD_OPTION"      : "osclient-host",
-                   "USAGE"           : "The IP address of the server on which to install the openstack client packages, an admin \"rc\" file will also be installed",
+                   "USAGE"           : "The IP address of the server on which to install the openstack client packages. An admin \"rc\" file will also be installed",
                    "PROMPT"          : "Enter the IP address of the client server",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateSSH,
@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                  ]
 
     groupDict = { "GROUP_NAME"            : "NOVACLIENT",
-                  "DESCRIPTION"           : "NOVACLIENT Config paramaters",
+                  "DESCRIPTION"           : "NOVACLIENT Config parameters",
                   "PRE_CONDITION"         : "CONFIG_CLIENT_INSTALL",
                   "PRE_CONDITION_MATCH"   : "y",
                   "POST_CONDITION"        : False,

@@ -9,9 +9,12 @@ if $::is_virtual == "true" {
     $libvirt_type = "kvm"
 }
 
+package{'python-cinderclient':}
+
 nova_config{
     "network_host": value => "%(CONFIG_NOVA_NETWORK_HOST)s";
     "libvirt_inject_partition": value => "-1";
+    "volume_api_class": value => "nova.volume.cinder.API";
 }
 
 class {"nova::compute":
