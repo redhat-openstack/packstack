@@ -5,6 +5,14 @@ class { 'swift::storage::all':
   require => Class['swift'],
 }
 
+if(!defined(File['/srv/node'])) {
+  file { '/srv/node':
+    owner  => 'swift',
+    group  => 'swift',
+    ensure => directory,
+  }
+}
+
 swift::ringsync{["account","container","object"]:
     ring_server => '%(CONFIG_SWIFT_BUILDER_HOST)s',
     notify => Class['swift::storage::all']
