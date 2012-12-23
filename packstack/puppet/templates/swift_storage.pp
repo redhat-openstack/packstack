@@ -10,12 +10,13 @@ if(!defined(File['/srv/node'])) {
     owner  => 'swift',
     group  => 'swift',
     ensure => directory,
+    require => Package['openstack-swift'],
   }
 }
 
 swift::ringsync{["account","container","object"]:
     ring_server => '%(CONFIG_SWIFT_BUILDER_HOST)s',
-    notify => Class['swift::storage::all']
+    before => Class['swift::storage::all']
 }
 
 firewall { '001 swift storage incoming':
