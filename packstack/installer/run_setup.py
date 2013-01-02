@@ -30,107 +30,37 @@ commandLineValues = {}
 masked_value_set = set()
 
 
-
 class InstallError(Exception):
     pass
 class FlagValidationError(InstallError):
     pass
 
-
-def initLogging(level='INFO'):
+def initLogging (debug):
     global logFile
+
     try:
         #in order to use UTC date for the log file, send True to getCurrentDateTime(True)
         logFilename = "openstack-setup_%s.log" %(utils.getCurrentDateTime())
         logFile = os.path.join(basedefs.DIR_LOG,logFilename)
         if not os.path.isdir(os.path.dirname(logFile)):
             os.makedirs(os.path.dirname(logFile))
-        level = getattr(logging, level)
-        hdlr = logging.FileHandler(filename = logFile, mode='w')
+
+        hdlr = logging.FileHandler (filename = logFile, mode='w')
+        if (debug):
+            level = logging.DEBUG
+        else:
+            level = logging.WARNING
+
         fmts='%(asctime)s::%(levelname)s::%(module)s::%(lineno)d::%(name)s:: %(message)s'
         dfmt='%Y-%m-%d %H:%M:%S'
         fmt = logging.Formatter(fmts, dfmt)
         hdlr.setFormatter(fmt)
+
         logging.root.addHandler(hdlr)
         logging.root.setLevel(level)
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_INIT_LOGGER)
-
-def initSequences():
-    sequences_conf = [
-                      { 'description'     : 'Initial Steps',
-                        'condition'       : [],
-                        'condition_match' : [],
-                        'steps'           : [ { 'title'     : "Pre Plugin Setup",
-                                                'functions' : [setDebug] },]
-                       },
-                     ]
-
-    for item in sequences_conf:
-        controller.addSequence(item['description'], item['condition'], item['condition_match'], item['steps'])
-
-def setDebug():
-    if controller.CONF['CONFIG_DEBUG'] == 'y':
-        logging.root.setLevel(logging.DEBUG) # XXX: this doesn't work at all, will have to refactor
-
-def initConfig():
-    """
-    Initialization of configuration
-    """
-
-    """
-    Param Fields:
-    CMD_OPTION       - the command line flag to use for this option
-    USAGE            - usage to display to the user
-    PROMPT           - text to prompt the user with when querying this param
-    OPTION_LIST      - if set, let the user only choose from this list as answer
-    VALIDATION_FUNC  - Validation function for this param
-    DEFAULT_VALUE    - the default value of this param
-    MASK_INPUT       - should we mask the value of this param in the logs?
-    LOOSE_VALIDATION - (True/False) if True, and validation failed, let the user use the failed value
-    CONF_NAME        - Name of param, must be unique, used as key
-    USE_DEFAULT      - (True/False) Should we use the default value instead of querying the user?
-    NEED_CONFIRM     - (True/False) Do we require the user to confirm the input(used in password fields)
-    CONDITION        - (True/False) is this a condition for a group?
-    """
-    conf_params = {
-        "INSTALLER": [
-            {"CMD_OPTION"      : "debug",
-             "USAGE"           : "Should we turn on debug in logging",
-             "PROMPT"          : "Should we turn on debug in logging",
-             "OPTION_LIST"     : ["y", "n"],
-             "VALIDATION_FUNC" : validate.validateOptions,
-             "DEFAULT_VALUE"   : "n",
-             "MASK_INPUT"      : False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME"       : "CONFIG_DEBUG",
-             "USE_DEFAULT"     : False,
-             "NEED_CONFIRM"    : False,
-             "CONDITION"       : False },
-        ]
-    }
-    """
-    Group fields:
-    GROUP_NAME           - Name of group, used as key
-    DESCRIPTION          - Used to prompt the user when showing the command line options
-    PRE_CONDITION        - Condition to match before going over all params in the group, if fails, will not go into group
-    PRE_CONDITION_MATCH  - Value to match condition with
-    POST_CONDITION       - Condition to match after all params in the groups has been queried. if fails, will re-query all parameters
-    POST_CONDITION_MATCH - Value to match condition with
-    """
-    conf_groups = (
-        { "GROUP_NAME"            : "INSTALLER",
-          "DESCRIPTION"           : "Installer Config parameters",
-          "PRE_CONDITION"         : utils.returnYes,
-          "PRE_CONDITION_MATCH"   : "yes",
-          "POST_CONDITION"        : False,
-          "POST_CONDITION_MATCH"  : True},
-    )
-
-    for group in conf_groups:
-        paramList = conf_params[group["GROUP_NAME"]]
-        controller.addGroup(group, paramList)
 
 def _getInputFromUser(param):
     """
@@ -262,19 +192,25 @@ def input_param(param):
 
 def _askYesNo(question=None):
     message = StringIO()
-    askString = "%s? (yes|no): "%(question)
-    logging.debug("asking user: %s"%askString)
-    message.write(askString)
-    message.seek(0)
-    rawAnswer = raw_input(message.read())
-    logging.debug("user answered: %s"%(rawAnswer))
-    answer = rawAnswer.lower()
-    if answer == "yes" or answer == "y":
-        return True
-    elif answer == "no" or answer == "n":
-        return False
-    else:
-        return _askYesNo(question)
+
+    while True:
+        askString = "\r%s? (yes|no): "%(question)
+        logging.debug("asking user: %s"%askString)
+
+        message.write(askString)
+        message.seek(0)
+
+        raw = raw_input(message.read())
+        if not len(raw):
+            continue
+
+        answer = raw[0].lower()
+        logging.debug("user answered read: %s"%(answer))
+
+        if answer not in 'yn':
+            continue
+
+        return answer == 'y'
 
 def _addDefaultsToMaskedValueSet():
     """
@@ -476,6 +412,8 @@ def _handleAnswerFileParams(answerFile):
 
 def _handleInteractiveParams():
     try:
+        logging.debug("Groups: %s" % ', '.join([x.getKey("GROUP_NAME") for x in controller.getAllGroups()]))
+
         for group in controller.getAllGroups():
             preConditionValue = True
             logging.debug("going over group %s" % group.getKey("GROUP_NAME"))
@@ -569,8 +507,8 @@ def _displaySummary():
                     print "%s:" % (cmdOption) + " " * l + mask(controller.CONF[param.getKey("CONF_NAME")])
                 else:
                     # Otherwise, log & display it as it is
-                    logging.info("%s: %s" % (cmdOption, controller.CONF[param.getKey("CONF_NAME")]))
-                    print "%s:" % (cmdOption) + " " * l + controller.CONF[param.getKey("CONF_NAME")]
+                    logging.info("%s: %s" % (cmdOption, str(controller.CONF[param.getKey("CONF_NAME")])))
+                    print "%s:" % (cmdOption) + " " * l + str(controller.CONF[param.getKey("CONF_NAME")])
     logging.info("*** User input summary ***")
     answer = _askYesNo(output_messages.INFO_USE_PARAMS)
     if not answer:
@@ -651,8 +589,6 @@ def _main(configFile=None):
         print "\n",output_messages.INFO_INSTALL
 
         # Initialize Sequences
-        initSequences()
-
         initPluginsSequences()
 
         # Run main setup logic
@@ -697,6 +633,7 @@ def initCmdLineParser():
                                             configuration file. using this option excludes all other options")
 
     parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file(rst format)")
+    parser.add_option("-d", "--debug", action="store_true", default=False, help="Enable debug in logging")
 
     # For each group, create a group option
     for group in controller.getAllGroups():
@@ -707,6 +644,7 @@ def initCmdLineParser():
             paramUsage = param.getKey("USAGE")
             optionsList = param.getKey("OPTION_LIST")
             useDefault = param.getKey("USE_DEFAULT")
+
             if not useDefault:
                 if optionsList:
                     groupParser.add_option("--%s" % cmdOption, metavar=optionsList, help=paramUsage, choices=optionsList)
@@ -788,6 +726,9 @@ def countCmdLineFlags(options, flag):
     for key, value  in options.__dict__.items():
         if key == flag:
             next
+        # Do not count --debug
+        elif key == 'debug':
+            next
         # If anything but flag was called, increment
         elif value:
             counter += 1
@@ -811,27 +752,8 @@ def initPluginsSequences():
     for plugin in controller.getAllPlugins():
         plugin.initSequences(controller)
 
-
-def initMain():
-    # Initialize logging
-    initLogging()
-
-    # Load Plugins
-    loadPlugins()
-
-    # Initialize configuration
-    initConfig()
-
-    initPluginsConfig()
-
-
 def main():
     try:
-        initMain()
-
-        runConfiguration = True
-        confFile = None
-
         optParser = initCmdLineParser()
 
         # Do the actual command line parsing
@@ -841,6 +763,17 @@ def main():
         if options.options:
             printOptions()
             raise SystemExit
+
+        # Initialize logging
+        initLogging (options.debug)
+
+        # Load Plugins
+        loadPlugins()
+        initPluginsConfig()
+
+        # Parse parameters
+        runConfiguration = True
+        confFile = None
 
         # If --gen-answer-file was supplied, do not run main
         if options.gen_answer_file:
