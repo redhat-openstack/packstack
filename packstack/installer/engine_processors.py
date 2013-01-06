@@ -1,14 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from .common_utils import UtilsNetworkError, forceIP
-
+from .exceptions import ParamProcessingError
 
 
 __all__ = ('ParamProcessingError', 'processHost')
 
-
-class ParamProcessingError(Exception):
-    pass
 
 
 def processHost(param, process_args=None):

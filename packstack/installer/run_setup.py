@@ -18,6 +18,7 @@ import common_utils as utils
 import engine_validators as validate
 import engine_processors as process
 import output_messages
+from .exceptions import FlagValidationError
 
 from setup_controller import Controller
 
@@ -29,11 +30,6 @@ commandLineValues = {}
 #TODO: read default values from conf_param?
 masked_value_set = set()
 
-
-class InstallError(Exception):
-    pass
-class FlagValidationError(InstallError):
-    pass
 
 def initLogging (debug):
     global logFile

@@ -6,8 +6,9 @@ import os
 import platform
 import time
 
-from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
+from packstack.installer import basedefs
+from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.ospluginutils import gethostlist,\
                                             manifestfiles,\
@@ -98,7 +99,7 @@ def waitforpuppet(currently_running):
                 # If we got to this point the puppet apply has finished
                 currently_running.remove((hostname, log))
 
-            except Exception, e:
+            except ScriptRuntimeError, e:
                 # the test raises an exception if the file doesn't exist yet
                 time.sleep(3)
                 print

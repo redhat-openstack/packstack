@@ -18,13 +18,8 @@ import tempfile
 
 import basedefs
 import output_messages
+from .exceptions import NetworkError, ScriptRuntimeError
 
-
-
-class UtilsError(Exception):
-    pass
-class UtilsNetworkError(UtilsError):
-    pass
 
 
 def getColoredText (text, color):
@@ -352,12 +347,12 @@ def host2ip(hostname, allow_localhost=False):
         # given hostname is localhost, return appropriate IP address
         ip = getLocalhostIP()
         if not ip:
-            raise UtilsNetworkError('Failed to get local IP address.')
+            raise NetworkError('Failed to get local IP address.')
         return ip
     except socket.error:
-        raise UtilsNetworkError('Unknown hostname %s.' % hostname)
+        raise NetworkError('Unknown hostname %s.' % hostname)
     except Exception, ex:
-        raise UtilsNetworkError('Unknown error appeared: %s' % repr(ex))
+        raise NetworkError('Unknown error appeared: %s' % repr(ex))
 
 def forceIP(host, allow_localhost=False):
     host = host.strip()
@@ -400,7 +395,7 @@ class ScriptRunner(object):
                 else:
                     logging.debug("============= STDERR ==========")
                     logging.debug(stderrdata)
-                raise Exception("Error running remote script")
+                raise ScriptRuntimeError("Error running remote script")
         else:
             logging.debug(script)
 
