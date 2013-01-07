@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from .common_utils import UtilsNetworkError, forceIP
-from .exceptions import ParamProcessingError
+from .common_utils import forceIP
+from .exceptions import ParamProcessingError, NetworkError
 
 
 __all__ = ('ParamProcessingError', 'processHost')
@@ -16,5 +16,5 @@ def processHost(param, process_args=None):
                 process_args.get('allow_localhost', False)
     try:
         return forceIP(param, allow_localhost=localhost)
-    except UtilsNetworkError, ex:
+    except NetworkError, ex:
         raise ParamProcessingError(str(ex))

@@ -1,6 +1,17 @@
 # -*- coding: utf-8 -*-
 
-__all__ = ()
+__all__ = (
+    'PackStackError',
+
+    'InstallError',
+    'FlagValidationError',
+
+    'PluginError',
+    'ParamProcessingError',
+
+    'NetworkError',
+    'ScriptRuntimeError',
+)
 
 
 class PackStackError(Exception):

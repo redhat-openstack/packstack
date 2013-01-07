@@ -101,6 +101,7 @@ def waitforpuppet(currently_running):
 
             except ScriptRuntimeError, e:
                 # the test raises an exception if the file doesn't exist yet
+                # TO-DO: We need to start testing 'e' for unexpected exceptions
                 time.sleep(3)
                 print
                 continue
