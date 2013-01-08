@@ -66,9 +66,11 @@ def installKeys():
         if '/' in hostname:
             hostname = hostname.split('/')[0]
         server = utils.ScriptRunner(hostname)
-
+        # TODO replace all that with ssh-copy-id
         server.append("mkdir -p ~/.ssh")
-        server.append("grep '%s' ~/.ssh/authorized_keys > /dev/null 2>&1 || echo %s > ~/.ssh/authorized_keys"%(sshkeydata, sshkeydata))
+        server.append("chmod 500 ~/.ssh")
+        server.append("grep '%s' ~/.ssh/authorized_keys > /dev/null 2>&1 || echo %s >> ~/.ssh/authorized_keys"%(sshkeydata, sshkeydata))
+        server.append("chmod 400 ~/.ssh/authorized_keys")
         server.append("restorecon -r ~/.ssh")
         server.execute()
 
