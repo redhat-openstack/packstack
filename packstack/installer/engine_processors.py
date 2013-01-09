@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 
-from .common_utils import forceIP
+import os
+
+from .common_utils import ScriptRunner, forceIP
 from .exceptions import ParamProcessingError, NetworkError
 
 
-__all__ = ('ParamProcessingError', 'processHost')
+__all__ = ('ParamProcessingError', 'processHost', 'processSSHKey')
 
 
 
@@ -18,3 +20,13 @@ def processHost(param, process_args=None):
         return forceIP(param, allow_localhost=localhost)
     except NetworkError, ex:
         raise ParamProcessingError(str(ex))
+
+def processSSHKey(param, process_args=None):
+    if not param:
+        key_file = '%s/.ssh/id_rsa' % os.environ["HOME"]
+        local = ScriptRunner()
+        # create new ssh key
+        local.append('ssh-keygen -f %s -N ""' % key_file)
+        local.execute()
+        param = '%s.pub' % key_file
+    return param
