@@ -5,7 +5,9 @@ Installs and configures ssh keys
 import glob
 import logging
 import os
+import tempfile
 
+import packstack.installer.engine_processors as process
 import packstack.installer.engine_validators as validate
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
@@ -31,6 +33,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the path to your ssh Public key to install on servers",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateFile,
+                   "PROCESSOR_FUNC"  : process.processSSHKey,
                    "DEFAULT_VALUE"   : (glob.glob(os.path.join(os.environ["HOME"], ".ssh/*.pub"))+[""])[0],
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -57,11 +60,10 @@ def initSequences(controller):
     ]
     controller.addSequence("ssh key setup", [], [], puppetsteps)
 
+
 def installKeys():
-    
     with open(controller.CONF["CONFIG_SSH_KEY"]) as fp:
         sshkeydata = fp.read().strip()
-
     for hostname in gethostlist(controller.CONF):
         if '/' in hostname:
             hostname = hostname.split('/')[0]
@@ -69,8 +71,7 @@ def installKeys():
         # TODO replace all that with ssh-copy-id
         server.append("mkdir -p ~/.ssh")
         server.append("chmod 500 ~/.ssh")
-        server.append("grep '%s' ~/.ssh/authorized_keys > /dev/null 2>&1 || echo %s >> ~/.ssh/authorized_keys"%(sshkeydata, sshkeydata))
+        server.append("grep '%s' ~/.ssh/authorized_keys > /dev/null 2>&1 || echo %s >> ~/.ssh/authorized_keys" % (sshkeydata, sshkeydata))
         server.append("chmod 400 ~/.ssh/authorized_keys")
         server.append("restorecon -r ~/.ssh")
         server.execute()
-
