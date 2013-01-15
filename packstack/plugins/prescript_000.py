@@ -7,11 +7,15 @@ import logging
 import packstack.installer.engine_validators as validate
 import packstack.installer.common_utils as utils
 
+from packstack.modules.ospluginutils import gethostlist,\
+                                            getManifestTemplate, \
+                                            appendManifestFile
+
 # Controller object will be initialized from main flow
 controller = None
 
 # Plugin name
-PLUGIN_NAME = "OS-GLOBAL"
+PLUGIN_NAME = "OS-PRESCRIPT"
 
 logging.debug("plugin %s loaded", __name__)
 
@@ -102,4 +106,13 @@ def initConfig(controllerObject):
     controller.addGroup(groupDict, paramsList)
 
 def initSequences(controller):
-    pass
+    osclientsteps = [
+             {'title': 'Running Pre install scripts', 'functions':[createmanifest]}
+    ]
+    controller.addSequence("Running Pre install scripts", [], [], osclientsteps)
+
+def createmanifest():
+    for hostname in gethostlist(controller.CONF):
+        manifestfile = "%s_prescript.pp" % hostname
+        manifestdata = getManifestTemplate("prescript.pp")
+        appendManifestFile(manifestfile, manifestdata)
