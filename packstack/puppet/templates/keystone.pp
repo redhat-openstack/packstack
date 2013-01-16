@@ -9,12 +9,6 @@ class {"keystone::roles::admin":
     admin_tenant => "admin"
 }
 
-class {"openstack::auth_file":
-    admin_password => "%(CONFIG_KEYSTONE_ADMINPASSWD)s",
-    admin_tenant => "admin",
-    keystone_admin_token => "%(CONFIG_KEYSTONE_ADMINTOKEN)s"
-}
-
 class {"keystone::endpoint":
     public_address  => "%(CONFIG_KEYSTONE_HOST)s",
     admin_address  => "%(CONFIG_KEYSTONE_HOST)s",
