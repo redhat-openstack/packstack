@@ -31,7 +31,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the Swift proxy service",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateSSH,
-                   "DEFAULT_VALUE"   : "127.0.0.1",
+                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_SWIFT_PROXY_HOSTS", # TO-DO: Create processor for CSV
@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the Swift Storage servers e.g. host/dev,host/dev",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateStringNotEmpty,
-                   "DEFAULT_VALUE"   : "127.0.0.1",
+                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_SWIFT_STORAGE_HOSTS", # TO-DO: Create processor for CSV
