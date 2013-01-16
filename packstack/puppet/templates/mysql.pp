@@ -4,7 +4,9 @@ class {"mysql::server":
                     root_password => "%(CONFIG_MYSQL_PW)s",}
 }
 
-class {"mysql::server::account_security": }
+class {"mysql::server::account_security":
+    require => Class["mysql::server"],
+}
 
 class {"keystone::db::mysql":
     password      => "keystone_default_password",
