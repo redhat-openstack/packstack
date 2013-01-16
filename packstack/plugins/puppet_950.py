@@ -86,18 +86,19 @@ def copyPuppetModules():
 
 def waitforpuppet(currently_running):
     while currently_running:
-        for hostname, log in currently_running:
-            print "Testing if puppet apply is finished : %s" % os.path.split(log)[1],
+        for hostname, finished_logfile in currently_running:
+            print "Testing if puppet apply is finished : %s" % os.path.splitext(os.path.basename(finished_logfile))[0],
             try:
                 # Once a remote puppet run has finished, we retrieve the log
                 # file and check it for errors
                 local_server = utils.ScriptRunner()
-                local_server.append('scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s:%s %s' % (hostname, log, log))
+                log = finished_logfile.replace(".finished", ".log")
+                local_server.append('scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s:%s %s' % (hostname, finished_logfile, log))
                 # Errors are expected here if the puppet run isn't finished so we suppress logging them
                 local_server.execute(logerrors=False)
 
                 # If we got to this point the puppet apply has finished
-                currently_running.remove((hostname, log))
+                currently_running.remove((hostname, finished_logfile))
 
             except ScriptRuntimeError, e:
                 # the test raises an exception if the file doesn't exist yet
@@ -129,9 +130,10 @@ def applyPuppetManifest():
             print "Applying " + manifest
             server = utils.ScriptRunner(hostname)
 
-            logfile = "%s.log" % manifest
-            currently_running.append((hostname, logfile))
-            command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s_ 2>&1 < /dev/null ; mv %s_ %s ) > /dev/null 2>&1 < /dev/null &" % (basedefs.VAR_DIR, basedefs.VAR_DIR, manifest, logfile, logfile, logfile)
+            running_logfile = "%s.running" % manifest
+            finished_logfile = "%s.finished" % manifest
+            currently_running.append((hostname, finished_logfile))
+            command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s 2>&1 < /dev/null ; mv %s %s ) > /dev/null 2>&1 < /dev/null &" % (basedefs.VAR_DIR, basedefs.VAR_DIR, manifest, running_logfile, running_logfile, finished_logfile)
             server.append("export FACTERLIB=%s/facts"%basedefs.VAR_DIR)
             server.append(command)
             server.execute()
