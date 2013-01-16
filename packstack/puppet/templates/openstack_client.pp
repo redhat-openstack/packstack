@@ -7,7 +7,7 @@ package {"clientlibs":
     name => ["python-novaclient", "python-keystoneclient", "python-glanceclient", "python-swiftclient", "python-cinderclient"]
 }
 
-file {"/root/keystonerc_admin":
+file {"${::home_dir}/keystonerc_admin":
    ensure  => "present",
    content => "export OS_USERNAME=admin
 export OS_TENANT_NAME=admin

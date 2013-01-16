@@ -78,7 +78,7 @@ def copyPuppetModules():
         tar_opts += "--exclude create_resources "
     for hostname in gethostlist(controller.CONF):
         server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
-        server.append("tar %s --dereference -czf - modules | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C %s -xzf -" % (tar_opts, hostname, basedefs.VAR_DIR))
+        server.append("tar %s --dereference -czf - modules facts | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C %s -xzf -" % (tar_opts, hostname, basedefs.VAR_DIR))
         server.append("cd %s" % basedefs.PUPPET_MANIFEST_DIR)
         server.append("tar %s --dereference -czf - ../manifests | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C %s -xzf -" % (tar_opts, hostname, basedefs.VAR_DIR))
     server.execute()
@@ -132,6 +132,7 @@ def applyPuppetManifest():
             logfile = "%s.log" % manifest
             currently_running.append((hostname, logfile))
             command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s_ 2>&1 < /dev/null ; mv %s_ %s ) > /dev/null 2>&1 < /dev/null &" % (basedefs.VAR_DIR, basedefs.VAR_DIR, manifest, logfile, logfile, logfile)
+            server.append("export FACTERLIB=%s/facts"%basedefs.VAR_DIR)
             server.append(command)
             server.execute()
 
