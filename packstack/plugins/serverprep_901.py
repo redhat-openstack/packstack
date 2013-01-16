@@ -111,17 +111,11 @@ def serverprep():
 
         server.append("mkdir -p %s" % basedefs.PUPPET_MANIFEST_DIR)
 
-        # lower priority of EPEL repository
-        # XXX: If somebody knows how to do this using sed, feel free to fix it
+        # set highest priority of RHOS repository if EPEL is installed
         server.append("rpm -q epel-release && yum install -y yum-plugin-priorities || true")
-        subs_cmd = ('rpm -q epel-release && python -c \'import re;'
-                      'f1 = open("%(repo)s"); c1 = f1.read();'
-                      'c2 = re.sub("enabled=1", "enabled=1\npriority=%(priority)s", c1);'
-                      'f2 = open("%(repo)s", "w"); f2.write(c2);'
-                      'f1.close(); f2.close()\' || true')
-        server.append(subs_cmd % {"repo": "/etc/yum.repos.d/epel.repo",
-                                  "priority": 50})
-        server.append(subs_cmd % {"repo": "/etc/yum.repos.d/redhat.repo",
+        subs_cmd = ('rpm -q epel-release && openstack-config --set %(repo_file)s %(repo)s priority %(priority)s || true')
+        server.append(subs_cmd % {"repo_file": "/etc/yum.repos.d/redhat.repo",
+                                  "repo": "rhel-server-ost-6-folsom-rpms",
                                   "priority": 1})
 
         # Add yum repositories if configured
