@@ -30,7 +30,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the QPID service",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateSSH,
-                   "DEFAULT_VALUE"   : "127.0.0.1",
+                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "PROCESSOR_ARGS"  : {"allow_localhost": True},
                    "PROCESSOR_FUNC"  : process.processHost,
                    "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
