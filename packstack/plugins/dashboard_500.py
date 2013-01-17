@@ -41,18 +41,6 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "os-horizon-secretkey",
-                   "USAGE"           : "Horizon Secret Encryption Key",
-                   "PROMPT"          : "Horizon Secret Encryption Key",
-                   "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
-                   "DEFAULT_VALUE"   : uuid.uuid4().hex,
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_HORIZON_SECRET_KEY",
-                   "USE_DEFAULT"     : True,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
                  ]
 
     groupDict = { "GROUP_NAME"            : "OSHORIZON",
@@ -75,6 +63,7 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Horizon", [], [], steps)
 
 def createmanifest():
+    controller.CONF["CONFIG_HORIZON_SECRET_KEY"] = uuid.uuid4().hex
     manifestfile = "%s_horizon.pp"%controller.CONF['CONFIG_HORIZON_HOST']
     manifestdata = getManifestTemplate("horizon.pp")
     appendManifestFile(manifestfile, manifestdata)
