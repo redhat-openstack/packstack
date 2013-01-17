@@ -22,12 +22,22 @@ def processHost(param, process_args=None):
         raise ParamProcessingError(str(ex))
 
 def processSSHKey(param, process_args=None):
+    """
+    Generates SSH key if given key in param doesn't exist. In case param
+    is an empty string it generates default SSH key ($HOME/.ssh/id_rsa).
+    """
+    def create_key(path):
+        local = ScriptRunner()
+        # create new ssh key
+        local.append('ssh-keygen -f %s -N ""' % path)
+        local.execute()
+
     if not param:
         key_file = '%s/.ssh/id_rsa' % os.environ["HOME"]
         param = '%s.pub' % key_file
         if not os.path.isfile(param):
-            local = ScriptRunner()
-            # create new ssh key
-            local.append('ssh-keygen -f %s -N ""' % key_file)
-            local.execute()
+            create_key(key_file)
+    elif not os.path.isfile(param):
+        key_file = param.endswith('.pub') and param[:-4] or param
+        create_key(key_file)
     return param
