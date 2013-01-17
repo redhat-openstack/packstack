@@ -135,4 +135,5 @@ def serverprep():
             server.append("yum clean all")
             server.append("yum-config-manager --enable rhel-server-ost-6-folsom-rpms")
 
+        server.append("yum clean metadata")
         server.execute(maskList=[controller.CONF["CONFIG_RH_PASSWORD"].strip()])
