@@ -9,7 +9,9 @@ if $::is_virtual == "true" {
     $libvirt_type = "kvm"
 }
 
-package{'python-cinderclient':}
+package{'python-cinderclient':
+    before => Class["nova"]
+}
 
 nova_config{
     "network_host": value => "%(CONFIG_NOVA_NETWORK_HOST)s";
