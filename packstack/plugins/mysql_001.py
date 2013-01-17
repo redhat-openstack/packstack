@@ -58,7 +58,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the password for the MySQL admin user",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateStringNotEmpty,
-                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:6],
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_MYSQL_PW",
