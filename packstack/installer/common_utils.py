@@ -169,6 +169,7 @@ def _maskString(string, maskList=[]):
     """
     maskedStr = string
     for maskItem in maskList:
+        if not maskItem: continue
         maskedStr = maskedStr.replace(maskItem, "*"*8)
 
     return maskedStr
@@ -370,34 +371,32 @@ class ScriptRunner(object):
     def append(self, s):
         self.script.append(s)
 
-    def execute(self, logerrors=True):
+    def execute(self, logerrors=True, maskList=[]):
         script = "\n".join(self.script)
         logging.debug("# ============ ssh : %r =========="%self.ip)
-        if not False: #config.justprint:
-            _PIPE = subprocess.PIPE  # pylint: disable=E1101
-            if self.ip:
-                obj = subprocess.Popen(["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "root@%s"%self.ip, "bash -x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
-                                        close_fds=True, shell=False)
-            else:
-                obj = subprocess.Popen(["bash", "-x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
-                                        close_fds=True, shell=False)
 
-            logging.debug(script)
-            script = "function t(){ exit $? ; } \n trap t ERR \n" + script
-            stdoutdata, stderrdata = obj.communicate(script)
-            logging.debug("============ STDOUT ==========")
-            logging.debug(stdoutdata)
-            _returncode = obj.returncode
-            if _returncode:
-                if logerrors:
-                    logging.error("============= STDERR ==========")
-                    logging.error(stderrdata)
-                else:
-                    logging.debug("============= STDERR ==========")
-                    logging.debug(stderrdata)
-                raise ScriptRuntimeError("Error running remote script")
+        _PIPE = subprocess.PIPE  # pylint: disable=E1101
+        if self.ip:
+            obj = subprocess.Popen(["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "root@%s"%self.ip, "bash -x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
+                                    close_fds=True, shell=False)
         else:
-            logging.debug(script)
+            obj = subprocess.Popen(["bash", "-x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
+                                    close_fds=True, shell=False)
+
+        logging.debug(_maskString(script, maskList))
+        script = "function t(){ exit $? ; } \n trap t ERR \n" + script
+        stdoutdata, stderrdata = obj.communicate(script)
+        logging.debug("============ STDOUT ==========")
+        logging.debug(_maskString(stdoutdata, maskList))
+        _returncode = obj.returncode
+        if _returncode:
+            if logerrors:
+                logging.error("============= STDERR ==========")
+                logging.error(_maskString(stderrdata, maskList))
+            else:
+                logging.debug("============= STDERR ==========")
+                logging.debug(_maskString(stderrdata, maskList))
+            raise ScriptRuntimeError("Error running remote script")
 
     def template(self, src, dst, varsdict):
         with open(src) as fp:

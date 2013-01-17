@@ -66,7 +66,7 @@ def initConfig(controllerObject):
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : lambda a,b: True,
                    "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : False,
+                   "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_RH_PASSWORD",
                    "USE_DEFAULT"     : False,
@@ -135,4 +135,4 @@ def serverprep():
             server.append("yum clean all")
             server.append("yum-config-manager --enable rhel-server-ost-6-folsom-rpms")
 
-        server.execute()
+        server.execute(maskList=[controller.CONF["CONFIG_RH_PASSWORD"].strip()])
