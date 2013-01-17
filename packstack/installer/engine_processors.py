@@ -24,9 +24,10 @@ def processHost(param, process_args=None):
 def processSSHKey(param, process_args=None):
     if not param:
         key_file = '%s/.ssh/id_rsa' % os.environ["HOME"]
-        local = ScriptRunner()
-        # create new ssh key
-        local.append('ssh-keygen -f %s -N ""' % key_file)
-        local.execute()
         param = '%s.pub' % key_file
+        if not os.path.isfile(param):
+            local = ScriptRunner()
+            # create new ssh key
+            local.append('ssh-keygen -f %s -N ""' % key_file)
+            local.execute()
     return param
