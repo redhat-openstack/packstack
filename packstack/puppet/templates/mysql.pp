@@ -4,8 +4,21 @@ class {"mysql::server":
                     root_password => "%(CONFIG_MYSQL_PW)s",}
 }
 
-class {"mysql::server::account_security":
-    require => Class["mysql::server"],
+# deleting database users for security
+# this is done in mysql::server::account_security but has problems
+# when there is no fqdn, so we're defining a slightly different one here
+database_user { [ 'root@127.0.0.1', 'root@::1', '@localhost', '@%%' ]:
+    ensure  => 'absent', require => Class['mysql::config'],
+}
+if ($::fqdn != "") {
+    database_user { [ "root@${::fqdn}", "@${::fqdn}"]:
+        ensure  => 'absent', require => Class['mysql::config'],
+    }
+}
+if ($::fqdn != $::hostname) {
+    database_user { ["root@${::hostname}", "@${::hostname}"]:
+        ensure  => 'absent', require => Class['mysql::config'],
+    }
 }
 
 class {"keystone::db::mysql":
