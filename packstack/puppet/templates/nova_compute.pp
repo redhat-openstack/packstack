@@ -1,6 +1,6 @@
 
 
-if $::is_virtual == "true" {
+if $::is_virtual_packstack == "true" {
     $libvirt_type = "qemu"
     nova_config{
         "libvirt_cpu_mode": value => "none";
@@ -30,7 +30,7 @@ class { 'nova::compute::libvirt':
   vncserver_listen            => "%(CONFIG_NOVA_COMPUTE_HOST)s",
 }
 
-if $::is_virtual == "true" and $::operatingsystem == "RedHat" {
+if $::is_virtual_packstack == "true" and $::operatingsystem == "RedHat" {
     file { "/usr/bin/qemu-system-x86_64":
         ensure => link,
         target => "/usr/libexec/qemu-kvm",
