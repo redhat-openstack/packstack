@@ -396,7 +396,7 @@ class ScriptRunner(object):
             else:
                 logging.debug("============= STDERR ==========")
                 logging.debug(_maskString(stderrdata, maskList))
-            raise ScriptRuntimeError("Error running remote script")
+            raise ScriptRuntimeError("Error running remote script: %s" % stdoutdata)
 
     def template(self, src, dst, varsdict):
         with open(src) as fp:
