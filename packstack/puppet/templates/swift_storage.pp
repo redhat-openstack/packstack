@@ -16,7 +16,8 @@ if(!defined(File['/srv/node'])) {
 
 swift::ringsync{["account","container","object"]:
     ring_server => '%(CONFIG_SWIFT_BUILDER_HOST)s',
-    before => Class['swift::storage::all']
+    before => Class['swift::storage::all'],
+    require => Class['swift'],
 }
 
 firewall { '001 swift storage incoming':
