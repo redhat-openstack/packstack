@@ -6,5 +6,5 @@ nova_config{
 
 class {"nova":
     glance_api_servers => "%(CONFIG_GLANCE_HOST)s:9292",
-    sql_connection => "mysql://nova:nova_default_password@%(CONFIG_MYSQL_HOST)s/nova",
+    sql_connection => "mysql://nova:%(CONFIG_NOVA_DB_PW)s@%(CONFIG_MYSQL_HOST)s/nova",
 }

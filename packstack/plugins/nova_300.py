@@ -2,8 +2,9 @@
 Installs and configures nova
 """
 
-import logging
 import os
+import uuid
+import logging
 
 import packstack.installer.engine_validators as validate
 import packstack.installer.engine_processors as process
@@ -106,6 +107,30 @@ def initConfig(controllerObject):
                    "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "nova-db-passwd",
+                   "USAGE"           : "The password to use for the Nova to access DB",
+                   "PROMPT"          : "Enter the password for the Nova DB access",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_NOVA_DB_PW",
+                   "USE_DEFAULT"     : True,
+                   "NEED_CONFIRM"    : True,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "nova-ks-passwd",
+                   "USAGE"           : "The password to use for the Nova to authenticate with Keystone",
+                   "PROMPT"          : "Enter the password for the Nova Keystone access",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_NOVA_KS_PW",
+                   "USE_DEFAULT"     : True,
+                   "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "novanetwork-pubif",
                    "USAGE"           : "Public interface on the Nova network server",
@@ -253,4 +278,3 @@ def createcommonmanifest():
         if manifestfile.endswith("_nova.pp"):
             data = getManifestTemplate("nova_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
-

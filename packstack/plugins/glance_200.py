@@ -2,6 +2,7 @@
 Installs and configures Glance
 """
 
+import uuid
 import logging
 
 import packstack.installer.engine_validators as validate
@@ -39,6 +40,30 @@ def initConfig(controllerObject):
                    "CONF_NAME"       : "CONFIG_GLANCE_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "glance-db-passwd",
+                   "USAGE"           : "The password to use for the Glance to access DB",
+                   "PROMPT"          : "Enter the password for the Glance DB access",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_GLANCE_DB_PW",
+                   "USE_DEFAULT"     : True,
+                   "NEED_CONFIRM"    : True,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "glance-ks-passwd",
+                   "USAGE"           : "The password to use for the Glance to authenticate with Keystone",
+                   "PROMPT"          : "Enter the password for the Glance Keystone access",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_GLANCE_KS_PW",
+                   "USE_DEFAULT"     : True,
+                   "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
                  ]
 
