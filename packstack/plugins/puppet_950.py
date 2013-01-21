@@ -134,7 +134,8 @@ def applyPuppetManifest():
             finished_logfile = "%s.finished" % manifest
             currently_running.append((hostname, finished_logfile))
             command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s 2>&1 < /dev/null ; mv %s %s ) > /dev/null 2>&1 < /dev/null &" % (basedefs.VAR_DIR, basedefs.VAR_DIR, manifest, running_logfile, running_logfile, finished_logfile)
-            server.append("export FACTERLIB=$FACTERLIB:%s/facts" % basedefs.VAR_DIR)
+            if not manifest.endswith('_horizon.pp'):
+                server.append("export FACTERLIB=$FACTERLIB:%s/facts" % basedefs.VAR_DIR)
             server.append(command)
             server.execute()
 
