@@ -49,7 +49,7 @@ class { 'swift::proxy::keystone':
 class { 'swift::proxy::authtoken':
     admin_user        => 'swift',
     admin_tenant_name => 'services',
-    admin_password    => 'swift_default_password',
+    admin_password    => '%(CONFIG_SWIFT_KS_PW)s',
     # assume that the controller host is the swift api server
     auth_host         => '%(CONFIG_KEYSTONE_HOST)s',
 }

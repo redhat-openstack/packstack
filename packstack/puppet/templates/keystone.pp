@@ -1,6 +1,6 @@
 class {"keystone":
     admin_token => "%(CONFIG_KEYSTONE_ADMINTOKEN)s",
-    sql_connection => "mysql://keystone_admin:keystone_default_password@%(CONFIG_MYSQL_HOST)s/keystone",
+    sql_connection => "mysql://keystone_admin:%(CONFIG_KEYSTONE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/keystone",
 }
 
 class {"keystone::roles::admin":
@@ -20,4 +20,3 @@ firewall { '001 keystone incoming':
     dport    => ['5000', '35357'],
     action   => 'accept',
 }
-

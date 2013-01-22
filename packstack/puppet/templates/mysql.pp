@@ -22,22 +22,22 @@ if ($::fqdn != $::hostname) {
 }
 
 class {"keystone::db::mysql":
-    password      => "keystone_default_password",
+    password      => "%(CONFIG_KEYSTONE_DB_PW)s",
     allowed_hosts => "%%",
 }
 
 class {"glance::db::mysql":
-    password      => "glance_default_password",
+    password      => "%(CONFIG_GLANCE_DB_PW)s",
     allowed_hosts => "%%",
 }
 
 class {"nova::db::mysql":
-    password      => "nova_default_password",
+    password      => "%(CONFIG_NOVA_DB_PW)s",
     allowed_hosts => "%%",
 }
 
 class {"cinder::db::mysql":
-    password      => "cinder_default_password",
+    password      => "%(CONFIG_CINDER_DB_PW)s",
     allowed_hosts => "%%",
 }
 

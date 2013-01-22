@@ -2,6 +2,7 @@
 Installs and configures Cinder
 """
 
+import uuid
 import logging
 
 import packstack.installer.engine_validators as validate
@@ -39,6 +40,30 @@ def initConfig(controllerObject):
                    "CONF_NAME"       : "CONFIG_CINDER_HOST",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "cinder-db-passwd",
+                   "USAGE"           : "The password to use for the Cinder to access DB",
+                   "PROMPT"          : "Enter the password for the Cinder DB access",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_CINDER_DB_PW",
+                   "USE_DEFAULT"     : True,
+                   "NEED_CONFIRM"    : True,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "cinder-ks-passwd",
+                   "USAGE"           : "The password to use for the Cinder to authenticate with Keystone",
+                   "PROMPT"          : "Enter the password for the Cinder Keystone access",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_CINDER_KS_PW",
+                   "USE_DEFAULT"     : True,
+                   "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
                  ]
 

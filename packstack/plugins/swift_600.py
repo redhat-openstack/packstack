@@ -2,6 +2,7 @@
 Installs and configures an openstack swift
 """
 
+import uuid
 import logging
 import os
 
@@ -37,6 +38,18 @@ def initConfig(controllerObject):
                    "CONF_NAME"       : "CONFIG_SWIFT_PROXY_HOSTS", # TO-DO: Create processor for CSV
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-swift-ks-passwd",
+                   "USAGE"           : "The password to use for the Swift to authenticate with Keystone",
+                   "PROMPT"          : "Enter the password for the Swift Keystone access",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_SWIFT_KS_PW",
+                   "USE_DEFAULT"     : True,
+                   "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "os-swift-storage",
                    "USAGE"           : "A comma separated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device, if /dev is omitted Packstack will create a loopback device for a test setup",
