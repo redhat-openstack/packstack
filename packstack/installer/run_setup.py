@@ -9,7 +9,7 @@ from StringIO import StringIO
 import traceback
 import types
 import uuid
-
+import textwrap
 
 from optparse import OptionParser, OptionGroup
 
@@ -603,14 +603,23 @@ def _main(configFile=None):
         _summaryParamsToLog()
 
 def generateAnswerFile(outputFile):
-    content = StringIO()
-    fd = open(outputFile,"w")
-    content.write("[general]%s"%(os.linesep))
-    for group in controller.getAllGroups():
-        for param in group.getAllParams():
-            content.write("%s=%s%s" % (param.getKey("CONF_NAME"), param.getKey("DEFAULT_VALUE"), os.linesep))
-    content.seek(0)
-    fd.write(content.read())
+    sep = os.linesep
+    fmt = ("%(comment)s%(separator)s%(conf_name)s=%(default_value)s"
+           "%(separator)s")
+    with open(outputFile, "w") as ans_file:
+        ans_file.write("[general]%s" % os.linesep)
+        for group in controller.getAllGroups():
+            for param in group.getAllParams():
+                comm = param.getKey("USAGE") or ''
+                comm = textwrap.fill(comm,
+                                     initial_indent='%s# ' % sep,
+                                     subsequent_indent='# ',
+                                     break_long_words=False)
+                args = {'separator': sep,
+                        'comment': comm,
+                        'conf_name': param.getKey("CONF_NAME"),
+                        'default_value': param.getKey("DEFAULT_VALUE")}
+                ans_file.write(fmt % args)
     os.chmod(outputFile, 0600)
 
 
