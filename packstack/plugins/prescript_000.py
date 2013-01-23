@@ -2,6 +2,7 @@
 Plugin responsible for setting Openstack global options
 """
 
+import uuid
 import logging
 
 import packstack.installer.engine_validators as validate
@@ -96,6 +97,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "ntp-severs",
+                   "USAGE"           : "Comma separated list of NTP servers. Leave plain if packstack should not install ntpd on instances.",
+                   "PROMPT"          : "Enter list of NTP server(s). Leave plain if packstack should not install ntpd on instances.",
+                   "OPTION_LIST"     : [],
+                   "VALIDATION_FUNC" : lambda param, options: True,
+                   "DEFAULT_VALUE"   : '',
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_NTP_SERVERS",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                  ]
     groupDict = { "GROUP_NAME"            : "GLOBAL",
                   "DESCRIPTION"           : "Global Options",
@@ -111,8 +124,34 @@ def initSequences(controller):
     ]
     controller.addSequence("Running Pre install scripts", [], [], osclientsteps)
 
+    if controller.CONF['CONFIG_NTP_SERVERS']:
+        ntp_step = [{'functions': [create_ntp_manifest],
+                     'title': 'Installing time synchronization via NTP'}]
+        controller.addSequence('Installing time synchronization via NTP', [], [], ntp_step)
+    else:
+        controler.MESSAGES.append('Time synchronization installation was '
+                                  'skipped. Please note that unsynchronized '
+                                  'time on server instances might be problem '
+                                  'for some OpenStack components.')
+
 def createmanifest():
     for hostname in gethostlist(controller.CONF):
         manifestfile = "%s_prescript.pp" % hostname
         manifestdata = getManifestTemplate("prescript.pp")
         appendManifestFile(manifestfile, manifestdata)
+
+def create_ntp_manifest():
+    servers = ''
+    for srv in controller.CONF['CONFIG_NTP_SERVERS'].split(','):
+        srv = srv.strip()
+        validate.validatePing(srv)
+        servers += 'server %s\n' % srv
+        controller.CONF.setdefault('CONFIG_NTP_FIRST_SERVER', srv)
+    controller.CONF['CONFIG_NTP_SERVERS'] = servers
+
+    marker = uuid.uuid4().hex[:16]
+    for hostname in gethostlist(controller.CONF):
+        manifestdata = getManifestTemplate('ntpd.pp')
+        appendManifestFile('%s_ntpd.pp' % hostname,
+                           manifestdata,
+                           marker=marker)
