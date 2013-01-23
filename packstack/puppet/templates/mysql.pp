@@ -21,25 +21,12 @@ if ($::fqdn != $::hostname) {
     }
 }
 
+
 class {"keystone::db::mysql":
     password      => "%(CONFIG_KEYSTONE_DB_PW)s",
     allowed_hosts => "%%",
 }
 
-class {"glance::db::mysql":
-    password      => "%(CONFIG_GLANCE_DB_PW)s",
-    allowed_hosts => "%%",
-}
-
-class {"nova::db::mysql":
-    password      => "%(CONFIG_NOVA_DB_PW)s",
-    allowed_hosts => "%%",
-}
-
-class {"cinder::db::mysql":
-    password      => "%(CONFIG_CINDER_DB_PW)s",
-    allowed_hosts => "%%",
-}
 
 firewall { '001 mysql incoming':
     proto    => 'tcp',

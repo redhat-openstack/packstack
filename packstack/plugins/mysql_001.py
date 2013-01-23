@@ -84,7 +84,23 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing MySQL", [], [], mysqlsteps)
 
+
 def createmanifest():
-    manifestfile = "%s_mysql.pp"%controller.CONF['CONFIG_MYSQL_HOST']
-    manifestdata = getManifestTemplate("mysql.pp")
-    appendManifestFile(manifestfile, manifestdata, 'pre')
+    host = controller.CONF['CONFIG_MYSQL_HOST']
+    manifestfile = "%s_mysql.pp" % host
+    manifestdata = [getManifestTemplate("mysql.pp")]
+
+    def append_for(module):
+        # Modules have be appended to the existing mysql.pp
+        # otherwise pp will fail for some of them saying that
+        # Mysql::Config definition is missing.
+        manifestdata.append(getManifestTemplate("mysql_%s.pp" % module))
+
+    if controller.CONF['CONFIG_NOVA_INSTALL'] == "y":
+        append_for("nova")
+    if controller.CONF['CONFIG_CINDER_INSTALL'] == "y":
+        append_for("cinder")
+    if controller.CONF['CONFIG_GLANCE_INSTALL'] == "y":
+        append_for("glance")
+
+    appendManifestFile(manifestfile, "\n".join(manifestdata), 'pre')
