@@ -20,6 +20,7 @@ import engine_processors as process
 import output_messages
 from .exceptions import FlagValidationError
 
+import engine_validators as validate
 from setup_controller import Controller
 
 controller = Controller()
@@ -77,8 +78,9 @@ def _getInputFromUser(param):
                     message = StringIO()
                     message.write(param.getKey("PROMPT"))
 
-                    if type(param.getKey("OPTION_LIST")) == types.ListType and len(param.getKey("OPTION_LIST")) > 0:
-                        message.write(" %s" % (str(param.getKey("OPTION_LIST")).replace(',', '|')))
+                    if not param.getKey("VALIDATION_FUNC") == validate.validateRe \
+                                                and param.getKey("OPTION_LIST"):
+                        message.write(" [%s]" % "|".join(param.getKey("OPTION_LIST")))
 
                     if param.getKey("DEFAULT_VALUE"):
                         message.write("  [%s] " % (str(param.getKey("DEFAULT_VALUE"))))
