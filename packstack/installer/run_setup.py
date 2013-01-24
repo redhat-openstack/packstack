@@ -37,12 +37,12 @@ def initLogging (debug):
 
     try:
         #in order to use UTC date for the log file, send True to getCurrentDateTime(True)
-        logFilename = "openstack-setup_%s.log" %(utils.getCurrentDateTime())
-        logFile = os.path.join(basedefs.DIR_LOG,logFilename)
+        logFilename = "openstack-setup.log"
+        logFile = os.path.join(basedefs.DIR_LOG, logFilename)
         if not os.path.isdir(os.path.dirname(logFile)):
             os.makedirs(os.path.dirname(logFile))
 
-        hdlr = logging.FileHandler (filename = logFile, mode='w')
+        hdlr = logging.FileHandler (filename=logFile, mode='w')
         if (debug):
             level = logging.DEBUG
         else:

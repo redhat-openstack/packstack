@@ -1,13 +1,15 @@
 """
 provides all the predefined variables for engine-setup
 """
-import os, sys, uuid
+import os
+import sys
+import datetime
 
 APP_NAME = "Installer"
 
 FILE_YUM_VERSION_LOCK = "/etc/yum/pluginconf.d/versionlock.list"
 
-VAR_DIR = os.path.join("/var/tmp", str(uuid.uuid4()))
+VAR_DIR = os.path.join("/var/tmp/packstack", datetime.datetime.now().strftime('%Y%m%d-%H%M'))
 DIR_LOG = VAR_DIR
 PUPPET_MANIFEST_DIR = os.path.join(VAR_DIR, "manifests")
 
