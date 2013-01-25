@@ -102,8 +102,12 @@ def isErrorException(line):
     return False
 
 
-_re_errorline = re.compile('err: | Syntax error at|^Duplicate definition:|^Parameter name failed:')
 _re_color = re.compile('\x1b.*?\d\dm')
+_re_errorline = re.compile('err: | Syntax error at|^Duplicate definition:|'
+                           '^Parameter name failed:|'
+                           '^No matching value for selector param')
+
+
 def validate_puppet_logfile(logfile):
     """
     Check a puppet log file for errors and raise an error if we find any
@@ -115,7 +119,7 @@ def validate_puppet_logfile(logfile):
     for line in data.split('\n'):
         line = line.strip()
 
-        if _re_errorline.search(line) == None:
+        if _re_errorline.search(line) is None:
             continue
 
         message = _re_color.sub('', line)  # remove colors

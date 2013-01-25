@@ -14,9 +14,12 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import os
 from test import TestCase
 
-from packstack.modules.ospluginutils import gethostlist
+from packstack.modules.ospluginutils import gethostlist, \
+                                            validate_puppet_logfile, \
+                                            PackStackError
 
 
 class OSPluginUtilsTestCase(TestCase):
@@ -26,3 +29,19 @@ class OSPluginUtilsTestCase(TestCase):
         hosts = gethostlist(conf)
         hosts.sort()
         self.assertEquals(['1.1.1.1', '2.2.2.2', '3.3.3.3'], hosts)
+
+    def test_validate_puppet_logfile(self):
+        filename = os.path.join(self.tempdir, "puppet.log")
+        fp = open(filename, "w")
+        fp.write("Everything went ok")
+        fp.close()
+
+        validate_puppet_logfile(filename)
+
+    def test_validate_puppet_logfile_error(self):
+        filename = os.path.join(self.tempdir, "puppet.log")
+        fp = open(filename, "w")
+        fp.write("No matching value for selector param 'Fedora' ...")
+        fp.close()
+
+        self.assertRaises(PackStackError, validate_puppet_logfile, filename)
