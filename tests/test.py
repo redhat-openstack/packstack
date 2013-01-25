@@ -14,12 +14,17 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import shutil
+import tempfile
+
 from unittest import TestCase
 
 
 class TestCase(TestCase):
     def setUp(self):
-        pass
+        # Creating a temp directory that can be used by tests
+        self.tempdir = tempfile.mkdtemp()
 
     def tearDown(self):
-        pass
+        # remove the temp directory
+        shutil.rmtree(self.tempdir)
