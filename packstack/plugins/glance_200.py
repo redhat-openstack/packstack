@@ -78,7 +78,11 @@ def initConfig(controllerObject):
 
 
 def initSequences(controller):
-    if controller.CONF['CONFIG_GLANCE_INSTALL'] != 'y':
+    conf = controller.CONF
+    if conf['CONFIG_GLANCE_INSTALL'] != 'y':
+        if conf['CONFIG_NOVA_INSTALL'] == 'y':
+            raise RuntimeError('Glance is required to instal Nova properly. '
+                               'Please set CONFIG_GLANCE_INSTALL=y')
         return
 
     glancesteps = [
@@ -88,11 +92,11 @@ def initSequences(controller):
     controller.addSequence("Installing Glance", [], [], glancesteps)
 
 def createkeystonemanifest():
-    manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
+    manifestfile = "%s_keystone.pp" % controller.CONF['CONFIG_KEYSTONE_HOST']
     manifestdata = getManifestTemplate("keystone_glance.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 def createmanifest():
-    manifestfile = "%s_glance.pp"%controller.CONF['CONFIG_GLANCE_HOST']
+    manifestfile = "%s_glance.pp" % controller.CONF['CONFIG_GLANCE_HOST']
     manifestdata = getManifestTemplate("glance.pp")
     appendManifestFile(manifestfile, manifestdata)
