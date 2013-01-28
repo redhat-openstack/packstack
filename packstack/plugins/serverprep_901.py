@@ -128,12 +128,13 @@ def serverprep():
 
         # Subscribe to Red Hat Repositories if configured
         RH_USERNAME = controller.CONF["CONFIG_RH_USERNAME"].strip()
+        RH_PASSWORD = controller.CONF["CONFIG_RH_PASSWORD"].strip()
         if RH_USERNAME:
-            server.append("subscription-manager register --username=%s --password=%s --autosubscribe || true" % (RH_USERNAME, controller.CONF["CONFIG_RH_PASSWORD"].strip()))
+            server.append("subscription-manager register --username=\"%s\" --password=\"%s\" --autosubscribe || true" % (RH_USERNAME, RH_PASSWORD.replace('"','\\"')))
             server.append("subscription-manager list --consumed | grep -i openstack || "
                           "subscription-manager subscribe --pool $(subscription-manager list --available | grep -e 'Red Hat OpenStack' -m 1 -A 2 | grep 'Pool Id' | awk '{print $3}')")
             server.append("yum clean all")
             server.append("yum-config-manager --enable rhel-server-ost-6-folsom-rpms")
 
         server.append("yum clean metadata")
-        server.execute(maskList=[controller.CONF["CONFIG_RH_PASSWORD"].strip()])
+        server.execute(maskList=[controller.CONF["CONFIG_RH_PASSWORD"]])
