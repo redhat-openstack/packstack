@@ -7,6 +7,7 @@ class {'cinder::base':
 cinder_config{
     "DEFAULT/rpc_backend": value => "cinder.openstack.common.rpc.impl_qpid";
     "DEFAULT/qpid_hostname": value => "%(CONFIG_QPID_HOST)s";
+    "DEFAULT/glance_host": value => "%(CONFIG_GLANCE_HOST)s";
 }
 
 package {'python-keystone':
