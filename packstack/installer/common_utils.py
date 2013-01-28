@@ -171,6 +171,9 @@ def _maskString(string, maskList=[]):
     for maskItem in maskList:
         if not maskItem: continue
         maskedStr = maskedStr.replace(maskItem, "*"*8)
+        # if looking at stderr of a script, single quotes have been converted
+        # to '\''
+        maskedStr = maskedStr.replace(maskItem.replace("'","'\\''"), "*"*8)
 
     return maskedStr
 
