@@ -129,10 +129,11 @@ def initSequences(controller):
                      'title': 'Installing time synchronization via NTP'}]
         controller.addSequence('Installing time synchronization via NTP', [], [], ntp_step)
     else:
-        controler.MESSAGES.append('Time synchronization installation was '
-                                  'skipped. Please note that unsynchronized '
-                                  'time on server instances might be problem '
-                                  'for some OpenStack components.')
+        controller.MESSAGES.append('Time synchronization installation '
+                                   'was skipped. Please note that '
+                                   'unsynchronized time on server '
+                                   'instances might be problem for '
+                                   'some OpenStack components.')
 
 def createmanifest():
     for hostname in gethostlist(controller.CONF):
