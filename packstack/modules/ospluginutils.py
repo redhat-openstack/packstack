@@ -89,6 +89,9 @@ def gethostlist(CONF):
 _error_exceptions = [
     # puppet preloads a provider using the mysql command before it is installed
     re.compile('Command mysql is missing'),
+    # puppet preloads a database_grant provider which fails if /root/.my.cnf
+    # this is ok because it will be retried later if needed
+    re.compile('Could not prefetch database_grant provider.*?\\.my\\.cnf'),
     # swift puppet module tries to install swift-plugin-s3, there is no such
     # pakage on RHEL, fixed in the upstream puppet module
     re.compile('yum.*?install swift-plugin-s3'),
