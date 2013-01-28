@@ -81,13 +81,13 @@ def initSequences(controller):
     conf = controller.CONF
     if conf['CONFIG_GLANCE_INSTALL'] != 'y':
         if conf['CONFIG_NOVA_INSTALL'] == 'y':
-            raise RuntimeError('Glance is required to instal Nova properly. '
+            raise RuntimeError('Glance is required to install Nova properly. '
                                'Please set CONFIG_GLANCE_INSTALL=y')
         return
 
     glancesteps = [
              {'title': 'Adding Glance Keystone Manifest entries', 'functions':[createkeystonemanifest]},
-             {'title': 'Creating Galnce Manifest', 'functions':[createmanifest]}
+             {'title': 'Creating Glance Manifest', 'functions':[createmanifest]}
     ]
     controller.addSequence("Installing Glance", [], [], glancesteps)
 
