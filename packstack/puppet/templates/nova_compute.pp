@@ -30,13 +30,12 @@ class { 'nova::compute::libvirt':
   vncserver_listen            => "%(CONFIG_NOVA_COMPUTE_HOST)s",
 }
 
-
 exec {'load_kvm':
     user => 'root',
     command => '/bin/sh /etc/sysconfig/modules/kvm.modules'
 }
 
-Class['nova::compute::libvirt'] -> Exec["load_kvm"]
+Class['nova::compute']-> Exec["load_kvm"]
 
 if $::is_virtual_packstack == "true" and $::operatingsystem == "RedHat" {
     file { "/usr/bin/qemu-system-x86_64":
