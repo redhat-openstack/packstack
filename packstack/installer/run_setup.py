@@ -608,6 +608,7 @@ def generateAnswerFile(outputFile):
     sep = os.linesep
     fmt = ("%(comment)s%(separator)s%(conf_name)s=%(default_value)s"
            "%(separator)s")
+    outputFile = os.path.expanduser(outputFile)
     with open(outputFile, "w") as ans_file:
         ans_file.write("[general]%s" % os.linesep)
         for group in controller.getAllGroups():
@@ -792,7 +793,7 @@ def main():
             # Make sure only --answer-file was supplied
             if options.answer_file:
                 validateSingleFlag(options, "answer_file")
-                confFile = options.answer_file
+                confFile = os.path.expanduser(options.answer_file)
                 if not os.path.exists(confFile):
                     raise Exception(output_messages.ERR_NO_ANSWER_FILE % confFile)
             else:
