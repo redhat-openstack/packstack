@@ -9,6 +9,7 @@ import packstack.installer.engine_validators as validate
 import packstack.installer.engine_processors as process
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
+from packstack.installer.exceptions import InstallError
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
 
@@ -94,8 +95,7 @@ def checkcindervg():
     try:
         server.execute()
     except:
-        print "The cinder server should contain a cinder-volumes volume group"
-        raise
+        raise InstallError("The cinder server should contain a cinder-volumes volume group")
 
 def createkeystonemanifest():
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
