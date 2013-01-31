@@ -10,12 +10,12 @@ class {"mysql::server":
 database_user { [ 'root@127.0.0.1', 'root@::1', '@localhost', '@%%' ]:
     ensure  => 'absent', require => Class['mysql::config'],
 }
-if ($::fqdn != "") {
+if ($::fqdn != "" and $::fqdn != "localhost") {
     database_user { [ "root@${::fqdn}", "@${::fqdn}"]:
         ensure  => 'absent', require => Class['mysql::config'],
     }
 }
-if ($::fqdn != $::hostname) {
+if ($::fqdn != $::hostname and $::hostname != "localhost") {
     database_user { ["root@${::hostname}", "@${::hostname}"]:
         ensure  => 'absent', require => Class['mysql::config'],
     }
