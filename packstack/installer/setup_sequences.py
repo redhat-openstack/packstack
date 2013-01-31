@@ -60,7 +60,6 @@ class Step(object):
                 function()
             except:
                 logging.debug(traceback.format_exc())
-                print ("[ " + utils.getColoredText(output_messages.INFO_ERROR, basedefs.RED) + " ]").rjust(spaceLen)
                 raise
         print ("[ " + utils.getColoredText(output_messages.INFO_DONE, basedefs.GREEN) + " ]").rjust(spaceLen)
 
