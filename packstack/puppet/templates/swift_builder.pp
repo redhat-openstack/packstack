@@ -22,7 +22,9 @@ firewall { '001 rsync incoming':
     action   => 'accept',
 }
 
-selboolean{'rsync_export_all_ro':
-    value => on,
-    persistent => true,
+if ($::selinux != "false"){
+    selboolean{'rsync_export_all_ro':
+        value => on,
+        persistent => true,
+    }
 }
