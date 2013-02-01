@@ -19,10 +19,10 @@ import engine_validators as validate
 import output_messages
 from .exceptions import FlagValidationError, ParamValidationError
 
+from packstack.modules.ospluginutils import gethostlist
 from setup_controller import Controller
 
 controller = Controller()
-logFile = os.path.join(basedefs.DIR_LOG, basedefs.FILE_INSTALLER_LOG)
 commandLineValues = {}
 
 # List to hold all values to be masked in logging (i.e. passwords and sensitive data)
@@ -37,8 +37,10 @@ def initLogging (debug):
         #in order to use UTC date for the log file, send True to getCurrentDateTime(True)
         logFilename = "openstack-setup.log"
         logFile = os.path.join(basedefs.DIR_LOG, logFilename)
-        if not os.path.isdir(os.path.dirname(logFile)):
-            os.makedirs(os.path.dirname(logFile))
+
+        # Create the log file with specific permissions, puppet has a habbit of putting
+        # passwords in logs
+        os.close(os.open(logFile, os.O_CREAT | os.O_EXCL, 0600))
 
         hdlr = logging.FileHandler (filename=logFile, mode='w')
         if (debug):
@@ -596,9 +598,33 @@ def _main(configFile=None):
         controller.MESSAGES.append(output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO%(logFile))
         logging.exception(e)
     finally:
+
+        remove_remote_var_dirs()
+
         # Always print user params to log
         _printAdditionalMessages()
         _summaryParamsToLog()
+
+
+def remove_remote_var_dirs():
+    """
+    Removes the temp directories on remote hosts,
+    doesn't remove data on localhost
+    """
+    for host in gethostlist(controller.CONF):
+        logging.info(output_messages.INFO_REMOVE_REMOTE_VAR%(basedefs.VAR_DIR, host))
+        server = utils.ScriptRunner(host)
+        # We don't want to remove the tmp dir on the host that was used to
+        # run packstack, this host has the logfile, if it doesn't have a
+        # logfile its a remote host, so we remove the temp files
+        server.append('ls -l %s || rm -rf %s'%(logFile, basedefs.VAR_DIR))
+        try:
+            server.execute()
+        except Exception, e:
+            msg = output_messages.ERR_REMOVE_REMOTE_VAR%(basedefs.VAR_DIR, host)
+            logging.error(msg)
+            logging.exception(e)
+            controller.MESSAGES.append(utils.getColoredText(msg, basedefs.RED))
 
 
 def generateAnswerFile(outputFile):

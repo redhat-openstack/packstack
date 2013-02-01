@@ -4,6 +4,7 @@ prepare server
 
 import os
 import logging
+import os
 
 from packstack.installer import basedefs
 from packstack.installer import common_utils as utils
@@ -376,7 +377,11 @@ def serverprep():
                           "( rpm -q epel-release || yum install -y --nogpg -c $REPOFILE epel-release ) || echo -n ''")
             server.append("rm -rf $REPOFILE")
 
-        server.append("mkdir -p %s" % basedefs.PUPPET_MANIFEST_DIR)
+        # Create the packstack tmp directory
+        server.append("mkdir -p %s" % basedefs.PACKSTACK_VAR_DIR)
+        # Separately create the tmp directory for this packstack run, this will fail if
+        # the directory already exists
+        server.append("mkdir --mode 0700 %s" % basedefs.VAR_DIR)
 
         # set highest priority of RHOS repository if EPEL is installed
         server.append("rpm -q epel-release && yum install -y yum-plugin-priorities || true")
