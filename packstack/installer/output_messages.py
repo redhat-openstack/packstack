@@ -51,6 +51,7 @@ INFO_STRING_LEN_LESS_THAN_MIN="String length is less than the minimum allowed: %
 INFO_STRING_EXCEEDS_MAX_LENGTH="String length exceeds the maximum length allowed: %s"
 INFO_STRING_CONTAINS_ILLEGAL_CHARS="String contains illegal characters"
 INFO_CINDER_VOLUMES_EXISTS="Did not create a cinder volume group, one already existed"
+INFO_REMOVE_REMOTE_VAR="Removing %s on %s (if it is a remote host)"
 
 WARN_WEAK_PASS="Warning: Weak Password."
 
@@ -80,6 +81,7 @@ ERR_RC_CODE="Return Code is not zero"
 ERR_FAILURE="General failure"
 ERR_NO_ANSWER_FILE="Error: Could not find file %s"
 ERR_ONLY_1_FLAG="Error: The %s flag is mutually exclusive to all other command line options"
+ERR_REMOVE_REMOTE_VAR="Error: Failed to remove directory %s on %s, it contains sensitive data and should be removed"
 
 #
 INFO_KEYSTONERC="To use the command line tools source the file /root/keystonerc_admin created on %s"

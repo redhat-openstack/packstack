@@ -4,12 +4,21 @@ provides all the predefined variables for engine-setup
 import os
 import sys
 import datetime
+import tempfile
 
 APP_NAME = "Installer"
 
 FILE_YUM_VERSION_LOCK = "/etc/yum/pluginconf.d/versionlock.list"
 
-VAR_DIR = os.path.join("/var/tmp/packstack", datetime.datetime.now().strftime('%Y%m%d-%H%M'))
+_tmpdirprefix = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-')
+
+PACKSTACK_VAR_DIR = "/var/tmp/packstack"
+try:
+    os.mkdir(PACKSTACK_VAR_DIR, 0700)
+except:
+    pass
+
+VAR_DIR = tempfile.mkdtemp(prefix = _tmpdirprefix, dir = PACKSTACK_VAR_DIR)
 DIR_LOG = VAR_DIR
 PUPPET_MANIFEST_DIR = os.path.join(VAR_DIR, "manifests")
 

@@ -38,10 +38,12 @@ class NovaConfig(object):
 class ManifestFiles(object):
     def __init__(self):
         self.filelist = []
+        self.data = {}
 
     # continuous manifest file that have the same marker can be
     # installed in parallel, if on different servers
-    def addFile(self, filename, marker):
+    def addFile(self, filename, marker, data=''):
+        self.data[filename] = self.data.get(filename, '') + '\n' + data
         for f, p in self.filelist:
             if f == filename:
                 return
@@ -49,6 +51,17 @@ class ManifestFiles(object):
 
     def getFiles(self):
         return [f for f in self.filelist]
+
+    def writeManifests(self):
+        """
+        Write out the manifest data to disk, this should only be called once
+        write before the puppet manifests are copied to the various servers
+        """
+        os.mkdir(basedefs.PUPPET_MANIFEST_DIR, 0700)
+        for file, data in self.data.items():
+            fd = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0600)
+            with os.fdopen(fd, 'w') as fp:
+                fp.write(data)
 manifestfiles = ManifestFiles()
 
 
@@ -58,13 +71,8 @@ def getManifestTemplate(template_name):
 
 
 def appendManifestFile(manifest_name, data, marker=''):
-    if not os.path.exists(basedefs.PUPPET_MANIFEST_DIR):
-        os.mkdir(basedefs.PUPPET_MANIFEST_DIR)
     manifestfile = os.path.join(basedefs.PUPPET_MANIFEST_DIR, manifest_name)
-    manifestfiles.addFile(manifestfile, marker)
-    with open(manifestfile, 'a') as fp:
-        fp.write("\n")
-        fp.write(data)
+    manifestfiles.addFile(manifestfile, marker, data)
 
 
 def gethostlist(CONF):
