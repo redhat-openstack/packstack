@@ -17,7 +17,23 @@
 import shutil
 import tempfile
 
+import subprocess
 from unittest import TestCase
+
+
+class fakePopen(object):
+    def __init__(self, returncode=0):
+        self.returncode = returncode
+        self.stdout = self.stderr = self.data = ""
+
+    def __call__(self, *args, **kwargs):
+        self.args = args
+        self.kwargs = kwargs
+        return self
+
+    def communicate(self, data):
+        self.data += data
+        return self.stdout, self.stderr
 
 
 class TestCase(TestCase):
@@ -25,6 +41,12 @@ class TestCase(TestCase):
         # Creating a temp directory that can be used by tests
         self.tempdir = tempfile.mkdtemp()
 
+        # some plugins call popen, we're replacing it for tests
+        self._Popen = subprocess.Popen
+        self.fakePopen = subprocess.Popen = fakePopen()
+
     def tearDown(self):
         # remove the temp directory
         shutil.rmtree(self.tempdir)
+
+        subprocess.Popen = self._Popen
