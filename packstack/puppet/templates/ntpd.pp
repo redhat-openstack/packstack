@@ -66,6 +66,13 @@ file {'ntp_config':
     content => $config_content,
 }
 
+exec {'stop-ntpd':
+  command     => $operatingsystem ? {
+    'Fedora'                  => '/usr/bin/systemctl stop ntpd.service',
+    /(RedHat|CentOS|Scientific)/  => '/sbin/service ntpd stop',
+  },
+}
+
 exec {'ntpdate':
     command => '/usr/sbin/ntpdate %(CONFIG_NTP_FIRST_SERVER)s',
 }
@@ -78,4 +85,4 @@ service {'ntpd':
     hasrestart => true,
 }
 
-Package['ntp'] -> File['ntp_config'] -> Exec['ntpdate'] -> Service['ntpd']
+Package['ntp'] -> File['ntp_config'] -> Exec['stop-ntpd'] -> Exec['ntpdate'] -> Service['ntpd']
