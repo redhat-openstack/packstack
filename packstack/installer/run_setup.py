@@ -8,23 +8,21 @@ import sys
 from StringIO import StringIO
 import traceback
 import types
-import uuid
 import textwrap
 
 from optparse import OptionParser, OptionGroup
 
 import basedefs
 import common_utils as utils
-import engine_validators as validate
 import engine_processors as process
+import engine_validators as validate
 import output_messages
 from .exceptions import FlagValidationError
 
-import engine_validators as validate
 from setup_controller import Controller
 
 controller = Controller()
-logFile = os.path.join(basedefs.DIR_LOG,basedefs.FILE_INSTALLER_LOG)
+logFile = os.path.join(basedefs.DIR_LOG, basedefs.FILE_INSTALLER_LOG)
 commandLineValues = {}
 
 # List to hold all values to be masked in logging (i.e. passwords and sensitive data)
@@ -454,7 +452,24 @@ def _handleInteractiveParams():
             else:
                 logging.debug("no post condition check for group %s" % group.getKey("GROUP_NAME"))
 
+        path = None
+        msg = "\nCould not find a suitable path to create the answer's file"
+
+        # We'll use the first path with
+        # write permissions. Order matters.
+        for p in ["./", "~/", "/tmp"]:
+            if os.access(p, os.W_OK):
+                path = os.path.abspath(
+                        os.path.expanduser(os.path.join(p, "answers.txt")))
+                msg = "\nA new answer's file will be created in: %s" % path
+                break
+
+        print msg,
         _displaySummary()
+
+        if path:
+            generateAnswerFile(path)
+
     except KeyboardInterrupt:
         logging.error("keyboard interrupt caught")
         raise Exception(output_messages.ERR_EXP_KEYBOARD_INTERRUPT)
@@ -604,6 +619,7 @@ def _main(configFile=None):
         # Always print user params to log
         _summaryParamsToLog()
 
+
 def generateAnswerFile(outputFile):
     sep = os.linesep
     fmt = ("%(comment)s%(separator)s%(conf_name)s=%(default_value)s"
@@ -617,10 +633,12 @@ def generateAnswerFile(outputFile):
                                      initial_indent='%s# ' % sep,
                                      subsequent_indent='# ',
                                      break_long_words=False)
-                args = {'separator': sep,
-                        'comment': comm,
-                        'conf_name': param.getKey("CONF_NAME"),
-                        'default_value': param.getKey("DEFAULT_VALUE")}
+                value = controller.CONF.get(param.getKey("CONF_NAME"),
+                                            param.getKey("DEFAULT_VALUE"))
+                args = {'comment': comm,
+                        'separator': sep,
+                        'default_value': value,
+                        'conf_name': param.getKey("CONF_NAME")}
                 ans_file.write(fmt % args)
     os.chmod(outputFile, 0600)
 
