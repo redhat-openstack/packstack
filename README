@@ -9,7 +9,7 @@ options have yet to be added
 
 Installation
 $ yum install -y git
-$ git clone --recursive git://github.com/fedora-openstack/packstack.git
+$ git clone --branch folsom --recursive git://github.com/stackforge/packstack.git
 $ cd packstack
 
 Option 1 (using answer file)
