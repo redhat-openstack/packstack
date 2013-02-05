@@ -17,7 +17,7 @@ import common_utils as utils
 import engine_processors as process
 import engine_validators as validate
 import output_messages
-from .exceptions import FlagValidationError
+from .exceptions import FlagValidationError, ParamValidationError
 
 from setup_controller import Controller
 
@@ -77,8 +77,9 @@ def _getInputFromUser(param):
                     message = StringIO()
                     message.write(param.getKey("PROMPT"))
 
-                    if not param.getKey("VALIDATION_FUNC") == validate.validateRe \
-                                                and param.getKey("OPTION_LIST"):
+                    validators = param.getKey("VALIDATORS") or []
+                    if validate.validate_regexp not in validators \
+                       and param.getKey("OPTION_LIST"):
                         message.write(" [%s]" % "|".join(param.getKey("OPTION_LIST")))
 
                     if param.getKey("DEFAULT_VALUE"):
@@ -99,62 +100,33 @@ def _getInputFromUser(param):
                     userInput = param.getKey("DEFAULT_VALUE")
 
                 # Param processing
-                try:
-                    logging.debug("Processing value of parameter "
-                                  "%s." % param.getKey("CONF_NAME"))
-                    processFunc = param.getKey("PROCESSOR_FUNC")
-                    try:
-                        processArgs = param.getKey("PROCESSOR_ARGS")
-                    except KeyError:
-                        processArgs = None
-                    try:
-                        _userInput = processFunc(userInput, processArgs)
-                        if userInput != _userInput:
-                            msg = output_messages.INFO_VAL_IS_HOSTNAME
-                            print msg % (userInput, _userInput)
-                            userInput = _userInput
-                        else:
-                            logging.debug("Processor returned the original "
-                                          "value: %s" % _userInput)
-                    except process.ParamProcessingError, ex:
-                        try:
-                            cn = param.getKey("CONF_NAME")
-                            msg = param.getKey("PROCESSOR_MSG")
-                            print getattr(output_messages, msg) % cn
-                        except KeyError:
-                            logging.debug("Value processing of parameter "
-                                          "%s failed." % param.getKey("CONF_NAME"))
-                except KeyError:
-                    logging.debug("Parameter %s doesn't have value "
-                                  "processor." % param.getKey("CONF_NAME"))
+                userInput = process_param_value(param, userInput)
 
                 # If param requires validation
-                if param.getKey("VALIDATION_FUNC")(userInput, param.getKey("OPTION_LIST")):
-                    if "yes" in param.getKey("OPTION_LIST") and userInput.lower() == "y":
-                        userInput = "yes"
-                    if "no" in param.getKey("OPTION_LIST") and userInput.lower() == "n":
-                        userInput = "no"
+                try:
+                    validate_param_value(param, userInput)
                     controller.CONF[param.getKey("CONF_NAME")] = userInput
                     loop = False
-                # If validation failed but LOOSE_VALIDATION is true, ask user
-                elif param.getKey("LOOSE_VALIDATION"):
-                    answer = _askYesNo("User input failed validation, do you still wish to use it")
-                    if answer:
-                        loop = False
-                        controller.CONF[param.getKey("CONF_NAME")] = userInput
+                except ParamValidationError:
+                    if param.getKey("LOOSE_VALIDATION"):
+                        # If validation failed but LOOSE_VALIDATION is true, ask user
+                        answer = _askYesNo("User input failed validation, "
+                                           "do you still wish to use it")
+                        loop = not answer
+                        if answer:
+                            controller.CONF[param.getKey("CONF_NAME")] = userInput
+                            continue
+                        else:
+                            if commandLineValues.has_key(param.getKey("CONF_NAME")):
+                                del commandLineValues[param.getKey("CONF_NAME")]
                     else:
+                        # Delete value from commandLineValues so that we will prompt the user for input
                         if commandLineValues.has_key(param.getKey("CONF_NAME")):
                             del commandLineValues[param.getKey("CONF_NAME")]
                         loop = True
-                else:
-                    # Delete value from commandLineValues so that we will prompt the user for input
-                    if commandLineValues.has_key(param.getKey("CONF_NAME")):
-                        del commandLineValues[param.getKey("CONF_NAME")]
-                    loop = True
-
     except KeyboardInterrupt:
         print "" # add the new line so messages wont be displayed in the same line as the question
-        raise KeyboardInterrupt
+        raise
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_READ_INPUT_PARAM % (param.getKey("CONF_NAME")))
@@ -172,7 +144,7 @@ def input_param(param):
         confirmedParamName = param.getKey("CONF_NAME") + "_CONFIRMED"
         confirmedParam.setKey("CONF_NAME", confirmedParamName)
         confirmedParam.setKey("PROMPT", output_messages.INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT)
-        confirmedParam.setKey("VALIDATION_FUNC", validate.validateStringNotEmpty)
+        confirmedParam.setKey("VALIDATORS", [validate.validate_not_empty])
         # Now get both values from user (with existing validations
         while True:
             _getInputFromUser(param)
@@ -285,35 +257,39 @@ def maskString(str):
             str = str.replace(password, '*'*8)
     return str
 
-def _validateParamValue(param, paramValue):
-    validateFunc = param.getKey("VALIDATION_FUNC")
-    optionsList  = param.getKey("OPTION_LIST")
-    logging.debug("validating param %s in answer file." % param.getKey("CONF_NAME"))
-    if not validateFunc(paramValue, optionsList):
-        raise Exception(output_messages.ERR_EXP_VALIDATE_PARAM % param.getKey("CONF_NAME"))
+def validate_param_value(param, value):
+    cname = param.getKey("CONF_NAME")
+    logging.debug("Validating parameter %s." % cname)
 
-def _processParamValue(param, paramValue):
-    try:
-        processFunc = param.getKey("PROCESSOR_FUNC")
-    except KeyError:
-        return paramValue
-    try:
-        processArgs = param.getKey("PROCESSOR_ARGS")
-    except KeyError:
-        processArgs = None
-    logging.debug("processing param %s in answer file." % param.getKey("CONF_NAME"))
-    try:
-        return processFunc(paramValue, processArgs)
-    except process.ParamProcessingError, ex:
-        cn = param.getKey("CONF_NAME")
-        logging.debug("processing param %s failed, falling back to "
-                      "original, reason: %s" % (cn, ex))
+    validators = param.getKey("VALIDATORS") or []
+    opt_list = param.getKey("OPTION_LIST")
+    for val_func in validators:
         try:
-            msg = param.getKey("PROCESSOR_MSG")
-            print getattr(output_messages, msg) % cn
-        except KeyError:
-            pass
-        return paramValue
+            val_func(value, opt_list)
+        except ParamValidationError as ex:
+            print 'Parameter %s failed validation: %s' % (cname, ex)
+            raise
+
+def process_param_value(param, value):
+    _value = value
+    processors = param.getKey("PROCESSORS") or []
+    for proc_func in processors:
+        logging.debug("Processing value of parameter "
+                      "%s." % param.getKey("CONF_NAME"))
+        try:
+            new_value = proc_func(_value, controller.CONF)
+            if new_value != _value:
+                msg = output_messages.INFO_CHANGED_VALUE
+                print msg % (_value, new_value)
+                _value = new_value
+            else:
+                logging.debug("Processor returned the original "
+                              "value: %s" % _value)
+        except process.ParamProcessingError, ex:
+            print ("Value processing of parameter %s "
+                   "failed.\n%s" % (param.getKey("CONF_NAME"), ex))
+            raise
+    return _value
 
 def _handleGroupCondition(config, conditionName, conditionValue):
     """
@@ -349,8 +325,8 @@ def _loadParamFromFile(config, section, paramName):
 
     # Validate param value using its validation func
     param = controller.getParamByName(paramName)
-    value = _processParamValue(param, value)
-    _validateParamValue(param, value)
+    value = process_param_value(param, value)
+    validate_param_value(param, value)
 
     # Keep param value in our never ending global conf
     controller.CONF[param.getKey("CONF_NAME")] = value

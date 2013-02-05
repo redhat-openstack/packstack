@@ -31,11 +31,11 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address on which to install the Swift proxy service",
                    "PROMPT"          : "Enter the IP address of the Swift proxy service",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateSSH,
+                   "VALIDATORS"      : [validate.validate_ip, validate.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_SWIFT_PROXY_HOSTS", # TO-DO: Create processor for CSV
+                   "CONF_NAME"       : "CONFIG_SWIFT_PROXY_HOSTS", #XXX: Shouldn't be here CONFIG_SWIFT_PROXY_HOST?
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Swift to authenticate with Keystone",
                    "PROMPT"          : "Enter the password for the Swift Keystone access",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -55,11 +55,11 @@ def initConfig(controllerObject):
                    "USAGE"           : "A comma separated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device, if /dev is omitted Packstack will create a loopback device for a test setup",
                    "PROMPT"          : "Enter the Swift Storage servers e.g. host/dev,host/dev",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty, validate_storage],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_SWIFT_STORAGE_HOSTS", # TO-DO: Create processor for CSV
+                   "CONF_NAME"       : "CONFIG_SWIFT_STORAGE_HOSTS",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -67,7 +67,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Number of swift storage zones, this number MUST be no bigger than the number of storage devices configured",
                    "PROMPT"          : "Enter the number of swift storage zones, MUST be no bigger than the number of storage devices configured",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateInteger,
+                   "VALIDATORS"      : [validate.validate_integer],
                    "DEFAULT_VALUE"   : "1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -79,7 +79,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Number of swift storage replicas, this number MUST be no bigger than the number of storage zones configured",
                    "PROMPT"          : "Enter the number of swift storage replicas, MUST be no bigger than the number of storage zones configured",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateInteger,
+                   "VALIDATORS"      : [validate.validate_integer],
                    "DEFAULT_VALUE"   : "1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -91,7 +91,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "FileSystem type for storage nodes",
                    "PROMPT"          : "Enter FileSystem type for storage nodes",
                    "OPTION_LIST"     : ['xfs','ext4'],
-                   "VALIDATION_FUNC" : validate.validateOptions,
+                   "VALIDATORS"      : [validate.validate_options],
                    "DEFAULT_VALUE"   : "ext4",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -111,6 +111,12 @@ def initConfig(controllerObject):
     controller.addGroup(groupDict, paramsList)
 
 
+def validate_storage(param, options=None):
+    for host in param.split(','):
+        host = host.split('/', 1)[0]
+        validate.validate_ip(host.strip(), options)
+
+
 def initSequences(controller):
     if controller.CONF['CONFIG_SWIFT_INSTALL'] != 'y':
         return
@@ -124,11 +130,13 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing OpenStack Swift", [], [], steps)
 
+
 def createkeystonemanifest():
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
     controller.CONF['CONFIG_SWIFT_PROXY'] = controller.CONF['CONFIG_SWIFT_PROXY_HOSTS'].split(',')[0]
     manifestdata = getManifestTemplate("keystone_swift.pp")
     appendManifestFile(manifestfile, manifestdata)
+
 
 devices = []
 def parseDevices(config_swift_storage_hosts):
@@ -141,6 +149,7 @@ def parseDevices(config_swift_storage_hosts):
         zone = (device_number % int(controller.CONF["CONFIG_SWIFT_STORAGE_ZONES"]))+1
         devices.append({'host':host, 'device':device, 'device_name':'device%s'%device_number, 'zone':str(zone)})
     return devices
+
 
 # The ring file should be built and distributed befor the storage services
 # come up. Specifically the replicator crashes if the ring isn't present
@@ -163,6 +172,7 @@ def createbuildermanifest():
 
     appendManifestFile(manifestfile, manifestdata, 'swiftbuilder')
 
+
 def createproxymanifest():
     manifestfile = "%s_swift.pp"%controller.CONF['CONFIG_SWIFT_PROXY_HOSTS']
     manifestdata = getManifestTemplate("swift_proxy.pp")
@@ -170,6 +180,32 @@ def createproxymanifest():
     if controller.CONF['CONFIG_SWIFT_PROXY_HOSTS'] not in [h['host'] for h in devices]:
         manifestdata += 'swift::ringsync{["account","container","object"]:\n    ring_server => "%s"\n}'%controller.CONF['CONFIG_SWIFT_BUILDER_HOST']
     appendManifestFile(manifestfile, manifestdata)
+
+
+def check_device(host, device):
+    """
+    Raises ScriptRuntimeError if given device is not mounted on given
+    host.
+    """
+    server = utils.ScriptRunner()
+
+    # the device MUST exist
+    cmd = 'ls -l /dev/%s'
+    server.append(cmd % device)
+
+    # if it is not mounted then we can use it
+    cmd = 'grep "/dev/%s " /proc/self/mounts || exit 0'
+    server.append(cmd % device)
+
+    # if it is mounted then the mount point has to be in /srv/node
+    cmd = 'grep "/dev/%s /srv/node" /proc/self/mounts && exit 0'
+    server.append(cmd % device)
+
+    # if we got here without exiting then we can't use this device
+    server.append('exit 1')
+    server.execute()
+    return False
+
 
 def createstoragemanifest():
 
@@ -185,10 +221,8 @@ def createstoragemanifest():
         host = device['host']
         devicename = device['device_name']
         device = device['device']
-
-        server = utils.ScriptRunner(host)
-        validate.r_validateDevice(server, device)
-        server.execute()
+        if device:
+            check_device(host, device)
 
         manifestfile = "%s_swift.pp"%host
         if device:
@@ -197,6 +231,7 @@ def createstoragemanifest():
             controller.CONF["SWIFT_STORAGE_DEVICES"] = "'%s'"%devicename
             manifestdata = "\n" + getManifestTemplate("swift_loopback.pp")
         appendManifestFile(manifestfile, manifestdata)
+
 
 def createcommonmanifest():
     for manifestfile, marker in manifestfiles.getFiles():
