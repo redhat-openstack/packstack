@@ -1,5 +1,5 @@
 """
-Installs and configures an openstack client
+Installs and configures an OpenStack Client
 """
 
 import logging
@@ -39,9 +39,9 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     osclientsteps = [
-             {'title': 'Running Post install scripts', 'functions':[createmanifest]}
+             {'title': 'Adding post install manifest entries', 'functions':[createmanifest]}
     ]
-    controller.addSequence("Running Post install scripts", [], [], osclientsteps)
+    controller.addSequence("Running post install scripts", [], [], osclientsteps)
 
 def createmanifest():
     for hostname in gethostlist(controller.CONF):

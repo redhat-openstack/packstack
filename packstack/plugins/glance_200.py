@@ -24,7 +24,7 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack Glance configuration")
+    logging.debug("Adding OpenStack Glance configuration")
     paramsList = [
                   {"CMD_OPTION"      : "glance-host",
                    "USAGE"           : "The IP address of the server on which to install Glance",
@@ -86,10 +86,10 @@ def initSequences(controller):
         return
 
     glancesteps = [
-             {'title': 'Adding Glance Keystone Manifest entries', 'functions':[createkeystonemanifest]},
-             {'title': 'Creating Galnce Manifest', 'functions':[createmanifest]}
+             {'title': 'Adding Glance Keystone manifest entries', 'functions':[createkeystonemanifest]},
+             {'title': 'Adding Glance manifest entries', 'functions':[createmanifest]}
     ]
-    controller.addSequence("Installing Glance", [], [], glancesteps)
+    controller.addSequence("Installing OpenStack Glance", [], [], glancesteps)
 
 def createkeystonemanifest():
     manifestfile = "%s_keystone.pp" % controller.CONF['CONFIG_KEYSTONE_HOST']

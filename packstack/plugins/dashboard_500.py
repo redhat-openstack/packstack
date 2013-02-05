@@ -1,5 +1,5 @@
 """
-Installs and configures an openstack horizon
+Installs and configures OpenStack Horizon
 """
 
 import logging
@@ -24,7 +24,7 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack horizon configuration")
+    logging.debug("Adding OpenStack Horizon configuration")
     paramsList = [
                   {"CMD_OPTION"      : "os-horizon-host",
                    "USAGE"           : "The IP address of the server on which to install Horizon",
@@ -58,7 +58,7 @@ def initSequences(controller):
         return
 
     steps = [
-             {'title': 'Creating OS Horizon Manifest', 'functions':[createmanifest]}
+             {'title': 'Adding Horizon manifest entries', 'functions': [createmanifest]}
     ]
     controller.addSequence("Installing OpenStack Horizon", [], [], steps)
 

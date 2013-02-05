@@ -1,5 +1,5 @@
 """
-Installs and configures an openstack swift
+Installs and configures an OpenStack Swift
 """
 
 import uuid
@@ -25,7 +25,7 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack swift configuration")
+    logging.debug("Adding OpenStack Swift configuration")
     paramsList = [
                   {"CMD_OPTION"      : "os-swift-proxy",
                    "USAGE"           : "The IP address on which to install the Swift proxy service",
@@ -116,11 +116,11 @@ def initSequences(controller):
         return
 
     steps = [
-             {'title': 'Adding Swift Keystone Manifest entries', 'functions':[createkeystonemanifest]},
-             {'title': 'Creating OS Swift builder Manifests', 'functions':[createbuildermanifest]},
-             {'title': 'Creating OS Swift proxy Manifests', 'functions':[createproxymanifest]},
-             {'title': 'Creating OS Swift storage Manifests', 'functions':[createstoragemanifest]},
-             {'title': 'Creating OS Swift Common Manifests', 'functions':[createcommonmanifest]},
+             {'title': 'Adding Swift Keystone manifest entries', 'functions':[createkeystonemanifest]},
+             {'title': 'Adding Swift builder manifest entries', 'functions':[createbuildermanifest]},
+             {'title': 'Adding Swift proxy manifest entries', 'functions':[createproxymanifest]},
+             {'title': 'Adding Swift storage manifest entries', 'functions':[createstoragemanifest]},
+             {'title': 'Adding Swift common manifest entries', 'functions':[createcommonmanifest]},
     ]
     controller.addSequence("Installing OpenStack Swift", [], [], steps)
 

@@ -24,7 +24,7 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding MySQL Openstack configuration")
+    logging.debug("Adding MySQL OpenStack configuration")
     paramsList = [
                   {"CMD_OPTION"      : "mysql-host",
                    "USAGE"           : "The IP address of the server on which to install MySQL",
@@ -79,7 +79,7 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     mysqlsteps = [
-             {'title': 'Create MySQL Manifest',
+             {'title': 'Adding MySQL manifest entries',
               'functions':[createmanifest]}
     ]
     controller.addSequence("Installing MySQL", [], [], mysqlsteps)
