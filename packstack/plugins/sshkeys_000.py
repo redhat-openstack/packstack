@@ -55,10 +55,10 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     puppetsteps = [
-             {'title': 'Setting Up ssh keys',
+             {'title': 'Setting up ssh keys',
               'functions':[installKeys]}
     ]
-    controller.addSequence("ssh key setup", [], [], puppetsteps)
+    controller.addSequence("Setting up ssh keys", [], [], puppetsteps)
 
 
 def installKeys():
