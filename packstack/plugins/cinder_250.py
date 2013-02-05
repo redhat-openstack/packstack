@@ -31,11 +31,8 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install Cinder",
                    "PROMPT"          : "Enter the IP address of the Cinder server",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateSSH,
+                   "VALIDATORS"      : [validate.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
-                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
-                   "PROCESSOR_FUNC"  : process.processHost,
-                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_CINDER_HOST",
@@ -46,7 +43,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Cinder to access DB",
                    "PROMPT"          : "Enter the password for the Cinder DB access",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -58,7 +55,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Cinder to authenticate with Keystone",
                    "PROMPT"          : "Enter the password for the Cinder Keystone access",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -88,6 +85,10 @@ def initSequences(controller):
              {'title': 'Adding Cinder manifest entries', 'functions':[createmanifest]}
     ]
     controller.addSequence("Installing OpenStack Cinder", [], [], cindersteps)
+<<<<<<< HEAD
+=======
+
+>>>>>>> cba297d... Fail when Nova API, Nova network and Swift hosts are not set as IP addresses
 
 def checkcindervg():
     server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])

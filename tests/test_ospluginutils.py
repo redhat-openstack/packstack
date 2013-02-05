@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # vim: tabstop=4 shiftwidth=4 softtabstop=4
 
 # Copyright 2013, Red Hat, Inc.
@@ -15,14 +16,15 @@
 # under the License.
 
 import os
-from test import TestCase
+from unittest import TestCase
 
+from test_base import PackstackTestCaseMixin
 from packstack.modules.ospluginutils import gethostlist, \
                                             validate_puppet_logfile, \
                                             PackStackError
 
 
-class OSPluginUtilsTestCase(TestCase):
+class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
     def test_gethostlist(self):
         conf = {"A_HOST": "1.1.1.1", "B_HOSTS": "2.2.2.2,1.1.1.1",
                 "C_HOSTS": "3.3.3.3/vdc"}

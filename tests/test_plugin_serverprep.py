@@ -15,15 +15,16 @@
 # under the License.
 
 import os
-from test import TestCase
+from unittest import TestCase
 
+from test_base import PackstackTestCaseMixin
 from packstack.plugins import serverprep_901
 from packstack.installer.setup_controller import Controller
 
 serverprep_901.controller = Controller()
 
 
-class OSPluginUtilsTestCase(TestCase):
+class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
     def test_rhn_creds_quoted(self):
         """Make sure RHN password is quoted"""
 
@@ -37,5 +38,5 @@ class OSPluginUtilsTestCase(TestCase):
         serverprep_901.serverprep()
 
         self.assertNotEqual(
-            self.fakePopen.data.find('--password="%s"' % password), -1
+            self.fake_popen.data.find('--password="%s"' % password), -1
         )

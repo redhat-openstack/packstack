@@ -28,11 +28,8 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the Nova API service",
                    "PROMPT"          : "Enter the IP address of the Nova API service",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateSSH,
+                   "VALIDATORS"      : [validate.validate_ip, validate.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
-                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
-                   "PROCESSOR_FUNC"  : process.processHost,
-                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_API_HOST",
@@ -43,11 +40,8 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the Nova Cert service",
                    "PROMPT"          : "Enter the IP address of the Nova Cert service",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateSSH,
+                   "VALIDATORS"      : [validate.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
-                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
-                   "PROCESSOR_FUNC"  : process.processHost,
-                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_CERT_HOST",
@@ -58,11 +52,8 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the Nova VNC proxy",
                    "PROMPT"          : "Enter the IP address of the Nova VNC proxy",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateSSH,
+                   "VALIDATORS"      : [validate.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
-                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
-                   "PROCESSOR_FUNC"  : process.processHost,
-                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_VNCPROXY_HOST",
@@ -73,11 +64,11 @@ def initConfig(controllerObject):
                    "USAGE"           : "A comma separated list of IP addresses on which to install the Nova Compute services",
                    "PROMPT"          : "Enter a comma separated list of IP addresses on which to install the Nova Compute services",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateMultiSSH,
+                   "VALIDATORS"      : [validate.validate_multi_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_HOSTS", # TO-DO: Create processor for CSV
+                   "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_HOSTS",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -85,7 +76,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Private interface for Flat DHCP on the Nova compute servers",
                    "PROMPT"          : "Enter the Private interface for Flat DHCP on the Nova compute servers",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : "eth1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -97,11 +88,8 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the Nova Network service",
                    "PROMPT"          : "Enter the IP address of the Nova Network service",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateSSH,
+                   "VALIDATORS"      : [validate.validate_ip, validate.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
-                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
-                   "PROCESSOR_FUNC"  : process.processHost,
-                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOST",
@@ -112,7 +100,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Nova to access DB",
                    "PROMPT"          : "Enter the password for the Nova DB access",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -124,7 +112,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Nova to authenticate with Keystone",
                    "PROMPT"          : "Enter the password for the Nova Keystone access",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -136,7 +124,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Public interface on the Nova network server",
                    "PROMPT"          : "Enter the Public interface on the Nova network server",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : "eth0",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -148,7 +136,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Private interface for Flat DHCP on the Nova network server",
                    "PROMPT"          : "Enter the Private interface for Flat DHCP on the Nova network server",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : "eth1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -160,7 +148,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "IP Range for Flat DHCP",
                    "PROMPT"          : "Enter the IP Range for Flat DHCP",
                    "OPTION_LIST"     : ["^([\d]{1,3}\.){3}[\d]{1,3}/\d\d?$"],
-                   "VALIDATION_FUNC" : validate.validateRe,
+                   "VALIDATORS"      : [validate.validate_regexp],
                    "DEFAULT_VALUE"   : "192.168.32.0/22",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -172,7 +160,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "IP Range for Floating IP's",
                    "PROMPT"          : "Enter the IP Range for Floating IP's",
                    "OPTION_LIST"     : ["^([\d]{1,3}\.){3}[\d]{1,3}/\d\d?$"],
-                   "VALIDATION_FUNC" : validate.validateRe,
+                   "VALIDATORS"      : [validate.validate_regexp],
                    "DEFAULT_VALUE"   : "10.3.4.0/22",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -184,11 +172,8 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the Nova Scheduler service",
                    "PROMPT"          : "Enter the IP address of the Nova Scheduler service",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateSSH,
+                   "VALIDATORS"      : [validate.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
-                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
-                   "PROCESSOR_FUNC"  : process.processHost,
-                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_SCHED_HOST",
@@ -203,6 +188,7 @@ def initConfig(controllerObject):
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
     controller.addGroup(groupDict, paramsList)
+
 
 def initSequences(controller):
     if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
@@ -220,20 +206,34 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing OpenStack Nova API", [], [], novaapisteps)
 
+
 def createapimanifest():
     manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVA_API_HOST']
     manifestdata = getManifestTemplate("nova_api.pp")
     appendManifestFile(manifestfile, manifestdata, 'novaapi')
+
 
 def createkeystonemanifest():
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
     manifestdata = getManifestTemplate("keystone_nova.pp")
     appendManifestFile(manifestfile, manifestdata)
 
+
 def createcertmanifest():
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_CERT_HOST']
     manifestdata = getManifestTemplate("nova_cert.pp")
     appendManifestFile(manifestfile, manifestdata)
+
+
+def check_ifcfg(host, device):
+    """
+    Raises ScriptRuntimeError if given host does not have give device.
+    """
+    server = utils.ScriptRunner(host)
+    cmd = "ifconfig %s || ( echo Device %s does not exist && exit 1 )"
+    server.append(cmd % (device, device))
+    server.execute()
+
 
 def createcomputemanifest():
     for host in controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(","):
@@ -241,37 +241,35 @@ def createcomputemanifest():
         manifestdata = getManifestTemplate("nova_compute.pp")
         manifestfile = "%s_nova.pp"%host
 
-        server = utils.ScriptRunner(host)
         nova_config_options = NovaConfig()
-
         if host != controller.CONF["CONFIG_NOVA_NETWORK_HOST"]:
             nova_config_options.addOption("flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
-        validate.r_validateIF(server, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+        check_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
 
-        server.execute()
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
+
 def createnetworkmanifest():
-    hostname = controller.CONF['CONFIG_NOVA_NETWORK_HOST']
+    host = controller.CONF['CONFIG_NOVA_NETWORK_HOST']
+    check_ifcfg(host, controller.CONF['CONFIG_NOVA_NETWORK_PRIVIF'])
+    check_ifcfg(host, controller.CONF['CONFIG_NOVA_NETWORK_PUBIF'])
 
-    server = utils.ScriptRunner(hostname)
-    validate.r_validateIF(server, controller.CONF['CONFIG_NOVA_NETWORK_PRIVIF'])
-    validate.r_validateIF(server, controller.CONF['CONFIG_NOVA_NETWORK_PUBIF'])
-    server.execute()
-
-    manifestfile = "%s_nova.pp"%hostname
+    manifestfile = "%s_nova.pp" % host
     manifestdata = getManifestTemplate("nova_network.pp")
     appendManifestFile(manifestfile, manifestdata)
+
 
 def createschedmanifest():
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_SCHED_HOST']
     manifestdata = getManifestTemplate("nova_sched.pp")
     appendManifestFile(manifestfile, manifestdata)
 
+
 def createvncproxymanifest():
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_VNCPROXY_HOST']
     manifestdata = getManifestTemplate("nova_vncproxy.pp")
     appendManifestFile(manifestfile, manifestdata)
+
 
 def createcommonmanifest():
     for manifestfile, marker in manifestfiles.getFiles():
