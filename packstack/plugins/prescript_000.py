@@ -1,5 +1,5 @@
 """
-Plugin responsible for setting Openstack global options
+Plugin responsible for setting OpenStack global options
 """
 
 import uuid
@@ -86,8 +86,8 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "os-client-install",
-                   "USAGE"           : "Set to 'y' if you would like Packstack to install the openstack client packages. An admin \"rc\" file will also be installed",
-                   "PROMPT"          : "Should Packstack install Openstack client tools",
+                   "USAGE"           : "Set to 'y' if you would like Packstack to install the OpenStack Client packages. An admin \"rc\" file will also be installed",
+                   "PROMPT"          : "Should Packstack install OpenStack client tools",
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATION_FUNC" : validate.validateOptions,
                    "DEFAULT_VALUE"   : "y",
@@ -98,8 +98,8 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "ntp-severs",
-                   "USAGE"           : "Comma separated list of NTP servers. Leave plain if packstack should not install ntpd on instances.",
-                   "PROMPT"          : "Enter list of NTP server(s). Leave plain if packstack should not install ntpd on instances.",
+                   "USAGE"           : "Comma separated list of NTP servers. Leave plain if Packstack should not install ntpd on instances.",
+                   "PROMPT"          : "Enter list of NTP server(s). Leave plain if Packstack should not install ntpd on instances.",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : lambda param, options: True,
                    "DEFAULT_VALUE"   : '',
@@ -120,9 +120,9 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     osclientsteps = [
-             {'title': 'Running Pre install scripts', 'functions':[createmanifest]}
+             {'title': 'Adding pre install manifest entries', 'functions':[createmanifest]}
     ]
-    controller.addSequence("Running Pre install scripts", [], [], osclientsteps)
+    controller.addSequence("Running pre install scripts", [], [], osclientsteps)
 
     if controller.CONF['CONFIG_NTP_SERVERS']:
         ntp_step = [{'functions': [create_ntp_manifest],

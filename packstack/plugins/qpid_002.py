@@ -23,7 +23,7 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack QPID configuration")
+    logging.debug("Adding OpenStack QPID configuration")
     paramsList = [
                   {"CMD_OPTION"      : "qpid-host",
                    "USAGE"           : "The IP address of the server on which to install the QPID service",
@@ -57,7 +57,7 @@ def initSequences(controller):
     if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
         return
     qpidsteps = [
-             {'title': 'Creating QPID Manifest', 'functions':[createmanifest]}
+             {'title': 'Adding QPID manifest entries', 'functions':[createmanifest]}
     ]
     controller.addSequence("Installing QPID", [], [], qpidsteps)
 

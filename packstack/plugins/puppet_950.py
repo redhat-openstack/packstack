@@ -30,7 +30,7 @@ MODULEDIR = os.path.join(PUPPETDIR, "modules")
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack Puppet configuration")
+    logging.debug("Adding OpenStack Puppet configuration")
     paramsList = [
                  ]
 
@@ -51,8 +51,8 @@ def initSequences(controller):
     controller.insertSequence("Clean Up", [], [], puppetpresteps, index=0)
 
     puppetsteps = [
-             {'title': 'Installing Puppet', 'functions':[installpuppet]},
-             {'title': 'Copying Puppet modules/manifests', 'functions':[copyPuppetModules]},
+             {'title': 'Installing Puppet', 'functions': [installpuppet]},
+             {'title': 'Copying Puppet modules and manifests', 'functions':[copyPuppetModules]},
              {'title': 'Applying Puppet manifests', 'functions':[applyPuppetManifest]},
     ]
     controller.addSequence("Puppet", [], [], puppetsteps)
