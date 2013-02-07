@@ -11,8 +11,6 @@ class { 'swift::proxy':
     'healthcheck',
     'cache',
 #    'ratelimit',
-#    'swift3',
-#    's3token',
     'authtoken',
     'keystone',
     'proxy-server'
@@ -25,7 +23,6 @@ class { [
     'swift::proxy::catch_errors',
     'swift::proxy::healthcheck',
     'swift::proxy::cache',
-    'swift::proxy::swift3',
 ]: }
 
 class { 'swift::proxy::ratelimit':
@@ -34,12 +31,6 @@ class { 'swift::proxy::ratelimit':
     log_sleep_time_seconds => 0,
     rate_buffer_seconds    => 5,
     account_ratelimit      => 0
-}
-
-class { 'swift::proxy::s3token':
-    # assume that the controller host is the swift api server
-    auth_host     => $controller_node_public,
-    auth_port     => '35357',
 }
 
 class { 'swift::proxy::keystone':
