@@ -374,7 +374,8 @@ class ScriptRunner(object):
     def append(self, s):
         self.script.append(s)
 
-    def execute(self, logerrors=True, maskList=[]):
+    def execute(self, logerrors=True, maskList=None):
+        maskList = maskList or []
         script = "\n".join(self.script)
         logging.debug("# ============ ssh : %r =========="%self.ip)
 
