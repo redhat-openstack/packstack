@@ -101,12 +101,12 @@ def serverprep():
             hostname = hostname.split('/')[0]
         server = utils.ScriptRunner(hostname)
 
-        # install epel if on rhel and epel is configured
+        # install epel if on rhel (or popular derivative thereof) and epel is configured
         if controller.CONF["CONFIG_USE_EPEL"] == 'y':
             server.append("export EPEL_RPM_URL=\"http://download.fedoraproject.org/pub/epel/6/"
                                                 "$([ `uname -i` = 'x86_64' ] && echo 'x86_64' || echo 'i386')"
                                                 "/epel-release-6-8.noarch.rpm\"")
-            server.append("grep 'Red Hat Enterprise Linux' /etc/redhat-release && "
+            server.append("grep -e 'Red Hat Enterprise Linux' -e 'CentOS' -e 'Scientific Linux' /etc/redhat-release && "
                           "( rpm -q epel-release || rpm -Uvh $EPEL_RPM_URL ) || echo -n ''")
 
         server.append("mkdir -p %s" % basedefs.PUPPET_MANIFEST_DIR)
