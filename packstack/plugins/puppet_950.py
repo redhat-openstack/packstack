@@ -1,13 +1,14 @@
 """
 Installs and configures puppet
 """
+import sys
 import logging
 import os
 import platform
 import time
 
 import packstack.installer.common_utils as utils
-from packstack.installer import basedefs
+from packstack.installer import basedefs, output_messages
 from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.ospluginutils import gethostlist,\
@@ -89,9 +90,18 @@ def copyPuppetModules():
 
 
 def waitforpuppet(currently_running):
+    log_len = 0
+    twirl = ["-","\\","|","/"]
     while currently_running:
         for hostname, finished_logfile in currently_running:
-            print "Testing if puppet apply is finished : %s" % os.path.splitext(os.path.basename(finished_logfile))[0],
+            log_file = os.path.splitext(os.path.basename(finished_logfile))[0]
+            space_len = basedefs.SPACE_LEN - len(log_file)
+            if len(log_file) > log_len:
+                log_len = len(log_file)
+            twirl = twirl[-1:] + twirl[:-1]
+            sys.stdout.write(("\rTesting if puppet apply is finished : %s" % log_file).ljust(40 + log_len))
+            sys.stdout.write("[ %s ]" % twirl[0])
+            sys.stdout.flush()
             try:
                 # Once a remote puppet run has finished, we retrieve the log
                 # file and check it for errors
@@ -104,16 +114,19 @@ def waitforpuppet(currently_running):
                 # If we got to this point the puppet apply has finished
                 currently_running.remove((hostname, finished_logfile))
 
+                # clean off the last "testing apply" msg
+                sys.stdout.write(("\r").ljust(45 + log_len))
+
             except ScriptRuntimeError, e:
                 # the test raises an exception if the file doesn't exist yet
                 # TO-DO: We need to start testing 'e' for unexpected exceptions
                 time.sleep(3)
-                print
                 continue
 
             # check the log file for errors
             validate_puppet_logfile(log)
-            print "OK"
+            sys.stdout.write(("\r%s : " % log_file).ljust(basedefs.SPACE_LEN))
+            print ("[ " + utils.getColoredText(output_messages.INFO_DONE, basedefs.GREEN) + " ]")
 
 
 def applyPuppetManifest():
