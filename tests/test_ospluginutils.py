@@ -45,3 +45,14 @@ class OSPluginUtilsTestCase(TestCase):
         fp.close()
 
         self.assertRaises(PackStackError, validate_puppet_logfile, filename)
+
+    def test_validate_puppet_logfile_okerror(self):
+        filename = os.path.join(self.tempdir, "puppet.log")
+        fp = open(filename, "w")
+        fp.write("err: Could not prefetch database_grant provider 'mysql': "
+                 "Execution of '/usr/bin/mysql --defaults-file=/root/.my.cnf "
+                 "mysql -Be describe user' returned 1: Could not open required"
+                 " defaults file: /root/.my.cnf")
+        fp.close()
+
+        validate_puppet_logfile(filename)
