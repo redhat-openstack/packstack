@@ -380,26 +380,32 @@ class ScriptRunner(object):
 
         _PIPE = subprocess.PIPE  # pylint: disable=E1101
         if self.ip:
-            obj = subprocess.Popen(["ssh", "-o", "StrictHostKeyChecking=no", "-o", "UserKnownHostsFile=/dev/null", "root@%s"%self.ip, "bash -x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
-                                    close_fds=True, shell=False)
+            cmd = ["ssh", "-o", "StrictHostKeyChecking=no",
+                          "-o", "UserKnownHostsFile=/dev/null",
+                          "root@%s" % self.ip, "bash -x"]
         else:
-            obj = subprocess.Popen(["bash", "-x"], stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
-                                    close_fds=True, shell=False)
+            cmd = ["bash", "-x"]
+        obj = subprocess.Popen(cmd, stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
+                               close_fds=True, shell=False)
 
         logging.debug(_maskString(script, maskList))
         script = "function t(){ exit $? ; } \n trap t ERR \n" + script
         stdoutdata, stderrdata = obj.communicate(script)
         logging.debug("============ STDOUT ==========")
         logging.debug(_maskString(stdoutdata, maskList))
-        _returncode = obj.returncode
-        if _returncode:
+        returncode = obj.returncode
+        if returncode:
             if logerrors:
                 logging.error("============= STDERR ==========")
                 logging.error(_maskString(stderrdata, maskList))
+
+            pattern = (r'^ssh\:')
+            if re.search(pattern, stderrdata):
+                raise NetworkError(stderrdata)
             else:
-                logging.debug("============= STDERR ==========")
-                logging.debug(_maskString(stderrdata, maskList))
-            raise ScriptRuntimeError("Error running remote script: %s" % stdoutdata)
+                raise ScriptRuntimeError('Error running remote script: '
+                                         '%s' % stdoutdata)
+        return returncode, stdoutdata, stderrdata
 
     def template(self, src, dst, varsdict):
         with open(src) as fp:
