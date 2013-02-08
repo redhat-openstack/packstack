@@ -51,7 +51,7 @@ def initSequences(controller):
     controller.insertSequence("Clean Up", [], [], puppetpresteps, index=0)
 
     puppetsteps = [
-             {'title': 'Installing Puppet', 'functions': [installpuppet]},
+             {'title': 'Installing Dependencies', 'functions':[installdeps]},
              {'title': 'Copying Puppet modules and manifests', 'functions':[copyPuppetModules]},
              {'title': 'Applying Puppet manifests', 'functions':[applyPuppetManifest]},
     ]
@@ -64,10 +64,11 @@ def runCleanup():
     localserver.execute()
 
 
-def installpuppet():
+def installdeps():
     for hostname in gethostlist(controller.CONF):
         server = utils.ScriptRunner(hostname)
         server.append("rpm -q puppet || yum install -y puppet")
+        server.append("rpm -q openssh-clients || yum install -y openssh-clients")
         server.execute()
 
 
