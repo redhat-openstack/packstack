@@ -44,13 +44,14 @@ def initLogging (debug):
         if (debug):
             level = logging.DEBUG
         else:
-            level = logging.WARNING
+            level = logging.INFO
 
         fmts='%(asctime)s::%(levelname)s::%(module)s::%(lineno)d::%(name)s:: %(message)s'
         dfmt='%Y-%m-%d %H:%M:%S'
         fmt = logging.Formatter(fmts, dfmt)
         hdlr.setFormatter(fmt)
 
+        logging.root.handlers = []
         logging.root.addHandler(hdlr)
         logging.root.setLevel(level)
     except:
@@ -613,10 +614,14 @@ def _main(configFile=None):
         # Print info
         _addFinalInfoMsg()
         print output_messages.INFO_INSTALL_SUCCESS
-        _printAdditionalMessages()
 
+    except Exception, e:
+        controller.MESSAGES.append(utils.getColoredText("ERROR : "+str(e), basedefs.RED))
+        controller.MESSAGES.append(output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO%(logFile))
+        logging.exception(e)
     finally:
         # Always print user params to log
+        _printAdditionalMessages()
         _summaryParamsToLog()
 
 
