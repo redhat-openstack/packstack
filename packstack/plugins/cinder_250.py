@@ -34,11 +34,8 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install Cinder",
                    "PROMPT"          : "Enter the IP address of the Cinder server",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateSSH,
+                   "VALIDATORS"      : [validate.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
-                   "PROCESSOR_ARGS"  : {"allow_localhost": True},
-                   "PROCESSOR_FUNC"  : process.processHost,
-                   "PROCESSOR_MSG"   : "WARN_VAL_IS_HOSTNAME",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_CINDER_HOST",
@@ -49,7 +46,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Cinder to access DB",
                    "PROMPT"          : "Enter the password for the Cinder DB access",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -61,7 +58,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Cinder to authenticate with Keystone",
                    "PROMPT"          : "Enter the password for the Cinder Keystone access",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -73,7 +70,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Cinder's volumes group size",
                    "PROMPT"          : "Enter Cinder's volumes group size",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : "2G",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -85,7 +82,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Cinder's volumes group path",
                    "PROMPT"          : "Enter Cinder's volumes group path",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : "/var/lib/cinder",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -97,7 +94,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Cinder's volumes group name",
                    "PROMPT"          : "Enter Cinder's volumes group name",
                    "OPTION_LIST"     : [],
-                   "VALIDATION_FUNC" : validate.validateStringNotEmpty,
+                   "VALIDATORS"      : [validate.validate_not_empty],
                    "DEFAULT_VALUE"   : "cinder-volumes",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -109,7 +106,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Create Cinder's volumes group",
                    "PROMPT"          : "Should Cinder's volumes group be created?",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATION_FUNC" : createVolume,
+                   "VALIDATORS"      : [validate.validate_options, createVolume],
                    "DEFAULT_VALUE"   : "y",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -141,18 +138,19 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Cinder", [], [], cindersteps)
 
 
-def createVolume(param, options=[]):
+def createVolume(param, options=None):
     """
     Check that provided host is listening on port 22
     """
+    options = options or []
     if param == "n":
-        return True
+        return
 
+    # XXX: For this case it probably is better (cleaner) to use processor instead of validator
     for option in ['CONFIG_CINDER_VOLUMES_SIZE', 'CONFIG_CINDER_VOLUMES_PATH']:
         param = controller.getParamByName(option)
         param.setKey('USE_DEFAULT', False)
         setup.input_param(param)
-    return True
 
 
 def checkcindervg():

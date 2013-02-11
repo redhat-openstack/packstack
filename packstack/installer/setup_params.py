@@ -3,9 +3,9 @@ Container set for groups and parameters
 """
 class Param(object):
     allowed_keys = ('CMD_OPTION','USAGE','PROMPT','OPTION_LIST',
-                    'PROCESSOR_ARGS', 'PROCESSOR_FUNC', 'PROCESSOR_MSG',
-                    'VALIDATION_FUNC','DEFAULT_VALUE','MASK_INPUT','LOOSE_VALIDATION',
-                    'CONF_NAME','USE_DEFAULT','NEED_CONFIRM','CONDITION')
+                    'PROCESSORS', 'VALIDATORS','DEFAULT_VALUE',
+                    'MASK_INPUT', 'LOOSE_VALIDATION', 'CONF_NAME',
+                    'USE_DEFAULT','NEED_CONFIRM','CONDITION')
 
     def __init__(self, attributes=None):
         if not attributes:
@@ -25,10 +25,10 @@ class Param(object):
 
     def getKey(self, key):
         self.validateKey(key)
-        return self.__ATTRIBUTES[key]
+        return self.__ATTRIBUTES.get(key)
 
     def validateKey(self, key):
-        if not self.__ATTRIBUTES.has_key(key):
+        if key not in self.allowed_keys:
             raise KeyError("%s is not a valid key" % key)
 
 class Group(Param):

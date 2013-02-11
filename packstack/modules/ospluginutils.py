@@ -5,15 +5,12 @@ import re
 
 from packstack.installer import basedefs
 from packstack.installer.setup_controller import Controller
+from packstack.installer.exceptions import PackStackError
 
 controller = Controller()
 
 PUPPET_DIR = os.path.join(basedefs.DIR_PROJECT_DIR, "puppet")
 PUPPET_TEMPLATE_DIR = os.path.join(PUPPET_DIR, "templates")
-
-
-class PackStackError(Exception):
-    pass
 
 
 class NovaConfig(object):
