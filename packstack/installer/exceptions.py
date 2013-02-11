@@ -25,6 +25,7 @@ class MissingRequirements(PackStackError):
 
 
 class InstallError(PackStackError):
+    """Exception for generic errors during setup run."""
     pass
 
 class FlagValidationError(InstallError):
