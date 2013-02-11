@@ -67,8 +67,8 @@ def runCleanup():
 def installdeps():
     for hostname in gethostlist(controller.CONF):
         server = utils.ScriptRunner(hostname)
-        server.append("rpm -q puppet || yum install -y puppet")
-        server.append("rpm -q openssh-clients || yum install -y openssh-clients")
+        for package in ("puppet", "openssh-clients", "tar"):
+            server.append("rpm -q %s || yum install -y %s" % (package, package))
         server.execute()
 
 
