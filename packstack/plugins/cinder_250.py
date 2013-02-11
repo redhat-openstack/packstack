@@ -85,10 +85,7 @@ def initSequences(controller):
              {'title': 'Adding Cinder manifest entries', 'functions':[createmanifest]}
     ]
     controller.addSequence("Installing OpenStack Cinder", [], [], cindersteps)
-<<<<<<< HEAD
-=======
 
->>>>>>> cba297d... Fail when Nova API, Nova network and Swift hosts are not set as IP addresses
 
 def checkcindervg():
     server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
