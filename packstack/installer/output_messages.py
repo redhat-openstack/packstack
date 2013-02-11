@@ -50,6 +50,7 @@ WARN_VAL_IS_HOSTNAME = ("Warning: Packstack failed to change given "
 INFO_STRING_LEN_LESS_THAN_MIN="String length is less than the minimum allowed: %s"
 INFO_STRING_EXCEEDS_MAX_LENGTH="String length exceeds the maximum length allowed: %s"
 INFO_STRING_CONTAINS_ILLEGAL_CHARS="String contains illegal characters"
+INFO_CINDER_VOLUMES_EXISTS="Did not create a cinder volume group, one already existed"
 
 WARN_WEAK_PASS="Warning: Weak Password."
 

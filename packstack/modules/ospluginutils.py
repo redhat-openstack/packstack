@@ -72,13 +72,13 @@ def gethostlist(CONF):
     for key, value in CONF.items():
         if key.endswith("_HOST"):
             value = value.split('/')[0]
-            if value not in hosts:
+            if value not in hosts and value:
                 hosts.append(value)
         if key.endswith("_HOSTS"):
             for host in value.split(","):
                 host = host.strip()
                 host = host.split('/')[0]
-                if host not in hosts:
+                if host not in hosts and host:
                     hosts.append(host)
     return hosts
 
