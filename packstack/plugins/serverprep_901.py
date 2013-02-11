@@ -26,7 +26,7 @@ def initConfig(controllerObject):
     conf_params = {"SERVERPREPARE": [
                   {"CMD_OPTION"      : "use-epel",
                    "USAGE"           : "Install OpenStack from EPEL. If set to \"y\" EPEL will be installed on each server",
-                   "PROMPT"          : "Should packstack install EPEL on each server",
+                   "PROMPT"          : "Should Packstack install EPEL on each server",
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATION_FUNC" : validate.validateOptions,
                    "DEFAULT_VALUE"   : "n",
@@ -90,9 +90,9 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     preparesteps = [
-             {'title': 'Preparing Servers', 'functions':[serverprep]}
+             {'title': 'Preparing servers', 'functions':[serverprep]}
     ]
-    controller.addSequence("Prepare Server", [], [], preparesteps)
+    controller.addSequence("Preparing servers", [], [], preparesteps)
 
 
 def serverprep():

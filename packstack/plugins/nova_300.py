@@ -209,16 +209,16 @@ def initSequences(controller):
         return
 
     novaapisteps = [
-             {'title': 'Adding Nova API Manifest entries', 'functions':[createapimanifest]},
-             {'title': 'Adding Nova Keystone Manifest entries', 'functions':[createkeystonemanifest]},
-             {'title': 'Adding Nova Cert Manifest entries', 'functions':[createcertmanifest]},
-             {'title': 'Adding Nova Compute Manifest entries', 'functions':[createcomputemanifest]},
-             {'title': 'Adding Nova Network Manifest entries', 'functions':[createnetworkmanifest]},
-             {'title': 'Adding Nova Scheduler Manifest entries', 'functions':[createschedmanifest]},
-             {'title': 'Adding Nova VNC Proxy Manifest entries', 'functions':[createvncproxymanifest]},
-             {'title': 'Adding Nova Common Manifest entries', 'functions':[createcommonmanifest]},
+             {'title': 'Adding Nova API manifest entries', 'functions':[createapimanifest]},
+             {'title': 'Adding Nova Keystone manifest entries', 'functions':[createkeystonemanifest]},
+             {'title': 'Adding Nova Cert manifest entries', 'functions':[createcertmanifest]},
+             {'title': 'Adding Nova Compute manifest entries', 'functions':[createcomputemanifest]},
+             {'title': 'Adding Nova Network manifest entries', 'functions':[createnetworkmanifest]},
+             {'title': 'Adding Nova Scheduler manifest entries', 'functions':[createschedmanifest]},
+             {'title': 'Adding Nova VNC Proxy manifest entries', 'functions':[createvncproxymanifest]},
+             {'title': 'Adding Nova Common manifest entries', 'functions':[createcommonmanifest]},
     ]
-    controller.addSequence("Installing Nova API", [], [], novaapisteps)
+    controller.addSequence("Installing OpenStack Nova API", [], [], novaapisteps)
 
 def createapimanifest():
     manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVA_API_HOST']

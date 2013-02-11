@@ -25,7 +25,7 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack Keystone configuration")
+    logging.debug("Adding OpenStack Keystone configuration")
     paramsList = [
                   {"CMD_OPTION"      : "keystone-host",
                    "USAGE"           : "The IP address of the server on which to install Keystone",
@@ -92,9 +92,9 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     keystonesteps = [
-             {'title': 'Creating Keystone Manifest', 'functions':[createmanifest]}
+             {'title': 'Adding Keystone manifest entries', 'functions':[createmanifest]}
     ]
-    controller.addSequence("Installing Keystone", [], [], keystonesteps)
+    controller.addSequence("Installing OpenStack Keystone", [], [], keystonesteps)
 
 def createmanifest():
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']

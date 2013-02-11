@@ -1,5 +1,5 @@
 """
-Installs and configures an openstack client
+Installs and configures an OpenStack Client
 """
 
 import logging
@@ -23,10 +23,10 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack client configuration")
+    logging.debug("Adding OpenStack Client configuration")
     paramsList = [
                   {"CMD_OPTION"      : "osclient-host",
-                   "USAGE"           : "The IP address of the server on which to install the openstack client packages. An admin \"rc\" file will also be installed",
+                   "USAGE"           : "The IP address of the server on which to install the OpenStack client packages. An admin \"rc\" file will also be installed",
                    "PROMPT"          : "Enter the IP address of the client server",
                    "OPTION_LIST"     : [],
                    "VALIDATION_FUNC" : validate.validateSSH,
@@ -57,7 +57,7 @@ def initSequences(controller):
         return
 
     osclientsteps = [
-             {'title': 'Creating OS Client Manifest', 'functions':[createmanifest]}
+             {'title': 'Adding OpenStack Client manifest entries', 'functions':[createmanifest]}
     ]
     controller.addSequence("Installing OpenStack Client", [], [], osclientsteps)
 

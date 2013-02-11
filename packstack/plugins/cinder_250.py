@@ -25,7 +25,7 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
-    logging.debug("Adding Openstack Cinder configuration")
+    logging.debug("Adding OpenStack Cinder configuration")
     paramsList = [
                   {"CMD_OPTION"      : "cinder-host",
                    "USAGE"           : "The IP address of the server on which to install Cinder",
@@ -83,11 +83,11 @@ def initSequences(controller):
         return
 
     cindersteps = [
-             {'title': 'Adding Cinder Keystone Manifest entries', 'functions':[createkeystonemanifest]},
+             {'title': 'Adding Cinder Keystone manifest entries', 'functions':[createkeystonemanifest]},
              {'title': 'Checking if the Cinder server has a cinder-volumes vg', 'functions':[checkcindervg]},
-             {'title': 'Creating Cinder Manifest', 'functions':[createmanifest]}
+             {'title': 'Adding Cinder manifest entries', 'functions':[createmanifest]}
     ]
-    controller.addSequence("Installing Cinder", [], [], cindersteps)
+    controller.addSequence("Installing OpenStack Cinder", [], [], cindersteps)
 
 def checkcindervg():
     server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
