@@ -7,16 +7,18 @@ import uuid
 import logging
 
 from packstack.installer import exceptions
-from packstack.installer import run_setup as setup
-from packstack.installer import engine_validators as validate
 from packstack.installer import engine_processors as process
+from packstack.installer import engine_validators as validate
 
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
+from packstack.installer.exceptions import ScriptRuntimeError
+from packstack.installer import output_messages
 
-# Controller object will be initialized from main flow
+# Controller object will
+# be initialized from main flow
 controller = None
 
 # Plugin name
@@ -24,6 +26,7 @@ PLUGIN_NAME = "OS-Cinder"
 PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
 
 logging.debug("plugin %s loaded", __name__)
+
 
 def initConfig(controllerObject):
     global controller
@@ -66,47 +69,11 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : True,
                    "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "cinder-volumes-size",
-                   "USAGE"           : "Cinder's volumes group size",
-                   "PROMPT"          : "Enter Cinder's volumes group size",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
-                   "DEFAULT_VALUE"   : "2G",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_CINDER_VOLUMES_SIZE",
-                   "USE_DEFAULT"     : True,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "cinder-volumes-path",
-                   "USAGE"           : "Cinder's volumes group path",
-                   "PROMPT"          : "Enter Cinder's volumes group path",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
-                   "DEFAULT_VALUE"   : "/var/lib/cinder",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_CINDER_VOLUMES_PATH",
-                   "USE_DEFAULT"     : True,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "cinder-volumes",
-                   "USAGE"           : "Cinder's volumes group name",
-                   "PROMPT"          : "Enter Cinder's volumes group name",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
-                   "DEFAULT_VALUE"   : "cinder-volumes",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_CINDER_VOLUMES",
-                   "USE_DEFAULT"     : True,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "cinder-volumes-create",
                    "USAGE"           : "Create Cinder's volumes group",
                    "PROMPT"          : "Should Cinder's volumes group be created?",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options, createVolume],
+                   "VALIDATORS"      : [validate.validate_options],
                    "DEFAULT_VALUE"   : "y",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -125,54 +92,80 @@ def initConfig(controllerObject):
 
     controller.addGroup(groupDict, paramsList)
 
+    paramsList = [
+                  {"CMD_OPTION"      : "cinder-volumes-size",
+                   "USAGE"           : "Cinder's volumes group size",
+                   "PROMPT"          : "Enter Cinder's volumes group size",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS" : [validate.validate_not_empty],
+                   "DEFAULT_VALUE"   : "20G",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_CINDER_VOLUMES_SIZE",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                 ]
+
+    groupDict = { "GROUP_NAME"            : "CINDERVOLUMECREATE",
+                  "DESCRIPTION"           : "Cinder volume create Config parameters",
+                  "PRE_CONDITION"         : "CONFIG_CINDER_VOLUMES_CREATE",
+                  "PRE_CONDITION_MATCH"   : "y",
+                  "POST_CONDITION"        : False,
+                  "POST_CONDITION_MATCH"  : True}
+
+    controller.addGroup(groupDict, paramsList)
+
 
 def initSequences(controller):
     if controller.CONF['CONFIG_CINDER_INSTALL'] != 'y':
         return
 
-    cindersteps = [
-             {'title': 'Adding Cinder Keystone manifest entries', 'functions':[createkeystonemanifest]},
-             {'title': 'Checking if the Cinder server has a cinder-volumes vg', 'functions':[checkcindervg]},
-             {'title': 'Adding Cinder manifest entries', 'functions':[createmanifest]}
+    cinder_steps = [
+             {'title': 'Adding Cinder Keystone manifest entries', 'functions':[create_keystone_manifest]},
+             {'title': 'Checking if the Cinder server has a cinder-volumes vg', 'functions':[check_cinder_vg]},
+             {'title': 'Adding Cinder manifest entries', 'functions':[create_manifest]}
     ]
-    controller.addSequence("Installing OpenStack Cinder", [], [], cindersteps)
+    controller.addSequence("Installing OpenStack Cinder", [], [], cinder_steps)
 
 
-def createVolume(param, options=None):
-    """
-    Check that provided host is listening on port 22
-    """
-    options = options or []
-    if param == "n":
-        return
+def check_cinder_vg():
 
-    # XXX: For this case it probably is better (cleaner) to use processor instead of validator
-    for option in ['CONFIG_CINDER_VOLUMES_SIZE', 'CONFIG_CINDER_VOLUMES_PATH']:
-        param = controller.getParamByName(option)
-        param.setKey('USE_DEFAULT', False)
-        setup.input_param(param)
+    cinders_volume = 'cinder-volumes'
 
-
-def checkcindervg():
+    # Do we have a cinder-volumes vg?
+    have_cinders_volume = False
     server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
-
-    cinders_volume = controller.CONF['CONFIG_CINDER_VOLUMES']
+    server.append('vgdisplay %s' % cinders_volume)
+    try:
+        server.execute()
+        have_cinders_volume = True
+    except ScriptRuntimeError:
+        pass
 
     if controller.CONF["CONFIG_CINDER_VOLUMES_CREATE"] != "y":
-        server.append('vgdisplay %s' % cinders_volume)
-        err = "The cinder server should contain a cinder-volumes volume group"
+        if not have_cinders_volume:
+            raise exceptions.MissingRequirements("The cinder server should"
+                " contain a cinder-volumes volume group")
     else:
+        if have_cinders_volume:
+            controller.MESSAGES.append(
+                output_messages.INFO_CINDER_VOLUMES_EXISTS)
+            return
+
+        server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
         logging.info("A new cinder volumes group will be created")
         err = "Cinder's volume group '%s' could not be created" % \
-                            controller.CONF['CONFIG_CINDER_VOLUMES']
+                            cinders_volume
 
-        cinders_volume_path = controller.CONF['CONFIG_CINDER_VOLUMES_PATH']
+        cinders_volume_path = '/var/lib/cinder'
         server.append('mkdir -p  %s' % cinders_volume_path)
         logging.debug("Volume's path: %s" % cinders_volume_path)
 
         cinders_volume_path = os.path.join(cinders_volume_path, cinders_volume)
         server.append('dd if=/dev/zero of=%s bs=1 count=0 seek=%s' % \
-            (cinders_volume_path, controller.CONF['CONFIG_CINDER_VOLUMES_SIZE']))
+            (cinders_volume_path,
+             controller.CONF['CONFIG_CINDER_VOLUMES_SIZE']))
         server.append('losetup /dev/loop2  %s' % cinders_volume_path)
         server.append('pvcreate /dev/loop2')
         server.append('vgcreate %s /dev/loop2' % cinders_volume)
@@ -180,30 +173,29 @@ def checkcindervg():
         # Let's make sure it exists
         server.append('vgdisplay %s' % cinders_volume)
 
-    try:
-        server.execute()
-    except:
-        if controller.CONF["CONFIG_CINDER_VOLUMES_CREATE"] == "y":
+        try:
+            server.execute()
+        except:
             # Release loop device if cinder's volume creation
             # fails.
             try:
-                logging.debug("Release loop device since volume's creation failed")
+                logging.debug("Release loop device, volume creation failed")
                 server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
                 server.append('losetup -d /dev/loop2')
                 server.execute()
             except:
                 pass
 
-        raise exceptions.MissingRequirements(err)
+            raise exceptions.MissingRequirements(err)
 
 
-def createkeystonemanifest():
+def create_keystone_manifest():
     manifestfile = "%s_keystone.pp" % controller.CONF['CONFIG_KEYSTONE_HOST']
     manifestdata = getManifestTemplate("keystone_cinder.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
-def createmanifest():
+def create_manifest():
     manifestfile = "%s_cinder.pp" % controller.CONF['CONFIG_CINDER_HOST']
     manifestdata = getManifestTemplate("cinder.pp")
     appendManifestFile(manifestfile, manifestdata)
