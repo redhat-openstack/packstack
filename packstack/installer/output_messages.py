@@ -40,8 +40,8 @@ INFO_VAL_PORT_OCCUPIED="Error: TCP Port %s is already open by %s (pid: %s)"
 INFO_VAL_PORT_OCCUPIED_BY_JBOSS="Error: TCP Port %s is used by JBoss"
 INFO_VAL_PASSWORD_DONT_MATCH="Error: passwords don't match"
 
-INFO_VAL_IS_HOSTNAME = ("Packstack changed given hostname %s to IP "
-                        "address %s.")
+INFO_CHANGED_VALUE = ("Packstack changed given value %s to required "
+                      "value %s")
 WARN_VAL_IS_HOSTNAME = ("Warning: Packstack failed to change given "
                         "hostname %s to IP address. Note that some "
                         "services might not run correctly when hostname"

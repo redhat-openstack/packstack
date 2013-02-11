@@ -21,11 +21,18 @@ class PackStackError(Exception):
 class InstallError(PackStackError):
     """Exception for generic errors during setup run."""
     pass
+
 class FlagValidationError(InstallError):
+    """Raised when single flag validation fails."""
+    pass
+
+class ParamValidationError(InstallError):
+    """Raised when parameter value validation fails."""
     pass
 
 class PluginError(PackStackError):
     pass
+
 class ParamProcessingError(PluginError):
     pass
 
