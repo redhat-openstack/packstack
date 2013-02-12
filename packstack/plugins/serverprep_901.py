@@ -310,7 +310,7 @@ def run_rhsm_reg(host, username, password):
     # register host
     cmd = ('subscription-manager register --username=\"%s\" '
                             '--password=\"%s\" --autosubscribe || true')
-    server.append(cmd % (username, password))
+    server.append(cmd % (username, password.replace('"','\\"')))
 
     # subscribe to required channel
     cmd = ('subscription-manager list --consumed | grep -i openstack || '
