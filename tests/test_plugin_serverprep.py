@@ -44,7 +44,7 @@ class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
         serverprep_901.controller.CONF["CONFIG_SATELLITE_CACERT"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_AKEY"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_PROFILE"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_HOST"] = ""
+        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_USERNAME"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_PASSWORD"] = ""
 
