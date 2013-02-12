@@ -47,7 +47,8 @@ class ManifestFiles(object):
         for f, p in self.filelist:
             if f == filename:
                 return
-        self.filelist.append((filename, marker,))
+
+        self.filelist.append((filename, marker))
 
     def getFiles(self):
         return [f for f in self.filelist]
@@ -58,8 +59,9 @@ class ManifestFiles(object):
         write before the puppet manifests are copied to the various servers
         """
         os.mkdir(basedefs.PUPPET_MANIFEST_DIR, 0700)
-        for file, data in self.data.items():
-            fd = os.open(file, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0600)
+        for fname, data in self.data.items():
+            path = os.path.join(basedefs.PUPPET_MANIFEST_DIR, fname)
+            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0600)
             with os.fdopen(fd, 'w') as fp:
                 fp.write(data)
 manifestfiles = ManifestFiles()
@@ -71,8 +73,7 @@ def getManifestTemplate(template_name):
 
 
 def appendManifestFile(manifest_name, data, marker=''):
-    manifestfile = os.path.join(basedefs.PUPPET_MANIFEST_DIR, manifest_name)
-    manifestfiles.addFile(manifestfile, marker, data)
+    manifestfiles.addFile(manifest_name, marker, data)
 
 
 def gethostlist(CONF):

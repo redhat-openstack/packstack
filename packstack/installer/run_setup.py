@@ -612,16 +612,14 @@ def remove_remote_var_dirs():
     doesn't remove data on localhost
     """
     for host in gethostlist(controller.CONF):
-        logging.info(output_messages.INFO_REMOVE_REMOTE_VAR%(basedefs.VAR_DIR, host))
+        host_dir = controller.temp_map[host]
+        logging.info(output_messages.INFO_REMOVE_REMOTE_VAR % (host_dir, host))
         server = utils.ScriptRunner(host)
-        # We don't want to remove the tmp dir on the host that was used to
-        # run packstack, this host has the logfile, if it doesn't have a
-        # logfile its a remote host, so we remove the temp files
-        server.append('ls -l %s || rm -rf %s'%(logFile, basedefs.VAR_DIR))
+        server.append('rm -rf %s' % host_dir)
         try:
             server.execute()
         except Exception, e:
-            msg = output_messages.ERR_REMOVE_REMOTE_VAR%(basedefs.VAR_DIR, host)
+            msg = output_messages.ERR_REMOVE_REMOTE_VAR % (host_dir, host)
             logging.error(msg)
             logging.exception(e)
             controller.MESSAGES.append(utils.getColoredText(msg, basedefs.RED))

@@ -88,6 +88,7 @@ def validate_options(param, options=None):
     """
     options = options or []
 
+    # TO-DO: to be more flexible, remove this and exit in case param is empty
     validate_not_empty(param, options)
     if param not in options:
         logging.debug('validate_options(%s, options=%s) failed.' %
@@ -95,6 +96,21 @@ def validate_options(param, options=None):
         msg = 'Given value is not is allowed values %s: %s'
         raise ParamValidationError(msg % (options, param))
 
+
+def validate_multi_options(param, options=None):
+    """
+    Validates if comma separated values given in params are members
+    of options.
+    """
+    if not param:
+        return
+    options = options or []
+    for i in param.split(','):
+        if i.strip() not in options:
+            logging.debug('validate_multi_options(%s, options=%s) '
+                          'failed.' % (param, options))
+            msg = 'Given value is not member of allowed values %s: %s'
+            raise ParamValidationError(msg % (options, param))
 
 def validate_ip(param, options=None):
     """
@@ -129,6 +145,7 @@ def validate_file(param, options=None):
     Raises ParamValidationError if provided file in param does not exist.
     """
     options = options or []
+    # TO-DO: to be more flexible, remove this and exit in case param is empty
     validate_not_empty(param)
 
     if not os.path.isfile(param):
@@ -144,6 +161,7 @@ def validate_ping(param, options=None):
     echo request.
     """
     options = options or []
+    # TO-DO: to be more flexible, remove this and exit in case param is empty
     validate_not_empty(param)
 
     cmd = ["/bin/ping", "-c", "1", str(param)]
@@ -161,6 +179,7 @@ def validate_multi_ping(param, options=None):
     do not answer to ICMP echo request.
     """
     options = options or []
+    # TO-DO: to be more flexible, remove this and exit in case param is empty
     validate_not_empty(param)
     for host in param.split(","):
         validate_ping(host.strip())
@@ -202,6 +221,7 @@ def validate_multi_ssh(param, options=None):
     in param do not listen on port 22.
     """
     options = options or []
+    # TO-DO: to be more flexible, remove this and exit in case param is empty
     validate_not_empty(param)
     for host in param.split(","):
         validate_ssh(host)
