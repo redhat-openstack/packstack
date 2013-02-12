@@ -72,6 +72,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "rh-beta-repo",
+                   "USAGE"           : "To subscribe each server with Red Hat subscription manager, to Red Hat Beta RPM's",
+                   "PROMPT"          : "To subscribe each server to Red Hat Beta RPM's enter y",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATORS"      : [validate.validate_options],
+                   "DEFAULT_VALUE"   : "n",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_RH_BETA_REPO",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "rhn-satellite-server",
                    "USAGE"           : ("To subscribe each server with RHN Satellite,"
                                         "fill Satellite's URL here. Note that either "
@@ -301,7 +313,7 @@ def run_rhn_reg(host, server_url, username=None, password=None,
     server.execute(maskList=mask)
 
 
-def run_rhsm_reg(host, username, password):
+def run_rhsm_reg(host, username, password, beta):
     """
     Registers given host to Red Hat Repositories via subscription manager.
     """
@@ -322,6 +334,8 @@ def run_rhsm_reg(host, username, password):
 
     server.append("yum clean all")
     server.append("yum-config-manager --enable rhel-server-ost-6-folsom-rpms")
+    if beta:
+        server.append("yum-config-manager --enable rhel-6-server-beta-rpms")
     server.append("yum clean metadata")
     server.execute(maskList=[password])
 
@@ -388,7 +402,7 @@ def serverprep():
 
         # Subscribe to Red Hat Repositories if configured
         if rh_username:
-            run_rhsm_reg(hostname, rh_username, rh_password)
+            run_rhsm_reg(hostname, rh_username, rh_password, config["CONFIG_RH_BETA_REPO"] == 'y')
 
         # Subscribe to RHN Satellite if configured
         if satellite_url and hostname not in sat_registered:

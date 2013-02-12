@@ -35,6 +35,7 @@ class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
         serverprep_901.controller.CONF["CONFIG_REPO"] = ""
         serverprep_901.controller.CONF["CONFIG_RH_USERNAME"] = "testuser"
         serverprep_901.controller.CONF["CONFIG_RH_PASSWORD"] = password
+        serverprep_901.controller.CONF["CONFIG_RH_BETA_REPO"] = "n"
 
         serverprep_901.controller.CONF["CONFIG_SATELLITE_FLAGS"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_URL"] = ""
