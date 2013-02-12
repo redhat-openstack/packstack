@@ -175,7 +175,7 @@ def check_cinder_vg():
 
         try:
             server.execute()
-        except:
+        except ScriptRuntimeError:
             # Release loop device if cinder's volume creation
             # fails.
             try:

@@ -92,7 +92,6 @@ def initConfig(controllerObject):
                    "PROMPT"          : ("To subscribe each server with RHN Satellite "
                                         "enter RHN Satellite server URL"),
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -105,7 +104,6 @@ def initConfig(controllerObject):
                    "PROMPT"          : ("Enter RHN Satellite username or leave plain "
                                         "if you will use activation key instead"),
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -118,7 +116,6 @@ def initConfig(controllerObject):
                    "PROMPT"          : ("Enter RHN Satellite password or leave plain "
                                         "if you will use activation key instead"),
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -131,7 +128,6 @@ def initConfig(controllerObject):
                    "PROMPT"          : ("Enter RHN Satellite activation key or leave plain "
                                         "if you used username/password instead"),
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -143,7 +139,6 @@ def initConfig(controllerObject):
                    "USAGE"           : "Specify a path or URL to a SSL CA certificate to use",
                    "PROMPT"          : "Specify a path or URL to a SSL CA certificate to use",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -159,7 +154,6 @@ def initConfig(controllerObject):
                                         "be used as an identifier for the system in RHN "
                                         "Satellite"),
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -171,7 +165,6 @@ def initConfig(controllerObject):
                    "USAGE"           : "Specify a HTTP proxy to use with RHN Satellite",
                    "PROMPT"          : "Specify a HTTP proxy to use with RHN Satellite",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -183,7 +176,6 @@ def initConfig(controllerObject):
                    "USAGE"           : "Specify a username to use with an authenticated HTTP proxy",
                    "PROMPT"          : "Specify a username to use with an authenticated HTTP proxy",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -195,7 +187,6 @@ def initConfig(controllerObject):
                    "USAGE"           : "Specify a password to use with an authenticated HTTP proxy.",
                    "PROMPT"          : "Specify a password to use with an authenticated HTTP proxy.",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [lambda a,b: True],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
