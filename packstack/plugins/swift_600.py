@@ -52,7 +52,7 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "os-swift-storage",
-                   "USAGE"           : "A comma separated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device, if /dev is omitted Packstack will create a loopback device for a test setup",
+                   "USAGE"           : "A comma separated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device(packstack does not create the filesystem, you must first do this first), if /dev is omitted Packstack will create a loopback device for a test setup",
                    "PROMPT"          : "Enter the Swift Storage servers e.g. host/dev,host/dev",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validate.validate_not_empty, validate_storage],
