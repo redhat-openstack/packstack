@@ -18,7 +18,7 @@
 	url = https://github.com/packstack/puppetlabs-swift.git
 [submodule "packstack/puppet/modules/cinder"]
 	path = packstack/puppet/modules/cinder
-	url = https://github.com/puppetlabs/puppetlabs-cinder.git
+	url = https://github.com/packstack/puppetlabs-cinder.git
 [submodule "packstack/puppet/modules/stdlib"]
 	path = packstack/puppet/modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
