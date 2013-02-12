@@ -168,7 +168,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_HOST",
+                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -353,7 +353,7 @@ def serverprep():
                       'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
                       'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
                       'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
-                      'proxy_host': config["CONFIG_SATELLITE_PROXY_HOST"].strip(),
+                      'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
                       'proxy_user': config["CONFIG_SATELLITE_PROXY_USERNAME"].strip(),
                       'proxy_pass': config["CONFIG_SATELLITE_PROXY_PASSWORD"].strip(),
                       'flags': satellite_flags}
