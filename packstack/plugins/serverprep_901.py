@@ -3,8 +3,9 @@ prepare server
 """
 
 import os
+import uuid
 import logging
-import os
+import datetime
 
 from packstack.installer import basedefs
 from packstack.installer import common_utils as utils
@@ -200,7 +201,7 @@ def initConfig(controllerObject):
                                         "flags are: novirtinfo, norhnsd, nopackages"),
                    "PROMPT"          : "Enter comma separated list of flags passed to rhnreg_ks",
                    "OPTION_LIST"     : ['novirtinfo', 'norhnsd', 'nopackages'],
-                   "VALIDATORS"      : [validate_multi_options],
+                   "VALIDATORS"      : [validate.validate_multi_options],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -223,23 +224,6 @@ def initConfig(controllerObject):
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, paramList)
-
-
-def validate_multi_options(param, options=None):
-    """
-    Validates if comma separated values given in params are members
-    of options.
-    """
-    # TO-DO: Move this to packstack.installer.setup_validators and modify
-    #        it to raise exception as soon as I1bb3486e will be accepted
-    options = options or []
-    for i in param.split(','):
-        if i.strip() not in options:
-            msg = 'Given value is not member of allowed values %s: %s'
-            # TO-DO: raise ParamValidationError(msg % (options, param))
-            print msg % (options, param)
-            return False
-    return True
 
 
 def run_rhn_reg(host, server_url, username=None, password=None,
@@ -378,10 +362,14 @@ def serverprep():
             server.append("rm -rf $REPOFILE")
 
         # Create the packstack tmp directory
-        server.append("mkdir -p %s" % basedefs.PACKSTACK_VAR_DIR)
-        # Separately create the tmp directory for this packstack run, this will fail if
-        # the directory already exists
-        server.append("mkdir --mode 0700 %s" % basedefs.VAR_DIR)
+        if hostname not in controller.temp_map:
+            # TO-DO: Move this to packstack.installer.setup_controller
+            server.append("mkdir -p %s" % basedefs.PACKSTACK_VAR_DIR)
+            # Separately create the tmp directory for this packstack run, this will fail if
+            # the directory already exists
+            host_dir = os.path.join(basedefs.PACKSTACK_VAR_DIR, uuid.uuid4().hex)
+            server.append("mkdir --mode 0700 %s" % host_dir)
+            controller.temp_map[hostname] = host_dir
 
         # set highest priority of RHOS repository if EPEL is installed
         server.append("rpm -q epel-release && yum install -y yum-plugin-priorities || true")

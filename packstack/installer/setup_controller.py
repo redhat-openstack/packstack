@@ -13,7 +13,7 @@ class Controller(object):
     MESSAGES=[]
     CONF={}
 
-    __single = None # the one, true Singleton
+    __single = None # the one, true Singleton ... for god's sake why ??? :)
 
     def __new__(self, *args, **kwargs):
         """
@@ -22,12 +22,17 @@ class Controller(object):
         which means that we will not invoke this singleton if someone tries to create a new
         instance from a class which inherit Controller.
         did not use isinstance because inheritence makes it behave erratically.
-        """ 
+        """
         if self != type(self.__single):
             self.__single = object.__new__(self, *args, **kwargs)
         return self.__single
 
-    def __init__(self): pass
+    def __init__(self):
+        # XXX: Right now this will only hold all temp dirs on each host.
+        #      Method for temp dir creation should be implemented in this
+        #      class, when it will start behaving like controller and not
+        #      only like data container
+        self.temp_map = {}
 
     # PLugins
     def addPlugin(self, plugObj):

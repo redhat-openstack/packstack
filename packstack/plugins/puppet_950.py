@@ -81,10 +81,18 @@ def copyPuppetModules():
     if platform.linux_distribution()[0] == "Fedora":
         tar_opts += "--exclude create_resources "
     for hostname in gethostlist(controller.CONF):
+        host_dir = controller.temp_map[hostname]
+        puppet_dir = os.path.join(host_dir, basedefs.PUPPET_MANIFEST_RELATIVE)
         server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
-        server.append("tar %s --dereference -cpzf - modules facts | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C %s -xpzf -" % (tar_opts, hostname, basedefs.VAR_DIR))
+        server.append("tar %s --dereference -cpzf - modules facts | "
+                      "ssh -o StrictHostKeyChecking=no "
+                          "-o UserKnownHostsFile=/dev/null "
+                          "root@%s tar -C %s -xpzf -" % (tar_opts, hostname, host_dir))
         server.append("cd %s" % basedefs.PUPPET_MANIFEST_DIR)
-        server.append("tar %s --dereference -cpzf - ../manifests | ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s tar -C %s -xpzf -" % (tar_opts, hostname, basedefs.VAR_DIR))
+        server.append("tar %s --dereference -cpzf - ../manifests | "
+                      "ssh -o StrictHostKeyChecking=no "
+                          "-o UserKnownHostsFile=/dev/null "
+                          "root@%s tar -C %s -xpzf -" % (tar_opts, hostname, host_dir))
     server.execute()
 
 
@@ -96,7 +104,8 @@ def waitforpuppet(currently_running):
                 # Once a remote puppet run has finished, we retrieve the log
                 # file and check it for errors
                 local_server = utils.ScriptRunner()
-                log = finished_logfile.replace(".finished", ".log")
+                log = os.path.join(basedefs.PUPPET_MANIFEST_DIR,
+                                   os.path.basename(finished_logfile).replace(".finished", ".log"))
                 local_server.append('scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s:%s %s' % (hostname, finished_logfile, log))
                 # Errors are expected here if the puppet run isn't finished so we suppress logging them
                 local_server.execute(logerrors=False)
@@ -128,20 +137,25 @@ def applyPuppetManifest():
         lastmarker = marker
 
         for hostname in gethostlist(controller.CONF):
-            if "/%s_" % hostname not in manifest:
+            if "%s_" % hostname not in manifest:
                 continue
 
+            host_dir = controller.temp_map[hostname]
             print "Applying " + manifest
             server = utils.ScriptRunner(hostname)
 
-            running_logfile = "%s.running" % manifest
-            finished_logfile = "%s.finished" % manifest
+            man_path = os.path.join(controller.temp_map[hostname],
+                                    basedefs.PUPPET_MANIFEST_RELATIVE,
+                                    manifest)
+
+            running_logfile = "%s.running" % man_path
+            finished_logfile = "%s.finished" % man_path
             currently_running.append((hostname, finished_logfile))
             if not manifest.endswith('_horizon.pp'):
-                server.append("export FACTERLIB=$FACTERLIB:%s/facts" % basedefs.VAR_DIR)
-            server.append("touch %s"%running_logfile)
-            server.append("chmod 600 %s"%running_logfile)
-            command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s 2>&1 < /dev/null ; mv %s %s ) > /dev/null 2>&1 < /dev/null &" % (basedefs.VAR_DIR, basedefs.VAR_DIR, manifest, running_logfile, running_logfile, finished_logfile)
+                server.append("export FACTERLIB=$FACTERLIB:%s/facts" % host_dir)
+            server.append("touch %s" % running_logfile)
+            server.append("chmod 600 %s" % running_logfile)
+            command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s 2>&1 < /dev/null ; mv %s %s ) > /dev/null 2>&1 < /dev/null &" % (host_dir, host_dir, man_path, running_logfile, running_logfile, finished_logfile)
             server.append(command)
             server.execute()
 
