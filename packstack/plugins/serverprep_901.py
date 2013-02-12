@@ -360,11 +360,16 @@ def serverprep():
 
         # install epel if on rhel (or popular derivative thereof) and epel is configured
         if config["CONFIG_USE_EPEL"] == 'y':
-            server.append("export EPEL_RPM_URL=\"http://download.fedoraproject.org/pub/epel/6/"
-                                                "$([ `uname -i` = 'x86_64' ] && echo 'x86_64' || echo 'i386')"
-                                                "/epel-release-6-8.noarch.rpm\"")
+            server.append("REPOFILE=$(mktemp)")
+            server.append("cat /etc/yum.conf > $REPOFILE")
+            server.append("echo -e '[packstack-epel]\nname=packstack-epel\n"
+                          "enabled=1\n"
+                          "mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch'"
+                          ">> $REPOFILE")
+
             server.append("grep -e 'Red Hat Enterprise Linux' -e 'CentOS' -e 'Scientific Linux' /etc/redhat-release && "
-                          "( rpm -q epel-release || rpm -Uvh $EPEL_RPM_URL ) || echo -n ''")
+                          "( rpm -q epel-release || yum install -y --nogpg -c $REPOFILE epel-release ) || echo -n ''")
+            server.append("rm -rf $REPOFILE")
 
         server.append("mkdir -p %s" % basedefs.PUPPET_MANIFEST_DIR)
 
