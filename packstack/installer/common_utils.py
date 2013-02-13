@@ -332,7 +332,7 @@ def getLocalhostIP():
 
 def host2ip(hostname, allow_localhost=False):
     """
-    Converts given hostname to IP address. Raises HostnameConvertError
+    Converts given hostname to IP address. Raises NetworkError
     if conversion failed.
     """
     try:
