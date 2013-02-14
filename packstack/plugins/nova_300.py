@@ -243,7 +243,7 @@ def createcomputemanifest():
 
         nova_config_options = NovaConfig()
         if host != controller.CONF["CONFIG_NOVA_NETWORK_HOST"]:
-            nova_config_options.addOption("flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+            nova_config_options.addOption("DEFAULT/flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
         check_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
 
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())

@@ -1,10 +1,10 @@
 nova_config{
-    "metadata_host": value => "%(CONFIG_NOVA_API_HOST)s";
-    "qpid_hostname": value => "%(CONFIG_QPID_HOST)s";
-    "rpc_backend": value => "nova.rpc.impl_qpid";
+    "DEFAULT/metadata_host": value => "%(CONFIG_NOVA_API_HOST)s";
 }
 
 class {"nova":
     glance_api_servers => "%(CONFIG_GLANCE_HOST)s:9292",
     sql_connection => "mysql://nova:%(CONFIG_NOVA_DB_PW)s@%(CONFIG_MYSQL_HOST)s/nova",
+    qpid_hostname => "%(CONFIG_QPID_HOST)s",
+    rpc_backend => 'nova.rpc.impl_qpid',
 }
