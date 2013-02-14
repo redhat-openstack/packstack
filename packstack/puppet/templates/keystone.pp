@@ -1,11 +1,11 @@
 class {"keystone":
-    admin_token => "%(CONFIG_KEYSTONE_ADMINTOKEN)s",
+    admin_token => "%(CONFIG_KEYSTONE_ADMIN_TOKEN)s",
     sql_connection => "mysql://keystone_admin:%(CONFIG_KEYSTONE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/keystone",
 }
 
 class {"keystone::roles::admin":
     email => "test@test.com",
-    password => "%(CONFIG_KEYSTONE_ADMINPASSWD)s",
+    password => "%(CONFIG_KEYSTONE_ADMIN_PW)s",
     admin_tenant => "admin"
 }
 
