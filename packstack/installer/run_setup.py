@@ -612,7 +612,11 @@ def remove_remote_var_dirs():
     doesn't remove data on localhost
     """
     for host in gethostlist(controller.CONF):
-        host_dir = controller.temp_map[host]
+        try:
+            host_dir = controller.temp_map[host]
+        except KeyError:
+            # Nothing was added to this host yet, so we have nothing to delete
+            continue
         logging.info(output_messages.INFO_REMOVE_REMOTE_VAR % (host_dir, host))
         server = utils.ScriptRunner(host)
         server.append('rm -rf %s' % host_dir)
