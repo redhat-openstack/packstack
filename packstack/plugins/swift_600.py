@@ -187,7 +187,7 @@ def check_device(host, device):
     Raises ScriptRuntimeError if given device is not mounted on given
     host.
     """
-    server = utils.ScriptRunner()
+    server = utils.ScriptRunner(host)
 
     # the device MUST exist
     cmd = 'ls -l /dev/%s'
