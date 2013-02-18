@@ -144,7 +144,7 @@ def create_ntp_manifest():
     servers = ''
     for srv in controller.CONF['CONFIG_NTP_SERVERS'].split(','):
         srv = srv.strip()
-        validate.validatePing(srv)
+        validate.validate_ping(srv)
         servers += 'server %s\n' % srv
         controller.CONF.setdefault('CONFIG_NTP_FIRST_SERVER', srv)
     controller.CONF['CONFIG_NTP_SERVERS'] = servers
