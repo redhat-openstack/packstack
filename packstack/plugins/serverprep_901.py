@@ -53,24 +53,24 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "rh-username",
-                   "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_PASSWORD",
+                   "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_PW",
                    "PROMPT"          : "To subscribe each server to Red Hat enter a username here",
                    "OPTION_LIST"     : [],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_RH_USERNAME",
+                   "CONF_NAME"       : "CONFIG_RH_USER",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "rh-password",
-                   "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_USERNAME",
+                   "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_USER",
                    "PROMPT"          : "To subscribe each server to Red Hat enter your password here",
                    "OPTION_LIST"     : [],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_RH_PASSWORD",
+                   "CONF_NAME"       : "CONFIG_RH_PW",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -109,7 +109,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_USERNAME",
+                   "CONF_NAME"       : "CONFIG_SATELLITE_USER",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -121,7 +121,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PASSWORD",
+                   "CONF_NAME"       : "CONFIG_SATELLITE_PW",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -181,7 +181,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_USERNAME",
+                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_USER",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -192,7 +192,7 @@ def initConfig(controllerObject):
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_PASSWORD",
+                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_PW",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -326,21 +326,21 @@ def initSequences(controller):
 def serverprep():
     config = controller.CONF
 
-    rh_username = config["CONFIG_RH_USERNAME"].strip()
-    rh_password = config["CONFIG_RH_PASSWORD"].strip()
+    rh_username = config["CONFIG_RH_USER"].strip()
+    rh_password = config["CONFIG_RH_PW"].strip()
 
     sat_registered = set()
     satellite_flags = map(lambda i: i.strip(),
                           config["CONFIG_SATELLITE_FLAGS"].split(','))
     satellite_url = config["CONFIG_SATELLITE_URL"]
-    satellite_args = {'username': config["CONFIG_SATELLITE_USERNAME"].strip(),
-                      'password': config["CONFIG_SATELLITE_PASSWORD"].strip(),
+    satellite_args = {'username': config["CONFIG_SATELLITE_USER"].strip(),
+                      'password': config["CONFIG_SATELLITE_PW"].strip(),
                       'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
                       'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
                       'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
                       'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
-                      'proxy_user': config["CONFIG_SATELLITE_PROXY_USERNAME"].strip(),
-                      'proxy_pass': config["CONFIG_SATELLITE_PROXY_PASSWORD"].strip(),
+                      'proxy_user': config["CONFIG_SATELLITE_PROXY_USER"].strip(),
+                      'proxy_pass': config["CONFIG_SATELLITE_PROXY_PW"].strip(),
                       'flags': satellite_flags}
 
     for hostname in gethostlist(config):

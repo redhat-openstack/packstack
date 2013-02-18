@@ -33,20 +33,20 @@ class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
         serverprep_901.controller.CONF["CONFIG_KEYSTONE_HOST"] = "1.2.3.4"
         serverprep_901.controller.CONF["CONFIG_USE_EPEL"] = "n"
         serverprep_901.controller.CONF["CONFIG_REPO"] = ""
-        serverprep_901.controller.CONF["CONFIG_RH_USERNAME"] = "testuser"
-        serverprep_901.controller.CONF["CONFIG_RH_PASSWORD"] = password
+        serverprep_901.controller.CONF["CONFIG_RH_USER"] = "testuser"
+        serverprep_901.controller.CONF["CONFIG_RH_PW"] = password
         serverprep_901.controller.CONF["CONFIG_RH_BETA_REPO"] = "n"
 
         serverprep_901.controller.CONF["CONFIG_SATELLITE_FLAGS"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_URL"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_USERNAME"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PASSWORD"] = ""
+        serverprep_901.controller.CONF["CONFIG_SATELLITE_USER"] = ""
+        serverprep_901.controller.CONF["CONFIG_SATELLITE_PW"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_CACERT"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_AKEY"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_PROFILE"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_USERNAME"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_PASSWORD"] = ""
+        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_USER"] = ""
+        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_PW"] = ""
 
         serverprep_901.serverprep()
 
