@@ -9,6 +9,7 @@ import logging
 import packstack.installer.engine_validators as validate
 import packstack.installer.engine_processors as process
 import packstack.installer.common_utils as utils
+from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile, manifestfiles
 
@@ -235,6 +236,28 @@ def check_ifcfg(host, device):
     server.execute()
 
 
+def bring_up_ifcfg(host, device):
+    """
+    Brings given device up if it's down. Raises ScriptRuntimeError in case
+    of failure.
+    """
+    server = utils.ScriptRunner(host)
+    server.append('ip link show up | grep "%s"' % device)
+    try:
+        server.execute()
+    except ScriptRuntimeError:
+        server.clear()
+        cmd = 'ip link set dev %s up'
+        server.append(cmd % device)
+        try:
+            server.execute()
+        except ScriptRuntimeError:
+            msg = ('Failed to bring up network interface %s on host %s.'
+                   ' Interface should be up so Openstack can work'
+                   ' properly.' % (device, host))
+            raise ScriptRuntimeError(msg)
+
+
 def createcomputemanifest():
     for host in controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(","):
         controller.CONF["CONFIG_NOVA_COMPUTE_HOST"] = host
@@ -245,14 +268,24 @@ def createcomputemanifest():
         if host != controller.CONF["CONFIG_NOVA_NETWORK_HOST"]:
             nova_config_options.addOption("DEFAULT/flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
         check_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+        try:
+            bring_up_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+        except ScriptRuntimeError, ex:
+            # just warn user to do it by himself
+            controller.MESSAGES.append(str(ScriptRuntimeError))
 
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
 
 def createnetworkmanifest():
     host = controller.CONF['CONFIG_NOVA_NETWORK_HOST']
-    check_ifcfg(host, controller.CONF['CONFIG_NOVA_NETWORK_PRIVIF'])
-    check_ifcfg(host, controller.CONF['CONFIG_NOVA_NETWORK_PUBIF'])
+    for i in ('CONFIG_NOVA_NETWORK_PRIVIF', 'CONFIG_NOVA_NETWORK_PUBIF'):
+        check_ifcfg(host, controller.CONF[i])
+        try:
+            bring_up_ifcfg(host, controller.CONF[i])
+        except ScriptRuntimeError, ex:
+            # just warn user to do it by himself
+            controller.MESSAGES.append(str(ScriptRuntimeError))
 
     manifestfile = "%s_nova.pp" % host
     manifestdata = getManifestTemplate("nova_network.pp")
