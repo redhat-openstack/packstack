@@ -1,0 +1,13 @@
+#!/bin/env bash
+
+. /etc/nagios/keystonerc_admin
+
+data=$(keystone user-list 2>&1)
+rv=$?
+
+if [ "$rv" != "0" ] ; then
+    echo $data
+    exit $rv
+fi
+
+echo "$data" | grep -v -e "   id    " -e "---------------"  | wc -l
