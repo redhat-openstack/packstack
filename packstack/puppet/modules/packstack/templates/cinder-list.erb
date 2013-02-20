@@ -1,0 +1,14 @@
+#!/bin/env bash
+
+. /etc/nagios/keystonerc_admin
+
+data=$(cinder list 2>&1)
+rv=$?
+
+if [ "$rv" != "0" ] ; then
+    echo $data
+    exit $rv
+fi
+
+echo "$data" | grep -v -e '--------' -e ' Status ' | wc -l
+

@@ -1,0 +1,13 @@
+#!/bin/env bash
+
+. /etc/nagios/keystonerc_admin
+
+data=$(glance index 2>&1)
+rv=$?
+
+if [ "$rv" != "0" ] ; then
+    echo $data
+    exit $rv
+fi
+
+echo "$data" | grep -v -e "^ID " -e "---------------" | wc -l
