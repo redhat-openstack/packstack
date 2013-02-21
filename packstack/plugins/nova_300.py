@@ -259,7 +259,7 @@ def check_ifcfg(host, device):
     Raises ScriptRuntimeError if given host does not have give device.
     """
     server = utils.ScriptRunner(host)
-    cmd = "ifconfig %s || ( echo Device %s does not exist && exit 1 )"
+    cmd = "ip addr show dev %s || ( echo Device %s does not exist && exit 1 )"
     server.append(cmd % (device, device))
     server.execute()
 
