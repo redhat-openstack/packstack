@@ -67,9 +67,14 @@ file {'ntp_config':
 }
 
 exec {'stop-ntpd':
-  command     => $operatingsystem ? {
-    'Fedora'                  => '/usr/bin/systemctl stop ntpd.service',
-    /(RedHat|CentOS|Scientific)/  => '/sbin/service ntpd stop',
+  command     => $osfamily ? {
+    # Unfortunately, the RedHat osfamily doesn't only include RHEL and
+    # derivatives thereof but also Fedora so further differentiation by
+    # operatingsystem is necessary.
+    'RedHat' => $operatingsystem ? {
+      'Fedora' => '/usr/bin/systemctl stop ntpd.service',
+      default  => '/sbin/service ntpd stop',
+    },
   },
 }
 
