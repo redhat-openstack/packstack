@@ -374,6 +374,9 @@ class ScriptRunner(object):
     def append(self, s):
         self.script.append(s)
 
+    def clear(self):
+        self.script = []
+
     def execute(self, logerrors=True, maskList=None):
         maskList = maskList or []
         script = "\n".join(self.script)
