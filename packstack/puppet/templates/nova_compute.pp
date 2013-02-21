@@ -39,7 +39,7 @@ Class['nova::compute']-> Exec["load_kvm"]
 
 # Note : remove this once we're installing a version of openstack that isn't
 #        supported on RHEL 6.3
-if $::is_virtual_packstack == "true" and $::operatingsystem == "RedHat" and
+if $::is_virtual_packstack == "true" and $::osfamily == "RedHat" and
     $::operatingsystemrelease == "6.3"{
     file { "/usr/bin/qemu-system-x86_64":
         ensure => link,
