@@ -28,7 +28,8 @@ def initConfig(controllerObject):
     global controller
     controller = controllerObject
     logging.debug("Adding SERVERPREPARE KEY configuration")
-    conf_params = {"SERVERPREPARE": [
+    conf_params = {
+            "SERVERPREPARE": [
                   {"CMD_OPTION"      : "use-epel",
                    "USAGE"           : "Install OpenStack from EPEL. If set to \"y\" EPEL will be installed on each server",
                    "PROMPT"          : "Should Packstack install EPEL on each server",
@@ -41,6 +42,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "additional-repo",
                    "USAGE"           : "A comma separated list of URLs to any additional yum repositories to install",
                    "PROMPT"          : "Enter a comma separated list of URLs to any additional yum repositories to install",
@@ -52,6 +54,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rh-username",
                    "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_PW",
                    "PROMPT"          : "To subscribe each server to Red Hat enter a username here",
@@ -63,6 +66,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rh-password",
                    "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_USER",
                    "PROMPT"          : "To subscribe each server to Red Hat enter your password here",
@@ -74,6 +78,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rh-beta-repo",
                    "USAGE"           : "To subscribe each server with Red Hat subscription manager, to Red Hat Beta RPM's",
                    "PROMPT"          : "To subscribe each server to Red Hat Beta RPM's enter y",
@@ -86,6 +91,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rhn-satellite-server",
                    "USAGE"           : ("To subscribe each server with RHN Satellite,"
                                         "fill Satellite's URL here. Note that either "
@@ -100,7 +106,9 @@ def initConfig(controllerObject):
                    "CONF_NAME"       : "CONFIG_SATELLITE_URL",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+                   "CONDITION"       : False }],
+
+            "SATELLITE": [
                   {"CMD_OPTION"      : "rhn-satellite-username",
                    "USAGE"           : "Username to access RHN Satellite",
                    "PROMPT"          : ("Enter RHN Satellite username or leave plain "
@@ -113,6 +121,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rhn-satellite-password",
                    "USAGE"           : "Password to access RHN Satellite",
                    "PROMPT"          : ("Enter RHN Satellite password or leave plain "
@@ -125,6 +134,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rhn-satellite-activation-key",
                    "USAGE"           : "Activation key for subscription to RHN Satellite",
                    "PROMPT"          : ("Enter RHN Satellite activation key or leave plain "
@@ -137,6 +147,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rhn-satellite-cacert",
                    "USAGE"           : "Specify a path or URL to a SSL CA certificate to use",
                    "PROMPT"          : "Specify a path or URL to a SSL CA certificate to use",
@@ -148,6 +159,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rhn-satellite-profile",
                    "USAGE"           : ("If required specify the profile name that should "
                                         "be used as an identifier for the system in RHN "
@@ -163,39 +175,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "rhn-satellite-proxy-host",
-                   "USAGE"           : "Specify a HTTP proxy to use with RHN Satellite",
-                   "PROMPT"          : "Specify a HTTP proxy to use with RHN Satellite",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "rhn-satellite-proxy-username",
-                   "USAGE"           : "Specify a username to use with an authenticated HTTP proxy",
-                   "PROMPT"          : "Specify a username to use with an authenticated HTTP proxy",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_USER",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "rhn-satellite-proxy-password",
-                   "USAGE"           : "Specify a password to use with an authenticated HTTP proxy.",
-                   "PROMPT"          : "Specify a password to use with an authenticated HTTP proxy.",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_PW",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+
                   {"CMD_OPTION"      : "rhn-satellite-flags",
                    "USAGE"           : ("Comma separated list of flags passed to rhnreg_ks. Valid "
                                         "flags are: novirtinfo, norhnsd, nopackages"),
@@ -209,14 +189,69 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-            ]
-        }
+
+                  {"CMD_OPTION"      : "rhn-satellite-proxy-host",
+                   "USAGE"           : "Specify a HTTP proxy to use with RHN Satellite",
+                   "PROMPT"          : "Specify a HTTP proxy to use with RHN Satellite",
+                   "OPTION_LIST"     : [],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False }],
+
+            "SATELLITE_PROXY": [
+                  {"CMD_OPTION"      : "rhn-satellite-proxy-username",
+                   "USAGE"           : "Specify a username to use with an authenticated HTTP proxy",
+                   "PROMPT"          : "Specify a username to use with an authenticated HTTP proxy",
+                   "OPTION_LIST"     : [],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_USER",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+
+                  {"CMD_OPTION"      : "rhn-satellite-proxy-password",
+                   "USAGE"           : "Specify a password to use with an authenticated HTTP proxy.",
+                   "PROMPT"          : "Specify a password to use with an authenticated HTTP proxy.",
+                   "OPTION_LIST"     : [],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_PW",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False }]}
+
+    def filled_satellite(config):
+        return bool(config.get('CONFIG_SATELLITE_URL'))
+
+    def filled_satellite_proxy(config):
+        return bool(config.get('CONFIG_SATELLITE_PROXY'))
 
     conf_groups = [
-            { "GROUP_NAME"            : "SERVERPREPARE",
+             {"GROUP_NAME"            : "SERVERPREPARE",
               "DESCRIPTION"           : "Server Prepare Configs ",
               "PRE_CONDITION"         : utils.returnYes,
               "PRE_CONDITION_MATCH"   : "yes",
+              "POST_CONDITION"        : False,
+              "POST_CONDITION_MATCH"  : True},
+
+             {"GROUP_NAME"            : "SATELLITE",
+              "DESCRIPTION"           : "RHN Satellite config",
+              "PRE_CONDITION"         : filled_satellite,
+              "PRE_CONDITION_MATCH"   : True,
+              "POST_CONDITION"        : False,
+              "POST_CONDITION_MATCH"  : True},
+
+             {"GROUP_NAME"            : "SATELLITE_PROXY",
+              "DESCRIPTION"           : "RHN Satellite proxy config",
+              "PRE_CONDITION"         : filled_satellite_proxy,
+              "PRE_CONDITION_MATCH"   : True,
               "POST_CONDITION"        : False,
               "POST_CONDITION_MATCH"  : True},
         ]
@@ -330,18 +365,22 @@ def serverprep():
     rh_password = config["CONFIG_RH_PW"].strip()
 
     sat_registered = set()
-    satellite_flags = map(lambda i: i.strip(),
-                          config["CONFIG_SATELLITE_FLAGS"].split(','))
-    satellite_url = config["CONFIG_SATELLITE_URL"]
-    satellite_args = {'username': config["CONFIG_SATELLITE_USER"].strip(),
-                      'password': config["CONFIG_SATELLITE_PW"].strip(),
-                      'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
-                      'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
-                      'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
-                      'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
-                      'proxy_user': config["CONFIG_SATELLITE_PROXY_USER"].strip(),
-                      'proxy_pass': config["CONFIG_SATELLITE_PROXY_PW"].strip(),
-                      'flags': satellite_flags}
+
+    sat_url = config["CONFIG_SATELLITE_URL"].strip()
+    if sat_url:
+        sat_flags = map(lambda i: i.strip(),
+                        config["CONFIG_SATELLITE_FLAGS"].split(','))
+        sat_proxy_user = config.get("CONFIG_SATELLITE_PROXY_USER", '')
+        sat_proxy_pass = config.get("CONFIG_SATELLITE_PROXY_PW", '')
+        sat_args = {'username': config["CONFIG_SATELLITE_USER"].strip(),
+                    'password': config["CONFIG_SATELLITE_PW"].strip(),
+                    'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
+                    'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
+                    'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
+                    'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
+                    'proxy_user': sat_proxy_user.strip(),
+                    'proxy_pass': sat_proxy_pass.strip(),
+                    'flags': sat_flags}
 
     for hostname in gethostlist(config):
         if '/' in hostname:
@@ -394,6 +433,6 @@ def serverprep():
             run_rhsm_reg(hostname, rh_username, rh_password, config["CONFIG_RH_BETA_REPO"] == 'y')
 
         # Subscribe to RHN Satellite if configured
-        if satellite_url and hostname not in sat_registered:
-            run_rhn_reg(hostname, satellite_url, **satellite_args)
+        if sat_url and hostname not in sat_registered:
+            run_rhn_reg(hostname, sat_url, **sat_args)
             sat_registered.add(hostname)
