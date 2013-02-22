@@ -38,6 +38,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-horizon-ssl",
+                   "USAGE"           : "To set up Horizon communication over https set this to \"y\"",
+                   "PROMPT"          : "Would you like to set up Horizon communication over https",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATORS"      : [validate.validate_options],
+                   "DEFAULT_VALUE"   : "n",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_HORIZON_SSL",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                  ]
 
     groupDict = { "GROUP_NAME"            : "OSHORIZON",
@@ -59,9 +71,30 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing OpenStack Horizon", [], [], steps)
 
+
 def createmanifest():
     controller.CONF["CONFIG_HORIZON_SECRET_KEY"] = uuid.uuid4().hex
-    manifestfile = "%s_horizon.pp"%controller.CONF['CONFIG_HORIZON_HOST']
+    horizon_host = controller.CONF['CONFIG_HORIZON_HOST']
+    manifestfile = "%s_horizon.pp" % horizon_host
+
+    proto = "http"
+    controller.CONF["CONFIG_HORIZON_PORT"] = "'80'"
+    sslmanifestdata = ''
+    if controller.CONF["CONFIG_HORIZON_SSL"] == 'y':
+        controller.CONF["CONFIG_HORIZON_PORT"] = "'443'"
+        controller.MESSAGES.append(
+            "%sNOTE%s : A default self signed certificate was used for ssl, "
+            "You should change the ssl certificate configured in "
+            "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
+            % (basedefs.RED, basedefs.NO_COLOR, horizon_host))
+        proto = "https"
+        sslmanifestdata += ("class {'apache::mod::ssl': }\n"
+                            "file {'/etc/httpd/conf.d/ssl.conf':}\n")
+
     manifestdata = getManifestTemplate("horizon.pp")
+    manifestdata += sslmanifestdata
     appendManifestFile(manifestfile, manifestdata)
-    controller.MESSAGES.append(output_messages.INFO_DASHBOARD%controller.CONF['CONFIG_HORIZON_HOST'])
+
+    msg = "To use the console, browse to %s://%s/dashboard" % \
+        (proto,  controller.CONF['CONFIG_HORIZON_HOST'])
+    controller.MESSAGES.append(msg)
