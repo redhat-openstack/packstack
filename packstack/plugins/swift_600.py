@@ -139,15 +139,21 @@ def createkeystonemanifest():
 
 
 devices = []
-def parseDevices(config_swift_storage_hosts):
+def parse_devices(config_swift_storage_hosts):
+    """
+    Returns dict containing information about Swift storage devices.
+    """
     device_number = 0
+    num_zones = int(controller.CONF["CONFIG_SWIFT_STORAGE_ZONES"])
     for host in config_swift_storage_hosts.split(","):
+        host = host.strip()
         device_number += 1
         device = None
         if '/' in host:
-            host, device = host.split('/')[0:2]
-        zone = (device_number % int(controller.CONF["CONFIG_SWIFT_STORAGE_ZONES"]))+1
-        devices.append({'host':host, 'device':device, 'device_name':'device%s'%device_number, 'zone':str(zone)})
+            host, device = map(lambda x: x.strip(), host.split('/', 1))
+        zone = str((device_number % num_zones) + 1)
+        devices.append({'host': host, 'device': device, 'zone': zone,
+                        'device_name': 'device%s' % device_number})
     return devices
 
 
@@ -161,7 +167,7 @@ def createbuildermanifest():
 
     # Add each device to the ring
     devicename = 0
-    for device in parseDevices(controller.CONF["CONFIG_SWIFT_STORAGE_HOSTS"]):
+    for device in parse_devices(controller.CONF["CONFIG_SWIFT_STORAGE_HOSTS"]):
         host = device['host']
         devicename = device['device_name']
         zone = device['zone']
