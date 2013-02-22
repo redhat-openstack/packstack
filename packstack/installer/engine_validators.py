@@ -18,7 +18,7 @@ from .setup_controller import Controller
 from .exceptions import ParamValidationError
 
 
-__all__ = ('ParamValidationError', 'validate_integer',
+__all__ = ('ParamValidationError', 'validate_integer', 'validate_float',
            'validate_regexp', 'validate_port', 'validate_not_empty',
            'validate_options', 'validate_ip', 'validate_multi_ip',
            'validate_file', 'validate_ping', 'validate_ssh',
@@ -36,6 +36,20 @@ def validate_integer(param, options=None):
         logging.debug('validate_integer(%s, options=%s) failed.' %
                       (param, options))
         msg = 'Given value is not an integer: %s'
+        raise ParamValidationError(msg % param)
+
+
+def validate_float(param, options=None):
+    """
+    Raises ParamValidationError if given param is not a float.
+    """
+    options = options or []
+    try:
+        float(param)
+    except ValueError:
+        logging.debug('validate_float(%s, options=%s) failed.' %
+                      (param, options))
+        msg = 'Given value is not a float: %s'
         raise ParamValidationError(msg % param)
 
 
