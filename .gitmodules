@@ -27,7 +27,7 @@
 	url = https://github.com/puppetlabs/puppetlabs-sysctl.git
 [submodule "packstack/puppet/modules/mysql"]
 	path = packstack/puppet/modules/mysql
-	url = https://github.com/puppetlabs/puppetlabs-mysql.git
+	url = https://github.com/packstack/puppetlabs-mysql.git
 [submodule "packstack/puppet/modules/concat"]
 	path = packstack/puppet/modules/concat
 	url = https://github.com/puppetlabs/puppetlabs-concat.git
