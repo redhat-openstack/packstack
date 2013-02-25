@@ -312,6 +312,7 @@ def _handleGroupCondition(config, conditionName, conditionValue):
     else:
         # Any other type is invalid
         raise TypeError("%s type (%s) is not supported" % (conditionName, type(conditionName)))
+    return conditionValue
 
 
 def _loadParamFromFile(config, section, paramName):
