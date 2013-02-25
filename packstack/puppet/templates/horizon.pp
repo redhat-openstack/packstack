@@ -23,7 +23,7 @@ file { '/etc/httpd/conf.d/openstack-dashboard.conf':}
 
 firewall { '001 horizon incoming':
     proto    => 'tcp',
-    dport    => ['80'],
+    dport    => [%(CONFIG_HORIZON_PORT)s],
     action   => 'accept',
 }
 

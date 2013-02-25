@@ -84,4 +84,3 @@ ERR_ONLY_1_FLAG="Error: The %s flag is mutually exclusive to all other command l
 ERR_REMOVE_REMOTE_VAR="Error: Failed to remove directory %s on %s, it contains sensitive data and should be removed"
 
 #
-INFO_DASHBOARD="To use the console, browse to http://%s/dashboard"
