@@ -1,0 +1,14 @@
+#!/bin/env bash
+
+. /etc/nagios/keystonerc_admin
+
+data=$(swift list 2>&1)
+rv=$?
+
+if [ "$rv" != "0" ] ; then
+    echo $data
+    exit $rv
+fi
+
+echo "$data" |wc -l
+
