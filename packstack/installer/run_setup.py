@@ -98,7 +98,7 @@ def _getInputFromUser(param):
                 else:
                     userInput = commandLineValues[param.getKey("CONF_NAME")]
                 # If DEFAULT_VALUE is set and user did not input anything
-                if userInput == "" and len(param.getKey("DEFAULT_VALUE")) > 0:
+                if userInput == "" and len(str(param.getKey("DEFAULT_VALUE"))) > 0:
                     userInput = param.getKey("DEFAULT_VALUE")
 
                 # Param processing
