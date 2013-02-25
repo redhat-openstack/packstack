@@ -1,6 +1,6 @@
 [submodule "packstack/puppet/modules/glance"]
 	path = packstack/puppet/modules/glance
-	url = https://github.com/puppetlabs/puppetlabs-glance.git
+	url = https://github.com/packstack/puppetlabs-glance.git
 [submodule "packstack/puppet/modules/horizon"]
 	path = packstack/puppet/modules/horizon
 	url = https://github.com/puppetlabs/puppetlabs-horizon.git
