@@ -385,6 +385,16 @@ def serverprep():
     for hostname in gethostlist(config):
         if '/' in hostname:
             hostname = hostname.split('/')[0]
+
+        # Subscribe to Red Hat Repositories if configured
+        if rh_username:
+            run_rhsm_reg(hostname, rh_username, rh_password, config["CONFIG_RH_BETA_REPO"] == 'y')
+
+        # Subscribe to RHN Satellite if configured
+        if sat_url and hostname not in sat_registered:
+            run_rhn_reg(hostname, sat_url, **sat_args)
+            sat_registered.add(hostname)
+
         server = utils.ScriptRunner(hostname)
 
         # install epel if on rhel (or popular derivative thereof) and epel is configured
@@ -400,6 +410,24 @@ def serverprep():
                           "( rpm -q epel-release || yum install -y --nogpg -c $REPOFILE epel-release ) || echo -n ''")
             server.append("rm -rf $REPOFILE")
 
+
+        # set highest priority of RHOS repository if EPEL is installed and
+        # the repo rhel-server-ost-6-folsom-rpms exists in redhat.repo
+
+        # If RHOS has been installed we can diable EPEL when installing openstack-utils
+        yum_opts = ""
+        if config["CONFIG_RH_USER"].strip():
+            yum_opts += "--disablerepo='epel*'"
+
+        server.append("rpm -q epel-release && "
+                      "yum install -y %s openstack-utils yum-plugin-priorities || true" % yum_opts)
+        subs_cmd = ('rpm -q epel-release && '
+                    'grep %(repo)s %(repo_file)s && '
+                    'openstack-config --set %(repo_file)s %(repo)s priority %(priority)s || true')
+        server.append(subs_cmd % {"repo_file": "/etc/yum.repos.d/redhat.repo",
+                                  "repo": "rhel-server-ost-6-folsom-rpms",
+                                  "priority": 1})
+
         # Create the packstack tmp directory
         if hostname not in controller.temp_map:
             # TO-DO: Move this to packstack.installer.setup_controller
@@ -409,13 +437,6 @@ def serverprep():
             host_dir = os.path.join(basedefs.PACKSTACK_VAR_DIR, uuid.uuid4().hex)
             server.append("mkdir --mode 0700 %s" % host_dir)
             controller.temp_map[hostname] = host_dir
-
-        # set highest priority of RHOS repository if EPEL is installed
-        server.append("rpm -q epel-release && yum install -y yum-plugin-priorities || true")
-        subs_cmd = ('rpm -q epel-release && openstack-config --set %(repo_file)s %(repo)s priority %(priority)s || true')
-        server.append(subs_cmd % {"repo_file": "/etc/yum.repos.d/redhat.repo",
-                                  "repo": "rhel-server-ost-6-folsom-rpms",
-                                  "priority": 1})
 
         # Add yum repositories if configured
         CONFIG_REPO = config["CONFIG_REPO"].strip()
@@ -427,12 +448,3 @@ def serverprep():
 
         server.append("yum clean metadata")
         server.execute()
-
-        # Subscribe to Red Hat Repositories if configured
-        if rh_username:
-            run_rhsm_reg(hostname, rh_username, rh_password, config["CONFIG_RH_BETA_REPO"] == 'y')
-
-        # Subscribe to RHN Satellite if configured
-        if sat_url and hostname not in sat_registered:
-            run_rhn_reg(hostname, sat_url, **sat_args)
-            sat_registered.add(hostname)
