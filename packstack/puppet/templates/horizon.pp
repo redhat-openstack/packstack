@@ -20,6 +20,8 @@ class {'memcached':}
 class {'apache':}
 class {'apache::mod::wsgi':}
 file { '/etc/httpd/conf.d/openstack-dashboard.conf':}
+file { '/etc/httpd/conf.d/nagios.conf':}
+file { '/etc/httpd/conf.d/php.conf':}
 
 firewall { '001 horizon incoming':
     proto    => 'tcp',
