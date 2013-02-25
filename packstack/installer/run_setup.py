@@ -385,6 +385,24 @@ def _handleAnswerFileParams(answerFile):
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_HANDLE_ANSWER_FILE%(e))
 
+
+def _getanswerfilepath():
+    path = None
+    msg = "Could not find a suitable path on which to create the answerfile"
+
+    # We'll use the first path with
+    # write permissions. Order matters.
+    for p in ["./", "~/", "/tmp"]:
+        if os.access(p, os.W_OK):
+            path = os.path.abspath(
+                    os.path.expanduser(os.path.join(p, "answers.txt")))
+            msg = "A new answerfile was created in: %s" % path
+            break
+
+    controller.MESSAGES.append(msg)
+    logging.info(msg)
+    return path
+
 def _handleInteractiveParams():
     try:
         logging.debug("Groups: %s" % ', '.join([x.getKey("GROUP_NAME") for x in controller.getAllGroups()]))
@@ -431,19 +449,8 @@ def _handleInteractiveParams():
             else:
                 logging.debug("no post condition check for group %s" % group.getKey("GROUP_NAME"))
 
-        path = None
-        msg = "\nCould not find a suitable path to create the answer's file"
+        path = _getanswerfilepath()
 
-        # We'll use the first path with
-        # write permissions. Order matters.
-        for p in ["./", "~/", "/tmp"]:
-            if os.access(p, os.W_OK):
-                path = os.path.abspath(
-                        os.path.expanduser(os.path.join(p, "answers.txt")))
-                msg = "\nA new answer's file will be created in: %s" % path
-                break
-
-        print msg,
         _displaySummary()
 
         if path:
@@ -629,7 +636,7 @@ def remove_remote_var_dirs():
             controller.MESSAGES.append(utils.getColoredText(msg, basedefs.RED))
 
 
-def generateAnswerFile(outputFile):
+def generateAnswerFile(outputFile, overrides={}):
     sep = os.linesep
     fmt = ("%(comment)s%(separator)s%(conf_name)s=%(default_value)s"
            "%(separator)s")
@@ -645,13 +652,43 @@ def generateAnswerFile(outputFile):
                                      break_long_words=False)
                 value = controller.CONF.get(param.getKey("CONF_NAME"),
                                             param.getKey("DEFAULT_VALUE"))
+
                 args = {'comment': comm,
                         'separator': sep,
-                        'default_value': value,
+                        'default_value': overrides.get(param.getKey("CONF_NAME"), value),
                         'conf_name': param.getKey("CONF_NAME")}
                 ans_file.write(fmt % args)
     os.chmod(outputFile, 0600)
 
+def single_step_install(options):
+    answerfilepath =  _getanswerfilepath()
+    if not answerfilepath:
+        _printAdditionalMessages()
+        return
+
+    # We're going to generate the answerfile and run Packstack in a single step
+    # todo this we generate the answerfile and pass in some override variables to
+    # override the default hosts
+    overrides = {}
+
+    hosts = options.install_hosts
+    hosts = [host.strip() for host in hosts.split(',')]
+    for group in controller.getAllGroups():
+        for param in group.getAllParams():
+            # and directives that contain _HOST are set to the controller node
+            if param.getKey("CONF_NAME").find("_HOST") != -1:
+                overrides[param.getKey("CONF_NAME")] = hosts[0]
+    # If there are more than one host, all but the first are a compute nodes
+    if len(hosts) > 1:
+        overrides["CONFIG_NOVA_COMPUTE_HOSTS"] = ','.join(hosts[1:])
+
+    # We can also override defaults with command line options
+    _set_command_line_values(options)
+    for key,value in commandLineValues.items():
+        overrides[key] = value
+
+    generateAnswerFile(answerfilepath, overrides)
+    _main(answerfilepath)
 
 def initCmdLineParser():
     """
@@ -666,6 +703,10 @@ def initCmdLineParser():
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other options")
     parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the \
                                             configuration file. using this option excludes all other options")
+    parser.add_option("--install-hosts", help="Install on a set of hosts in a single step. The format should be a comma separated list "
+                                          "of hosts, the first is setup as a controller, and the others are setup as compute nodes."
+                                          "if only a single host is supplied then it is setup as an all in one installation. An answerfile "
+                                          "will also be generated and should be used if Packstack needs to be run a second time ")
 
     parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file(rst format)")
     parser.add_option("-d", "--debug", action="store_true", default=False, help="Enable debug in logging")
@@ -787,8 +828,20 @@ def initPluginsSequences():
     for plugin in controller.getAllPlugins():
         plugin.initSequences(controller)
 
+def _set_command_line_values(options):
+    for key, value in options.__dict__.items():
+        # Replace the _ with - in the string since optparse replace _ with -
+        for group in controller.getAllGroups():
+            param = group.getParams("CMD_OPTION", key.replace("_","-"))
+            if len(param) > 0 and value:
+                commandLineValues[param[0].getKey("CONF_NAME")] = value
+
 def main():
     try:
+        # Load Plugins
+        loadPlugins()
+        initPluginsConfig()
+
         optParser = initCmdLineParser()
 
         # Do the actual command line parsing
@@ -802,10 +855,6 @@ def main():
         # Initialize logging
         initLogging (options.debug)
 
-        # Load Plugins
-        loadPlugins()
-        initPluginsConfig()
-
         # Parse parameters
         runConfiguration = True
         confFile = None
@@ -815,6 +864,9 @@ def main():
             # Make sure only --gen-answer-file was supplied
             validateSingleFlag(options, "gen_answer_file")
             generateAnswerFile(options.gen_answer_file)
+        # Are we installing in a single step
+        elif options.install_hosts:
+            single_step_install(options)
         # Otherwise, run main()
         else:
             # Make sure only --answer-file was supplied
@@ -824,13 +876,7 @@ def main():
                 if not os.path.exists(confFile):
                     raise Exception(output_messages.ERR_NO_ANSWER_FILE % confFile)
             else:
-                for key, value in options.__dict__.items():
-                    # Replace the _ with - in the string since optparse replace _ with -
-                    for group in controller.getAllGroups():
-                        param = group.getParams("CMD_OPTION", key.replace("_","-"))
-                        if len(param) > 0 and value:
-                            commandLineValues[param[0].getKey("CONF_NAME")] = value
-
+                _set_command_line_values(options)
             _main(confFile)
 
     except SystemExit:
