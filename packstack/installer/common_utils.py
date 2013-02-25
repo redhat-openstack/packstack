@@ -409,7 +409,7 @@ class ScriptRunner(object):
             else:
                 raise ScriptRuntimeError('Error running remote script: '
                                          '%s' % stdoutdata)
-        return returncode, stdoutdata, stderrdata
+        return returncode, stdoutdata
 
     def template(self, src, dst, varsdict):
         with open(src) as fp:
