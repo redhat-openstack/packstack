@@ -114,7 +114,8 @@ def isErrorException(line):
 _re_color = re.compile('\x1b.*?\d\dm')
 _re_errorline = re.compile('err: | Syntax error at|^Duplicate definition:|'
                            '^No matching value for selector param|'
-                           '^Parameter name failed:|Error: ')
+                           '^Parameter name failed:|Error: |'
+                           '^Invalid parameter ')
 
 
 def validate_puppet_logfile(logfile):
