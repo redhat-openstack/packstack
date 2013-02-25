@@ -301,7 +301,7 @@ def _handleGroupCondition(config, conditionName, conditionValue):
     """
 
     # If the post condition is a function
-    if type(conditionName) == types.FunctionType:
+    if callable(conditionName):
         # Call the function conditionName with conf as the arg
         conditionValue = conditionName(controller.CONF)
 
@@ -313,7 +313,6 @@ def _handleGroupCondition(config, conditionName, conditionValue):
         # Any other type is invalid
         raise TypeError("%s type (%s) is not supported" % (conditionName, type(conditionName)))
 
-    return conditionValue
 
 def _loadParamFromFile(config, section, paramName):
     """
