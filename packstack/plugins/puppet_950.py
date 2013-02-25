@@ -106,10 +106,11 @@ def waitforpuppet(currently_running):
             space_len = basedefs.SPACE_LEN - len(log_file)
             if len(log_file) > log_len:
                 log_len = len(log_file)
-            twirl = twirl[-1:] + twirl[:-1]
-            sys.stdout.write(("\rTesting if puppet apply is finished : %s" % log_file).ljust(40 + log_len))
-            sys.stdout.write("[ %s ]" % twirl[0])
-            sys.stdout.flush()
+            if sys.stdout.isatty():
+                twirl = twirl[-1:] + twirl[:-1]
+                sys.stdout.write(("\rTesting if puppet apply is finished : %s" % log_file).ljust(40 + log_len))
+                sys.stdout.write("[ %s ]" % twirl[0])
+                sys.stdout.flush()
             try:
                 # Once a remote puppet run has finished, we retrieve the log
                 # file and check it for errors
@@ -124,7 +125,8 @@ def waitforpuppet(currently_running):
                 currently_running.remove((hostname, finished_logfile))
 
                 # clean off the last "testing apply" msg
-                sys.stdout.write(("\r").ljust(45 + log_len))
+                if sys.stdout.isatty():
+                    sys.stdout.write(("\r").ljust(45 + log_len))
 
             except ScriptRuntimeError, e:
                 # the test raises an exception if the file doesn't exist yet
