@@ -11,5 +11,5 @@ class {"nova":
     glance_api_servers => "%(CONFIG_GLANCE_HOST)s:9292",
     sql_connection => "mysql://nova:%(CONFIG_NOVA_DB_PW)s@%(CONFIG_MYSQL_HOST)s/nova",
     qpid_hostname => "%(CONFIG_QPID_HOST)s",
-    rpc_backend => 'nova.rpc.impl_qpid',
+    rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
 }
