@@ -59,7 +59,15 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Client", [], [], osclientsteps)
 
 def createmanifest():
-    manifestfile = "%s_osclient.pp"%controller.CONF['CONFIG_OSCLIENT_HOST']
+    client_host = controller.CONF['CONFIG_OSCLIENT_HOST'].strip()
+    manifestfile = "%s_osclient.pp" % client_host
     manifestdata = getManifestTemplate("openstack_client.pp")
     appendManifestFile(manifestfile, manifestdata)
-    controller.MESSAGES.append(output_messages.INFO_KEYSTONERC%controller.CONF['CONFIG_OSCLIENT_HOST'])
+
+    server = utils.ScriptRunner(client_host)
+    server.append('echo $HOME')
+    rc, root_home = server.execute()
+
+    msg = ("To use the command line tools you need to source the file "
+           "%s/keystonerc_admin created on %s")
+    controller.MESSAGES.append(msg % (root_home.strip(), client_host))
