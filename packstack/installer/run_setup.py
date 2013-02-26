@@ -1,5 +1,6 @@
 import ConfigParser
 import copy
+import datetime
 import getpass
 import logging
 import os
@@ -390,14 +391,12 @@ def _getanswerfilepath():
     path = None
     msg = "Could not find a suitable path on which to create the answerfile"
 
-    # We'll use the first path with
-    # write permissions. Order matters.
-    for p in ["./", "~/", "/tmp"]:
-        if os.access(p, os.W_OK):
-            path = os.path.abspath(
-                    os.path.expanduser(os.path.join(p, "answers.txt")))
-            msg = "A new answerfile was created in: %s" % path
-            break
+    ts = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+
+    p = os.path.expanduser("~/")
+    if os.access(p, os.W_OK):
+        path = os.path.abspath(os.path.join(p, "packstack-answers-%s.txt"%ts))
+        msg = "A new answerfile was created in: %s" % path
 
     controller.MESSAGES.append(msg)
     logging.info(msg)
@@ -640,8 +639,15 @@ def generateAnswerFile(outputFile, overrides={}):
     sep = os.linesep
     fmt = ("%(comment)s%(separator)s%(conf_name)s=%(default_value)s"
            "%(separator)s")
+
     outputFile = os.path.expanduser(outputFile)
-    with open(outputFile, "w") as ans_file:
+    # Remove the answer file so it can be recreated as the current user with
+    # the mode -rw-------
+    if os.path.exists(outputFile):
+        os.remove(outputFile)
+    fd = os.open(outputFile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0600)
+
+    with os.fdopen(fd, "w") as ans_file:
         ans_file.write("[general]%s" % os.linesep)
         for group in controller.getAllGroups():
             for param in group.getAllParams():
@@ -658,7 +664,6 @@ def generateAnswerFile(outputFile, overrides={}):
                         'default_value': overrides.get(param.getKey("CONF_NAME"), value),
                         'conf_name': param.getKey("CONF_NAME")}
                 ans_file.write(fmt % args)
-    os.chmod(outputFile, 0600)
 
 def single_step_install(options):
     answerfilepath =  _getanswerfilepath()
