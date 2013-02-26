@@ -3,7 +3,7 @@
 	url = https://github.com/packstack/puppetlabs-glance.git
 [submodule "packstack/puppet/modules/horizon"]
 	path = packstack/puppet/modules/horizon
-	url = https://github.com/puppetlabs/puppetlabs-horizon.git
+	url = https://github.com/packstack/puppetlabs-horizon.git
 [submodule "packstack/puppet/modules/keystone"]
 	path = packstack/puppet/modules/keystone
 	url = https://github.com/puppetlabs/puppetlabs-keystone.git
