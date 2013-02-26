@@ -215,7 +215,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('packstack', 'packstack', u'install openstack', [u'Derek Higgins, Alvaro Lopez Ortega'], 1)
+    ('packstack', 'packstack', u'install openstack', [u'Derek Higgins, Martin Magr, Sandro Mathys, Flavio Percoco, Alvaro Lopez Ortega'], 1)
 ]
 
 # If true, show URL addresses after external links.

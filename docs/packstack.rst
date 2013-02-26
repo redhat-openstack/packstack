@@ -19,16 +19,6 @@ DESCRIPTION
 OPTIONS
 =======
 
-Installer Config parameters
----------------------------
-
-**CONFIG_DEBUG**               : Should we turn on debug in logging ['y', 'n']
-
-SSH Configs
-------------
-
-**CONFIG_SSH_KEY**             : Path to a Public key to install on servers. If a usable key has not been installed on the remote servers the user will be prompted for a password and this key will be installed so the password will not be required again
-
 Global Options
 --------------
 
@@ -42,7 +32,16 @@ Global Options
 
 **CONFIG_SWIFT_INSTALL**       : Set to 'y' if you would like Packstack to install Swift ['y', 'n']
 
-**CONFIG_CLIENT_INSTALL**      : Set to 'y' if you would like Packstack to install the openstack client packages. An admin "rc" file will also be installed ['y', 'n']
+**CONFIG_CLIENT_INSTALL**      : Set to 'y' if you would like Packstack to install the OpenStack Client packages. An admin "rc" file will also be installed ['y', 'n']
+
+**CONFIG_NTP_SERVERS**         : Comma separated list of NTP servers. Leave plain if Packstack should not install ntpd on instances.
+
+**CONFIG_NAGIOS_INSTALL**      : Set to 'y' if you would like Packstack to install Nagios to monitor openstack hosts ['y', 'n']
+
+SSH Configs
+------------
+
+**CONFIG_SSH_KEY**             : Path to a Public key to install on servers. If a usable key has not been installed on the remote servers the user will be prompted for a password and this key will be installed so the password will not be required again
 
 MySQL Config parameters
 -----------------------
@@ -63,19 +62,36 @@ Keystone Config parameters
 
 **CONFIG_KEYSTONE_HOST**       : The IP address of the server on which to install Keystone
 
-**CONFIG_KEYSTONE_ADMINTOKEN** : The token to use for the Keystone service api
+**CONFIG_KEYSTONE_DB_PW**      : The password to use for the Keystone to access DB
 
-**CONFIG_KEYSTONE_ADMINPASSWD** : The password to use for the Keystone admin user
+**CONFIG_KEYSTONE_ADMIN_TOKEN** : The token to use for the Keystone service api
+
+**CONFIG_KEYSTONE_ADMIN_PW**   : The password to use for the Keystone admin user
 
 Glance Config parameters
 ------------------------
 
 **CONFIG_GLANCE_HOST**         : The IP address of the server on which to install Glance
 
+**CONFIG_GLANCE_DB_PW**        : The password to use for the Glance to access DB
+
+**CONFIG_GLANCE_KS_PW**        : The password to use for the Glance to authenticate with Keystone
+
 Cinder Config parameters
 ------------------------
 
 **CONFIG_CINDER_HOST**         : The IP address of the server on which to install Cinder
+
+**CONFIG_CINDER_DB_PW**        : The password to use for the Cinder to access DB
+
+**CONFIG_CINDER_KS_PW**        : The password to use for the Cinder to authenticate with Keystone
+
+**CONFIG_CINDER_VOLUMES_CREATE** : Create Cinder's volumes group ['y', 'n']
+
+Cinder volume create Config parameters
+--------------------------------------
+
+**CONFIG_CINDER_VOLUMES_SIZE** : Cinder's volumes group size
 
 Nova Options
 ------------
@@ -92,6 +108,10 @@ Nova Options
 
 **CONFIG_NOVA_NETWORK_HOST**   : The IP address of the server on which to install the Nova Network service
 
+**CONFIG_NOVA_DB_PW**          : The password to use for the Nova to access DB
+
+**CONFIG_NOVA_KS_PW**          : The password to use for the Nova to authenticate with Keystone
+
 **CONFIG_NOVA_NETWORK_PUBIF**  : Public interface on the Nova network server
 
 **CONFIG_NOVA_NETWORK_PRIVIF** : Private interface for Flat DHCP on the Nova network server
@@ -102,24 +122,30 @@ Nova Options
 
 **CONFIG_NOVA_SCHED_HOST**     : The IP address of the server on which to install the Nova Scheduler service
 
+**CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO** : The overcommitment ratio for virtual to physical CPUs. Set to 1.0 to disable CPU overcommitment
+
+**CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO** : The overcommitment ratio for virtual to physical RAM. Set to 1.0 to disable RAM overcommitment
+
 NOVACLIENT Config parameters
 ----------------------------
 
-**CONFIG_OSCLIENT_HOST**       : The IP address of the server on which to install the openstack client packages. An admin "rc" file will also be installed
+**CONFIG_OSCLIENT_HOST**       : The IP address of the server on which to install the OpenStack client packages. An admin "rc" file will also be installed
 
 OpenStack Horizon Config parameters
 -----------------------------------
 
 **CONFIG_HORIZON_HOST**        : The IP address of the server on which to install Horizon
 
-**CONFIG_HORIZON_SECRET_KEY**  : Horizon Secret Encryption Key
+**CONFIG_HORIZON_SSL**         : To set up Horizon communication over https set this to "y" ['y', 'n']
 
 OpenStack Swift Config parameters
 ---------------------------------
 
 **CONFIG_SWIFT_PROXY_HOSTS**   : The IP address on which to install the Swift proxy service
 
-**CONFIG_SWIFT_STORAGE_HOSTS** : A comma separated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device, if /dev is omitted Packstack will create a loopback device for a test setup
+**CONFIG_SWIFT_KS_PW**         : The password to use for the Swift to authenticate with Keystone
+
+**CONFIG_SWIFT_STORAGE_HOSTS** : A comma separated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device(packstack does not create the filesystem, you must do this first), if /dev is omitted Packstack will create a loopback device for a test setup
 
 **CONFIG_SWIFT_STORAGE_ZONES** : Number of swift storage zones, this number MUST be no bigger than the number of storage devices configured
 
@@ -134,13 +160,47 @@ Server Prepare Configs
 
 **CONFIG_REPO**                : A comma separated list of URLs to any additional yum repositories to install
 
-**CONFIG_RH_USERNAME**         : To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_PASSWORD
+**CONFIG_RH_USER**             : To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_PW
 
-**CONFIG_RH_PASSWORD**         : To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_USERNAME
+**CONFIG_RH_PW**               : To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_USER
+
+**CONFIG_RH_BETA_REPO**        : To subscribe each server with Red Hat subscription manager, to Red Hat Beta RPM's ['y', 'n']
+
+**CONFIG_SATELLITE_URL**       : To subscribe each server with RHN Satellite,fill Satellite's URL here. Note that either satellite's username/password or activtion key has to be provided/
+
+RHN Satellite config
+--------------------
+
+**CONFIG_SATELLITE_USER**      : Username to access RHN Satellite
+
+**CONFIG_SATELLITE_PW**        : Password to access RHN Satellite
+
+**CONFIG_SATELLITE_AKEY**      : Activation key for subscription to RHN Satellite
+
+**CONFIG_SATELLITE_CACERT**    : Specify a path or URL to a SSL CA certificate to use
+
+**CONFIG_SATELLITE_PROFILE**   : If required specify the profile name that should be used as an identifier for the system in RHN Satellite
+
+**CONFIG_SATELLITE_FLAGS**     : Comma separated list of flags passed to rhnreg_ks. Valid flags are: novirtinfo, norhnsd, nopackages ['novirtinfo', 'norhnsd', 'nopackages']
+
+**CONFIG_SATELLITE_PROXY**     : Specify a HTTP proxy to use with RHN Satellite
+
+RHN Satellite proxy config
+--------------------------
+
+**CONFIG_SATELLITE_PROXY_USER** : Specify a username to use with an authenticated HTTP proxy
+
+**CONFIG_SATELLITE_PROXY_PW**  : Specify a password to use with an authenticated HTTP proxy.
+
+Nagios Config parameters
+------------------------
+
+**CONFIG_NAGIOS_HOST**         : The IP address of the server on which to install the Nagios server
+
+**CONFIG_NAGIOS_PW**           : The password of the nagiosadmin user on the Nagios server
 
 
 SOURCE
 ======
-* `packstack      https://github.com/fedora-openstack/packstack`
-* `installer      https://github.com/derekhiggins/installer`
-* `puppet modules https://github.com/puppetlabs`
+* `packstack      https://github.com/stackforge/packstack`
+* `puppet modules https://github.com/puppetlabs and https://github.com/packstack`
