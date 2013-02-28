@@ -86,3 +86,8 @@ class PackstackTestCaseMixin(object):
         _msg = msg or ('%s is not a member of %s' % (first, second))
         if first not in second:
             raise AssertionError(_msg)
+
+    def assertIsNone(self, expr, msg=None):
+        _msg = msg or ('%s is not None' % expr)
+        if expr is not None:
+            raise AssertionError(_msg)
