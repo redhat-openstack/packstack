@@ -107,7 +107,7 @@ def validate_options(param, options=None):
     if param not in options:
         logging.debug('validate_options(%s, options=%s) failed.' %
                       (param, options))
-        msg = 'Given value is not is allowed values %s: %s'
+        msg = 'Given value is not member of allowed values %s: %s'
         raise ParamValidationError(msg % (options, param))
 
 
@@ -120,11 +120,8 @@ def validate_multi_options(param, options=None):
         return
     options = options or []
     for i in param.split(','):
-        if i.strip() not in options:
-            logging.debug('validate_multi_options(%s, options=%s) '
-                          'failed.' % (param, options))
-            msg = 'Given value is not member of allowed values %s: %s'
-            raise ParamValidationError(msg % (options, param))
+        validate_options(i.strip(), options=options)
+
 
 def validate_ip(param, options=None):
     """

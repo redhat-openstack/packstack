@@ -8,7 +8,7 @@ import os
 import tempfile
 
 import packstack.installer.engine_processors as process
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 
@@ -32,7 +32,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Path to a Public key to install on servers. If a usable key has not been installed on the remote servers the user will be prompted for a password and this key will be installed so the password will not be required again",
                    "PROMPT"          : "Enter the path to your ssh Public key to install on servers",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_file],
+                   "VALIDATORS"      : [validators.validate_file],
                    "PROCESSORS"      : [process.processSSHKey],
                    "DEFAULT_VALUE"   : (glob.glob(os.path.join(os.environ["HOME"], ".ssh/*.pub"))+[""])[0],
                    "MASK_INPUT"      : False,

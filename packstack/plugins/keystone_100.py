@@ -6,7 +6,7 @@ import logging
 import uuid
 
 
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 import packstack.installer.engine_processors as process
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
@@ -31,7 +31,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install Keystone",
                    "PROMPT"          : "Enter the IP address of the Keystone server",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Keystone to access DB",
                    "PROMPT"          : "Enter the password for the Keystone DB access",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -55,7 +55,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The token to use for the Keystone service api",
                    "PROMPT"          : "The token to use for the Keystone service api",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex,
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -67,7 +67,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Keystone admin user",
                    "PROMPT"          : "Enter the password for the Keystone admin user",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,

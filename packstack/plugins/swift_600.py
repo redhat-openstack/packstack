@@ -6,7 +6,7 @@ import uuid
 import logging
 import os
 
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 import packstack.installer.engine_processors as process
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
@@ -31,7 +31,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address on which to install the Swift proxy service",
                    "PROMPT"          : "Enter the IP address of the Swift proxy service",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ip, validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Swift to authenticate with Keystone",
                    "PROMPT"          : "Enter the password for the Swift Keystone access",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -55,7 +55,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "A comma separated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device(packstack does not create the filesystem, you must do this first), if /dev is omitted Packstack will create a loopback device for a test setup",
                    "PROMPT"          : "Enter the Swift Storage servers e.g. host/dev,host/dev",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty, validate_storage],
+                   "VALIDATORS"      : [validators.validate_not_empty, validate_storage],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -67,7 +67,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Number of swift storage zones, this number MUST be no bigger than the number of storage devices configured",
                    "PROMPT"          : "Enter the number of swift storage zones, MUST be no bigger than the number of storage devices configured",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_integer],
+                   "VALIDATORS"      : [validators.validate_integer],
                    "DEFAULT_VALUE"   : "1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -79,7 +79,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Number of swift storage replicas, this number MUST be no bigger than the number of storage zones configured",
                    "PROMPT"          : "Enter the number of swift storage replicas, MUST be no bigger than the number of storage zones configured",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_integer],
+                   "VALIDATORS"      : [validators.validate_integer],
                    "DEFAULT_VALUE"   : "1",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -91,7 +91,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "FileSystem type for storage nodes",
                    "PROMPT"          : "Enter FileSystem type for storage nodes",
                    "OPTION_LIST"     : ['xfs','ext4'],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "ext4",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -114,7 +114,7 @@ def initConfig(controllerObject):
 def validate_storage(param, options=None):
     for host in param.split(','):
         host = host.split('/', 1)[0]
-        validate.validate_ip(host.strip(), options)
+        validators.validate_ip(host.strip(), options)
 
 
 def initSequences(controller):

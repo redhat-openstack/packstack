@@ -5,7 +5,7 @@ Installs and configures OpenStack Horizon
 import logging
 import uuid
 
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 import packstack.installer.engine_processors as process
 from packstack.installer import basedefs, output_messages
 import packstack.installer.common_utils as utils
@@ -30,7 +30,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install Horizon",
                    "PROMPT"          : "Enter the IP address of the Horizon server",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -42,7 +42,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "To set up Horizon communication over https set this to \"y\"",
                    "PROMPT"          : "Would you like to set up Horizon communication over https",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "n",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,

@@ -9,7 +9,7 @@ import datetime
 
 from packstack.installer import basedefs
 from packstack.installer import common_utils as utils
-from packstack.installer import engine_validators as validate
+from packstack.installer import validators
 from packstack.installer.exceptions import InstallError
 
 
@@ -34,7 +34,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Install OpenStack from EPEL. If set to \"y\" EPEL will be installed on each server",
                    "PROMPT"          : "Should Packstack install EPEL on each server",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "n",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -83,7 +83,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "To subscribe each server with Red Hat subscription manager, to Red Hat Beta RPM's",
                    "PROMPT"          : "To subscribe each server to Red Hat Beta RPM's enter y",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "n",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -181,7 +181,7 @@ def initConfig(controllerObject):
                                         "flags are: novirtinfo, norhnsd, nopackages"),
                    "PROMPT"          : "Enter comma separated list of flags passed to rhnreg_ks",
                    "OPTION_LIST"     : ['novirtinfo', 'norhnsd', 'nopackages'],
-                   "VALIDATORS"      : [validate.validate_multi_options],
+                   "VALIDATORS"      : [validators.validate_multi_options],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,

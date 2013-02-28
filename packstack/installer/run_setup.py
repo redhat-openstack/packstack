@@ -14,9 +14,9 @@ import textwrap
 from optparse import OptionParser, OptionGroup
 
 import basedefs
+import validators
 import common_utils as utils
 import engine_processors as process
-import engine_validators as validate
 import output_messages
 from .exceptions import FlagValidationError, ParamValidationError
 
@@ -80,8 +80,8 @@ def _getInputFromUser(param):
                     message = StringIO()
                     message.write(param.getKey("PROMPT"))
 
-                    validators = param.getKey("VALIDATORS") or []
-                    if validate.validate_regexp not in validators \
+                    val_list = param.getKey("VALIDATORS") or []
+                    if validators.validate_regexp not in val_list \
                        and param.getKey("OPTION_LIST"):
                         message.write(" [%s]" % "|".join(param.getKey("OPTION_LIST")))
 
@@ -147,7 +147,7 @@ def input_param(param):
         confirmedParamName = param.getKey("CONF_NAME") + "_CONFIRMED"
         confirmedParam.setKey("CONF_NAME", confirmedParamName)
         confirmedParam.setKey("PROMPT", output_messages.INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT)
-        confirmedParam.setKey("VALIDATORS", [validate.validate_not_empty])
+        confirmedParam.setKey("VALIDATORS", [validators.validate_not_empty])
         # Now get both values from user (with existing validations
         while True:
             _getInputFromUser(param)
@@ -264,9 +264,9 @@ def validate_param_value(param, value):
     cname = param.getKey("CONF_NAME")
     logging.debug("Validating parameter %s." % cname)
 
-    validators = param.getKey("VALIDATORS") or []
+    val_list = param.getKey("VALIDATORS") or []
     opt_list = param.getKey("OPTION_LIST")
-    for val_func in validators:
+    for val_func in val_list:
         try:
             val_func(value, opt_list)
         except ParamValidationError as ex:

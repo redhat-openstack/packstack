@@ -4,7 +4,7 @@ Installs and configures qpid
 
 import logging
 
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 import packstack.installer.engine_processors as process
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
@@ -29,7 +29,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the QPID service",
                    "PROMPT"          : "Enter the IP address of the QPID service",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,

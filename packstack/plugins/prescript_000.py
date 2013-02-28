@@ -5,7 +5,7 @@ Plugin responsible for setting OpenStack global options
 import uuid
 import logging
 
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 import packstack.installer.common_utils as utils
 
 from packstack.modules.ospluginutils import gethostlist,\
@@ -29,7 +29,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Set to 'y' if you would like Packstack to install Glance",
                    "PROMPT"          : "Should Packstack install Glance image service",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "y",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -41,7 +41,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Set to 'y' if you would like Packstack to install Cinder",
                    "PROMPT"          : "Should Packstack install Cinder volume service",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "y",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -53,7 +53,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Set to 'y' if you would like Packstack to install Nova",
                    "PROMPT"          : "Should Packstack install Nova compute service",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "y",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -65,7 +65,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Set to 'y' if you would like Packstack to install Horizon",
                    "PROMPT"          : "Should Packstack install Horizon dashboard",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "y",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -77,7 +77,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Set to 'y' if you would like Packstack to install Swift",
                    "PROMPT"          : "Should Packstack install Swift object storage",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "n",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -89,7 +89,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Set to 'y' if you would like Packstack to install the OpenStack Client packages. An admin \"rc\" file will also be installed",
                    "PROMPT"          : "Should Packstack install OpenStack client tools",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "y",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -112,7 +112,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Set to 'y' if you would like Packstack to install Nagios to monitor openstack hosts",
                    "PROMPT"          : "Should Packstack install Nagios to monitor openstack hosts",
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : 'n',
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -156,7 +156,7 @@ def create_ntp_manifest():
     servers = ''
     for srv in controller.CONF['CONFIG_NTP_SERVERS'].split(','):
         srv = srv.strip()
-        validate.validate_ping(srv)
+        validators.validate_ping(srv)
         servers += 'server %s\n' % srv
         controller.CONF.setdefault('CONFIG_NTP_FIRST_SERVER', srv)
     controller.CONF['CONFIG_NTP_SERVERS'] = servers

@@ -4,7 +4,7 @@ Installs and configures an OpenStack Client
 
 import logging
 
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 import packstack.installer.engine_processors as process
 from packstack.installer import basedefs, output_messages
 import packstack.installer.common_utils as utils
@@ -29,7 +29,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the OpenStack client packages. An admin \"rc\" file will also be installed",
                    "PROMPT"          : "Enter the IP address of the client server",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
