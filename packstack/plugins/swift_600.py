@@ -7,7 +7,6 @@ import logging
 import os
 
 from packstack.installer import validators
-import packstack.installer.engine_processors as process
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
 

@@ -5,7 +5,6 @@ Installs and configures an OpenStack Client
 import logging
 
 from packstack.installer import validators
-import packstack.installer.engine_processors as process
 from packstack.installer import basedefs, output_messages
 import packstack.installer.common_utils as utils
 

@@ -55,22 +55,34 @@ class PackstackTestCaseMixin(object):
 
     def assertItemsEqual(self, list1, list2, msg=None):
         f, s = len(list1), len(list2)
-        self.assertEqual(f, s, msg=('Element counts were not equal. '
-                                    'First has %s, Second has %s' % (f, s)))
+        _msg = msg or ('Element counts were not equal. First has %s, '
+                       'Second has %s' % (f, s))
+        self.assertEqual(f, s, msg=_msg)
+
+        _msg = msg or ('Given lists differ:\n%(list1)s'
+                       '\n%(list2)s' % locals())
         for i in list1:
             if i not in list2:
-                raise AssertionError('Given lists differ:'
-                                     '\n%(list1)s\n%(list2)s' % locals())
+                raise AssertionError(_msg)
 
     def assertListEqual(self, list1, list2, msg=None):
         f, s = len(list1), len(list2)
-        self.assertEqual(f, s, msg=('Element counts were not equal. '
-                                    'First has %s, Second has %s' % (f, s)))
+        _msg = msg or ('Element counts were not equal. First has %s, '
+                       'Second has %s' % (f, s))
+        self.assertEqual(f, s, msg=_msg)
+
+        _msg = msg or ('Given lists differ:\n%(list1)s'
+                       '\n%(list2)s' % locals())
         for index, item in enumerate(list1):
             if item != list2[index]:
-                raise AssertionError('Given lists differ:'
-                                     '\n%(list1)s\n%(list2)s' % locals())
+                raise AssertionError(_msg)
 
     def assertIsInstance(self, obj, cls, msg=None):
+        _msg = msg or ('%s is not an instance of %s' % (obj, cls))
         if not isinstance(obj, cls):
-            raise AssertionError('%s is not an instance of %s' % (obj, cls))
+            raise AssertionError(_msg)
+
+    def assertIn(self, first, second, msg=None):
+        _msg = msg or ('%s is not a member of %s' % (first, second))
+        if first not in second:
+            raise AssertionError(_msg)

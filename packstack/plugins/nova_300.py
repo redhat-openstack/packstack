@@ -7,7 +7,6 @@ import uuid
 import logging
 
 from packstack.installer import validators
-import packstack.installer.engine_processors as process
 import packstack.installer.common_utils as utils
 from packstack.installer.exceptions import ScriptRuntimeError
 

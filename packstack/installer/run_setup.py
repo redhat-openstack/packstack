@@ -16,7 +16,7 @@ from optparse import OptionParser, OptionGroup
 import basedefs
 import validators
 import common_utils as utils
-import engine_processors as process
+import processors
 import output_messages
 from .exceptions import FlagValidationError, ParamValidationError
 
@@ -288,7 +288,7 @@ def process_param_value(param, value):
             else:
                 logging.debug("Processor returned the original "
                               "value: %s" % _value)
-        except process.ParamProcessingError, ex:
+        except processors.ParamProcessingError, ex:
             print ("Value processing of parameter %s "
                    "failed.\n%s" % (param.getKey("CONF_NAME"), ex))
             raise
