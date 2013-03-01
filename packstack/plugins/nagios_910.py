@@ -7,7 +7,7 @@ import logging
 
 from packstack.installer import validators
 from packstack.installer import basedefs, output_messages
-import packstack.installer.common_utils as utils
+from packstack.installer import utils
 
 from packstack.modules.ospluginutils import gethostlist,\
                                             getManifestTemplate,\
@@ -18,7 +18,7 @@ controller = None
 
 # Plugin name
 PLUGIN_NAME = "OS-Nagios"
-PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
+PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 logging.debug("plugin %s loaded", __name__)
 
@@ -32,7 +32,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the Nagios server",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NAGIOS_HOST",

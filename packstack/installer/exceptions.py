@@ -18,7 +18,11 @@ __all__ = (
 
 class PackStackError(Exception):
     """Default Exception class for packstack installer."""
-    pass
+    def __init__(self, *args, **kwargs):
+        super(PackStackError, self).__init__(*args)
+        self.stdout = kwargs.get('stdout', None)
+        self.stderr = kwargs.get('stderr', None)
+
 
 
 class MissingRequirements(PackStackError):
@@ -55,5 +59,10 @@ class NetworkError(PackStackError):
 
 
 class ScriptRuntimeError(PackStackError):
-    """Raised when ScriptRunner.execute does not end successfully."""
+    """
+    Raised when utils.ScriptRunner.execute does not end successfully.
+    """
     pass
+
+class ExecuteRuntimeError(PackStackError):
+    """Raised when utils.execute does not end successfully."""

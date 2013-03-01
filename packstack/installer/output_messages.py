@@ -77,7 +77,6 @@ ERR_IPS_NOT_CONFIGED_ON_INT="The IP (%s) which was resolved from the FQDN %s is 
 ERR_IPS_HAS_NO_PTR="None of the IP addresses on this host(%s) holds a PTR record for the FQDN: %s"
 ERR_IP_HAS_NO_PTR="The IP %s does not hold a PTR record for the FQDN: %s"
 ERR_EXP_FAILED_INIT_LOGGER="Unexpected error: Failed to initiate logger, please check file system permission"
-ERR_RC_CODE="Return Code is not zero"
 ERR_FAILURE="General failure"
 ERR_NO_ANSWER_FILE="Error: Could not find file %s"
 ERR_ONLY_1_FLAG="Error: The %s flag is mutually exclusive to all other command line options"

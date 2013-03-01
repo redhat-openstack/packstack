@@ -6,7 +6,7 @@ import logging
 
 from packstack.installer import validators
 from packstack.installer import basedefs, output_messages
-import packstack.installer.common_utils as utils
+from packstack.installer import utils
 
 from packstack.modules.ospluginutils import gethostlist,\
                                             getManifestTemplate, \
@@ -28,7 +28,7 @@ def initConfig(controllerObject):
 
     groupDict = {"GROUP_NAME"            : "POSTSCRIPT",
                  "DESCRIPTION"           : "POSTSCRIPT Config parameters",
-                 "PRE_CONDITION"         : utils.returnYes,
+                 "PRE_CONDITION"         : lambda x: 'yes',
                  "PRE_CONDITION_MATCH"   : "yes",
                  "POST_CONDITION"        : False,
                  "POST_CONDITION_MATCH"  : True}

@@ -9,7 +9,7 @@ import datetime
 import platform
 
 from packstack.installer import basedefs
-from packstack.installer import common_utils as utils
+from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer.exceptions import InstallError
 
@@ -21,7 +21,7 @@ controller = None
 
 # Plugin name
 PLUGIN_NAME = "OS-SERVERPREPARE"
-PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
+PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 logging.debug("plugin %s loaded", __name__)
 
@@ -241,7 +241,7 @@ def initConfig(controllerObject):
     conf_groups = [
              {"GROUP_NAME"            : "SERVERPREPARE",
               "DESCRIPTION"           : "Server Prepare Configs ",
-              "PRE_CONDITION"         : utils.returnYes,
+              "PRE_CONDITION"         : lambda x: 'yes',
               "PRE_CONDITION_MATCH"   : "yes",
               "POST_CONDITION"        : False,
               "POST_CONDITION_MATCH"  : True},

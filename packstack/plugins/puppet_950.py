@@ -7,7 +7,7 @@ import os
 import platform
 import time
 
-import packstack.installer.common_utils as utils
+from packstack.installer import utils
 from packstack.installer import basedefs, output_messages
 from packstack.installer.exceptions import ScriptRuntimeError
 
@@ -20,7 +20,7 @@ controller = None
 
 # Plugin name
 PLUGIN_NAME = "OSPUPPET"
-PLUGIN_NAME_COLORED = utils.getColoredText(PLUGIN_NAME, basedefs.BLUE)
+PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 logging.debug("plugin %s loaded", __name__)
 
@@ -37,7 +37,7 @@ def initConfig(controllerObject):
 
     groupDict = {"GROUP_NAME"            : "PUPPET",
                  "DESCRIPTION"           : "Puppet Config parameters",
-                 "PRE_CONDITION"         : utils.returnYes,
+                 "PRE_CONDITION"         : lambda x: 'yes',
                  "PRE_CONDITION_MATCH"   : "yes",
                  "POST_CONDITION"        : False,
                  "POST_CONDITION_MATCH"  : True}
@@ -162,7 +162,7 @@ def waitforpuppet(currently_running):
             # check the log file for errors
             validate_puppet_logfile(log)
             sys.stdout.write(("\r%s : " % log_file).ljust(basedefs.SPACE_LEN))
-            print ("[ " + utils.getColoredText(output_messages.INFO_DONE, basedefs.GREEN) + " ]")
+            print ("[ " + utils.color_text(output_messages.INFO_DONE, 'green') + " ]")
 
 
 def applyPuppetManifest():

@@ -2,7 +2,7 @@
 
 import os
 
-from .common_utils import ScriptRunner, forceIP
+from .utils import ScriptRunner, force_ip
 from .exceptions import ParamProcessingError, NetworkError
 
 
@@ -17,7 +17,7 @@ def process_host(param, process_args=None):
     localhost = process_args and \
                 process_args.get('allow_localhost', False)
     try:
-        return forceIP(param, allow_localhost=localhost)
+        return force_ip(param, allow_localhost=localhost)
     except NetworkError, ex:
         raise ParamProcessingError(str(ex))
 

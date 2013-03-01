@@ -7,7 +7,7 @@ import uuid
 import logging
 
 from packstack.installer import validators
-import packstack.installer.common_utils as utils
+from packstack.installer import utils
 from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile, manifestfiles
@@ -29,7 +29,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the Nova API service",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_API_HOST",
@@ -41,7 +41,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the Nova Cert service",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_CERT_HOST",
@@ -53,7 +53,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the Nova VNC proxy",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_VNCPROXY_HOST",
@@ -65,7 +65,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter a comma separated list of IP addresses on which to install the Nova Compute services",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_multi_ssh],
-                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_HOSTS",
@@ -89,7 +89,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the Nova Network service",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOST",
@@ -101,7 +101,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the Nova Conductor service",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_CONDUCTOR_HOST",
@@ -209,7 +209,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the IP address of the Nova Scheduler service",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_SCHED_HOST",

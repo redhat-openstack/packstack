@@ -1,10 +1,14 @@
+# -*- coding: utf-8 -*-
+
 """
-provides all the predefined variables for engine-setup
+This module provides all the predefined variables.
 """
+
 import os
 import sys
 import datetime
 import tempfile
+
 
 APP_NAME = "Installer"
 
@@ -17,7 +21,7 @@ except:
     pass
 
 _tmpdirprefix = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-')
-VAR_DIR = tempfile.mkdtemp(prefix = _tmpdirprefix, dir = PACKSTACK_VAR_DIR)
+VAR_DIR = tempfile.mkdtemp(prefix=_tmpdirprefix, dir=PACKSTACK_VAR_DIR)
 DIR_LOG = VAR_DIR
 PUPPET_MANIFEST_RELATIVE = "manifests"
 PUPPET_MANIFEST_DIR = os.path.join(VAR_DIR, PUPPET_MANIFEST_RELATIVE)
@@ -37,17 +41,10 @@ EXEC_CHKCONFIG = "chkconfig"
 EXEC_SERVICE = "service"
 EXEC_IP = "ip"
 
-#text colors
-RED = "\033[0;31m"
-GREEN = "\033[92m"
-BLUE = "\033[94m"
-YELLOW = "\033[93m"
+# text colors
 NO_COLOR = "\033[0m"
+COLORS = {'red': "\033[0;31m", 'green': "\033[92m", 'blue': "\033[94m",
+          'yellow': "\033[93m"}
 
-COLORS = (RED, GREEN, BLUE, YELLOW, NO_COLOR)
-
-#space len size for color print
+# space len size for color print
 SPACE_LEN = 70
-
-RPM_LOCK_LIST = """
-"""

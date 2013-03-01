@@ -15,7 +15,7 @@ from optparse import OptionParser, OptionGroup
 
 import basedefs
 import validators
-import common_utils as utils
+from . import utils
 import processors
 import output_messages
 from .exceptions import FlagValidationError, ParamValidationError
@@ -35,7 +35,6 @@ def initLogging (debug):
     global logFile
 
     try:
-        #in order to use UTC date for the log file, send True to getCurrentDateTime(True)
         logFilename = "openstack-setup.log"
         logFile = os.path.join(basedefs.DIR_LOG, logFilename)
 
@@ -220,18 +219,19 @@ def mask(input):
     if type(input) == types.DictType:
         for key in input:
             if type(input[key]) == types.StringType:
-                output[key] = maskString(input[key])
+                output[key] = utils.mask_string(input[key],
+                                                masked_value_set)
     if type(input) == types.ListType:
         for item in input:
             org = item
             orgIndex = input.index(org)
             if type(item) == types.StringType:
-                item = maskString(item)
+                item = utils.mask_string(item, masked_value_set)
             if item != org:
                 output.remove(org)
                 output.insert(orgIndex, item)
     if type(input) == types.StringType:
-            output = maskString(input)
+            output = utils.mask_string(input, masked_value_set)
 
     return output
 
@@ -252,13 +252,6 @@ def removeMaskString(maskedString):
             found = True
     if found:
         masked_value_set.remove(maskedString)
-
-def maskString(str):
-    # Iterate sorted list, so we won't mask only part of a password
-    for password in sorted(masked_value_set, utils.byLength, None, True):
-        if password:
-            str = str.replace(password, '*'*8)
-    return str
 
 def validate_param_value(param, value):
     cname = param.CONF_NAME
@@ -364,7 +357,7 @@ def _handleAnswerFileParams(answerFile):
 
             # Handle pre condition match with case insensitive values
             logging.info("Comparing pre- conditions, value: '%s', and match: '%s'" % (preConditionValue, group.PRE_CONDITION_MATCH))
-            if utils.compareStrIgnoreCase(preConditionValue, group.PRE_CONDITION_MATCH):
+            if preConditionValue == group.PRE_CONDITION_MATCH:
                 for param in group.parameters.itervalues():
                     _loadParamFromFile(fconf, "general", param.CONF_NAME)
 
@@ -374,7 +367,7 @@ def _handleAnswerFileParams(answerFile):
                     postConditionValue = _handleGroupCondition(fconf, group.POST_CONDITION, postConditionValue)
 
                     # Handle post condition match for group
-                    if not utils.compareStrIgnoreCase(postConditionValue, group.POST_CONDITION_MATCH):
+                    if postConditionValue != group.POST_CONDITION_MATCH:
                         logging.error("The group condition (%s) returned: %s, which differs from the excpeted output: %s"%\
                                       (group.GROUP_NAME, postConditionValue, group.POST_CONDITION_MATCH))
                         raise ValueError(output_messages.ERR_EXP_GROUP_VALIDATION_ANS_FILE%\
@@ -422,7 +415,7 @@ def _handleInteractiveParams():
 
             # If we have a match, i.e. condition returned True, go over all params in the group
             logging.info("Comparing pre-conditions; condition: '%s', and match: '%s'" % (preConditionValue, group.PRE_CONDITION_MATCH))
-            if utils.compareStrIgnoreCase(preConditionValue, group.PRE_CONDITION_MATCH):
+            if preConditionValue == group.PRE_CONDITION_MATCH:
                 while inputLoop:
                     for param in group.parameters.itervalues():
                         if not param.CONDITION:
@@ -546,19 +539,6 @@ def _addFinalInfoMsg():
     """
     controller.MESSAGES.append(output_messages.INFO_LOG_FILE_PATH%(logFile))
 
-def _lockRpmVersion():
-    """
-    Enters rpm versions into yum version-lock
-    """
-    logging.debug("Locking rpms in yum-version-lock")
-    cmd = [
-        basedefs.EXEC_RPM, "-q",
-    ] + basedefs.RPM_LOCK_LIST.split()
-    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_YUM_LOCK)
-
-    with open(basedefs.FILE_YUM_VERSION_LOCK, "a") as f:
-        for rpm in output.splitlines():
-            f.write(rpm + "\n")
 
 def _summaryParamsToLog():
     if len(controller.CONF) > 0:
@@ -624,7 +604,7 @@ def remove_remote_var_dirs():
             msg = output_messages.ERR_REMOVE_REMOTE_VAR % (host_dir, host)
             logging.error(msg)
             logging.exception(e)
-            controller.MESSAGES.append(utils.getColoredText(msg, basedefs.RED))
+            controller.MESSAGES.append(utils.color_text(msg, 'red'))
 
 
 def generateAnswerFile(outputFile, overrides={}):
@@ -905,7 +885,7 @@ def main():
     except Exception as e:
         logging.error(traceback.format_exc())
         print
-        print utils.getColoredText("ERROR : "+str(e), basedefs.RED)
+        print utils.color_text("ERROR : " + str(e), 'red')
         print output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO%(logFile)
         sys.exit(1)
 

@@ -8,7 +8,7 @@ import string
 import traceback
 import basedefs
 import output_messages
-import common_utils as utils
+from . import utils
 
 class Step(object):
     def __init__(self, title=None, functions=[]):
@@ -61,7 +61,7 @@ class Step(object):
             except:
                 logging.debug(traceback.format_exc())
                 raise
-        print ("[ " + utils.getColoredText(output_messages.INFO_DONE, basedefs.GREEN) + " ]").rjust(spaceLen)
+        print ("[ " + utils.color_text(output_messages.INFO_DONE, 'green') + " ]").rjust(spaceLen)
 
 class Sequence(object):
     """

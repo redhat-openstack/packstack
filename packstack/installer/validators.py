@@ -12,7 +12,7 @@ import tempfile
 import traceback
 
 import basedefs
-import common_utils as utils
+from . import utils
 
 from .setup_controller import Controller
 from .exceptions import ParamValidationError
@@ -175,8 +175,8 @@ def validate_ping(param, options=None):
     # TO-DO: to be more flexible, remove this and exit in case param is empty
     validate_not_empty(param)
 
-    cmd = ["/bin/ping", "-c", "1", str(param)]
-    out, rc = utils.execCmd(cmdList=cmd)
+    rc, out = utils.execute(['/bin/ping', '-c', '1', str(param)],
+                            can_fail=True)
     if rc != 0:
         logging.debug('validate_ping(%s, options=%s) failed.' %
                       (param, options))
