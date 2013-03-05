@@ -70,3 +70,18 @@ exec {'tuned-virtual-host':
     command => '/usr/sbin/tuned-adm profile virtual-host',
     require => Service['tuned'],
 }
+
+# Need to start dbus for libvirt
+if($::operatingsystem == 'Fedora') {
+    service { 'messagebus':
+        name     => 'dbus',
+        ensure   => running,
+        enable   => true,
+    }
+} else {
+   service { 'messagebus':
+        ensure   => running,
+        enable   => true,
+    }
+}
+Package['libvirt'] -> Service['messagebus'] -> Service['libvirt']
