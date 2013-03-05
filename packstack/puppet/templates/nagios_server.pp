@@ -62,3 +62,9 @@ service{['nagios', 'httpd']:
     ensure => running,
     hasstatus => true,
 }
+
+firewall { '001 nagios incoming':
+    proto    => 'tcp',
+    dport    => ['80'],
+    action   => 'accept',
+}
