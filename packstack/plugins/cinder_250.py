@@ -123,11 +123,16 @@ def initSequences(controller):
 
     cinder_steps = [
              {'title': 'Adding Cinder Keystone manifest entries', 'functions':[create_keystone_manifest]},
+             {'title': 'Installing dependencies for Cinder', 'functions':[install_cinder_deps]},
              {'title': 'Checking if the Cinder server has a cinder-volumes vg', 'functions':[check_cinder_vg]},
              {'title': 'Adding Cinder manifest entries', 'functions':[create_manifest]}
     ]
     controller.addSequence("Installing OpenStack Cinder", [], [], cinder_steps)
 
+def install_cinder_deps():
+    server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
+    server.append("rpm -q %(package)s || yum install -y %(package)s" % {'package:': "lvm2"})
+    server.execute()
 
 def check_cinder_vg():
 
