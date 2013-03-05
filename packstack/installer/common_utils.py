@@ -366,6 +366,17 @@ def forceIP(host, allow_localhost=False):
         host = host2ip(host, allow_localhost=allow_localhost)
     return host
 
+def getNics():
+   output = subprocess.check_output('cat /proc/net/dev', shell=True)
+   if output.find("eth0") != -1:
+       return "eth0"
+   if output.find("eth1") != -1:
+       return "eth1"
+   if output.find("em0") != -1:
+       return "em0"
+   if output.find("em1") != -1:
+       return "em1"
+
 class ScriptRunner(object):
     def __init__(self, ip=None):
         self.script = []
