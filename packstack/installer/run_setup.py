@@ -529,7 +529,8 @@ def _displaySummary():
         logging.debug("user chose to accept user parameters")
 
 def _printAdditionalMessages():
-    print "\n",output_messages.INFO_ADDTIONAL_MSG
+    if len(controller.MESSAGES) > 0:
+        print "\n",output_messages.INFO_ADDTIONAL_MSG
     for msg in controller.MESSAGES:
         logging.info(output_messages.INFO_ADDTIONAL_MSG_BULLET%(msg))
         print output_messages.INFO_ADDTIONAL_MSG_BULLET%(msg)
@@ -569,47 +570,34 @@ def runSequences():
     controller.runAllSequences()
 
 def _main(configFile=None):
-    try:
-        logging.debug("Entered main(configFile='%s')"%(configFile))
-        print output_messages.INFO_HEADER
+    logging.debug("Entered main(configFile='%s')"%(configFile))
+    print output_messages.INFO_HEADER
 
-        # Get parameters
-        _handleParams(configFile)
+    # Get parameters
+    _handleParams(configFile)
 
-        # Update masked_value_list with user input values
-        _updateMaskedValueSet()
+    # Update masked_value_list with user input values
+    _updateMaskedValueSet()
 
-        # Print masked conf
-        logging.debug(mask(controller.CONF))
+    # Print masked conf
+    logging.debug(mask(controller.CONF))
 
-        # Start configuration stage
-        logging.debug("Entered Configuration stage")
-        print "\n",output_messages.INFO_INSTALL
+    # Start configuration stage
+    logging.debug("Entered Configuration stage")
+    print "\n",output_messages.INFO_INSTALL
 
-        # Initialize Sequences
-        initPluginsSequences()
+    # Initialize Sequences
+    initPluginsSequences()
 
-        # Run main setup logic
-        runSequences()
+    # Run main setup logic
+    runSequences()
 
-        # Lock rhevm version
-        #_lockRpmVersion()
+    # Lock rhevm version
+    #_lockRpmVersion()
 
-        # Print info
-        _addFinalInfoMsg()
-        print output_messages.INFO_INSTALL_SUCCESS
-
-    except Exception, e:
-        controller.MESSAGES.append(utils.getColoredText("ERROR : "+str(e), basedefs.RED))
-        controller.MESSAGES.append(output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO%(logFile))
-        logging.exception(e)
-    finally:
-
-        remove_remote_var_dirs()
-
-        # Always print user params to log
-        _printAdditionalMessages()
-        _summaryParamsToLog()
+    # Print info
+    _addFinalInfoMsg()
+    print output_messages.INFO_INSTALL_SUCCESS
 
 
 def remove_remote_var_dirs():
@@ -884,16 +872,22 @@ def main():
                 _set_command_line_values(options)
             _main(confFile)
 
-    except SystemExit:
-        raise
     except FlagValidationError, ex:
         optParser.print_help()
         print
-    except BaseException as e:
+    except Exception as e:
         logging.error(traceback.format_exc())
-        print e
+        print
+        print utils.getColoredText("ERROR : "+str(e), basedefs.RED)
         print output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO%(logFile)
         sys.exit(1)
+
+    finally:
+        remove_remote_var_dirs()
+
+        # Always print user params to log
+        _printAdditionalMessages()
+        _summaryParamsToLog()
 
 
 if __name__ == "__main__":
