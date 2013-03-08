@@ -74,6 +74,14 @@ def installdeps():
 
 
 def copyPuppetModules():
+    os_modules = ' '.join(('apache', 'cinder', 'concat',
+                           'create_resources', 'firewall',
+                           'glance', 'horizon', 'inifile',
+                           'keystone', 'memcached', 'mysql',
+                           'nova', 'openstack', 'packstack',
+                           'qpid', 'rsync', 'ssh', 'stdlib',
+                           'swift', 'sysctl', 'vlan', 'xinetd'))
+
     # write puppet manifest to disk
     manifestfiles.writeManifests()
 
@@ -85,21 +93,32 @@ def copyPuppetModules():
         host_dir = controller.temp_map[hostname]
         puppet_dir = os.path.join(host_dir, basedefs.PUPPET_MANIFEST_RELATIVE)
         server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
-        server.append("tar %s --dereference -cpzf - modules facts | "
+        # copy Packstack facts
+        server.append("tar %s --dereference -cpzf - facts | "
                       "ssh -o StrictHostKeyChecking=no "
                           "-o UserKnownHostsFile=/dev/null "
                           "root@%s tar -C %s -xpzf -" % (tar_opts, hostname, host_dir))
+        # copy Packstack manifests
         server.append("cd %s" % basedefs.PUPPET_MANIFEST_DIR)
         server.append("tar %s --dereference -cpzf - ../manifests | "
                       "ssh -o StrictHostKeyChecking=no "
                           "-o UserKnownHostsFile=/dev/null "
                           "root@%s tar -C %s -xpzf -" % (tar_opts, hostname, host_dir))
 
+        # copy resources
         for path, localname in controller.resources.get(hostname, []):
             server.append("scp -o StrictHostKeyChecking=no "
                 "-o UserKnownHostsFile=/dev/null %s root@%s:%s/resources/%s" %
                 (path, hostname, host_dir, localname))
 
+        # copy Puppet modules required by Packstack
+        server.append("cd %s/puppet/modules" % basedefs.DIR_PROJECT_DIR)
+        server.append("tar %s --dereference -cpzf - %s | "
+                      "ssh -o StrictHostKeyChecking=no "
+                          "-o UserKnownHostsFile=/dev/null "
+                          "root@%s tar -C %s -xpzf -" %
+                                (tar_opts, os_modules, hostname,
+                                 os.path.join(host_dir, 'modules')))
     server.execute()
 
 
