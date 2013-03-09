@@ -324,7 +324,11 @@ def _loadParamFromFile(config, section, paramName):
     """
 
     # Get paramName from answer file
-    value = config.get(section, paramName)
+    try:
+        value = config.get(section, paramName)
+    except ConfigParser.NoOptionError:
+        raise KeyError('Parser cannot find option %s in '
+                       'answer file.' % paramName)
 
     # Validate param value using its validation func
     param = controller.getParamByName(paramName)
