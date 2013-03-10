@@ -1,0 +1,37 @@
+#!/bin/env bash
+
+FQDN=`hostname`
+if [ "x${FQDN}" = "x" ]; then
+   FQDN=localhost.localdomain
+fi
+
+SSLKEY=/etc/pki/tls/private/ssl_ps_server.key
+SSLCERT=/etc/pki/tls/certs/ssl_ps_server.crt
+
+# If packstack dropped a cert in the resources directory then we
+# use that instead of generating one
+if [ -f $PACKSTACK_VAR_DIR/resources/ssl_ps_server.crt ] ; then
+    cp  $PACKSTACK_VAR_DIR/resources/ssl_ps_server.crt $SSLCERT
+    cp  $PACKSTACK_VAR_DIR/resources/ssl_ps_server.key $SSLKEY
+    exit 0
+fi
+
+umask 277
+
+answers() {
+        echo --
+        echo State
+        echo City
+        echo openstack
+        echo packstack
+        echo $1
+        echo admin@$1
+        echo
+        echo
+}
+
+
+# gen key and self signed host cert
+openssl genrsa -rand 2048 > $SSLKEY 2> /dev/null
+answers $FQDN | openssl req -new -x509 -days 1096 -key $SSLKEY -text -out $SSLCERT
+

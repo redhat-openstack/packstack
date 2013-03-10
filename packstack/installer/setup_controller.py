@@ -34,6 +34,21 @@ class Controller(object):
         #      only like data container
         self.temp_map = {}
 
+        # Resources that should be copied to each host along with the puppet
+        # files, on the remote host the file will be placed in
+        # $PACKSTACK_VAR_DIR/resources. As with temp_map, this controller
+        # should copy the files, for now the puppet plugin is doing it
+        # format {'host':[('/path/to/fileordirectory', 'filenameonremotehost'), ..]}
+        self.resources = {}
+
+
+    def addResource(self, host, localpath, remotename):
+        """ Populates self.resources """
+        current_value_for_host = self.resources.get(host, [])
+        current_value_for_host.append((localpath,remotename))
+        self.resources[host] = current_value_for_host
+
+
     # PLugins
     def addPlugin(self, plugObj):
         self.__PLUGINS.append(plugObj)
