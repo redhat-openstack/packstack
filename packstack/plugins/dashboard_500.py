@@ -3,11 +3,13 @@ Installs and configures OpenStack Horizon
 """
 
 import logging
+import os
 import uuid
 
 import packstack.installer.engine_validators as validate
 import packstack.installer.engine_processors as process
 from packstack.installer import basedefs, output_messages
+from packstack.installer import exceptions
 import packstack.installer.common_utils as utils
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
@@ -61,6 +63,42 @@ def initConfig(controllerObject):
 
     controller.addGroup(groupDict, paramsList)
 
+    paramsList = [
+                  {"CMD_OPTION"      : "os-ssl-cert",
+                   "USAGE"           : "PEM encoded certificate to be used for ssl on the https server, leave blank if one should be generated, this certificate should not require a passphrase",
+                   "PROMPT"          : "Enter the path to a PEM encoded certificate to be used on thr https server, leave blank if one should be generated, this certificate should not require a passphrase",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [],
+                   "DEFAULT_VALUE"   : '',
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_SSL_CERT",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-ssl-key",
+                   "USAGE"           : "Keyfile corresponding to the certificate if one was entered",
+                   "PROMPT"          : "Enter the keyfile corresponding to the certificate if one was entered",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_SSL_KEY",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                 ]
+
+    groupDict = { "GROUP_NAME"            : "OSSSL",
+                  "DESCRIPTION"           : "SSL Config parameters",
+                  "PRE_CONDITION"         : "CONFIG_HORIZON_SSL",
+                  "PRE_CONDITION_MATCH"   : "y",
+                  "POST_CONDITION"        : False,
+                  "POST_CONDITION_MATCH"  : True}
+
+    controller.addGroup(groupDict, paramsList)
+
 
 def initSequences(controller):
     if controller.CONF['CONFIG_HORIZON_INSTALL'] != 'y':
@@ -83,13 +121,31 @@ def createmanifest():
     if controller.CONF["CONFIG_HORIZON_SSL"] == 'y':
         controller.CONF["CONFIG_HORIZON_PORT"] = "'443'"
         controller.MESSAGES.append(
-            "%sNOTE%s : A default self signed certificate was used for ssl, "
+            "%sNOTE%s : A certificate was generated to be used for ssl, "
             "You should change the ssl certificate configured in "
             "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
             % (basedefs.RED, basedefs.NO_COLOR, horizon_host))
         proto = "https"
-        sslmanifestdata += ("class {'apache::mod::ssl': }\n"
-                            "file {'/etc/httpd/conf.d/ssl.conf':}\n")
+        sslmanifestdata += getManifestTemplate("https.pp")
+
+        # Are we using the users cert/key files
+        if controller.CONF["CONFIG_SSL_CERT"]:
+            ssl_cert = controller.CONF["CONFIG_SSL_CERT"]
+            ssl_key = controller.CONF["CONFIG_SSL_KEY"]
+
+            if not os.path.exists(ssl_cert):
+                raise exceptions.ParamValidationError(
+                    "The file %s doesn't exist" % ssl_cert)
+
+            if ssl_key and not os.path.exists(ssl_key):
+                raise exceptions.ParamValidationError(
+                    "The file %s doesn't exist" % ssl_key)
+
+            controller.addResource(horizon_host, ssl_cert, 'ssl_ps_server.crt')
+            if ssl_key:
+                controller.addResource(
+                    horizon_host, ssl_key, 'ssl_ps_server.key'
+                )
 
     manifestdata = getManifestTemplate("horizon.pp")
     manifestdata += sslmanifestdata
