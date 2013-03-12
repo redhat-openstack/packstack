@@ -92,6 +92,10 @@ def initConfig(controllerObject):
 
     controller.addGroup(groupDict, paramsList)
 
+    def check_options(config):
+        return (config.get('CONFIG_CINDER_INSTALL', 'n') ==
+                config.get('CONFIG_CINDER_VOLUMES_CREATE', 'n') == 'y')
+
     paramsList = [
                   {"CMD_OPTION"      : "cinder-volumes-size",
                    "USAGE"           : "Cinder's volumes group size",
@@ -109,8 +113,8 @@ def initConfig(controllerObject):
 
     groupDict = { "GROUP_NAME"            : "CINDERVOLUMECREATE",
                   "DESCRIPTION"           : "Cinder volume create Config parameters",
-                  "PRE_CONDITION"         : "CONFIG_CINDER_VOLUMES_CREATE",
-                  "PRE_CONDITION_MATCH"   : "y",
+                  "PRE_CONDITION"         : check_options,
+                  "PRE_CONDITION_MATCH"   : True,
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
 
