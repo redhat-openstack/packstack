@@ -344,6 +344,7 @@ def run_rhsm_reg(host, username, password, beta):
     server.append(cmd % pool)
 
     server.append("yum clean all")
+    server.append("rpm -q yum-utils || yum install -y yum-utils")
     server.append("yum-config-manager --enable rhel-server-ost-6-folsom-rpms")
     if beta:
         server.append("yum-config-manager --enable rhel-6-server-beta-rpms")
