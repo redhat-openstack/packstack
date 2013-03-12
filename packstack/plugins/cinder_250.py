@@ -175,9 +175,9 @@ def check_cinder_vg():
         server.append('dd if=/dev/zero of=%s bs=1 count=0 seek=%s' % \
             (cinders_volume_path,
              controller.CONF['CONFIG_CINDER_VOLUMES_SIZE']))
-        server.append('losetup /dev/loop2  %s' % cinders_volume_path)
-        server.append('pvcreate /dev/loop2')
-        server.append('vgcreate %s /dev/loop2' % cinders_volume)
+        server.append('LOFI=$(losetup --show -f  %s)' % cinders_volume_path)
+        server.append('pvcreate $LOFI')
+        server.append('vgcreate %s $LOFI' % cinders_volume)
 
         # Let's make sure it exists
         server.append('vgdisplay %s' % cinders_volume)
@@ -190,7 +190,9 @@ def check_cinder_vg():
             try:
                 logging.debug("Release loop device, volume creation failed")
                 server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
-                server.append('losetup -d /dev/loop2')
+                server.append('losetup -d $(losetup -j %s | cut -d : -f 1)' %
+                               cinders_volume_path
+                )
                 server.execute()
             except:
                 pass
