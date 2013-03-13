@@ -1,4 +1,4 @@
-Utility to install openstack on RHEL 6.3 (Openstack Folsom)
+Utility to install OpenStack on RHEL 6.4 (Openstack Grizzly)
 See other branches for older openstack versions
 
 This utility can be used to install openstack on a single or
@@ -19,6 +19,9 @@ $ ./bin/packstack --gen-answer-file=ans.txt
 o set CONFIG_SSH_KEY to a public ssh key to be installed to remote machines
 o Edit the IP address to anywhere you want to install a piece of openstack on another server
 o Edit the 3 network interfaces to whatever makes sense in your setup
+
+you'll need to use a grizzly repository for example for RHEL
+CONFIG_REPO=http://repos.fedorapeople.org/repos/openstack/openstack-grizzly/epel-6/
 
 $ ./bin/packstack --answer-file=ans.txt
 
