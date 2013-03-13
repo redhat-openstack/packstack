@@ -8,7 +8,7 @@ import logging
 
 from packstack.installer import exceptions
 from packstack.installer import engine_processors as process
-from packstack.installer import engine_validators as validate
+from packstack.installer import validators
 
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
@@ -37,7 +37,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install Cinder",
                    "PROMPT"          : "Enter the IP address of the Cinder server",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -49,7 +49,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Cinder to access DB",
                    "PROMPT"          : "Enter the password for the Cinder DB access",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -61,7 +61,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Cinder to authenticate with Keystone",
                    "PROMPT"          : "Enter the password for the Cinder Keystone access",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -77,7 +77,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : ("Should Cinder's volumes group be created (for proof-of-concept"
                                         "installation)?"),
                    "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validate.validate_options],
+                   "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "y",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -105,7 +105,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "Cinder's volumes group size",
                    "PROMPT"          : "Enter Cinder's volumes group size",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS" : [validate.validate_not_empty],
+                   "VALIDATORS" : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : "20G",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,

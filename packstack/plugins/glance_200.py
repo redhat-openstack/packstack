@@ -5,7 +5,7 @@ Installs and configures Glance
 import uuid
 import logging
 
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 import packstack.installer.engine_processors as process
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
@@ -30,7 +30,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install Glance",
                    "PROMPT"          : "Enter the IP address of the Glance server",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -42,7 +42,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Glance to access DB",
                    "PROMPT"          : "Enter the password for the Glance DB access",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,
@@ -54,7 +54,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password to use for the Glance to authenticate with Keystone",
                    "PROMPT"          : "Enter the password for the Glance Keystone access",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": False,

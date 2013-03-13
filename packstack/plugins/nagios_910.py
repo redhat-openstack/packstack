@@ -5,7 +5,7 @@ Installs and configures Nagios
 import uuid
 import logging
 
-import packstack.installer.engine_validators as validate
+from packstack.installer import validators
 from packstack.installer import basedefs, output_messages
 import packstack.installer.common_utils as utils
 
@@ -31,7 +31,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the Nagios server",
                    "PROMPT"          : "Enter the IP address of the Nagios server",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -43,7 +43,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The password of the nagiosadmin user on the Nagios server",
                    "PROMPT"          : "Enter the password for the nagiosadmin user",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
                    "MASK_INPUT"      : True,
                    "LOOSE_VALIDATION": True,
@@ -165,6 +165,6 @@ def createnrpemanifests():
         appendManifestFile(manifestfile, manifestdata)
 
     controller.MESSAGES.append("To use Nagios, browse to http://%s/nagios "
-                               "username : nagiosadmin, password : %s" % 
-                               (controller.CONF['CONFIG_NAGIOS_HOST'], 
+                               "username : nagiosadmin, password : %s" %
+                               (controller.CONF['CONFIG_NAGIOS_HOST'],
                                 controller.CONF['CONFIG_NAGIOS_PW']))

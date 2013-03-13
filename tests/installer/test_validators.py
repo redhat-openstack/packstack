@@ -19,9 +19,9 @@ import os
 import shutil
 import tempfile
 from unittest import TestCase
+from packstack.installer.validators import *
 
-from test_base import PackstackTestCaseMixin
-from packstack.installer.engine_validators import *
+from ..test_base import PackstackTestCaseMixin
 
 
 class ValidatorsTestCase(PackstackTestCaseMixin, TestCase):
@@ -34,20 +34,24 @@ class ValidatorsTestCase(PackstackTestCaseMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def test_validate_integer(self):
+        """Test packstack.installer.validators.validate_integer"""
         validate_integer('1')
         self.assertRaises(ParamValidationError, validate_integer, 'test')
 
     def test_validate_regexp(self):
+        """Test packstack.installer.validators.validate_regexp"""
         validate_regexp('Test_123', options=['\w'])
         self.assertRaises(ParamValidationError, validate_regexp,
                           '!#$%', options=['\w'])
 
     def test_validate_port(self):
+        """Test packstack.installer.validators.validate_port"""
         validate_port('666')
         self.assertRaises(ParamValidationError, validate_port, 'test')
         self.assertRaises(ParamValidationError, validate_port, '-3')
 
     def test_validate_not_empty(self):
+        """Test packstack.installer.validators.validate_not_empty"""
         validate_not_empty('test')
         validate_not_empty(False)
         self.assertRaises(ParamValidationError, validate_not_empty, '')
@@ -55,17 +59,20 @@ class ValidatorsTestCase(PackstackTestCaseMixin, TestCase):
         self.assertRaises(ParamValidationError, validate_not_empty, {})
 
     def test_validate_options(self):
+        """Test packstack.installer.validators.validate_options"""
         validate_options('a', options=['a', 'b'])
         validate_options('b', options=['a', 'b'])
         self.assertRaises(ParamValidationError, validate_options,
                           'c', options=['a', 'b'])
 
     def test_validate_ip(self):
+        """Test packstack.installer.validators.validate_ip"""
         validate_ip('127.0.0.1')
         validate_ip('::1')
         self.assertRaises(ParamValidationError, validate_ip, 'test')
 
     def test_validate_file(self):
+        """Test packstack.installer.validators.validate_file"""
         fname = os.path.join(self.tempdir, '.test_validate_file')
         bad_name = os.path.join(self.tempdir, '.me_no_exists')
         with open(fname, 'w') as f:
@@ -74,9 +81,16 @@ class ValidatorsTestCase(PackstackTestCaseMixin, TestCase):
         self.assertRaises(ParamValidationError, validate_file, bad_name)
 
     def test_validate_ping(self):
+        """Test packstack.installer.validators.validate_ping"""
         # ping to broadcast fails
         self.assertRaises(ParamValidationError, validate_ping, '192.168.122.0')
 
     def test_validate_ssh(self):
+        """Test packstack.installer.validators.validate_ssh"""
         # ssh to broadcast fails
         self.assertRaises(ParamValidationError, validate_ssh, '192.168.122.0')
+
+    def test_validate_float(self):
+        """Test packstack.installer.validators.validate_float"""
+        validate_float('5.3')
+        self.assertRaises(ParamValidationError, validate_float, 'test')
