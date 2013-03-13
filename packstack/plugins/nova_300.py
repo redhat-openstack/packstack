@@ -97,6 +97,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novaconductor-host",
+                   "USAGE"           : "The IP address of the server on which to install the Nova Conductor service",
+                   "PROMPT"          : "Enter the IP address of the Nova Conductor service",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validate.validate_ip, validate.validate_ssh],
+                   "DEFAULT_VALUE"   : utils.getLocalhostIP(),
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_CONDUCTOR_HOST",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "nova-db-passwd",
                    "USAGE"           : "The password to use for the Nova to access DB",
                    "PROMPT"          : "Enter the password for the Nova DB access",
@@ -227,6 +239,7 @@ def initSequences(controller):
              {'title': 'Adding Nova API manifest entries', 'functions':[createapimanifest]},
              {'title': 'Adding Nova Keystone manifest entries', 'functions':[createkeystonemanifest]},
              {'title': 'Adding Nova Cert manifest entries', 'functions':[createcertmanifest]},
+             {'title': 'Adding Nova Conductor manifest entries', 'functions':[createconductormanifest]},
              {'title': 'Adding Nova Compute manifest entries', 'functions':[createcomputemanifest]},
              {'title': 'Adding Nova Network manifest entries', 'functions':[createnetworkmanifest]},
              {'title': 'Adding Nova Scheduler manifest entries', 'functions':[createschedmanifest]},
@@ -251,6 +264,12 @@ def createkeystonemanifest():
 def createcertmanifest():
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_CERT_HOST']
     manifestdata = getManifestTemplate("nova_cert.pp")
+    appendManifestFile(manifestfile, manifestdata)
+
+
+def createconductormanifest():
+    manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_CONDUCTOR_HOST']
+    manifestdata = getManifestTemplate("nova_conductor.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
