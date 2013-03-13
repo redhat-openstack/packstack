@@ -70,8 +70,12 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "cinder-volumes-create",
-                   "USAGE"           : "Create Cinder's volumes group",
-                   "PROMPT"          : "Should Cinder's volumes group be created?",
+                   "USAGE"           : ("Create Cinder's volumes group. This should only be done for "
+                                        "testing on a proof-of-concept installation of Cinder.  This "
+                                        "will create a file-backed volume group and is not suitable "
+                                        "for production usage."),
+                   "PROMPT"          : ("Should Cinder's volumes group be created (for proof-of-concept"
+                                        "installation)?"),
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATORS"      : [validate.validate_options],
                    "DEFAULT_VALUE"   : "y",
