@@ -100,7 +100,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "The IP address of the server on which to install the Nova Conductor service",
                    "PROMPT"          : "Enter the IP address of the Nova Conductor service",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validate.validate_ip, validate.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
                    "DEFAULT_VALUE"   : utils.getLocalhostIP(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
