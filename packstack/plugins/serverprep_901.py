@@ -438,6 +438,8 @@ def serverprep():
             host_dir = os.path.join(basedefs.PACKSTACK_VAR_DIR, uuid.uuid4().hex)
             server.append("mkdir --mode 0700 %s" % host_dir)
             server.append("mkdir %s/resources" % host_dir)
+            server.append("mkdir --mode 0700 %s" %
+                          os.path.join(host_dir, 'modules'))
             controller.temp_map[hostname] = host_dir
 
         # Add yum repositories if configured
