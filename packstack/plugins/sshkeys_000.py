@@ -7,7 +7,7 @@ import logging
 import os
 import tempfile
 
-import packstack.installer.engine_processors as process
+from packstack.installer import processors
 from packstack.installer import validators
 from packstack.installer import basedefs
 import packstack.installer.common_utils as utils
@@ -33,7 +33,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the path to your ssh Public key to install on servers",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_file],
-                   "PROCESSORS"      : [process.processSSHKey],
+                   "PROCESSORS"      : [processors.process_ssh_key],
                    "DEFAULT_VALUE"   : (glob.glob(os.path.join(os.environ["HOME"], ".ssh/*.pub"))+[""])[0],
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,

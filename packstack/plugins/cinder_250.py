@@ -7,7 +7,6 @@ import uuid
 import logging
 
 from packstack.installer import exceptions
-from packstack.installer import engine_processors as process
 from packstack.installer import validators
 
 from packstack.installer import basedefs
