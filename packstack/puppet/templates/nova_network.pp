@@ -1,3 +1,6 @@
+nova_config{
+    "DEFAULT/auto_assign_floating_ip": value => '%(CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP)s';
+}
 
 class {"nova::network":
     enabled => true,
