@@ -7,6 +7,7 @@ class {"nova::network":
     private_interface => '%(CONFIG_NOVA_NETWORK_PRIVIF)s',
     public_interface => '%(CONFIG_NOVA_NETWORK_PUBIF)s',
     fixed_range => '%(CONFIG_NOVA_NETWORK_FIXEDRANGE)s',
+    network_size => '%(CONFIG_NOVA_NETWORK_FIXEDSIZE)s',
     floating_range => '%(CONFIG_NOVA_NETWORK_FLOATRANGE)s',
     config_overrides => {force_dhcp_release => false}
 }
