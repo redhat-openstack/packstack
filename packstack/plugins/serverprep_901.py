@@ -80,8 +80,8 @@ def initConfig(controllerObject):
                    "CONDITION"       : False },
 
                   {"CMD_OPTION"      : "rh-beta-repo",
-                   "USAGE"           : "To subscribe each server with Red Hat subscription manager, to Red Hat Beta RPM's",
-                   "PROMPT"          : "To subscribe each server to Red Hat Beta RPM's enter y",
+                   "USAGE"           : "To subscribe each server to Red Hat Enterprise Linux 6 Server Beta channel (only needed for Preview versions of RHOS) enter \"y\"",
+                   "PROMPT"          : "To subscribe each server to Red Hat Enterprise Linux 6 Server Beta channel (only needed for Preview versions of RHOS) enter \"y\"",
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "n",
