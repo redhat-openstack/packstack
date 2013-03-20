@@ -332,6 +332,11 @@ def createnetworkmanifest():
     else:
       controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] = False
 
+    # We need to explicitly set the network size
+    routing_prefix = controller.CONF['CONFIG_NOVA_NETWORK_FIXEDRANGE'].split('/')[1]
+    net_size = 2**(32 - int(routing_prefix))
+    controller.CONF['CONFIG_NOVA_NETWORK_FIXEDSIZE'] = str(net_size)
+
     manifestfile = "%s_nova.pp" % host
     manifestdata = getManifestTemplate("nova_network.pp")
     appendManifestFile(manifestfile, manifestdata)
