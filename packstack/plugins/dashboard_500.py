@@ -119,11 +119,6 @@ def createmanifest():
     sslmanifestdata = ''
     if controller.CONF["CONFIG_HORIZON_SSL"] == 'y':
         controller.CONF["CONFIG_HORIZON_PORT"] = "'443'"
-        controller.MESSAGES.append(
-            "%sNOTE%s : A certificate was generated to be used for ssl, "
-            "You should change the ssl certificate configured in "
-            "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
-            % (basedefs.RED, basedefs.NO_COLOR, horizon_host))
         proto = "https"
         sslmanifestdata += getManifestTemplate("https.pp")
 
@@ -145,6 +140,12 @@ def createmanifest():
                 controller.addResource(
                     horizon_host, ssl_key, 'ssl_ps_server.key'
                 )
+        else:
+            controller.MESSAGES.append(
+                "%sNOTE%s : A certificate was generated to be used for ssl, "
+                "You should change the ssl certificate configured in "
+                "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
+                % (basedefs.RED, basedefs.NO_COLOR, horizon_host))
 
     manifestdata = getManifestTemplate("horizon.pp")
     manifestdata += sslmanifestdata
