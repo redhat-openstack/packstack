@@ -65,7 +65,7 @@ def validate_regexp(param, options=None):
     else:
         logging.debug('validate_regexp(%s, options=%s) failed.' %
                       (param, options))
-        msg = 'Given value does not match required regular expresion: %s'
+        msg = 'Given value does not match required regular expression: %s'
         raise ParamValidationError(msg % param)
 
 
