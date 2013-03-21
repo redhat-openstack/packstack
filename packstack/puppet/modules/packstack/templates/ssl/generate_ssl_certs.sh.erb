@@ -32,6 +32,6 @@ answers() {
 
 
 # gen key and self signed host cert
-openssl genrsa -rand 2048 > $SSLKEY 2> /dev/null
+openssl genrsa 2048 > $SSLKEY 2> /dev/null
 answers $FQDN | openssl req -new -x509 -days 1096 -key $SSLKEY -text -out $SSLCERT
 
