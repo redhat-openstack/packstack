@@ -169,6 +169,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novanetwork-auto-assign-floating-ip",
+                   "USAGE"           : "Automatically assign a floating IP to new instances",
+                   "PROMPT"          : "Should new instances automatically have a floating IP assigned?",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATORS"      : [validate.validate_options],
+                   "DEFAULT_VALUE"   : "n",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "novasched-host",
                    "USAGE"           : "The IP address of the server on which to install the Nova Scheduler service",
                    "PROMPT"          : "Enter the IP address of the Nova Scheduler service",
@@ -314,6 +326,11 @@ def createnetworkmanifest():
         except ScriptRuntimeError, ex:
             # just warn user to do it by himself
             controller.MESSAGES.append(str(ScriptRuntimeError))
+
+    if controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] == "y":
+      controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] = True
+    else:
+      controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] = False
 
     manifestfile = "%s_nova.pp" % host
     manifestdata = getManifestTemplate("nova_network.pp")
