@@ -31,8 +31,8 @@ def initConfig(controllerObject):
     conf_params = {
             "SERVERPREPARE": [
                   {"CMD_OPTION"      : "use-epel",
-                   "USAGE"           : "Install OpenStack from EPEL. If set to \"y\" EPEL will be installed on each server",
-                   "PROMPT"          : "Should Packstack install EPEL on each server",
+                   "USAGE"           : "To subscribe each server to EPEL enter \"y\"",
+                   "PROMPT"          : "To subscribe each server to EPEL enter \"y\"",
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "n",
