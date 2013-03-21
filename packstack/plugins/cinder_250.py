@@ -73,7 +73,7 @@ def initConfig(controllerObject):
                                         "testing on a proof-of-concept installation of Cinder.  This "
                                         "will create a file-backed volume group and is not suitable "
                                         "for production usage."),
-                   "PROMPT"          : ("Should Cinder's volumes group be created (for proof-of-concept"
+                   "PROMPT"          : ("Should Cinder's volumes group be created (for proof-of-concept "
                                         "installation)?"),
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATORS"      : [validators.validate_options],
