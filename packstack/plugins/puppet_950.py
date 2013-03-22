@@ -131,7 +131,7 @@ def waitforpuppet(currently_running):
             space_len = basedefs.SPACE_LEN - len(log_file)
             if len(log_file) > log_len:
                 log_len = len(log_file)
-            if sys.stdout.isatty():
+            if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
                 twirl = twirl[-1:] + twirl[:-1]
                 sys.stdout.write(("\rTesting if puppet apply is finished : %s" % log_file).ljust(40 + log_len))
                 sys.stdout.write("[ %s ]" % twirl[0])
@@ -150,7 +150,7 @@ def waitforpuppet(currently_running):
                 currently_running.remove((hostname, finished_logfile))
 
                 # clean off the last "testing apply" msg
-                if sys.stdout.isatty():
+                if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
                     sys.stdout.write(("\r").ljust(45 + log_len))
 
             except ScriptRuntimeError, e:
