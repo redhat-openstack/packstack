@@ -1,4 +1,5 @@
 nova_config{
+    "DEFAULT/default_floating_pool": value => '%(CONFIG_NOVA_NETWORK_DEFAULTFLOATINGPOOL)s';
     "DEFAULT/auto_assign_floating_ip": value => '%(CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP)s';
 }
 
