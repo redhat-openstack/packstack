@@ -83,12 +83,14 @@ class ValidatorsTestCase(PackstackTestCaseMixin, TestCase):
     def test_validate_ping(self):
         """Test packstack.installer.validators.validate_ping"""
         # ping to broadcast fails
-        self.assertRaises(ParamValidationError, validate_ping, '192.168.122.0')
+        self.assertRaises(ParamValidationError, validate_ping,
+                          '255.255.255.255')
 
     def test_validate_ssh(self):
         """Test packstack.installer.validators.validate_ssh"""
         # ssh to broadcast fails
-        self.assertRaises(ParamValidationError, validate_ssh, '192.168.122.0')
+        self.assertRaises(ParamValidationError, validate_ssh,
+                          '255.255.255.255')
 
     def test_validate_float(self):
         """Test packstack.installer.validators.validate_float"""
