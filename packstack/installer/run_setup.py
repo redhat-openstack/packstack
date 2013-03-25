@@ -657,6 +657,26 @@ def generateAnswerFile(outputFile, overrides={}):
                         'conf_name': param.getKey("CONF_NAME")}
                 ans_file.write(fmt % args)
 
+def single_step_aio_install(options):
+    """ Installs an All in One host on this host"""
+
+    options.install_hosts = utils.getLocalhostIP()
+
+    # Also allow the command line to set values for any of these options
+    # by testing if they have been set before we set them here
+    if not options.os_swift_install:
+        options.os_swift_install = "y"
+    if not options.nagios_install:
+        options.nagios_install = "y"
+    if not options.novanetwork_pubif:
+        options.novanetwork_pubif = utils.device_from_ip(options.install_hosts)
+    if not options.novacompute_privif:
+        options.novacompute_privif = "lo"
+    if not options.novanetwork_privif:
+        options.novanetwork_privif = "lo"
+
+    single_step_install(options)
+
 def single_step_install(options):
     answerfilepath =  _getanswerfilepath()
     if not answerfilepath:
@@ -704,6 +724,9 @@ def initCmdLineParser():
                                           "of hosts, the first is setup as a controller, and the others are setup as compute nodes."
                                           "if only a single host is supplied then it is setup as an all in one installation. An answerfile "
                                           "will also be generated and should be used if Packstack needs to be run a second time ")
+    parser.add_option("--allinone", action="store_true", help="Shorthand for --install-hosts=<local ipaddr> --novanetwork-pubif=<dev> "
+                                          "--novacompute-privif=lo --novanetwork-privif=lo --os-swift-install=y --install-nagios=y "
+                                          ", this option can be used to install an all in one OpenStack on this host")
 
     parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file(rst format)")
     parser.add_option("-d", "--debug", action="store_true", default=False, help="Enable debug in logging")
@@ -861,6 +884,9 @@ def main():
             # Make sure only --gen-answer-file was supplied
             validateSingleFlag(options, "gen_answer_file")
             generateAnswerFile(options.gen_answer_file)
+        # Are we installing an all in one
+        elif options.allinone:
+            single_step_aio_install(options)
         # Are we installing in a single step
         elif options.install_hosts:
             single_step_install(options)

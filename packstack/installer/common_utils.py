@@ -366,6 +366,15 @@ def forceIP(host, allow_localhost=False):
         host = host2ip(host, allow_localhost=allow_localhost)
     return host
 
+def device_from_ip(ip):
+    server = ScriptRunner()
+    server.append("DEVICE=$(ip address show to %s | head -n 1 | sed -e 's/.*: \(.*\):.*/\\1/g')" % ip)
+    # Test device, raises an exception is it doesn't exist
+    server.append("ip link show \"$DEVICE\" > /dev/null")
+    server.append("echo $DEVICE")
+    rv, stdout = server.execute()
+    return stdout.strip()
+
 class ScriptRunner(object):
     def __init__(self, ip=None):
         self.script = []
