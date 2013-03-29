@@ -196,7 +196,10 @@ def applyPuppetManifest():
             server.append("touch %s" % running_logfile)
             server.append("chmod 600 %s" % running_logfile)
             server.append("export PACKSTACK_VAR_DIR=%s" % host_dir)
-            command = "( flock %s/ps.lock puppet apply --modulepath %s/modules %s > %s 2>&1 < /dev/null ; mv %s %s ) > /dev/null 2>&1 < /dev/null &" % (host_dir, host_dir, man_path, running_logfile, running_logfile, finished_logfile)
+            loglevel = ''
+            if logging.root.level <= logging.DEBUG:
+                loglevel = '--debug'
+            command = "( flock %s/ps.lock puppet apply %s --modulepath %s/modules %s > %s 2>&1 < /dev/null ; mv %s %s ) > /dev/null 2>&1 < /dev/null &" % (host_dir, loglevel, host_dir, man_path, running_logfile, running_logfile, finished_logfile)
             server.append(command)
             server.execute()
 
