@@ -11,6 +11,15 @@ file { 'resource-d':
     require => Package['nagios']
 }
 
+# This is a Hack to remove the nagios config file before each run
+# to work around a puppet bug http://projects.puppetlabs.com/issues/11921
+# and prevent duplicate entries
+exec{'rm-nagios-files':
+    path    => ['/bin', '/usr/bin'],
+    command => ['rm -rf /etc/nagios/resource.d/nagios_command.cfg /etc/nagios/resource.d/nagios_host.cfg'],
+    before  => Class['nagios_configs']
+}
+
 class nagios_configs(){
     file{['/etc/nagios/resource.d/nagios_command.cfg', '/etc/nagios/resource.d/nagios_host.cfg']:
         ensure => 'present',
@@ -58,7 +67,16 @@ class{'nagios_configs':
     notify => [Service['nagios'], Service['httpd']],
 }
 
-service{['nagios', 'httpd']: 
+class {'apache': }
+class {'apache::mod::php': }
+class {'apache::mod::wsgi':}
+# The apache module purges files it doesn't know about
+# avoid this be referencing them here
+file { '/etc/httpd/conf.d/openstack-dashboard.conf':}
+file { '/etc/httpd/conf.d/rootredirect.conf':}
+file { '/etc/httpd/conf.d/nagios.conf':}
+
+service{['nagios']:
     ensure => running,
     hasstatus => true,
 }

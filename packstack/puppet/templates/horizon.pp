@@ -18,10 +18,12 @@ class {'horizon':
 class {'memcached':}
 
 class {'apache':}
+class {'apache::mod::php': }
 class {'apache::mod::wsgi':}
+# The apache module purges files it doesn't know about
+# avoid this be referencing them here
 file { '/etc/httpd/conf.d/openstack-dashboard.conf':}
 file { '/etc/httpd/conf.d/nagios.conf':}
-file { '/etc/httpd/conf.d/php.conf':}
 
 firewall { '001 horizon incoming':
     proto    => 'tcp',
