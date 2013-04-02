@@ -191,7 +191,9 @@ def applyPuppetManifest():
             running_logfile = "%s.running" % man_path
             finished_logfile = "%s.finished" % man_path
             currently_running.append((hostname, finished_logfile))
-            if not manifest.endswith('_horizon.pp'):
+            # The apache puppet module doesn't work if we set FACTERLIB
+            # https://github.com/puppetlabs/puppetlabs-apache/pull/138
+            if not (manifest.endswith('_horizon.pp') or manifest.endswith('_nagios.pp')):
                 server.append("export FACTERLIB=$FACTERLIB:%s/facts" % host_dir)
             server.append("touch %s" % running_logfile)
             server.append("chmod 600 %s" % running_logfile)
