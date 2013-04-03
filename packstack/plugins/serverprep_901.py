@@ -399,7 +399,6 @@ def serverprep(config):
                         'proxy_user': sat_proxy_user.strip(),
                         'proxy_pass': sat_proxy_pass.strip(),
                         'flags': sat_flags}
-
     for hostname in gethostlist(config):
         if '/' in hostname:
             hostname = hostname.split('/')[0]

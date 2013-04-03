@@ -1,0 +1,2 @@
+class {'quantum::agents::linuxbridge':
+}

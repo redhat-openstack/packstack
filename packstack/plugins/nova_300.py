@@ -264,11 +264,16 @@ def initSequences(controller):
              {'title': 'Adding Nova Cert manifest entries', 'functions':[createcertmanifest]},
              {'title': 'Adding Nova Conductor manifest entries', 'functions':[createconductormanifest]},
              {'title': 'Adding Nova Compute manifest entries', 'functions':[createcomputemanifest]},
-             {'title': 'Adding Nova Network manifest entries', 'functions':[createnetworkmanifest]},
              {'title': 'Adding Nova Scheduler manifest entries', 'functions':[createschedmanifest]},
              {'title': 'Adding Nova VNC Proxy manifest entries', 'functions':[createvncproxymanifest]},
              {'title': 'Adding Nova Common manifest entries', 'functions':[createcommonmanifest]},
     ]
+
+    if controller.CONF['CONFIG_QUANTUM_INSTALL']:
+        novaapisteps.append({'title': 'Adding Openstack Network-related Nova manifest entries', 'functions':[createquantummanifest]})
+    else:
+        novaapisteps.append({'title': 'Adding Nova Network manifest entries', 'functions':[createnetworkmanifest]})
+
     controller.addSequence("Installing OpenStack Nova API", [], [], novaapisteps)
 
 
@@ -349,6 +354,9 @@ def createcomputemanifest(config):
 
 
 def createnetworkmanifest(config):
+    if controller.CONF['CONFIG_QUANTUM_INSTALL'] == "y":
+        return
+
     host = controller.CONF['CONFIG_NOVA_NETWORK_HOST']
     for i in ('CONFIG_NOVA_NETWORK_PRIVIF', 'CONFIG_NOVA_NETWORK_PUBIF'):
         check_ifcfg(host, controller.CONF[i])
@@ -389,4 +397,14 @@ def createcommonmanifest(config):
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
             data = getManifestTemplate("nova_common.pp")
+            appendManifestFile(os.path.split(manifestfile)[1], data)
+
+
+def createquantummanifest(config):
+    if controller.CONF['CONFIG_QUANTUM_INSTALL'] != "y":
+        return
+
+    for manifestfile, marker in manifestfiles.getFiles():
+        if manifestfile.endswith("_nova.pp"):
+            data = getManifestTemplate("nova_quantum.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)

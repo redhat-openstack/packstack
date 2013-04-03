@@ -61,3 +61,9 @@
 [submodule "packstack/puppet/modules/vlan"]
 	path = packstack/puppet/modules/vlan
 	url = https://github.com/derekhiggins/puppet-vlan.git
+[submodule "packstack/puppet/modules/vswitch"]
+	path = packstack/puppet/modules/vswitch
+	url = https://github.com/packstack/puppet-vswitch.git
+[submodule "packstack/puppet/modules/quantum"]
+	path = packstack/puppet/modules/quantum
+	url = https://github.com/stackforge/puppet-quantum.git
