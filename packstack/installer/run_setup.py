@@ -742,10 +742,7 @@ def initCmdLineParser():
             useDefault = param.getKey("USE_DEFAULT")
 
             if not useDefault:
-                if optionsList:
-                    groupParser.add_option("--%s" % cmdOption, metavar=optionsList, help=paramUsage, choices=optionsList)
-                else:
-                    groupParser.add_option("--%s" % cmdOption, help=paramUsage)
+                groupParser.add_option("--%s" % cmdOption, help=paramUsage)
 
         # Add group parser to main parser
         parser.add_option_group(groupParser)
