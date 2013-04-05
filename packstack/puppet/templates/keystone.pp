@@ -24,3 +24,12 @@ firewall { '001 keystone incoming':
     dport    => ['5000', '35357'],
     action   => 'accept',
 }
+
+Package['keystone'] -> File['keystone.log'] -> Service['keystone']
+file{'keystone.log':
+    path   => '/var/log/keystone/keystone.log',
+    ensure => present,
+    mode   => 640,
+    owner  => 'keystone',
+    group  => 'keystone',
+}
