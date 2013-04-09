@@ -39,7 +39,7 @@
 	url = https://github.com/puppetlabs/puppetlabs-rsync.git
 [submodule "packstack/puppet/modules/xinetd"]
 	path = packstack/puppet/modules/xinetd
-	url = https://github.com/puppetlabs/puppetlabs-xinetd.git
+	url = https://github.com/packstack/puppetlabs-xinetd.git
 [submodule "packstack/puppet/modules/apache"]
 	path = packstack/puppet/modules/apache
 	url = https://github.com/packstack/puppetlabs-apache.git
