@@ -182,6 +182,14 @@ def check_cinder_vg():
         server.append('pvcreate $LOFI')
         server.append('vgcreate %s $LOFI' % cinders_volume)
 
+        # Add the loop device on boot
+        server.append('grep %s /etc/rc.d/rc.local || '
+                      'echo losetup $LOFI %s >> /etc/rc.d/rc.local' %
+                       (cinders_volume, cinders_volume_path))
+        server.append('grep "#!" /etc/rc.d/rc.local || '
+                      'sed -i \'1i#!/bin/sh\' /etc/rc.d/rc.local')
+        server.append('chmod +x /etc/rc.d/rc.local')
+
         # Let's make sure it exists
         server.append('vgdisplay %s' % cinders_volume)
 
