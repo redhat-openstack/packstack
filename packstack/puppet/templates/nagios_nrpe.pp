@@ -4,7 +4,6 @@ package{'nrpe':
 }
 
 class nagios_configs(){
-
     file_line{'allowed_hosts':
         path => '/etc/nagios/nrpe.cfg',
         match => 'allowed_hosts=',
@@ -29,7 +28,7 @@ class{'nagios_configs':
     notify => Service['nrpe'],
 }
 
-service{'nrpe': 
+service{'nrpe':
     ensure => running,
     hasstatus => true,
 }

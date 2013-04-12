@@ -3,27 +3,12 @@ package{['nagios', 'nagios-plugins-nrpe', 'nagios-plugins-ping']:
     before => Class['nagios_configs']
 }
 
-file { 'resource-d':
-    path   => '/etc/nagios/resource.d',
-    ensure => directory,
-    owner  => 'nagios',
-    before => Class['nagios_configs'],
-    require => Package['nagios']
-}
-
-# This is a Hack to remove the nagios config file before each run
-# to work around a puppet bug http://projects.puppetlabs.com/issues/11921
-# and prevent duplicate entries
-exec{'rm-nagios-files':
-    path    => ['/bin', '/usr/bin'],
-    command => ['rm -rf /etc/nagios/resource.d/nagios_command.cfg /etc/nagios/resource.d/nagios_host.cfg'],
-    before  => Class['nagios_configs']
-}
-
 class nagios_configs(){
-    file{['/etc/nagios/resource.d/nagios_command.cfg', '/etc/nagios/resource.d/nagios_host.cfg']:
+    file{['/etc/nagios/nagios_command.cfg', '/etc/nagios/nagios_host.cfg']:
         ensure => 'present',
         mode => '0644',
+        owner => 'nagios',
+        group => 'nagios',
     }
 
     # Remove the entry for localhost, it contains services we're not
@@ -33,16 +18,19 @@ class nagios_configs(){
         content => '',
     }
 
-    Nagios_command{
-        target => '/etc/nagios/resource.d/nagios_command.cfg'
-    }
-    Nagios_host{
-        target => '/etc/nagios/resource.d/nagios_host.cfg'
+    file_line{'nagios_host':
+        path => '/etc/nagios/nagios.cfg',
+        line => 'cfg_file=/etc/nagios/nagios_host.cfg',
     }
 
-    file_line{'resource.d':
+    file_line{'nagios_command':
         path => '/etc/nagios/nagios.cfg',
-        line => 'cfg_dir=/etc/nagios/resource.d',
+        line => 'cfg_file=/etc/nagios/nagios_command.cfg',
+    }
+
+    file_line{'nagios_service':
+        path => '/etc/nagios/nagios.cfg',
+        line => 'cfg_file=/etc/nagios/nagios_service.cfg',
     }
 
     nagios_command{'check_nrpe':
