@@ -105,7 +105,7 @@ class Controller(object):
 
     def getGroupByName(self, groupName):
         for group in self.getAllGroups():
-            if group.getKey("GROUP_NAME") == groupName:
+            if group.GROUP_NAME == groupName:
                 return group
         return None
 
@@ -114,7 +114,7 @@ class Controller(object):
 
     def __getGroupIndexByDesc(self, name):
         for group in self.getAllGroups():
-            if group.getKey("GROUP_NAME") == name:
+            if group.GROUP_NAME == name:
                 return self.__GROUPS.index(group)
         return None
 
@@ -131,14 +131,13 @@ class Controller(object):
 
     def getParamByName(self, paramName):
         for group in self.getAllGroups():
-            param = group.getParamByName(paramName)
-            if param:
-                return param
+            if paramName in group.parameters:
+                return group.parameters[paramName]
         return None
 
     def getParamKeyValue(self, paramName, keyName):
         param = self.getParamByName(paramName)
         if param:
-            return param.getKey(keyName)
+            return getattr(param, keyName)
         else:
             return None
