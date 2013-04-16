@@ -6,6 +6,7 @@ import os
 import uuid
 import logging
 import datetime
+import platform
 
 from packstack.installer import basedefs
 from packstack.installer import common_utils as utils
@@ -53,8 +54,9 @@ def initConfig(controllerObject):
                    "CONF_NAME"       : "CONFIG_REPO",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+                   "CONDITION"       : False }],
 
+            "RHEL": [
                   {"CMD_OPTION"      : "rh-username",
                    "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_PW",
                    "PROMPT"          : "To subscribe each server to Red Hat enter a username here",
@@ -227,6 +229,9 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False }]}
 
+    def is_on_rhel(config):
+        return is_rhel()
+
     def filled_satellite(config):
         return bool(config.get('CONFIG_SATELLITE_URL'))
 
@@ -238,6 +243,13 @@ def initConfig(controllerObject):
               "DESCRIPTION"           : "Server Prepare Configs ",
               "PRE_CONDITION"         : utils.returnYes,
               "PRE_CONDITION_MATCH"   : "yes",
+              "POST_CONDITION"        : False,
+              "POST_CONDITION_MATCH"  : True},
+
+             {"GROUP_NAME"            : "RHEL",
+              "DESCRIPTION"           : "RHEL config",
+              "PRE_CONDITION"         : is_on_rhel,
+              "PRE_CONDITION_MATCH"   : True,
               "POST_CONDITION"        : False,
               "POST_CONDITION_MATCH"  : True},
 
@@ -259,6 +271,10 @@ def initConfig(controllerObject):
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, paramList)
+
+
+def is_rhel():
+    return 'Red Hat Enterprise Linux' in platform.linux_distribution()[0]
 
 
 def run_rhn_reg(host, server_url, username=None, password=None,
@@ -362,26 +378,29 @@ def initSequences(controller):
 def serverprep():
     config = controller.CONF
 
-    rh_username = config["CONFIG_RH_USER"].strip()
-    rh_password = config["CONFIG_RH_PW"].strip()
+    rh_username = None
+    sat_url = None
+    if is_rhel():
+        rh_username = config["CONFIG_RH_USER"].strip()
+        rh_password = config["CONFIG_RH_PW"].strip()
 
-    sat_registered = set()
+        sat_registered = set()
 
-    sat_url = config["CONFIG_SATELLITE_URL"].strip()
-    if sat_url:
-        sat_flags = map(lambda i: i.strip(),
-                        config["CONFIG_SATELLITE_FLAGS"].split(','))
-        sat_proxy_user = config.get("CONFIG_SATELLITE_PROXY_USER", '')
-        sat_proxy_pass = config.get("CONFIG_SATELLITE_PROXY_PW", '')
-        sat_args = {'username': config["CONFIG_SATELLITE_USER"].strip(),
-                    'password': config["CONFIG_SATELLITE_PW"].strip(),
-                    'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
-                    'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
-                    'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
-                    'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
-                    'proxy_user': sat_proxy_user.strip(),
-                    'proxy_pass': sat_proxy_pass.strip(),
-                    'flags': sat_flags}
+        sat_url = config["CONFIG_SATELLITE_URL"].strip()
+        if sat_url:
+            sat_flags = map(lambda i: i.strip(),
+                            config["CONFIG_SATELLITE_FLAGS"].split(','))
+            sat_proxy_user = config.get("CONFIG_SATELLITE_PROXY_USER", '')
+            sat_proxy_pass = config.get("CONFIG_SATELLITE_PROXY_PW", '')
+            sat_args = {'username': config["CONFIG_SATELLITE_USER"].strip(),
+                        'password': config["CONFIG_SATELLITE_PW"].strip(),
+                        'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
+                        'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
+                        'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
+                        'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
+                        'proxy_user': sat_proxy_user.strip(),
+                        'proxy_pass': sat_proxy_pass.strip(),
+                        'flags': sat_flags}
 
     for hostname in gethostlist(config):
         if '/' in hostname:
@@ -417,7 +436,7 @@ def serverprep():
 
         # If RHOS has been installed we can diable EPEL when installing openstack-utils
         yum_opts = ""
-        if config["CONFIG_RH_USER"].strip():
+        if rh_username:
             yum_opts += "--disablerepo='epel*'"
 
         server.append("rpm -q epel-release && "

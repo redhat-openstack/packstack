@@ -28,6 +28,11 @@ class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
     def test_rhn_creds_quoted(self):
         """Make sure RHN password is quoted"""
 
+        # On non-RHEL, the CONFIG_{RH,SATELLITE} options are never set,
+        # i.e. this test would always fail. Therefore, only run it on RHEL.
+        if not serverprep_901.is_rhel():
+            return
+
         password = "dasd|'asda%><?"
 
         serverprep_901.controller.CONF["CONFIG_KEYSTONE_HOST"] = "1.2.3.4"
