@@ -1,5 +1,4 @@
 
-
 class {"glance::api":
     auth_host => "%(CONFIG_KEYSTONE_HOST)s",
     keystone_tenant => "services",

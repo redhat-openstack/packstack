@@ -21,15 +21,8 @@ if ($::fqdn != $::hostname and $::hostname != "localhost") {
     }
 }
 
-
-class {"keystone::db::mysql":
-    password      => "%(CONFIG_KEYSTONE_DB_PW)s",
-    allowed_hosts => "%%",
-}
-
-
 firewall { '001 mysql incoming':
-    proto    => 'tcp',
-    dport    => ['3306'],
-    action   => 'accept',
+    proto  => 'tcp',
+    dport  => ['3306'],
+    action => 'accept',
 }

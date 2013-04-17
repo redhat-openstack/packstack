@@ -6,7 +6,7 @@ class {'cinder':
     sql_connection => "mysql://cinder:%(CONFIG_CINDER_DB_PW)s@%(CONFIG_MYSQL_HOST)s/cinder"
 }
 
-cinder_config{
+cinder_config {
     "DEFAULT/glance_host": value => "%(CONFIG_GLANCE_HOST)s";
 }
 

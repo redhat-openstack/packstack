@@ -3,15 +3,13 @@ Plugin responsible for setting OpenStack global options
 """
 
 import logging
-import os
 import uuid
 
-from packstack.installer import exceptions
-from packstack.installer import utils
 from packstack.installer import validators
-from packstack.modules.ospluginutils import gethostlist,\
-                                            getManifestTemplate, \
-                                            appendManifestFile
+
+from packstack.modules.common import filtered_hosts
+from packstack.modules.ospluginutils import (getManifestTemplate,
+                                             appendManifestFile)
 
 # Controller object will be initialized from main flow
 controller = None
@@ -25,7 +23,18 @@ def initConfig(controllerObject):
     global controller
     controller = controllerObject
 
-    paramsList = [
+    paramsList = [{"CMD_OPTION"      : "os-mysql-install",
+                   "USAGE"           : "Set to 'y' if you would like Packstack to install MySQL",
+                   "PROMPT"          : "Should Packstack install MySQL DB",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATORS"      : [validators.validate_options],
+                   "DEFAULT_VALUE"   : "y",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_MYSQL_INSTALL",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "os-glance-install",
                    "USAGE"           : "Set to 'y' if you would like Packstack to install OpenStack Image Service (Glance)",
                    "PROMPT"          : "Should Packstack install OpenStack Image Service (Glance)",
@@ -171,7 +180,7 @@ def initSequences(controller):
                                    'some OpenStack components.')
 
 def createmanifest(config):
-    for hostname in gethostlist(controller.CONF):
+    for hostname in filtered_hosts(config):
         manifestfile = "%s_prescript.pp" % hostname
         manifestdata = getManifestTemplate("prescript.pp")
         appendManifestFile(manifestfile, manifestdata)
@@ -186,7 +195,7 @@ def create_ntp_manifest(config):
     config['CONFIG_NTP_SERVER_DEF'] = '%s\n' % definiton
 
     marker = uuid.uuid4().hex[:16]
-    for hostname in gethostlist(config):
+    for hostname in filtered_hosts(config):
         manifestdata = getManifestTemplate('ntpd.pp')
         appendManifestFile('%s_ntpd.pp' % hostname,
                            manifestdata,

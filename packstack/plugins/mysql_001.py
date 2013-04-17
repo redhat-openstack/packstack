@@ -6,7 +6,6 @@ import uuid
 import logging
 
 from packstack.installer import validators
-from packstack.installer import basedefs
 from packstack.installer import utils
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
@@ -82,23 +81,30 @@ def initSequences(controller):
 
 
 def createmanifest(config):
-    host = controller.CONF['CONFIG_MYSQL_HOST']
-    manifestfile = "%s_mysql.pp" % host
-    manifestdata = [getManifestTemplate("mysql.pp")]
+    if config['CONFIG_MYSQL_INSTALL'] == 'y':
+        install = True
+        suffix = 'install'
+    else:
+        install = False
+        suffix = 'noinstall'
 
-    def append_for(module):
-        # Modules have be appended to the existing mysql.pp
+    # In case we are not installing MySQL server, mysql* manifests have
+    # to be run from Keystone host
+    host = install and config['CONFIG_MYSQL_HOST'] \
+                    or config['CONFIG_KEYSTONE_HOST']
+    manifestfile = "%s_mysql.pp" % host
+    manifestdata = [getManifestTemplate('mysql_%s.pp' % suffix)]
+
+    def append_for(module, suffix):
+        # Modules have to be appended to the existing mysql.pp
         # otherwise pp will fail for some of them saying that
         # Mysql::Config definition is missing.
-        manifestdata.append(getManifestTemplate("mysql_%s.pp" % module))
+        template = "mysql_%s_%s.pp" % (module, suffix)
+        manifestdata.append(getManifestTemplate(template))
 
-    if controller.CONF['CONFIG_NOVA_INSTALL'] == "y":
-        append_for("nova")
-    if controller.CONF['CONFIG_CINDER_INSTALL'] == "y":
-        append_for("cinder")
-    if controller.CONF['CONFIG_GLANCE_INSTALL'] == "y":
-        append_for("glance")
-    if controller.CONF['CONFIG_NEUTRON_INSTALL'] == 'y':
-        append_for("neutron")
+    append_for("keystone", suffix)
+    for mod in ['nova', 'cinder', 'glance', 'neutron']:
+        if config['CONFIG_%s_INSTALL' % mod.upper()] == 'y':
+            append_for(mod, suffix)
 
     appendManifestFile(manifestfile, "\n".join(manifestdata), 'pre')
