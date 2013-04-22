@@ -229,9 +229,6 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False }]}
 
-    def is_on_rhel(config):
-        return is_rhel()
-
     def filled_satellite(config):
         return bool(config.get('CONFIG_SATELLITE_URL'))
 
@@ -245,28 +242,29 @@ def initConfig(controllerObject):
               "PRE_CONDITION_MATCH"   : "yes",
               "POST_CONDITION"        : False,
               "POST_CONDITION_MATCH"  : True},
-
-             {"GROUP_NAME"            : "RHEL",
-              "DESCRIPTION"           : "RHEL config",
-              "PRE_CONDITION"         : is_on_rhel,
-              "PRE_CONDITION_MATCH"   : True,
-              "POST_CONDITION"        : False,
-              "POST_CONDITION_MATCH"  : True},
-
-             {"GROUP_NAME"            : "SATELLITE",
-              "DESCRIPTION"           : "RHN Satellite config",
-              "PRE_CONDITION"         : filled_satellite,
-              "PRE_CONDITION_MATCH"   : True,
-              "POST_CONDITION"        : False,
-              "POST_CONDITION_MATCH"  : True},
-
-             {"GROUP_NAME"            : "SATELLITE_PROXY",
-              "DESCRIPTION"           : "RHN Satellite proxy config",
-              "PRE_CONDITION"         : filled_satellite_proxy,
-              "PRE_CONDITION_MATCH"   : True,
-              "POST_CONDITION"        : False,
-              "POST_CONDITION_MATCH"  : True},
         ]
+
+    if is_rhel():
+        conf_groups.append({"GROUP_NAME"            : "RHEL",
+                            "DESCRIPTION"           : "RHEL config",
+                            "PRE_CONDITION"         : utils.returnYes,
+                            "PRE_CONDITION_MATCH"   : "yes",
+                            "POST_CONDITION"        : False,
+                            "POST_CONDITION_MATCH"  : True})
+
+        conf_groups.append({"GROUP_NAME"            : "SATELLITE",
+                            "DESCRIPTION"           : "RHN Satellite config",
+                            "PRE_CONDITION"         : filled_satellite,
+                            "PRE_CONDITION_MATCH"   : True,
+                            "POST_CONDITION"        : False,
+                            "POST_CONDITION_MATCH"  : True})
+
+        conf_groups.append({"GROUP_NAME"            : "SATELLITE_PROXY",
+                            "DESCRIPTION"           : "RHN Satellite proxy config",
+                            "PRE_CONDITION"         : filled_satellite_proxy,
+                            "PRE_CONDITION_MATCH"   : True,
+                            "POST_CONDITION"        : False,
+                            "POST_CONDITION_MATCH"  : True})
 
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
