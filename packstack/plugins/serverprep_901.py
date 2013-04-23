@@ -247,7 +247,7 @@ def initConfig(controllerObject):
     if is_rhel():
         conf_groups.append({"GROUP_NAME"            : "RHEL",
                             "DESCRIPTION"           : "RHEL config",
-                            "PRE_CONDITION"         : utils.returnYes,
+                            "PRE_CONDITION"         : lambda x: 'yes',
                             "PRE_CONDITION_MATCH"   : "yes",
                             "POST_CONDITION"        : False,
                             "POST_CONDITION_MATCH"  : True})
