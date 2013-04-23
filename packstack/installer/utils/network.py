@@ -24,7 +24,7 @@ def get_localhost_ip():
             nsrvs.append(match.group('ns_ip'))
 
     # try to connect to nameservers and return own IP address
-    nsrvs.append('8.8.8.8') # default to google dns
+    nsrvs.append('8.8.8.8')  # default to google dns
     for i in nsrvs:
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)

@@ -18,9 +18,9 @@ def execute(cmd, workdir=None, can_fail=False, mask_list=None,
     code. Otherwise
     """
     mask_list = mask_list or []
-    repl_list = [("'","'\\''")]
+    repl_list = [("'", "'\\''")]
 
-    if type(cmd) is not types.StringType:
+    if not isinstance(cmd, types.StringType):
         import pipes
         masked = ' '.join((pipes.quote(i) for i in cmd))
     else:
@@ -58,7 +58,7 @@ class ScriptRunner(object):
     def execute(self, logerrors=True, maskList=None):
         maskList = maskList or []
         script = "\n".join(self.script)
-        logging.debug("# ============ ssh : %r =========="%self.ip)
+        logging.debug("# ============ ssh : %r ==========" % self.ip)
 
         _PIPE = subprocess.PIPE  # pylint: disable=E1101
         if self.ip:
@@ -71,7 +71,7 @@ class ScriptRunner(object):
                                stderr=_PIPE, close_fds=True,
                                shell=False)
 
-        replace_list = [("'","'\\''")]
+        replace_list = [("'", "'\\''")]
         logging.debug(mask_string(script, maskList, replace_list))
         script = "function t(){ exit $? ; } \n trap t ERR \n" + script
         stdoutdata, stderrdata = obj.communicate(script)
