@@ -8,8 +8,3 @@ class { 'swift':
     package_ensure    => latest,
 }
 
-# We need to disable this while rsync causes AVC's
-exec{'setenforce 0':
-  path => '/usr/sbin',
-  notify => Class['swift']
-}
