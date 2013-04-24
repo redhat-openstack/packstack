@@ -116,7 +116,7 @@ _re_errorline = re.compile('err: | Syntax error at|^Duplicate definition:|'
                            '^No matching value for selector param|'
                            '^Parameter name failed:|Error: |^Invalid tag |'
                            '^Invalid parameter |^Duplicate declaration: '
-                           '^Could not find resource ')
+                           '^Could not find resource |^Could not parse for ')
 
 
 def validate_puppet_logfile(logfile):
