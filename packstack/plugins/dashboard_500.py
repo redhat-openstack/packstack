@@ -65,7 +65,7 @@ def initConfig(controllerObject):
     paramsList = [
                   {"CMD_OPTION"      : "os-ssl-cert",
                    "USAGE"           : "PEM encoded certificate to be used for ssl on the https server, leave blank if one should be generated, this certificate should not require a passphrase",
-                   "PROMPT"          : "Enter the path to a PEM encoded certificate to be used on thr https server, leave blank if one should be generated, this certificate should not require a passphrase",
+                   "PROMPT"          : "Enter the path to a PEM encoded certificate to be used on the https server, leave blank if one should be generated, this certificate should not require a passphrase",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [],
                    "DEFAULT_VALUE"   : '',
