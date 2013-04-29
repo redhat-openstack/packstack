@@ -640,7 +640,7 @@ def generateAnswerFile(outputFile, overrides={}):
 def single_step_aio_install(options):
     """ Installs an All in One host on this host"""
 
-    options.install_hosts = utils.getLocalhostIP()
+    options.install_hosts = utils.get_localhost_ip()
 
     # Also allow the command line to set values for any of these options
     # by testing if they have been set before we set them here

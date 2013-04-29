@@ -3,7 +3,7 @@
 import re
 import socket
 
-from .shell import execute
+from .shell import execute, ScriptRunner
 
 
 def get_localhost_ip():
@@ -72,3 +72,14 @@ def force_ip(host, allow_localhost=False):
     if not ipv4_regex.match(host) or not ipv6_regex.match(host):
         host = host2ip(host, allow_localhost=allow_localhost)
     return host
+
+
+def device_from_ip(ip):
+    server = ScriptRunner()
+    server.append("DEVICE=$(ip address show to %s | head -n 1 |"
+                  " sed -e 's/.*: \(.*\):.*/\\1/g')" % ip)
+    # Test device, raises an exception if it doesn't exist
+    server.append("ip link show \"$DEVICE\" > /dev/null")
+    server.append("echo $DEVICE")
+    rv, stdout = server.execute()
+    return stdout.strip()
