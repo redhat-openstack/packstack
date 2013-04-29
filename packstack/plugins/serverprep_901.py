@@ -369,8 +369,8 @@ def serverprep():
 
     sat_url = config["CONFIG_SATELLITE_URL"].strip()
     if sat_url:
-        sat_flags = map(lambda i: i.strip(),
-                        config["CONFIG_SATELLITE_FLAGS"].split(','))
+        flag_list = config["CONFIG_SATELLITE_FLAGS"].split(',')
+        sat_flags = [i.strip() for i in flag_list if i.strip()]
         sat_proxy_user = config.get("CONFIG_SATELLITE_PROXY_USER", '')
         sat_proxy_pass = config.get("CONFIG_SATELLITE_PROXY_PW", '')
         sat_args = {'username': config["CONFIG_SATELLITE_USER"].strip(),
