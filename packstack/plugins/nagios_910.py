@@ -74,22 +74,30 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing Nagios", [], [], nagiossteps)
 
+
 def _serviceentry(**kwargs):
     s = 'define service {\n'
-    keys = kwargs.keys()
-    keys.sort()
-    for key in keys:
-        s += "\t%s\t%s\n"%(key, kwargs[key])
-    s+= "\t}\n"
+    for key in sorted(kwargs.keys()):
+        s += "\t%s\t%s\n" % (key, kwargs[key])
+    s += "\t}\n"
     return s
 
 def _copy_script(**kwargs):
     # TODO : Replace all these shell templates with with python
-    s = ('file{"/usr/lib64/nagios/plugins/%(name)s":'
-        'mode => 755, owner => "nagios", seltype => "nagios_unconfined_plugin_exec_t",'
-        'content => template("packstack/%(name)s.erb"),}\n'
-        'nagios_command{"%(name)s": command_line => "/usr/lib64/nagios/plugins/%(name)s", }\n' % kwargs)
-    return s
+    return ('file{"/usr/lib64/nagios/plugins/%(name)s":'
+              'mode => 755, owner => "nagios", '
+              'seltype => "nagios_unconfined_plugin_exec_t", '
+              'content => template("packstack/%(name)s.erb"),}\n'
+            'nagios_command {"%(name)s": '
+              'command_line => "/usr/lib64/nagios/plugins/%(name)s",}\n'
+            % kwargs)
+
+def nagios_host(hostname, **kwargs):
+    out = ("nagios_host { '%s': " % hostname)
+    for key, value in kwargs.items():
+        out = "%s, %s => '%s'" % (out, key, value)
+    return "%s}\n" % out
+
 
 def createmanifest():
     manifest_entries = ''
@@ -97,7 +105,7 @@ def createmanifest():
     # http://projects.puppetlabs.com/issues/3420
     service_entries = ''
     for hostname in gethostlist(controller.CONF):
-        manifest_entries += "nagios_host{'%s': address => '%s', use   => 'linux-server', }\n" % (hostname, hostname)
+        manifest_entries += nagios_host(hostname, address=hostname, use='linux-server')
 
         service_entries += _serviceentry(name='load5-%s'%hostname, service_description='5 minute load average',
                                          host_name=hostname, check_command="check_nrpe!load5", use="generic-service",
@@ -147,9 +155,11 @@ def createmanifest():
             check_command="swift-list", use="generic-service",
             normal_check_interval='5')
 
-    manifest_entries+="file{'/etc/nagios/resource.d/nagios_service.cfg': \n" \
-                      "ensure => present, mode => 644,\n" \
-                      "content => '%s'}" % service_entries
+    manifest_entries += ("file { '/etc/nagios/nagios_service.cfg': \n"
+                            "ensure => present, mode => 644,\n"
+                            "owner => 'nagios', group => 'nagios',\n"
+                            "before => Service['nagios'],\n"
+                            "content => '%s'}" % service_entries)
 
     controller.CONF['CONFIG_NAGIOS_MANIFEST_CONFIG'] = manifest_entries
 
