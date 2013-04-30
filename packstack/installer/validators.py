@@ -232,7 +232,5 @@ def validate_multi_ssh(param, options=None):
     in param do not listen on port 22.
     """
     options = options or []
-    # TO-DO: to be more flexible, remove this and exit in case param is empty
-    validate_not_empty(param)
     for host in param.split(","):
         validate_ssh(host)

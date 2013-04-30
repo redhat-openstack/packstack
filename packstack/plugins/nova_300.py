@@ -64,7 +64,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "A comma separated list of IP addresses on which to install the Nova Compute services",
                    "PROMPT"          : "Enter a comma separated list of IP addresses on which to install the Nova Compute services",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_multi_ssh],
+                   "VALIDATORS"      : [validators.validate_not_empty, validators.validate_multi_ssh],
                    "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
