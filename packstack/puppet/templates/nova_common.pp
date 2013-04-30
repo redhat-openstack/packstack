@@ -12,4 +12,5 @@ class {"nova":
     sql_connection => "mysql://nova:%(CONFIG_NOVA_DB_PW)s@%(CONFIG_MYSQL_HOST)s/nova",
     qpid_hostname => "%(CONFIG_QPID_HOST)s",
     rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
+    verbose     => 'True',
 }
