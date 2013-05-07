@@ -64,5 +64,11 @@ class ScriptRuntimeError(PackStackError):
     """
     pass
 
+
 class ExecuteRuntimeError(PackStackError):
     """Raised when utils.execute does not end successfully."""
+
+
+class SequenceError(PackStackError):
+    """Exception for errors during setup sequence run."""
+    pass

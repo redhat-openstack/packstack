@@ -130,7 +130,7 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Swift", [], [], steps)
 
 
-def createkeystonemanifest():
+def createkeystonemanifest(config):
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
     controller.CONF['CONFIG_SWIFT_PROXY'] = controller.CONF['CONFIG_SWIFT_PROXY_HOSTS'].split(',')[0]
     manifestdata = getManifestTemplate("keystone_swift.pp")
@@ -158,7 +158,7 @@ def parse_devices(config_swift_storage_hosts):
 
 # The ring file should be built and distributed befor the storage services
 # come up. Specifically the replicator crashes if the ring isn't present
-def createbuildermanifest():
+def createbuildermanifest(config):
     # TODO : put this on the proxy server, will need to change this later
     controller.CONF['CONFIG_SWIFT_BUILDER_HOST'] = controller.CONF['CONFIG_SWIFT_PROXY_HOSTS'].split(',')[0]
     manifestfile = "%s_ring_swift.pp"%controller.CONF['CONFIG_SWIFT_BUILDER_HOST']
@@ -178,7 +178,7 @@ def createbuildermanifest():
     appendManifestFile(manifestfile, manifestdata, 'swiftbuilder')
 
 
-def createproxymanifest():
+def createproxymanifest(config):
     manifestfile = "%s_swift.pp"%controller.CONF['CONFIG_SWIFT_PROXY_HOSTS']
     manifestdata = getManifestTemplate("swift_proxy.pp")
     # If the proxy server is also a storage server then swift::ringsync will be included for the storage server
@@ -212,7 +212,7 @@ def check_device(host, device):
     return False
 
 
-def createstoragemanifest():
+def createstoragemanifest(config):
 
     # this need to happen once per storage host
     for host in set([device['host'] for device in devices]):
@@ -238,7 +238,7 @@ def createstoragemanifest():
         appendManifestFile(manifestfile, manifestdata)
 
 
-def createcommonmanifest():
+def createcommonmanifest(config):
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_swift.pp"):
             data = getManifestTemplate("swift_common.pp")

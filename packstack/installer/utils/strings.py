@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from .. import basedefs
-
 
 STR_MASK = '*' * 8
+COLORS = {'nocolor': "\033[0m", 'red': "\033[0;31m",
+          'green': "\033[92m", 'blue': "\033[94m",
+          'yellow': "\033[93m"}
 
 
 def color_text(text, color):
@@ -11,7 +12,7 @@ def color_text(text, color):
     Returns given text string with appropriate color tag. Allowed values
     for color parameter are 'red', 'blue', 'green' and 'yellow'.
     """
-    return '%s%s%s' % (basedefs.COLORS[color], text, basedefs.NO_COLOR)
+    return '%s%s%s' % (COLORS[color], text, COLORS['nocolor'])
 
 
 def mask_string(unmasked, mask_list=None, replace_list=None):

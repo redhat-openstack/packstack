@@ -272,25 +272,25 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Nova API", [], [], novaapisteps)
 
 
-def createapimanifest():
+def createapimanifest(config):
     manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVA_API_HOST']
     manifestdata = getManifestTemplate("nova_api.pp")
     appendManifestFile(manifestfile, manifestdata, 'novaapi')
 
 
-def createkeystonemanifest():
+def createkeystonemanifest(config):
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
     manifestdata = getManifestTemplate("keystone_nova.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
-def createcertmanifest():
+def createcertmanifest(config):
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_CERT_HOST']
     manifestdata = getManifestTemplate("nova_cert.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
-def createconductormanifest():
+def createconductormanifest(config):
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_CONDUCTOR_HOST']
     manifestdata = getManifestTemplate("nova_conductor.pp")
     appendManifestFile(manifestfile, manifestdata)
@@ -328,7 +328,7 @@ def bring_up_ifcfg(host, device):
             raise ScriptRuntimeError(msg)
 
 
-def createcomputemanifest():
+def createcomputemanifest(config):
     for host in controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(","):
         controller.CONF["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
@@ -347,7 +347,7 @@ def createcomputemanifest():
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
 
-def createnetworkmanifest():
+def createnetworkmanifest(config):
     host = controller.CONF['CONFIG_NOVA_NETWORK_HOST']
     for i in ('CONFIG_NOVA_NETWORK_PRIVIF', 'CONFIG_NOVA_NETWORK_PUBIF'):
         check_ifcfg(host, controller.CONF[i])
@@ -372,19 +372,19 @@ def createnetworkmanifest():
     appendManifestFile(manifestfile, manifestdata)
 
 
-def createschedmanifest():
+def createschedmanifest(config):
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_SCHED_HOST']
     manifestdata = getManifestTemplate("nova_sched.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
-def createvncproxymanifest():
+def createvncproxymanifest(config):
     manifestfile = "%s_nova.pp"%controller.CONF['CONFIG_NOVA_VNCPROXY_HOST']
     manifestdata = getManifestTemplate("nova_vncproxy.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
-def createcommonmanifest():
+def createcommonmanifest(config):
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
             data = getManifestTemplate("nova_common.pp")

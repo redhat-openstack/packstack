@@ -1,0 +1,98 @@
+# -*- coding: utf-8 -*-
+# vim: tabstop=4 shiftwidth=4 softtabstop=4
+
+# Copyright 2013, Red Hat, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License"); you may
+# not use this file except in compliance with the License. You may obtain
+# a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+# WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+# License for the specific language governing permissions and limitations
+# under the License.
+
+import sys
+import StringIO
+from unittest import TestCase
+
+from packstack.installer import utils
+from packstack.installer.core.sequences import *
+
+from ..test_base import PackstackTestCaseMixin
+
+
+class StepTestCase(PackstackTestCaseMixin, TestCase):
+    def setUp(self):
+        super(StepTestCase, self).setUp()
+        self._stdout = sys.stdout
+        sys.stdout = StringIO.StringIO()
+
+    def tearDown(self):
+        super(StepTestCase, self).tearDown()
+        sys.stdout = self._stdout
+
+    def test_run(self):
+        """
+        Test packstack.instaler.core.sequences.Step run.
+        """
+        def func(config):
+            if 'test' not in config:
+                raise AssertionError('Missing config value.')
+
+        step = Step('test', func, title='Running test')
+        step.run(config={'test': 'test'})
+        contents = sys.stdout.getvalue()
+
+        state = '[ %s ]\n' % utils.color_text('DONE', 'green')
+        if not contents.startswith('Running test') or \
+           not contents.endswith(state):
+            raise AssertionError('Step run test failed: %s' % contents)
+
+
+class SequenceTestCase(PackstackTestCaseMixin, TestCase):
+    def setUp(self):
+        super(SequenceTestCase, self).setUp()
+        self._stdout = sys.stdout
+        sys.stdout = StringIO.StringIO()
+
+        self.steps = [{'name': '1', 'function': lambda x: True,
+                       'title': 'Step 1'},
+                      {'name': '2', 'function': lambda x: True,
+                       'title': 'Step 2'},
+                      {'name': '3', 'function': lambda x: True,
+                       'title': 'Step 3'}]
+
+        self.seq = Sequence('test', self.steps, condition='test',
+                                                cond_match='test')
+
+    def tearDown(self):
+        super(SequenceTestCase, self).tearDown()
+        sys.stdout = self._stdout
+
+    def test_run(self):
+        """
+        Test packstack.instaler.core.sequences.Sequence run.
+        """
+        self.seq.run()
+        contents = sys.stdout.getvalue()
+        self.assertEqual(contents, '')
+
+        self.seq.run(config={'test': 'test'}, step='2')
+        contents = sys.stdout.getvalue()
+        assert contents.startswith('Step 2')
+
+        output = []
+        state_fmt = '[ %s ]\n'
+        self.steps.insert(0, {'title': 'Step 2'})
+        for i in self.steps:
+            space = 70 - len(i['title'])
+            title = '[ %s ]\n' % utils.color_text('DONE', 'green')
+            output.append('%s...%s' % (i['title'], title.rjust(space)))
+
+        self.seq.run(config={'test': 'test'})
+        contents = sys.stdout.getvalue()
+        self.assertEqual(contents, ''.join(output))

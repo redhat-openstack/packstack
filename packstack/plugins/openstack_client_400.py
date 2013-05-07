@@ -57,7 +57,7 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing OpenStack Client", [], [], osclientsteps)
 
-def createmanifest():
+def createmanifest(config):
     client_host = controller.CONF['CONFIG_OSCLIENT_HOST'].strip()
     manifestfile = "%s_osclient.pp" % client_host
     manifestdata = getManifestTemplate("openstack_client.pp")

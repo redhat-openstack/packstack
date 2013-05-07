@@ -99,7 +99,7 @@ def nagios_host(hostname, **kwargs):
     return "%s}\n" % out
 
 
-def createmanifest():
+def createmanifest(config):
     manifest_entries = ''
     # I should be adding service entries with nagios_service but it appears to  be broken
     # http://projects.puppetlabs.com/issues/3420
@@ -167,7 +167,7 @@ def createmanifest():
     manifestdata = getManifestTemplate("nagios_server.pp")
     appendManifestFile(manifestfile, manifestdata)
 
-def createnrpemanifests():
+def createnrpemanifests(config):
     for hostname in gethostlist(controller.CONF):
         controller.CONF['CONFIG_NRPE_HOST'] = hostname
         manifestfile = "%s_nagios_nrpe.pp" % hostname

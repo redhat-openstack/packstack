@@ -42,7 +42,7 @@ def initSequences(controller):
     ]
     controller.addSequence("Running post install scripts", [], [], osclientsteps)
 
-def createmanifest():
+def createmanifest(config):
     for hostname in gethostlist(controller.CONF):
         manifestfile = "%s_postscript.pp" % hostname
         manifestdata = getManifestTemplate("postscript.pp")
