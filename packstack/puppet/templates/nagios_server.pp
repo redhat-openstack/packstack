@@ -60,6 +60,7 @@ class{'nagios_configs':
 
 service{['nagios', 'httpd']: 
     ensure => running,
+    enable => true,
     hasstatus => true,
 }
 
