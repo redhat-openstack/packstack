@@ -330,6 +330,7 @@ def bring_up_ifcfg(host, device):
 
 def createcomputemanifest():
     for host in controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(","):
+        host = host.strip()
         controller.CONF["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
         manifestfile = "%s_nova.pp"%host
