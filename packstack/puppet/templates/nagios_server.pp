@@ -66,6 +66,7 @@ file { '/etc/httpd/conf.d/nagios.conf':}
 
 service{['nagios']:
     ensure => running,
+    enable => true,
     hasstatus => true,
 }
 
