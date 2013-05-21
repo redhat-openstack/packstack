@@ -1,18 +1,19 @@
 
-class {'cinder::base':
-    rabbit_password => '',
+class {'cinder':
+    rpc_backend    => 'cinder.openstack.common.rpc.impl_qpid',
+    qpid_hostname  => "%(CONFIG_QPID_HOST)s",
+    qpid_password  => "notused",
     sql_connection => "mysql://cinder:%(CONFIG_CINDER_DB_PW)s@%(CONFIG_MYSQL_HOST)s/cinder"
 }
 
 cinder_config{
-    "DEFAULT/rpc_backend": value => "cinder.openstack.common.rpc.impl_qpid";
-    "DEFAULT/qpid_hostname": value => "%(CONFIG_QPID_HOST)s";
     "DEFAULT/glance_host": value => "%(CONFIG_GLANCE_HOST)s";
 }
 
 package {'python-keystone':
     notify => Class['cinder::api'],
 }
+
 class {'cinder::api':
     keystone_password => '%(CONFIG_CINDER_KS_PW)s',
     keystone_tenant => "services",

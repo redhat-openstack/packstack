@@ -1,24 +1,24 @@
 [submodule "packstack/puppet/modules/glance"]
 	path = packstack/puppet/modules/glance
-	url = https://github.com/puppetlabs/puppetlabs-glance.git
+	url = https://github.com/stackforge/puppet-glance.git
 [submodule "packstack/puppet/modules/horizon"]
 	path = packstack/puppet/modules/horizon
-	url = https://github.com/packstack/puppetlabs-horizon.git
+	url = https://github.com/stackforge/puppet-horizon.git
 [submodule "packstack/puppet/modules/keystone"]
 	path = packstack/puppet/modules/keystone
-	url = https://github.com/packstack/puppetlabs-keystone.git
+	url = https://github.com/stackforge/puppet-keystone.git
 [submodule "packstack/puppet/modules/nova"]
 	path = packstack/puppet/modules/nova
-	url = https://github.com/packstack/puppetlabs-nova.git
+	url = https://github.com/stackforge/puppet-nova.git
 [submodule "packstack/puppet/modules/openstack"]
 	path = packstack/puppet/modules/openstack
-	url = https://github.com/puppetlabs/puppetlabs-openstack.git
+	url = https://github.com/stackforge/puppet-openstack.git
 [submodule "packstack/puppet/modules/swift"]
 	path = packstack/puppet/modules/swift
-	url = https://github.com/packstack/puppetlabs-swift.git
+	url = https://github.com/stackforge/puppet-swift.git
 [submodule "packstack/puppet/modules/cinder"]
 	path = packstack/puppet/modules/cinder
-	url = https://github.com/packstack/puppetlabs-cinder.git
+	url = https://github.com/stackforge/puppet-cinder.git
 [submodule "packstack/puppet/modules/stdlib"]
 	path = packstack/puppet/modules/stdlib
 	url = https://github.com/puppetlabs/puppetlabs-stdlib.git
