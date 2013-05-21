@@ -31,6 +31,7 @@ class{'nagios_configs':
 
 service{'nrpe': 
     ensure => running,
+    enable => true,
     hasstatus => true,
 }
 
