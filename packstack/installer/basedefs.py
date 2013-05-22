@@ -5,6 +5,7 @@ This module provides all the predefined variables.
 """
 
 import os
+import pwd
 import sys
 import datetime
 import tempfile
@@ -17,8 +18,29 @@ FILE_YUM_VERSION_LOCK = "/etc/yum/pluginconf.d/versionlock.list"
 PACKSTACK_VAR_DIR = "/var/tmp/packstack"
 try:
     os.mkdir(PACKSTACK_VAR_DIR, 0700)
-except:
-    pass
+except OSError:
+    # directory is already created, check ownership
+    stat = os.stat(PACKSTACK_VAR_DIR)
+    if stat.st_uid == 0 and os.getuid() != stat.st_uid:
+        print ('%s is already created and owned by root. Please change '
+               'ownership and try again.' % PACKSTACK_VAR_DIR)
+        sys.exit(1)
+finally:
+    # in case user switched to root, change ownership back
+    try:
+        user = pwd.getpwnam(os.getlogin())
+        uid, gid = user.pw_uid, user.pw_gid
+    except OSError:
+        # in case Packstack is run by a script
+        uid, gid = os.getuid(), os.getgid()
+
+    if uid != 0 and os.getuid() == 0:
+        try:
+            os.chown(PACKSTACK_VAR_DIR, uid, gid)
+        except Exception, ex:
+            print ('Unable to change owner of %s. Please fix ownership '
+                   'manually and try again.' % PACKSTACK_VAR_DIR)
+            sys.exit(1)
 
 _tmpdirprefix = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-')
 VAR_DIR = tempfile.mkdtemp(prefix=_tmpdirprefix, dir=PACKSTACK_VAR_DIR)
