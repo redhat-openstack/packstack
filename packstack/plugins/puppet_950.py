@@ -79,8 +79,8 @@ def copyPuppetModules(config):
                            'glance', 'horizon', 'inifile',
                            'keystone', 'memcached', 'mysql',
                            'nova', 'openstack', 'packstack',
-                           'qpid', 'rsync', 'ssh', 'stdlib',
-                           'swift', 'sysctl', 'vlan', 'xinetd'))
+                           'qpid', 'quantum', 'rsync', 'ssh', 'stdlib',
+                           'swift', 'sysctl', 'vlan', 'vswitch', 'xinetd'))
 
     # write puppet manifest to disk
     manifestfiles.writeManifests()

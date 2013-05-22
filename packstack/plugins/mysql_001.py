@@ -98,5 +98,7 @@ def createmanifest(config):
         append_for("cinder")
     if controller.CONF['CONFIG_GLANCE_INSTALL'] == "y":
         append_for("glance")
+    if controller.CONF['CONFIG_QUANTUM_INSTALL'] == 'y':
+        append_for("quantum")
 
     appendManifestFile(manifestfile, "\n".join(manifestdata), 'pre')
