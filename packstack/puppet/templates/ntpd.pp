@@ -17,7 +17,7 @@ restrict -6 ::1
 
 # Use public servers from the pool.ntp.org project.
 # Please consider joining the pool (http://www.pool.ntp.org/join.html).
-%(CONFIG_NTP_SERVERS)s
+%(CONFIG_NTP_SERVER_DEF)s
 
 #broadcast 192.168.1.255 autokey    # broadcast server
 #broadcastclient            # broadcast client
@@ -79,7 +79,7 @@ exec {'stop-ntpd':
 }
 
 exec {'ntpdate':
-    command => '/usr/sbin/ntpdate %(CONFIG_NTP_FIRST_SERVER)s',
+    command => '/usr/sbin/ntpdate %(CONFIG_NTP_SERVERS)s',
 }
 
 service {'ntpd':

@@ -7,6 +7,7 @@ import logging
 
 from packstack.installer import validators
 from packstack.installer import utils
+from packstack.installer.exceptions import ParamValidationError
 
 from packstack.modules.ospluginutils import gethostlist,\
                                             getManifestTemplate, \
@@ -153,16 +154,16 @@ def createmanifest(config):
         appendManifestFile(manifestfile, manifestdata)
 
 def create_ntp_manifest(config):
-    servers = ''
-    for srv in controller.CONF['CONFIG_NTP_SERVERS'].split(','):
-        srv = srv.strip()
-        validators.validate_ping(srv)
-        servers += 'server %s\n' % srv
-        controller.CONF.setdefault('CONFIG_NTP_FIRST_SERVER', srv)
-    controller.CONF['CONFIG_NTP_SERVERS'] = servers
+    srvlist = [i.strip()
+               for i in config['CONFIG_NTP_SERVERS'].split(',')
+               if i.strip()]
+    config['CONFIG_NTP_SERVERS'] = ' '.join(srvlist)
+
+    definiton = '\n'.join(['server %s' % i for i in srvlist])
+    config['CONFIG_NTP_SERVER_DEF'] = '%s\n' % definiton
 
     marker = uuid.uuid4().hex[:16]
-    for hostname in gethostlist(controller.CONF):
+    for hostname in gethostlist(config):
         manifestdata = getManifestTemplate('ntpd.pp')
         appendManifestFile('%s_ntpd.pp' % hostname,
                            manifestdata,
