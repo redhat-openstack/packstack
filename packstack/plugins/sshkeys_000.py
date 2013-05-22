@@ -61,7 +61,7 @@ def initSequences(controller):
     controller.addSequence("Setting up ssh keys", [], [], puppetsteps)
 
 
-def installKeys():
+def installKeys(config):
     with open(controller.CONF["CONFIG_SSH_KEY"]) as fp:
         sshkeydata = fp.read().strip()
     for hostname in gethostlist(controller.CONF):

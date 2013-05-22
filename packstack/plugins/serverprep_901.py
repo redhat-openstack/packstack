@@ -373,7 +373,7 @@ def initSequences(controller):
     controller.addSequence("Preparing servers", [], [], preparesteps)
 
 
-def serverprep():
+def serverprep(config):
     config = controller.CONF
 
     rh_username = None

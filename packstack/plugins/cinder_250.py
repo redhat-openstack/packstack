@@ -136,12 +136,12 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing OpenStack Cinder", [], [], cinder_steps)
 
-def install_cinder_deps():
+def install_cinder_deps(config):
     server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
     server.append("rpm -q %(package)s || yum install -y %(package)s" % {'package': "lvm2"})
     server.execute()
 
-def check_cinder_vg():
+def check_cinder_vg(config):
 
     cinders_volume = 'cinder-volumes'
 
@@ -211,13 +211,13 @@ def check_cinder_vg():
             raise exceptions.MissingRequirements(err)
 
 
-def create_keystone_manifest():
+def create_keystone_manifest(config):
     manifestfile = "%s_keystone.pp" % controller.CONF['CONFIG_KEYSTONE_HOST']
     manifestdata = getManifestTemplate("keystone_cinder.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
-def create_manifest():
+def create_manifest(config):
     manifestfile = "%s_cinder.pp" % controller.CONF['CONFIG_CINDER_HOST']
     manifestdata = getManifestTemplate("cinder.pp")
     appendManifestFile(manifestfile, manifestdata)

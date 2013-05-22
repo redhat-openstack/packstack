@@ -146,13 +146,13 @@ def initSequences(controller):
                                    'instances might be problem for '
                                    'some OpenStack components.')
 
-def createmanifest():
+def createmanifest(config):
     for hostname in gethostlist(controller.CONF):
         manifestfile = "%s_prescript.pp" % hostname
         manifestdata = getManifestTemplate("prescript.pp")
         appendManifestFile(manifestfile, manifestdata)
 
-def create_ntp_manifest():
+def create_ntp_manifest(config):
     servers = ''
     for srv in controller.CONF['CONFIG_NTP_SERVERS'].split(','):
         srv = srv.strip()

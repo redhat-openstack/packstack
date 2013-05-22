@@ -59,13 +59,13 @@ def initSequences(controller):
     controller.addSequence("Puppet", [], [], puppetsteps)
 
 
-def runCleanup():
+def runCleanup(config):
     localserver = utils.ScriptRunner()
     localserver.append("rm -rf %s/*pp" % basedefs.PUPPET_MANIFEST_DIR)
     localserver.execute()
 
 
-def installdeps():
+def installdeps(config):
     for hostname in gethostlist(controller.CONF):
         server = utils.ScriptRunner(hostname)
         for package in ("puppet", "openssh-clients", "tar"):
@@ -73,7 +73,7 @@ def installdeps():
         server.execute()
 
 
-def copyPuppetModules():
+def copyPuppetModules(config):
     os_modules = ' '.join(('apache', 'cinder', 'concat',
                            'create_resources', 'firewall',
                            'glance', 'horizon', 'inifile',
@@ -165,7 +165,7 @@ def waitforpuppet(currently_running):
             print ("[ " + utils.color_text(output_messages.INFO_DONE, 'green') + " ]")
 
 
-def applyPuppetManifest():
+def applyPuppetManifest(config):
     print
     currently_running = []
     lastmarker = None

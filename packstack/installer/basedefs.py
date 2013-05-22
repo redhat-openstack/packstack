@@ -41,10 +41,5 @@ EXEC_CHKCONFIG = "chkconfig"
 EXEC_SERVICE = "service"
 EXEC_IP = "ip"
 
-# text colors
-NO_COLOR = "\033[0m"
-COLORS = {'red': "\033[0;31m", 'green': "\033[92m", 'blue': "\033[94m",
-          'yellow': "\033[93m"}
-
 # space len size for color print
 SPACE_LEN = 70

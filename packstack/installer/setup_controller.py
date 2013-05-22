@@ -3,7 +3,15 @@ Controller class is a SINGLETON which handles all groups, params, sequences,
 steps and replaces the CONF dictionary.
 """
 from setup_params import Group
-from setup_sequences import Sequence
+from .core.sequences import Sequence
+
+
+def steps_new_format(steplist):
+    # we have to duplicate title to name parameter and also only sigle
+    # function is allowed in new step
+    return [{'name': i['title'], 'title': i['title'],
+             'function': i['functions'][0]} for i in steplist]
+
 
 class Controller(object):
 
@@ -64,27 +72,32 @@ class Controller(object):
 
     # Sequences and steps
     def addSequence(self, desc, cond, cond_match, steps):
-        self.__SEQUENCES.append(Sequence(desc, cond, cond_match, steps))
+        self.__SEQUENCES.append(Sequence(desc, steps_new_format(steps),
+                                         condition=cond,
+                                         cond_match=cond_match))
 
     def insertSequence(self, desc, cond, cond_match, steps, index=0):
-        self.__SEQUENCES.insert(index, Sequence(desc, cond, cond_match, steps))
+        self.__SEQUENCES.insert(index, Sequence(desc,
+                                                steps_new_format(steps),
+                                                condition=cond,
+                                                cond_match=cond_match))
 
     def getAllSequences(self):
         return self.__SEQUENCES
 
     def runAllSequences(self):
         for sequence in self.__SEQUENCES:
-            sequence.run()
+            sequence.run(self.CONF)
 
     def getSequenceByDesc(self, desc):
         for sequence in self.getAllSequences():
-            if sequence.getDescription() == desc:
+            if sequence.name == desc:
                 return sequence
         return None
 
     def __getSequenceIndexByDesc(self, desc):
         for sequence in self.getAllSequences():
-            if sequence.getDescription() == desc:
+            if sequence.name == desc:
                 return self.__SEQUENCES.index(sequence)
         return None
 
@@ -97,7 +110,10 @@ class Controller(object):
         index = self.__getSequenceIndexByDesc(sequenceName)
         if index == None:
             index = len(self.getAllSequences())
-        self.__SEQUENCES.insert(index, Sequence(desc, cond, cond_match, steps))
+        self.__SEQUENCES.insert(index, Sequence(desc,
+                                                steps_new_format(steps),
+                                                condition=cond,
+                                                cond_match=cond_match))
 
     # Groups and params
     def addGroup(self, group, params):

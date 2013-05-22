@@ -109,7 +109,7 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Horizon", [], [], steps)
 
 
-def createmanifest():
+def createmanifest(config):
     controller.CONF["CONFIG_HORIZON_SECRET_KEY"] = uuid.uuid4().hex
     horizon_host = controller.CONF['CONFIG_HORIZON_HOST']
     manifestfile = "%s_horizon.pp" % horizon_host

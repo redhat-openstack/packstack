@@ -81,7 +81,7 @@ def initSequences(controller):
     controller.addSequence("Installing MySQL", [], [], mysqlsteps)
 
 
-def createmanifest():
+def createmanifest(config):
     host = controller.CONF['CONFIG_MYSQL_HOST']
     manifestfile = "%s_mysql.pp" % host
     manifestdata = [getManifestTemplate("mysql.pp")]
