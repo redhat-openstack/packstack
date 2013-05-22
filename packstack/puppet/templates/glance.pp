@@ -5,6 +5,7 @@ class {"glance::api":
     keystone_tenant => "services",
     keystone_user => "glance",
     keystone_password => "%(CONFIG_GLANCE_KS_PW)s",
+    pipeline => 'keystone',
     sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/glance"
 }
 
