@@ -695,7 +695,7 @@ def initCmdLineParser():
 
     # Init parser and all general flags
     logging.debug("initiating command line option parser")
-    usage = "usage: %prog [options]"
+    usage = "usage: %prog [options] [--help]"
     parser = OptionParser(usage)
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other options")
     parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the \
@@ -863,6 +863,10 @@ def main():
             generateAnswerFile(options.gen_answer_file)
         # Are we installing an all in one
         elif options.allinone:
+            if getattr(options, 'answer_file', None):
+                msg = ('Please use either --allinone or --answer-file, '
+                       'but not both.')
+                raise FlagValidationError(msg)
             single_step_aio_install(options)
         # Are we installing in a single step
         elif options.install_hosts:
@@ -880,8 +884,7 @@ def main():
             _main(confFile)
 
     except FlagValidationError, ex:
-        optParser.print_help()
-        print
+        optParser.error(str(ex))
     except Exception as e:
         logging.error(traceback.format_exc())
         print
