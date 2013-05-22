@@ -1,5 +1,3 @@
-
-
 if $::is_virtual_packstack == "true" {
     $libvirt_type = "qemu"
     nova_config{
@@ -71,17 +69,3 @@ exec {'tuned-virtual-host':
     require => Service['tuned'],
 }
 
-# Need to start dbus for libvirt
-if($::operatingsystem == 'Fedora') {
-    service { 'messagebus':
-        name     => 'dbus',
-        ensure   => running,
-        enable   => true,
-    }
-} else {
-   service { 'messagebus':
-        ensure   => running,
-        enable   => true,
-    }
-}
-Package['libvirt'] -> Service['messagebus'] -> Service['libvirt']
