@@ -269,7 +269,7 @@ def initSequences(controller):
              {'title': 'Adding Nova Common manifest entries', 'functions':[createcommonmanifest]},
     ]
 
-    if controller.CONF['CONFIG_QUANTUM_INSTALL']:
+    if controller.CONF['CONFIG_QUANTUM_INSTALL'] == 'y':
         novaapisteps.append({'title': 'Adding Openstack Network-related Nova manifest entries', 'functions':[createquantummanifest]})
     else:
         novaapisteps.append({'title': 'Adding Nova Network manifest entries', 'functions':[createnetworkmanifest]})
@@ -278,6 +278,16 @@ def initSequences(controller):
 
 
 def createapimanifest(config):
+    # This is a hack around us needing to generate the quantum metadata
+    # password, but the nova puppet plugin uses the existence of that
+    # password to determine whether or not to configure quantum metadata
+    # proxy support. So the nova_api.pp template needs unquoted 'undef'
+    # to disable metadata support if quantum is not being installed.
+    if controller.CONF['CONFIG_QUANTUM_INSTALL'] != 'y':
+        controller.CONF['CONFIG_QUANTUM_METADATA_PW_UNQUOTED'] = 'undef'
+    else:
+        controller.CONF['CONFIG_QUANTUM_METADATA_PW_UNQUOTED'] = \
+            "'%s'" % controller.CONF['CONFIG_QUANTUM_METADATA_PW']
     manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVA_API_HOST']
     manifestdata = getManifestTemplate("nova_api.pp")
     appendManifestFile(manifestfile, manifestdata, 'novaapi')

@@ -8,10 +8,5 @@ class {"nova::network::quantum":
 }
 
 class {"nova::compute::quantum":
-  libvirt_vif_driver => "nova.virt.libvirt.vif.LibvirtGenericVifDriver",
-}
-
-nova_config {
-  'DEFAULT/service_quantum_metadata_proxy': value => 'True';
-  'DEFAULT/quantum_metadata_proxy_shared_secret': value => '%(CONFIG_QUANTUM_METADATA_PW)s';
+  libvirt_vif_driver => "nova.virt.libvirt.vif.LibvirtGenericVIFDriver",
 }
