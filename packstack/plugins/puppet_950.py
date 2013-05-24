@@ -11,9 +11,10 @@ from packstack.installer import utils
 from packstack.installer import basedefs, output_messages
 from packstack.installer.exceptions import ScriptRuntimeError
 
-from packstack.modules.ospluginutils import gethostlist,\
-                                            manifestfiles,\
-                                            validate_puppet_logfile
+from packstack.modules.ospluginutils import (gethostlist,
+                                             manifestfiles,
+                                             scan_puppet_logfile,
+                                             validate_puppet_logfile)
 
 # Controller object will be initialized from main flow
 controller = None
@@ -123,6 +124,7 @@ def copyPuppetModules(config):
 
 
 def waitforpuppet(currently_running):
+    global controller
     log_len = 0
     twirl = ["-","\\","|","/"]
     while currently_running:
@@ -158,6 +160,9 @@ def waitforpuppet(currently_running):
                 # TO-DO: We need to start testing 'e' for unexpected exceptions
                 time.sleep(3)
                 continue
+
+            # check log file for relevant notices
+            controller.MESSAGES.extend(scan_puppet_logfile(log))
 
             # check the log file for errors
             validate_puppet_logfile(log)

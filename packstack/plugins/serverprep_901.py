@@ -9,9 +9,9 @@ import datetime
 import platform
 
 from packstack.installer import basedefs
+from packstack.installer import exceptions
 from packstack.installer import utils
 from packstack.installer import validators
-from packstack.installer.exceptions import InstallError
 
 
 from packstack.modules.ospluginutils import gethostlist
@@ -303,8 +303,9 @@ def run_rhn_reg(host, server_url, username=None, password=None,
             cmd.extend(['--password', password])
             mask.append(password)
     else:
-        raise InstallError('Either RHN Satellite activation key or '
-                           'username/password must be provided.')
+        raise exceptions.InstallError('Either RHN Satellite activation '
+                                      'key or username/password must '
+                                      'be provided.')
 
     if cacert:
         # use and if required download given certificate
@@ -374,8 +375,6 @@ def initSequences(controller):
 
 
 def serverprep(config):
-    config = controller.CONF
-
     rh_username = None
     sat_url = None
     if is_rhel():
@@ -399,6 +398,7 @@ def serverprep(config):
                         'proxy_user': sat_proxy_user.strip(),
                         'proxy_pass': sat_proxy_pass.strip(),
                         'flags': sat_flags}
+
     for hostname in gethostlist(config):
         if '/' in hostname:
             hostname = hostname.split('/')[0]
