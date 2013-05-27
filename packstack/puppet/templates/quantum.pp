@@ -17,3 +17,9 @@ class { 'quantum::server':
   auth_host => '%(CONFIG_KEYSTONE_HOST)s',
   enabled => '%(CONFIG_QUANTUM_SERVER_ENABLE)s',
 }
+
+firewall { '001 quantum incoming':
+    proto    => 'tcp',
+    dport    => ['9696'],
+    action   => 'accept',
+}
