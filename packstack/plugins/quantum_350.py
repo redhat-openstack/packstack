@@ -226,6 +226,14 @@ def initConfig(controllerObject):
             ],
         }
 
+    def use_linuxbridge(config):
+        return config['CONFIG_QUANTUM_INSTALL'] == 'y' and \
+               config['CONFIG_QUANTUM_L2_PLUGIN'] == 'linuxbridge'
+
+    def use_openvswitch(config):
+        return config['CONFIG_QUANTUM_INSTALL'] == 'y' and \
+               config['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch'
+
     conf_groups = [
         { "GROUP_NAME"            : "QUANTUM",
           "DESCRIPTION"           : "Quantum config",
@@ -235,14 +243,14 @@ def initConfig(controllerObject):
           "POST_CONDITION_MATCH"  : True },
         { "GROUP_NAME"            : "QUANTUM_LB_PLUGIN",
           "DESCRIPTION"           : "Quantum LB plugin config",
-          "PRE_CONDITION"         : "CONFIG_QUANTUM_L2_PLUGIN",
-          "PRE_CONDITION_MATCH"   : "linuxbridge",
+          "PRE_CONDITION"         : use_linuxbridge,
+          "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
         { "GROUP_NAME"            : "QUANTUM_OVS_PLUGIN",
           "DESCRIPTION"           : "Quantum OVS plugin config",
-          "PRE_CONDITION"         : "CONFIG_QUANTUM_L2_PLUGIN",
-          "PRE_CONDITION_MATCH"   : "openvswitch",
+          "PRE_CONDITION"         : use_openvswitch,
+          "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
         ]
