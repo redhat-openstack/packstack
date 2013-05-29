@@ -64,7 +64,7 @@ def initConfig(controllerObject):
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "os-quantum-install",
                    "USAGE"           : "Set to 'y' if you would like Packstack to install Quantum",
-                   "PROMPT"          : "Should Packstack install Quantum compute service",
+                   "PROMPT"          : "Should Packstack install Quantum network service",
                    "OPTION_LIST"     : ["y", "n"],
                    "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "y",
