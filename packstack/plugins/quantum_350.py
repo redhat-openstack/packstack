@@ -216,7 +216,7 @@ def initConfig(controllerObject):
              "PROMPT"          : "Enter a comma separated list of bridge mappings for the Quantum openvswitch plugin",
              "OPTION_LIST"     : [],
              "VALIDATORS"      : [],
-             "DEFAULT_VALUE"   : "physnet1:1000:2000",
+             "DEFAULT_VALUE"   : "",
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS",
