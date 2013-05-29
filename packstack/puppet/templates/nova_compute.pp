@@ -12,7 +12,6 @@ package{'python-cinderclient':
 }
 
 nova_config{
-    "DEFAULT/network_host": value => "%(CONFIG_NOVA_NETWORK_HOST)s";
     "DEFAULT/libvirt_inject_partition": value => "-1";
     "DEFAULT/volume_api_class": value => "nova.volume.cinder.API";
 }
