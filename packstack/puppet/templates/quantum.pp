@@ -10,6 +10,7 @@ $quantum_user_password = '%(CONFIG_QUANTUM_KS_PW)s'
 class { 'quantum':
   rpc_backend => 'quantum.openstack.common.rpc.impl_qpid',
   qpid_hostname => '%(CONFIG_QPID_HOST)s',
+  verbose => true,
 }
 
 class { 'quantum::server':
