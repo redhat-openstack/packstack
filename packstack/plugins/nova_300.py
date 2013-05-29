@@ -23,7 +23,8 @@ def initConfig(controllerObject):
     global controller
     controller = controllerObject
 
-    paramsList = [
+    nova_params = {
+            "NOVA" : [
                   {"CMD_OPTION"      : "novaapi-host",
                    "USAGE"           : "The IP address of the server on which to install the Nova API service",
                    "PROMPT"          : "Enter the IP address of the Nova API service",
@@ -72,30 +73,6 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "novacompute-privif",
-                   "USAGE"           : "Private interface for Flat DHCP on the Nova compute servers",
-                   "PROMPT"          : "Enter the Private interface for Flat DHCP on the Nova compute servers",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "eth1",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_PRIVIF",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "novanetwork-host",
-                   "USAGE"           : "The IP address of the server on which to install the Nova Network service",
-                   "PROMPT"          : "Enter the IP address of the Nova Network service",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOST",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "novaconductor-host",
                    "USAGE"           : "The IP address of the server on which to install the Nova Conductor service",
                    "PROMPT"          : "Enter the IP address of the Nova Conductor service",
@@ -131,6 +108,72 @@ def initConfig(controllerObject):
                    "CONF_NAME"       : "CONFIG_NOVA_KS_PW",
                    "USE_DEFAULT"     : True,
                    "NEED_CONFIRM"    : True,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novasched-host",
+                   "USAGE"           : "The IP address of the server on which to install the Nova Scheduler service",
+                   "PROMPT"          : "Enter the IP address of the Nova Scheduler service",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_ssh],
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_SCHED_HOST",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novasched-cpu-allocation-ratio",
+                   "USAGE"           : "The overcommitment ratio for virtual to physical CPUs. "
+                                       "Set to 1.0 to disable CPU overcommitment",
+                   "PROMPT"          : "Enter the CPU overcommitment ratio. "
+                                       "Set to 1.0 to disable CPU overcommitment",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_float],
+                   "DEFAULT_VALUE"   : 16.0,
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novasched-ram-allocation-ratio",
+                   "USAGE"           : "The overcommitment ratio for virtual to physical RAM. "
+                                       "Set to 1.0 to disable RAM overcommitment",
+                   "PROMPT"          : "Enter the RAM overcommitment ratio. "
+                                       "Set to 1.0 to disable RAM overcommitment",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_float],
+                   "DEFAULT_VALUE"   : 1.5,
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  ],
+             "NOVA_NETWORK" : [
+                  {"CMD_OPTION"      : "novacompute-privif",
+                   "USAGE"           : "Private interface for Flat DHCP on the Nova compute servers",
+                   "PROMPT"          : "Enter the Private interface for Flat DHCP on the Nova compute servers",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "DEFAULT_VALUE"   : "eth1",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_PRIVIF",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novanetwork-host",
+                   "USAGE"           : "The IP address of the server on which to install the Nova Network service",
+                   "PROMPT"          : "Enter the IP address of the Nova Network service",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
+                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOST",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "novanetwork-pubif",
                    "USAGE"           : "Public interface on the Nova network server",
@@ -204,55 +247,31 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "novasched-host",
-                   "USAGE"           : "The IP address of the server on which to install the Nova Scheduler service",
-                   "PROMPT"          : "Enter the IP address of the Nova Scheduler service",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_SCHED_HOST",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "novasched-cpu-allocation-ratio",
-                   "USAGE"           : "The overcommitment ratio for virtual to physical CPUs. "
-                                       "Set to 1.0 to disable CPU overcommitment",
-                   "PROMPT"          : "Enter the CPU overcommitment ratio. "
-                                       "Set to 1.0 to disable CPU overcommitment",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_float],
-                   "DEFAULT_VALUE"   : 16.0,
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "novasched-ram-allocation-ratio",
-                   "USAGE"           : "The overcommitment ratio for virtual to physical RAM. "
-                                       "Set to 1.0 to disable RAM overcommitment",
-                   "PROMPT"          : "Enter the RAM overcommitment ratio. "
-                                       "Set to 1.0 to disable RAM overcommitment",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_float],
-                   "DEFAULT_VALUE"   : 1.5,
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                 ]
-    groupDict = { "GROUP_NAME"            : "NOVA",
-                  "DESCRIPTION"           : "Nova Options",
-                  "PRE_CONDITION"         : "CONFIG_NOVA_INSTALL",
-                  "PRE_CONDITION_MATCH"   : "y",
-                  "POST_CONDITION"        : False,
-                  "POST_CONDITION_MATCH"  : True}
-    controller.addGroup(groupDict, paramsList)
+                  ],
+              }
 
+    def use_nova_network(config):
+        return config['CONFIG_NOVA_INSTALL'] == 'y' and \
+               config['CONFIG_QUANTUM_INSTALL'] != 'y'
+
+    nova_groups = [
+        { "GROUP_NAME"            : "NOVA",
+          "DESCRIPTION"           : "Nova Options",
+          "PRE_CONDITION"         : "CONFIG_NOVA_INSTALL",
+          "PRE_CONDITION_MATCH"   : "y",
+          "POST_CONDITION"        : False,
+          "POST_CONDITION_MATCH"  : True},
+        { "GROUP_NAME"            : "NOVA_NETWORK",
+          "DESCRIPTION"           : "Nova Network Options",
+          "PRE_CONDITION"         : use_nova_network,
+          "PRE_CONDITION_MATCH"   : True,
+          "POST_CONDITION"        : False,
+          "POST_CONDITION_MATCH"  : True},
+        ]
+
+    for group in nova_groups:
+        paramList = nova_params[group["GROUP_NAME"]]
+        controller.addGroup(group, paramList)
 
 def initSequences(controller):
     if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
@@ -351,14 +370,15 @@ def createcomputemanifest(config):
         manifestfile = "%s_nova.pp"%host
 
         nova_config_options = NovaConfig()
-        if host != controller.CONF["CONFIG_NOVA_NETWORK_HOST"]:
-            nova_config_options.addOption("DEFAULT/flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
-        check_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
-        try:
-            bring_up_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
-        except ScriptRuntimeError, ex:
-            # just warn user to do it by himself
-            controller.MESSAGES.append(str(ScriptRuntimeError))
+        if controller.CONF['CONFIG_QUANTUM_INSTALL'] != 'y':
+            if host != controller.CONF["CONFIG_NOVA_NETWORK_HOST"]:
+                nova_config_options.addOption("DEFAULT/flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+            check_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+            try:
+                bring_up_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+            except ScriptRuntimeError, ex:
+                # just warn user to do it by himself
+                controller.MESSAGES.append(str(ScriptRuntimeError))
 
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
