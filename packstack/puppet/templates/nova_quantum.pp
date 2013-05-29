@@ -8,5 +8,5 @@ class {"nova::network::quantum":
 }
 
 class {"nova::compute::quantum":
-  libvirt_vif_driver => "nova.virt.libvirt.vif.LibvirtGenericVIFDriver",
+  libvirt_vif_driver => "%(CONFIG_NOVA_LIBVIRT_VIF_DRIVER)s",
 }

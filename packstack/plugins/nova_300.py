@@ -434,6 +434,11 @@ def createquantummanifest(config):
     if controller.CONF['CONFIG_QUANTUM_INSTALL'] != "y":
         return
 
+    if controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch':
+        controller.CONF['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = 'nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver'
+    else:
+        controller.CONF['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = 'nova.virt.libvirt.vif.LibvirtGenericVIFDriver'
+
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
             data = getManifestTemplate("nova_quantum.pp")
