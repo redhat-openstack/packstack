@@ -143,3 +143,20 @@ def validate_puppet_logfile(logfile):
         logging.error("Error  during remote puppet apply of " + manifestfile)
         logging.error(data)
         raise PackStackError(message)
+
+
+def scan_puppet_logfile(logfile):
+    """
+    Returns list of packstack_info/packstack_warn notices parsed from
+    given puppet log file.
+    """
+    output = []
+    notice = re.compile(r"notice: .*Notify\[packstack_info\]"
+                         "\/message: defined \'message\' as "
+                         "\'(?P<message>.*)\'")
+    with open(logfile) as content:
+        for line in content:
+            match = notice.search(line)
+            if match:
+                output.append(match.group('message'))
+    return output

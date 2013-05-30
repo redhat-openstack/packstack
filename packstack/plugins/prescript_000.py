@@ -2,13 +2,13 @@
 Plugin responsible for setting OpenStack global options
 """
 
-import uuid
 import logging
+import os
+import uuid
 
-from packstack.installer import validators
+from packstack.installer import exceptions
 from packstack.installer import utils
-from packstack.installer.exceptions import ParamValidationError
-
+from packstack.installer import validators
 from packstack.modules.ospluginutils import gethostlist,\
                                             getManifestTemplate, \
                                             appendManifestFile
@@ -144,7 +144,7 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     osclientsteps = [
-             {'title': 'Adding pre install manifest entries', 'functions':[createmanifest]}
+             {'title': 'Adding pre install manifest entries', 'functions':[createmanifest]},
     ]
     controller.addSequence("Running pre install scripts", [], [], osclientsteps)
 
