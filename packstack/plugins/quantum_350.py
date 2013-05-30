@@ -275,6 +275,11 @@ def initSequences(controller):
     else:
         controller.CONF['CONFIG_QUANTUM_USE_NAMESPACES'] = 'False'
 
+    if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch":
+        controller.CONF['CONFIG_QUANTUM_L2_DBNAME'] = 'ovs_quantum'
+    elif controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "linuxbridge":
+        controller.CONF['CONFIG_QUANTUM_L2_DBNAME'] = 'quantum_linux_bridge'
+
     global api_hosts, l3_hosts, dhcp_hosts, compute_hosts, meta_hosts, q_hosts
     api_hosts = set(controller.CONF['CONFIG_QUANTUM_SERVER_HOST'].split(','))
     l3_hosts = set(controller.CONF['CONFIG_QUANTUM_L3_HOSTS'].split(','))

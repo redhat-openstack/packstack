@@ -1,5 +1,5 @@
 $quantum_db_host     = '%(CONFIG_MYSQL_HOST)s'
-$quantum_db_name     = 'quantum'
+$quantum_db_name     = '%(CONFIG_QUANTUM_L2_DBNAME)s'
 $quantum_db_user = 'quantum'
 $quantum_db_password = '%(CONFIG_QUANTUM_DB_PW)s'
 $quantum_sql_connection = "mysql://${quantum_db_user}:${quantum_db_password}@${quantum_db_host}/${quantum_db_name}"
