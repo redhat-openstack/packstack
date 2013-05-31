@@ -4,6 +4,7 @@ Installs and configures quantum
 
 import logging
 import os
+import re
 import uuid
 
 from packstack.installer import utils
@@ -353,6 +354,16 @@ def createL2AgentManifests(config):
     if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch":
         host_var = 'CONFIG_QUANTUM_OVS_HOST'
         template_name = 'quantum_ovs_agent.pp'
+
+        # The CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS parameter contains a
+        # comma-separated list of bridge mappings. Since the puppet module
+        # expects this parameter to be an array, this parameter must be properly
+        # formatted by packstack, then consumed by the puppet module.
+        # For example, the input string 'A, B, C' should formatted as '['A','B','C']'.
+        r = re.compile("[\s,]+")
+        controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"] = \
+            str(filter(None, r.split(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"])))
+
     elif controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "linuxbridge":
         host_var = 'CONFIG_QUANTUM_LB_HOST'
         template_name = 'quantum_lb_agent.pp'
