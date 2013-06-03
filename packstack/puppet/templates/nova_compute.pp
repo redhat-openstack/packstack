@@ -1,3 +1,8 @@
+
+# Ensure Firewall changes happen before libvirt service start
+# preventing a clash with rules being set by libvirt
+Firewall <| |> -> Class['nova::compute::libvirt']
+
 if $::is_virtual_packstack == "true" {
     $libvirt_type = "qemu"
     nova_config{
@@ -67,4 +72,3 @@ exec {'tuned-virtual-host':
     command => '/usr/sbin/tuned-adm profile virtual-host',
     require => Service['tuned'],
 }
-
