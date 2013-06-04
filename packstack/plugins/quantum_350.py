@@ -282,11 +282,20 @@ def initSequences(controller):
         controller.CONF['CONFIG_QUANTUM_L2_DBNAME'] = 'quantum_linux_bridge'
 
     global api_hosts, l3_hosts, dhcp_hosts, compute_hosts, meta_hosts, q_hosts
-    api_hosts = set(controller.CONF['CONFIG_QUANTUM_SERVER_HOST'].split(','))
-    l3_hosts = set(controller.CONF['CONFIG_QUANTUM_L3_HOSTS'].split(','))
-    dhcp_hosts = set(controller.CONF['CONFIG_QUANTUM_DHCP_HOSTS'].split(','))
-    meta_hosts = set(controller.CONF['CONFIG_QUANTUM_METADATA_HOSTS'].split(','))
-    compute_hosts = set(controller.CONF['CONFIG_NOVA_COMPUTE_HOSTS'].split(','))
+    dirty = controller.CONF['CONFIG_QUANTUM_SERVER_HOST'].split(',')
+    api_hosts = set([i.strip() for i in dirty if i.strip()])
+
+    dirty = controller.CONF['CONFIG_QUANTUM_L3_HOSTS'].split(',')
+    l3_hosts = set([i.strip() for i in dirty if i.strip()])
+
+    dirty = controller.CONF['CONFIG_QUANTUM_DHCP_HOSTS'].split(',')
+    dhcp_hosts = set([i.strip() for i in dirty if i.strip()])
+
+    dirty = controller.CONF['CONFIG_QUANTUM_METADATA_HOSTS'].split(',')
+    meta_hosts = set([i.strip() for i in dirty if i.strip()])
+
+    dirty = controller.CONF['CONFIG_NOVA_COMPUTE_HOSTS'].split(',')
+    compute_hosts = set([i.strip() for i in dirty if i.strip()])
     q_hosts = api_hosts | l3_hosts | dhcp_hosts | compute_hosts | meta_hosts
 
     quantum_steps = [
