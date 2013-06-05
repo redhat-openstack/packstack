@@ -311,14 +311,16 @@ def initSequences(controller):
 
 def createManifest(config):
     global q_hosts
+
     for host in q_hosts:
-        if host in api_hosts:
-            controller.CONF['CONFIG_QUANTUM_SERVER_ENABLE'] = 'true'
-        else:
-            controller.CONF['CONFIG_QUANTUM_SERVER_ENABLE'] = 'false'
         manifest_file = "%s_quantum.pp" % (host,)
         manifest_data = getManifestTemplate("quantum.pp")
         appendManifestFile(manifest_file, manifest_data, 'quantum')
+
+        if host in api_hosts:
+            manifest_file = "%s_quantum.pp" % (host,)
+            manifest_data = getManifestTemplate("quantum_api.pp")
+            appendManifestFile(manifest_file, manifest_data, 'quantum')
 
         # Set up any l2 plugin configs we need anywhere we install quantum
         # XXX I am not completely sure about this, but it seems necessary
@@ -336,6 +338,7 @@ def createKeystoneManifest(config):
 
 def createL3Manifests(config):
     global l3_hosts
+
     for host in l3_hosts:
         controller.CONF['CONFIG_QUANTUM_L3_HOST'] = host
         controller.CONF['CONFIG_QUANTUM_L3_INTERFACE_DRIVER'] = getInterfaceDriver()
