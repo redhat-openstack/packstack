@@ -145,7 +145,7 @@ def createmanifest(config):
                 "%sNOTE%s : A certificate was generated to be used for ssl, "
                 "You should change the ssl certificate configured in "
                 "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
-                % (basedefs.RED, basedefs.NO_COLOR, horizon_host))
+                % (utils.COLORS['red'], utils.COLORS['nocolor'], horizon_host))
 
     manifestdata = getManifestTemplate("horizon.pp")
     manifestdata += sslmanifestdata
