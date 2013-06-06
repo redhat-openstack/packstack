@@ -268,8 +268,8 @@ def validate_param_value(param, value):
 
 def process_param_value(param, value):
     _value = value
-    processors = param.PROCESSORS or []
-    for proc_func in processors:
+    proclist = param.PROCESSORS or []
+    for proc_func in proclist:
         logging.debug("Processing value of parameter "
                       "%s." % param.CONF_NAME)
         try:
