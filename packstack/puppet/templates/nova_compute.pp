@@ -27,6 +27,11 @@ class {"nova::compute":
     vncserver_proxyclient_address => "%(CONFIG_NOVA_COMPUTE_HOST)s",
 }
 
+package { 'qemu-kvm':
+    ensure => present,
+    before => Class['nova::compute::libvirt']
+}
+
 class { 'nova::compute::libvirt':
   libvirt_type                => "$libvirt_type",
   vncserver_listen            => "%(CONFIG_NOVA_COMPUTE_HOST)s",
