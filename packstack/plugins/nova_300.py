@@ -425,23 +425,8 @@ def createvncproxymanifest(config):
 
 
 def createcommonmanifest(config):
-    dirty = controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(",")
-    compnodes = [i.strip() for i in dirty if i.strip()]
-    conductor = config['CONFIG_NOVA_CONDUCTOR_HOST']
-    dbhost = config['CONFIG_MYSQL_HOST']
-
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
-            host, manifest = manifestfile.split('_', 1)
-            host = host.strip()
-
-            if host != conductor and host in compnodes:
-                perms = "nova"
-            else:
-                perms = "nova:%(CONFIG_NOVA_DB_PW)s" % config
-            config['CONFIG_NOVA_SQL_CONN'] = ("mysql://%s@%s/nova"
-                                              % (perms, dbhost))
-
             data = getManifestTemplate("nova_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
 
