@@ -425,8 +425,31 @@ def createvncproxymanifest(config):
 
 
 def createcommonmanifest(config):
+    dbhost = config['CONFIG_MYSQL_HOST']
+    dirty = controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(",")
+    nopass_nodes = [i.strip() for i in dirty if i.strip()]
+    dirty = [config.get('CONFIG_NOVA_CONDUCTOR_HOST'),
+             config.get('CONFIG_NOVA_API_HOST'),
+             config.get('CONFIG_NOVA_CERT_HOST'),
+             config.get('CONFIG_NOVA_VNCPROXY_HOST'),
+             config.get('CONFIG_NOVA_SCHED_HOST'),
+             config.get('CONFIG_NOVA_NETWORK_HOST')]
+    dbpass_nodes = [i.strip() for i in dirty if i and i.strip()]
+
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
+            host, manifest = manifestfile.split('_', 1)
+            host = host.strip()
+
+            if host in nopass_nodes and host not in dbpass_nodes:
+                # we should omit password in case we are installing only
+                # nova-compute to the host
+                perms = "nova"
+            else:
+                perms = "nova:%(CONFIG_NOVA_DB_PW)s" % config
+            config['CONFIG_NOVA_SQL_CONN'] = ("mysql://%s@%s/nova"
+                                              % (perms, dbhost))
+
             data = getManifestTemplate("nova_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
 
