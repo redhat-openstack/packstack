@@ -3,8 +3,8 @@
 
 STR_MASK = '*' * 8
 COLORS = {'nocolor': "\033[0m", 'red': "\033[0;31m",
-          'green': "\033[92m", 'blue': "\033[94m",
-          'yellow': "\033[93m"}
+          'green': "\033[32m", 'blue': "\033[34m",
+          'yellow': "\033[33m"}
 
 
 def color_text(text, color):
