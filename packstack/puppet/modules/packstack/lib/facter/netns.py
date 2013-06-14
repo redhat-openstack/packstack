@@ -170,6 +170,11 @@ class TestNetns(unittest.TestCase):
         be possible.
 
         """
+        try:
+            execute('which nc')
+        except Exception:
+            self.fail("The 'nc' command is not available - please install it.")
+
         sock_filename = os.path.join(tempfile.gettempdir(),
                                      'testsock-%s' % str(uuid.uuid4()))
         server = None
