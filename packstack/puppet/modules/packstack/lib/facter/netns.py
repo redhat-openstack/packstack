@@ -112,6 +112,8 @@ class TestNetns(unittest.TestCase):
               '-c 1 %(address1_1)s')
             e('%(ns2)s route add default gw %(address1_1)s')
             e('%(ns2)s ping -c 1 -w 1 %(address1_1)s')
+            e('ping -c 1 -w 1 %(address1_1)s', prefix='', return_code=1,
+              error_msg='Namespace isolation not supported!')
 
             # Check that iptables filtering and save/restore can be performed
             saved_iptables_state = e('%(ns1)s iptables-save').stdout.read()
