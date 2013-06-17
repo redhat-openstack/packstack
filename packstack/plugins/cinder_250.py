@@ -166,6 +166,14 @@ def check_cinder_vg(config):
             return
 
         server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
+        server.append('systemctl')
+        try:
+            server.execute()
+            rst_cmd = 'systemctl restart openstack-cinder-volume.service'
+        except ScriptRuntimeError:
+            rst_cmd = 'service openstack-cinder-volume restart'
+
+        server.clear()
         logging.info("A new cinder volumes group will be created")
         err = "Cinder's volume group '%s' could not be created" % \
                             cinders_volume
@@ -184,9 +192,12 @@ def check_cinder_vg(config):
 
         # Add the loop device on boot
         server.append('grep %(volume)s /etc/rc.d/rc.local || '
-            'echo "losetup -f %(path)s && vgchange -a y %(volume)s" '
-            '>> /etc/rc.d/rc.local' % {'volume': cinders_volume,
-                                       'path': cinders_volume_path})
+                      'echo "losetup -f %(path)s && '
+                            'vgchange -a y %(volume)s && '
+                            '%(restart_cmd)s" '
+                      '>> /etc/rc.d/rc.local' %
+                      {'volume': cinders_volume, 'restart_cmd': rst_cmd,
+                       'path': cinders_volume_path})
         server.append('grep "#!" /etc/rc.d/rc.local || '
                       'sed -i \'1i#!/bin/sh\' /etc/rc.d/rc.local')
         server.append('chmod +x /etc/rc.d/rc.local')
