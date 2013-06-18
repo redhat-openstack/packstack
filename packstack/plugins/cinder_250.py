@@ -155,6 +155,20 @@ def check_cinder_vg(config):
     except ScriptRuntimeError:
         pass
 
+    # Configure system LVM settings (snapshot_autoextend)
+    server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
+    server.append('sed -i -r "s/^ *snapshot_autoextend_threshold +=.*/'
+                  '    snapshot_autoextend_threshold = 80/" '
+                  '/etc/lvm/lvm.conf')
+    server.append('sed -i -r "s/^ *snapshot_autoextend_percent +=.*/'
+                  '    snapshot_autoextend_percent = 20/" '
+                  '/etc/lvm/lvm.conf')
+    try:
+        server.execute()
+    except ScriptRuntimeError:
+        logging.info("Warning: Unable to set system LVM settings.")
+
+
     if controller.CONF["CONFIG_CINDER_VOLUMES_CREATE"] != "y":
         if not have_cinders_volume:
             raise exceptions.MissingRequirements("The cinder server should"
