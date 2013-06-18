@@ -16,13 +16,13 @@
 # under the License.
 
 """
-Test cases for packstack.installer.setup_params module.
+Test cases for packstack.installer.core.parameters module.
 """
 
 from unittest import TestCase
 
 from ..test_base import PackstackTestCaseMixin
-from packstack.installer.setup_params import *
+from packstack.installer.core.parameters import *
 
 
 class ParameterTestCase(PackstackTestCaseMixin, TestCase):
@@ -45,7 +45,8 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
 
     def test_parameter_init(self):
         """
-        Test packstack.installer.setup_params.Parameter initialization
+        Test packstack.installer.core.parameters.Parameter
+        initialization
         """
         param = Parameter(self.data)
         for key, value in self.data.iteritems():
@@ -53,7 +54,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
 
     def test_default_attribute(self):
         """
-        Test packstack.installer.setup_params.Parameter default value
+        Test packstack.installer.core.parameters.Parameter default value
         """
         param = Parameter()
         self.assertIsNone(param.PROCESSORS)
@@ -75,7 +76,9 @@ class GroupTestCase(PackstackTestCaseMixin, TestCase):
             {"CONF_NAME": "CONFIG_MYSQL_PW"}]
 
     def test_group_init(self):
-        """Test packstack.installer.setup_params.Group initialization"""
+        """
+        Test packstack.installer.core.parameters.Group initialization
+        """
         group = Group(attributes=self.attrs, parameters=self.params)
         for key, value in self.attrs.iteritems():
             self.assertEqual(getattr(group, key), value)
@@ -83,7 +86,9 @@ class GroupTestCase(PackstackTestCaseMixin, TestCase):
             self.assertIn(param['CONF_NAME'], group.parameters)
 
     def test_search(self):
-        """Test packstack.installer.setup_params.Group search method"""
+        """
+        Test packstack.installer.core.parameters.Group search method
+        """
         group = Group(attributes=self.attrs, parameters=self.params)
         param_list = group.search('PROMPT', 'find_me')
         self.assertEqual(len(param_list), 1)

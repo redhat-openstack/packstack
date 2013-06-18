@@ -2,7 +2,7 @@
 Controller class is a SINGLETON which handles all groups, params, sequences,
 steps and replaces the CONF dictionary.
 """
-from setup_params import Group
+from .core.parameters import Group
 from .core.sequences import Sequence
 
 
