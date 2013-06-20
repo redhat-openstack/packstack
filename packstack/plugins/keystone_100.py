@@ -74,6 +74,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : True,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "keystone-token-format",
+                   "USAGE"           : "Kestone token format. Use either UUID or PKI",
+                   "PROMPT"          : "Enter the Keystone token format.",
+                   "OPTION_LIST"     : ['UUID', 'PKI'],
+                   "VALIDATORS"      : [validators.validate_options],
+                   "DEFAULT_VALUE"   : 'PKI',
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : 'CONFIG_KEYSTONE_TOKEN_FORMAT',
+                   "USE_DEFAULT"     : True,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                  ]
 
     groupDict = { "GROUP_NAME"            : "KEYSTONE",
