@@ -77,3 +77,10 @@ exec {'tuned-virtual-host':
     command => '/usr/sbin/tuned-adm profile virtual-host',
     require => Service['tuned'],
 }
+
+file_line { 'libvirt-guests':
+    path  => '/etc/sysconfig/libvirt-guests',
+    line  => 'ON_BOOT=ignore',
+    match => '^[\s#]*ON_BOOT=.*',
+    require => Class['nova::compute::libvirt']
+}
