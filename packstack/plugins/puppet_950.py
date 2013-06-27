@@ -77,7 +77,7 @@ def installdeps(config):
 def copyPuppetModules(config):
     os_modules = ' '.join(('apache', 'ceilometer', 'cinder', 'concat',
                            'create_resources', 'firewall', 'glance',
-                           'horizon', 'inifile', 'keystone',
+                           'heat', 'horizon', 'inifile', 'keystone',
                            'memcached', 'mongodb', 'mysql', 'neutron',
                            'nova', 'openstack', 'packstack', 'qpid',
                            'rsync', 'ssh', 'stdlib', 'swift', 'sysctl',

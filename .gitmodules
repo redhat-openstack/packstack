@@ -82,3 +82,6 @@
 [submodule "packstack/puppet/modules/mongodb"]
 	path = packstack/puppet/modules/mongodb
 	url = https://github.com/puppetlabs/puppetlabs-mongodb.git
+[submodule "packstack/puppet/modules/heat"]
+	path = packstack/puppet/modules/heat
+	url = https://github.com/packstack/puppet-heat.git
