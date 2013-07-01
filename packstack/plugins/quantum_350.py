@@ -278,8 +278,10 @@ def initSequences(controller):
 
     if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch":
         controller.CONF['CONFIG_QUANTUM_L2_DBNAME'] = 'ovs_quantum'
+        controller.CONF['CONFIG_QUANTUM_CORE_PLUGIN'] = 'quantum.plugins.openvswitch.ovs_quantum_plugin.OVSQuantumPluginV2'
     elif controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "linuxbridge":
         controller.CONF['CONFIG_QUANTUM_L2_DBNAME'] = 'quantum_linux_bridge'
+        controller.CONF['CONFIG_QUANTUM_CORE_PLUGIN'] = 'quantum.plugins.linuxbridge.lb_quantum_plugin.LinuxBridgePluginV2'
 
     global api_hosts, l3_hosts, dhcp_hosts, compute_hosts, meta_hosts, q_hosts
     dirty = controller.CONF['CONFIG_QUANTUM_SERVER_HOST'].split(',')
@@ -328,8 +330,8 @@ def createManifest(config):
             manifest_data = getManifestTemplate("quantum_ovs_plugin.pp")
             appendManifestFile(manifest_file, manifest_data, 'quantum')
         elif controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'linuxbridge':
-            # Eventually linuxbridge module will need to spearate plugin/agent functionality
-            pass
+            manifest_data = getManifestTemplate("quantum_lb_plugin.pp")
+            appendManifestFile(manifest_file, manifest_data, 'quantum')
 
 def createKeystoneManifest(config):
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
