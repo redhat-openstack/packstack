@@ -90,7 +90,7 @@ def initConfig(controllerObject):
              "CONDITION"       : False },
             {"CMD_OPTION"      : "quantum-l3-ext-bridge",
              "USAGE"           : "The name of the bridge that the Quantum L3 agent will use for external traffic",
-             "PROMPT"          : "Enter the name of the bridge that the Quantum L3 agent will use for external traffic",
+             "PROMPT"          : "Enter the bridge the Quantum L3 agent will use for external traffic, or 'provider' if using provider networks",
              "OPTION_LIST"     : [],
              "VALIDATORS"      : [validators.validate_not_empty],
              "DEFAULT_VALUE"   : "br-ex",
@@ -224,6 +224,18 @@ def initConfig(controllerObject):
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
+            {"CMD_OPTION"      : "quantum-ovs-bridge-interfaces",
+             "USAGE"           : "A comma separated list of colon-separated OVS bridge:interface pairs. The interface will be added to the associated bridge.",
+             "PROMPT"          : "Enter a comma separated list of OVS bridge:interface pairs for the Quantum openvswitch plugin",
+             "OPTION_LIST"     : [],
+             "VALIDATORS"      : [],
+             "DEFAULT_VALUE"   : "",
+             "MASK_INPUT"      : False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME"       : "CONFIG_QUANTUM_OVS_BRIDGE_IFACES",
+             "USE_DEFAULT"     : False,
+             "NEED_CONFIRM"    : False,
+             "CONDITION"       : False },
             ],
         }
 
@@ -339,13 +351,22 @@ def createKeystoneManifest(config):
 def createL3Manifests(config):
     global l3_hosts
 
+    # When using provider networks, the external_network_bridge setting should be empty.
+    # Since the puppet-quantum module has a default value of br-ex, we need to set
+    # external_network_bridge to false (unquoted). Since we need both quoted and unquoted
+    # values, we handle that here.
+    if controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE'] == 'provider':
+        controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE_STR'] = 'false'
+    else:
+        controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE_STR'] = "'%s'" % (controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE'],)
+
     for host in l3_hosts:
         controller.CONF['CONFIG_QUANTUM_L3_HOST'] = host
         controller.CONF['CONFIG_QUANTUM_L3_INTERFACE_DRIVER'] = getInterfaceDriver()
         manifestdata = getManifestTemplate("quantum_l3.pp")
         manifestfile = "%s_quantum.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + '\n')
-        if controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch' and controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE']:
+        if controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch' and controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE'] != 'provider':
             controller.CONF['CONFIG_QUANTUM_OVS_BRIDGE'] = controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE']
             manifestdata = getManifestTemplate('quantum_ovs_bridge.pp')
             appendManifestFile(manifestfile, manifestdata + '\n')
@@ -360,6 +381,9 @@ def createDHCPManifests(config):
 
         appendManifestFile(manifestfile, manifestdata + "\n")
 
+def get_values(val):
+    return [x.strip() for x in val.split(',')] if val else []
+
 def createL2AgentManifests(config):
     global compute_hosts, dhcp_host, l3_hosts
 
@@ -367,14 +391,22 @@ def createL2AgentManifests(config):
         host_var = 'CONFIG_QUANTUM_OVS_HOST'
         template_name = 'quantum_ovs_agent.pp'
 
+        bm_arr = get_values(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"])
+        iface_arr = get_values(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_IFACES"])
+
+        for if_map in iface_arr:
+            controller.CONF['CONFIG_QUANTUM_OVS_BRIDGE'], controller.CONF['CONFIG_QUANTUM_OVS_IFACE'] = if_map.split(':')
+            manifestdata = getManifestTemplate("quantum_ovs_port.pp")
+            for host in l3_hosts:
+              manifestfile = "%s_quantum.pp" % (host,)
+              appendManifestFile(manifestfile, manifestdata + "\n")
+
         # The CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS parameter contains a
         # comma-separated list of bridge mappings. Since the puppet module
         # expects this parameter to be an array, this parameter must be properly
         # formatted by packstack, then consumed by the puppet module.
         # For example, the input string 'A, B, C' should formatted as '['A','B','C']'.
-        r = re.compile("[\s,]+")
-        controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"] = \
-            str(filter(None, r.split(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"])))
+        controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"] = str(bm_arr)
 
     elif controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "linuxbridge":
         host_var = 'CONFIG_QUANTUM_LB_HOST'
