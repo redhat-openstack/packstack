@@ -46,6 +46,15 @@ def initConfig(controllerObject):
     controller.addGroup(groupDict, paramsList)
 
 
+def getinstallhostlist(conf):
+    list = []
+    exclude_list = map(str.strip, conf['EXCLUDE_SERVERS'].split(','))
+    for host in gethostlist(conf):
+        if host not in exclude_list:
+            list.append(host)
+    return list
+
+
 def initSequences(controller):
     puppetpresteps = [
              {'title': 'Clean Up', 'functions':[runCleanup]},
@@ -67,7 +76,7 @@ def runCleanup(config):
 
 
 def installdeps(config):
-    for hostname in gethostlist(controller.CONF):
+    for hostname in getinstallhostlist(controller.CONF):
         server = utils.ScriptRunner(hostname)
         for package in ("puppet", "openssh-clients", "tar", "nc"):
             server.append("rpm -q %s || yum install -y %s" % (package, package))
@@ -90,7 +99,7 @@ def copyPuppetModules(config):
     tar_opts = ""
     if platform.linux_distribution()[0] == "Fedora":
         tar_opts += "--exclude create_resources "
-    for hostname in gethostlist(controller.CONF):
+    for hostname in getinstallhostlist(controller.CONF):
         host_dir = controller.temp_map[hostname]
         puppet_dir = os.path.join(host_dir, basedefs.PUPPET_MANIFEST_RELATIVE)
         server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
@@ -181,7 +190,7 @@ def applyPuppetManifest(config):
             waitforpuppet(currently_running)
         lastmarker = marker
 
-        for hostname in gethostlist(controller.CONF):
+        for hostname in getinstallhostlist(controller.CONF):
             if "%s_" % hostname not in manifest:
                 continue
 
