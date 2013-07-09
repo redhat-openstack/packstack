@@ -68,6 +68,35 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : True,
                    "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "cinder-backend",
+                   "USAGE"           : ("The Cinder backend to use, valid options are: "
+                                        "lvm, gluster"),
+                   "PROMPT"          : "Enter the Cinder backend to be configured",
+                   "OPTION_LIST"     : ["lvm", "gluster"],
+                   "VALIDATORS"      : [validators.validate_options],
+                   "DEFAULT_VALUE"   : "lvm",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_CINDER_BACKEND",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                 ]
+
+    groupDict = { "GROUP_NAME"            : "CINDER",
+                  "DESCRIPTION"           : "Cinder Config parameters",
+                  "PRE_CONDITION"         : "CONFIG_CINDER_INSTALL",
+                  "PRE_CONDITION_MATCH"   : "y",
+                  "POST_CONDITION"        : False,
+                  "POST_CONDITION_MATCH"  : True}
+
+    controller.addGroup(groupDict, paramsList)
+
+    def check_lvm_options(config):
+        return (config.get('CONFIG_CINDER_INSTALL', 'n') == 'y' and
+                config.get('CONFIG_CINDER_BACKEND', 'lvm') == 'lvm')
+
+    paramsList = [
                   {"CMD_OPTION"      : "cinder-volumes-create",
                    "USAGE"           : ("Create Cinder's volumes group. This should only be done for "
                                         "testing on a proof-of-concept installation of Cinder.  This "
@@ -86,18 +115,19 @@ def initConfig(controllerObject):
                    "CONDITION"       : False },
                  ]
 
-    groupDict = { "GROUP_NAME"            : "CINDER",
-                  "DESCRIPTION"           : "Cinder Config parameters",
-                  "PRE_CONDITION"         : "CONFIG_CINDER_INSTALL",
-                  "PRE_CONDITION_MATCH"   : "y",
+    groupDict = { "GROUP_NAME"            : "CINDERVOLUMECREATE",
+                  "DESCRIPTION"           : "Cinder volume create Config parameters",
+                  "PRE_CONDITION"         : check_lvm_options,
+                  "PRE_CONDITION_MATCH"   : True,
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
 
     controller.addGroup(groupDict, paramsList)
 
-    def check_options(config):
-        return (config.get('CONFIG_CINDER_INSTALL', 'n') ==
-                config.get('CONFIG_CINDER_VOLUMES_CREATE', 'n') == 'y')
+    def check_lvm_vg_options(config):
+        return (config.get('CONFIG_CINDER_INSTALL', 'n') == 'y' and
+                config.get('CONFIG_CINDER_BACKEND', 'lvm') == 'lvm' and
+                config.get('CONFIG_CINDER_VOLUMES_CREATE', 'y') == 'y')
 
     paramsList = [
                   {"CMD_OPTION"      : "cinder-volumes-size",
@@ -114,9 +144,40 @@ def initConfig(controllerObject):
                    "CONDITION"       : False },
                  ]
 
-    groupDict = { "GROUP_NAME"            : "CINDERVOLUMECREATE",
-                  "DESCRIPTION"           : "Cinder volume create Config parameters",
-                  "PRE_CONDITION"         : check_options,
+    groupDict = { "GROUP_NAME"            : "CINDERVOLUMESIZE",
+                  "DESCRIPTION"           : "Cinder volume size Config parameters",
+                  "PRE_CONDITION"         : check_lvm_vg_options,
+                  "PRE_CONDITION_MATCH"   : True,
+                  "POST_CONDITION"        : False,
+                  "POST_CONDITION_MATCH"  : True}
+
+    controller.addGroup(groupDict, paramsList)
+
+    def check_gluster_options(config):
+        return (config.get('CONFIG_CINDER_INSTALL', 'n') == 'y' and
+                config.get('CONFIG_CINDER_BACKEND', 'lvm') == 'gluster')
+
+    paramsList = [
+                  {"CMD_OPTION"      : "cinder-gluster-mounts",
+                   "USAGE"           : ("A gluster volume to mount, eg: "
+                                        "ip-address:/vol-name "
+                                        "You don't need to create a local volume group when "
+                                        "using gluster."),
+                   "PROMPT"          : "Enter a gluster volume for use with Cinder",
+                   "OPTION_LIST"     : ["^([\d]{1,3}\.){3}[\d]{1,3}:/.*"],
+                   "VALIDATORS"      : [validators.validate_regexp],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_CINDER_GLUSTER_MOUNTS",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  ]
+
+    groupDict = { "GROUP_NAME"            : "CINDERGLUSTERMOUNTS",
+                  "DESCRIPTION"           : "Cinder gluster mounts",
+                  "PRE_CONDITION"         : check_gluster_options,
                   "PRE_CONDITION_MATCH"   : True,
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
@@ -129,16 +190,22 @@ def initSequences(controller):
         return
 
     cinder_steps = [
-             {'title': 'Adding Cinder Keystone manifest entries', 'functions':[create_keystone_manifest]},
              {'title': 'Installing dependencies for Cinder', 'functions':[install_cinder_deps]},
-             {'title': 'Checking if the Cinder server has a cinder-volumes vg', 'functions':[check_cinder_vg]},
+             {'title': 'Adding Cinder Keystone manifest entries', 'functions':[create_keystone_manifest]},
              {'title': 'Adding Cinder manifest entries', 'functions':[create_manifest]}
     ]
+
+    if controller.CONF['CONFIG_CINDER_BACKEND'] == 'lvm':
+        cinder_steps.append({'title': 'Checking if the Cinder server has a cinder-volumes vg', 'functions':[check_cinder_vg]})
     controller.addSequence("Installing OpenStack Cinder", [], [], cinder_steps)
 
 def install_cinder_deps(config):
     server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
-    server.append("rpm -q %(package)s || yum install -y %(package)s" % {'package': "lvm2"})
+    pkgs = []
+    if controller.CONF['CONFIG_CINDER_BACKEND'] == 'lvm':
+        pkgs.append('lvm2')
+    for p in pkgs:
+        server.append("rpm -q %(package)s || yum install -y %(package)s" % dict(package=p))
     server.execute()
 
 def check_cinder_vg(config):
@@ -246,4 +313,8 @@ def create_keystone_manifest(config):
 def create_manifest(config):
     manifestfile = "%s_cinder.pp" % controller.CONF['CONFIG_CINDER_HOST']
     manifestdata = getManifestTemplate("cinder.pp")
+
+    if controller.CONF['CONFIG_CINDER_BACKEND'] == "gluster":
+        manifestdata += getManifestTemplate("cinder_gluster.pp")
+
     appendManifestFile(manifestfile, manifestdata)

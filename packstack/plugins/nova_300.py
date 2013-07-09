@@ -368,6 +368,8 @@ def createcomputemanifest(config):
     for host in hostlist:
         controller.CONF["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
+        if controller.CONF['CONFIG_CINDER_BACKEND'] == 'gluster':
+            manifestdata += getManifestTemplate("nova_gluster.pp")
         manifestfile = "%s_nova.pp"%host
 
         nova_config_options = NovaConfig()
