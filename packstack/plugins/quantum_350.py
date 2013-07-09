@@ -89,7 +89,7 @@ def initConfig(controllerObject):
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
             {"CMD_OPTION"      : "quantum-l3-ext-bridge",
-             "USAGE"           : "The name of the bridge that the Quantum L3 agent will use for external traffic",
+             "USAGE"           : "The name of the bridge that the Quantum L3 agent will use for external traffic, or 'provider' if using provider networks",
              "PROMPT"          : "Enter the bridge the Quantum L3 agent will use for external traffic, or 'provider' if using provider networks",
              "OPTION_LIST"     : [],
              "VALIDATORS"      : [validators.validate_not_empty],
@@ -351,14 +351,8 @@ def createKeystoneManifest(config):
 def createL3Manifests(config):
     global l3_hosts
 
-    # When using provider networks, the external_network_bridge setting should be empty.
-    # Since the puppet-quantum module has a default value of br-ex, we need to set
-    # external_network_bridge to false (unquoted). Since we need both quoted and unquoted
-    # values, we handle that here.
     if controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE'] == 'provider':
-        controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE_STR'] = 'false'
-    else:
-        controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE_STR'] = "'%s'" % (controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE'],)
+        controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE'] = ''
 
     for host in l3_hosts:
         controller.CONF['CONFIG_QUANTUM_L3_HOST'] = host
@@ -366,7 +360,7 @@ def createL3Manifests(config):
         manifestdata = getManifestTemplate("quantum_l3.pp")
         manifestfile = "%s_quantum.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + '\n')
-        if controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch' and controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE'] != 'provider':
+        if controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch' and controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE']:
             controller.CONF['CONFIG_QUANTUM_OVS_BRIDGE'] = controller.CONF['CONFIG_QUANTUM_L3_EXT_BRIDGE']
             manifestdata = getManifestTemplate('quantum_ovs_bridge.pp')
             appendManifestFile(manifestfile, manifestdata + '\n')
@@ -394,13 +388,6 @@ def createL2AgentManifests(config):
         bm_arr = get_values(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"])
         iface_arr = get_values(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_IFACES"])
 
-        for if_map in iface_arr:
-            controller.CONF['CONFIG_QUANTUM_OVS_BRIDGE'], controller.CONF['CONFIG_QUANTUM_OVS_IFACE'] = if_map.split(':')
-            manifestdata = getManifestTemplate("quantum_ovs_port.pp")
-            for host in l3_hosts:
-              manifestfile = "%s_quantum.pp" % (host,)
-              appendManifestFile(manifestfile, manifestdata + "\n")
-
         # The CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS parameter contains a
         # comma-separated list of bridge mappings. Since the puppet module
         # expects this parameter to be an array, this parameter must be properly
@@ -418,9 +405,13 @@ def createL2AgentManifests(config):
     # specifically for the l2 agent
     for host in compute_hosts | dhcp_hosts | l3_hosts:
         controller.CONF[host_var] = host
-        manifestdata = getManifestTemplate(template_name)
         manifestfile = "%s_quantum.pp" % (host,)
+        manifestdata = getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
+        for if_map in iface_arr:
+            controller.CONF['CONFIG_QUANTUM_OVS_BRIDGE'], controller.CONF['CONFIG_QUANTUM_OVS_IFACE'] = if_map.split(':')
+            manifestdata = getManifestTemplate("quantum_ovs_port.pp")
+            appendManifestFile(manifestfile, manifestdata + "\n")
 
 def createMetadataManifests(config):
     global meta_hosts
