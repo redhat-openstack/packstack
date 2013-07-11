@@ -1,6 +1,7 @@
 
 class {"qpid::server":
-    auth => "no"
+    auth => "no",
+    clustered => false,
 }
 
 firewall { '001 qpid incoming':
@@ -8,4 +9,3 @@ firewall { '001 qpid incoming':
     dport    => ['5672'],
     action   => 'accept',
 }
-
