@@ -97,8 +97,8 @@ def initConfig(controllerObject):
                   {"CMD_OPTION"      : "rhn-satellite-server",
                    "USAGE"           : ("To subscribe each server with RHN Satellite,"
                                         "fill Satellite's URL here. Note that either "
-                                        "satellite's username/password or activtion "
-                                        "key has to be provided/"),
+                                        "satellite's username/password or activation "
+                                        "key has to be provided"),
                    "PROMPT"          : ("To subscribe each server with RHN Satellite "
                                         "enter RHN Satellite server URL"),
                    "OPTION_LIST"     : [],
