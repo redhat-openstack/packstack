@@ -399,6 +399,10 @@ def createL2AgentManifests(config):
                 controller.CONF['CONFIG_NEUTRON_OVS_BRIDGE'], controller.CONF['CONFIG_NEUTRON_OVS_IFACE'] = if_map.split(':')
                 manifestdata = getManifestTemplate("neutron_ovs_port.pp")
                 appendManifestFile(manifestfile, manifestdata + "\n")
+        # Additional configurations required for compute hosts
+        if host in compute_hosts:
+            manifestdata = getManifestTemplate('neutron_bridge_module.pp')
+            appendManifestFile(manifestfile, manifestdata + '\n')
 
 def createMetadataManifests(config):
     global meta_hosts

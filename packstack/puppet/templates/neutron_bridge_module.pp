@@ -1,0 +1,2 @@
+
+class { 'packstack::neutron::bridge': }
