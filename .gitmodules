@@ -54,7 +54,7 @@
 	url = https://github.com/saz/puppet-ssh.git
 [submodule "packstack/puppet/modules/inifile"]
 	path = packstack/puppet/modules/inifile
-	url = https://github.com/cprice-puppet/puppetlabs-inifile.git
+        url = https://github.com/puppetlabs/puppetlabs-inifile.git
 [submodule "packstack/puppet/modules/qpid"]
 	path = packstack/puppet/modules/qpid
 	url = https://github.com/derekhiggins/puppet-qpid.git
