@@ -10,6 +10,7 @@ class packstack::netns (
         exec { "netns_dependecy_install":
             path => "/usr/bin/",
             command => "yum update -y kernel iputils iproute"
+            timeout => 900,
         }
 
         notify { "packstack_info":
