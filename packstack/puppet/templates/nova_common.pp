@@ -12,5 +12,6 @@ class {"nova":
     glance_api_servers => "%(CONFIG_GLANCE_HOST)s:9292",
     qpid_hostname => "%(CONFIG_QPID_HOST)s",
     rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
-    verbose     => 'True',
+    verbose     => true,
+    debug       => true,
 }
