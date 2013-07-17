@@ -128,9 +128,11 @@ def marshall_conf_bool(conf, key):
 
 def initSequences(controller):
     provisioning_required = (
-        controller.CONF['CONFIG_PROVISION_DEMO'] == 'y'
+        (controller.CONF['CONFIG_QUANTUM_INSTALL']== 'y' and
+        (controller.CONF['CONFIG_PROVISION_DEMO'] == 'y'
         or
-        controller.CONF['CONFIG_PROVISION_TEMPEST'] == 'y'
+        controller.CONF['CONFIG_PROVISION_TEMPEST'] == 'y')
+        )
     )
     if not provisioning_required:
        return
