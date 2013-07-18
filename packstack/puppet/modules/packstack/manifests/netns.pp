@@ -9,7 +9,7 @@ class packstack::netns (
     if $::netns_support != "true" {
         exec { "netns_dependecy_install":
             path => "/usr/bin/",
-            command => "yum update -y kernel iputils iproute"
+            command => "yum update -y kernel iputils iproute",
             timeout => 900,
         }
 
