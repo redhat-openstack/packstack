@@ -59,8 +59,6 @@ def initSequences(controller):
 
 def createmanifest(config):
     client_host = controller.CONF['CONFIG_OSCLIENT_HOST'].strip()
-    if controller.CONF.get('CONFIG_PROVISION_DEMO', 'n') != 'y':
-        controller.CONF['CONFIG_PROVISION_DEMO'] = 'n'
     manifestfile = "%s_osclient.pp" % client_host
     manifestdata = getManifestTemplate("openstack_client.pp")
     appendManifestFile(manifestfile, manifestdata)
