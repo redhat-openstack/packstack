@@ -57,7 +57,7 @@
         url = https://github.com/puppetlabs/puppetlabs-inifile.git
 [submodule "packstack/puppet/modules/qpid"]
 	path = packstack/puppet/modules/qpid
-	url = https://github.com/derekhiggins/puppet-qpid.git
+	url = https://github.com/packstack/puppet-qpid.git
 [submodule "packstack/puppet/modules/vlan"]
 	path = packstack/puppet/modules/vlan
 	url = https://github.com/derekhiggins/puppet-vlan.git
