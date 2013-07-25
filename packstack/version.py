@@ -1,5 +1,5 @@
 
-VERSION = ['2013', '1', '1']
+VERSION = ['2013', '2', '1']
 FINAL=False
 
 def version_string():
