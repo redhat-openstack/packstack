@@ -40,7 +40,7 @@ class { 'nova::compute::libvirt':
 exec {'load_kvm':
     user => 'root',
     command => '/bin/sh /etc/sysconfig/modules/kvm.modules',
-    onlyif => '/bin/test -e /etc/sysconfig/modules/kvm.modules',
+    onlyif => '/usr/bin/test -e /etc/sysconfig/modules/kvm.modules',
 }
 
 Class['nova::compute']-> Exec["load_kvm"]
