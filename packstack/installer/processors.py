@@ -1,12 +1,24 @@
 # -*- coding: utf-8 -*-
 
+import netaddr
 import os
 
 from .utils import ScriptRunner, force_ip
 from .exceptions import ParamProcessingError, NetworkError
 
 
-__all__ = ('ParamProcessingError', 'process_host', 'process_ssh_key')
+__all__ = ('ParamProcessingError', 'process_cidr', 'process_host',
+           'process_ssh_key')
+
+
+def process_cidr(param, process_args=None):
+    """
+    Corrects given CIDR if necessary.
+    """
+    try:
+        return str(netaddr.IPNetwork(param).cidr)
+    except Exception, ex:
+        raise ParamProcessingError(str(ex))
 
 
 def process_host(param, process_args=None):

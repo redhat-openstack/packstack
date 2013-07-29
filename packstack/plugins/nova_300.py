@@ -6,8 +6,7 @@ import os
 import uuid
 import logging
 
-from packstack.installer import validators
-from packstack.installer import utils
+from packstack.installer import processors, utils, validators
 from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile, manifestfiles
@@ -203,6 +202,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "IP Range for Flat DHCP",
                    "PROMPT"          : "Enter the IP Range for Flat DHCP",
                    "OPTION_LIST"     : ["^([\d]{1,3}\.){3}[\d]{1,3}/\d\d?$"],
+                   "PROCESSORS"      : [processors.process_cidr],
                    "VALIDATORS"      : [validators.validate_regexp],
                    "DEFAULT_VALUE"   : "192.168.32.0/22",
                    "MASK_INPUT"      : False,
@@ -215,6 +215,7 @@ def initConfig(controllerObject):
                    "USAGE"           : "IP Range for Floating IP's",
                    "PROMPT"          : "Enter the IP Range for Floating IP's",
                    "OPTION_LIST"     : ["^([\d]{1,3}\.){3}[\d]{1,3}/\d\d?$"],
+                   "PROCESSORS"      : [processors.process_cidr],
                    "VALIDATORS"      : [validators.validate_regexp],
                    "DEFAULT_VALUE"   : "10.3.4.0/22",
                    "MASK_INPUT"      : False,
