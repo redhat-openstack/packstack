@@ -147,7 +147,7 @@ def validate_multi_ip(param, options=None):
     parameter value are in IPv4 or IPv6 aformat.
     """
     for host in param.split(','):
-        host, device = host.split('/', 1)
+        host = host.split('/', 1)[0]
         validate_ip(host.strip(), options)
 
 
