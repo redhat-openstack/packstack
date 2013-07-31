@@ -10,6 +10,7 @@ firewall { '000 nat':
   chain  => 'POSTROUTING',
   jump   => 'MASQUERADE',
   source => $::openstack::provision::floating_range,
+  outiface => $::gateway_device,
   table => 'nat',
   proto => 'all',
 }
