@@ -410,10 +410,11 @@ def createL2AgentManifests(config):
         manifestfile = "%s_quantum.pp" % (host,)
         manifestdata = getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
-        for if_map in iface_arr:
-            controller.CONF['CONFIG_QUANTUM_OVS_BRIDGE'], controller.CONF['CONFIG_QUANTUM_OVS_IFACE'] = if_map.split(':')
-            manifestdata = getManifestTemplate("quantum_ovs_port.pp")
-            appendManifestFile(manifestfile, manifestdata + "\n")
+        if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch":
+            for if_map in iface_arr:
+                controller.CONF['CONFIG_QUANTUM_OVS_BRIDGE'], controller.CONF['CONFIG_QUANTUM_OVS_IFACE'] = if_map.split(':')
+                manifestdata = getManifestTemplate("quantum_ovs_port.pp")
+                appendManifestFile(manifestfile, manifestdata + "\n")
 
 def createMetadataManifests(config):
     global meta_hosts
