@@ -30,7 +30,7 @@
 	url = https://github.com/packstack/puppetlabs-mysql.git
 [submodule "packstack/puppet/modules/concat"]
 	path = packstack/puppet/modules/concat
-	url = https://github.com/puppetlabs/puppetlabs-concat.git
+	url = https://github.com/ripienaar/puppet-concat.git
 [submodule "packstack/puppet/modules/create_resources"]
 	path = packstack/puppet/modules/create_resources
 	url = https://github.com/puppetlabs/puppetlabs-create_resources.git
