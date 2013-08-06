@@ -86,8 +86,7 @@ def initConfig(controllerObject):
         # resources are implemented) and quantum with namespaces (due
         # to the provisioning manifest assuming this configuration).
         return is_all_in_one(config) and \
-               config['CONFIG_QUANTUM_INSTALL'] == 'y' and \
-               config['CONFIG_QUANTUM_USE_NAMESPACES'] == 'y'
+               config['CONFIG_QUANTUM_INSTALL'] == 'y'
 
     def allow_all_in_one_ovs_bridge(config):
         return allow_provisioning(config) and \

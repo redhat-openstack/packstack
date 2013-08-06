@@ -40,18 +40,6 @@ def initConfig(controllerObject):
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
-            {"CMD_OPTION"      : "quantum-use-namespaces",
-             "USAGE"           : "Enable network namespaces for Quantum",
-             "PROMPT"          : "Should Quantum use network namespaces?",
-             "OPTION_LIST"     : ["y", "n"],
-             "VALIDATORS"      : [validators.validate_options],
-             "DEFAULT_VALUE"   : "y",
-             "MASK_INPUT"      : False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME"       : "CONFIG_QUANTUM_USE_NAMESPACES",
-             "USE_DEFAULT"     : False,
-             "NEED_CONFIRM"    : False,
-             "CONDITION"       : False },
             {"CMD_OPTION"      : "quantum-ks-password",
              "USAGE"           : "The password to use for Quantum to authenticate with Keystone",
              "PROMPT"          : "Enter the password for Quantum Keystone access",
@@ -283,10 +271,6 @@ def getInterfaceDriver():
 def initSequences(controller):
     if controller.CONF['CONFIG_QUANTUM_INSTALL'] != 'y':
         return
-    if controller.CONF['CONFIG_QUANTUM_USE_NAMESPACES'] == 'y':
-        controller.CONF['CONFIG_QUANTUM_USE_NAMESPACES'] = 'True'
-    else:
-        controller.CONF['CONFIG_QUANTUM_USE_NAMESPACES'] = 'False'
 
     if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch":
         controller.CONF['CONFIG_QUANTUM_L2_DBNAME'] = 'ovs_quantum'
