@@ -89,7 +89,7 @@ def copyPuppetModules(config):
                            'glance', 'horizon', 'inifile',
                            'keystone', 'memcached', 'mysql',
                            'nova', 'openstack', 'packstack',
-                           'qpid', 'quantum', 'rsync', 'ssh', 'stdlib',
+                           'qpid', 'neutron', 'rsync', 'ssh', 'stdlib',
                            'swift', 'sysctl', 'tempest', 'vcsrepo',
                            'vlan', 'vswitch', 'xinetd'))
 

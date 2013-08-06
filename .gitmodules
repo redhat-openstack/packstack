@@ -64,12 +64,12 @@
 [submodule "packstack/puppet/modules/vswitch"]
 	path = packstack/puppet/modules/vswitch
 	url = https://github.com/packstack/puppet-vswitch.git
-[submodule "packstack/puppet/modules/quantum"]
-	path = packstack/puppet/modules/quantum
-	url = https://github.com/stackforge/puppet-quantum.git
 [submodule "packstack/puppet/modules/tempest"]
 	path = packstack/puppet/modules/tempest
 	url = git://github.com/stackforge/puppet-tempest.git
 [submodule "packstack/puppet/modules/vcsrepo"]
 	path = packstack/puppet/modules/vcsrepo
 	url = https://github.com/puppetlabs/puppetlabs-vcsrepo.git
+[submodule "packstack/puppet/modules/neutron"]
+	path = packstack/puppet/modules/neutron
+	url = https://github.com/stackforge/puppet-quantum.git
