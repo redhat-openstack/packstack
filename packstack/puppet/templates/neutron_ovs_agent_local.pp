@@ -1,0 +1,2 @@
+class { 'neutron::agents::ovs':
+}
