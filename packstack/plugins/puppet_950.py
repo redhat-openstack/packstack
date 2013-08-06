@@ -176,6 +176,8 @@ def waitforpuppet(currently_running):
 
 def applyPuppetManifest(config):
     print
+    if config.get("DRY_RUN"):
+        return
     currently_running = []
     lastmarker = None
     for manifest, marker in manifestfiles.getFiles():

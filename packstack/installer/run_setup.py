@@ -534,6 +534,8 @@ def _addFinalInfoMsg():
     successfull install of rhemv
     """
     controller.MESSAGES.append(output_messages.INFO_LOG_FILE_PATH%(logFile))
+    controller.MESSAGES.append(
+        output_messages.INFO_MANIFEST_PATH%(basedefs.PUPPET_MANIFEST_DIR))
 
 
 def _summaryParamsToLog():
@@ -710,8 +712,10 @@ def initCmdLineParser():
                                           "--novacompute-privif=lo --novanetwork-privif=lo --os-swift-install=y --nagios-install=y "
                                           ", this option can be used to install an all in one OpenStack on this host")
 
+    parser.add_option("-t", "--timeout", default=300, help="The timeout for puppet Exec calls")
     parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file(rst format)")
     parser.add_option("-d", "--debug", action="store_true", default=False, help="Enable debug in logging")
+    parser.add_option("-y", "--dry-run", action="store_true", default=False, help="Don't execute, just generate manifests")
 
     # For each group, create a group option
     for group in controller.getAllGroups():
@@ -799,10 +803,7 @@ def countCmdLineFlags(options, flag):
     counter = 0
     # make sure only flag was supplied
     for key, value  in options.__dict__.items():
-        if key == flag:
-            next
-        # Do not count --debug
-        elif key == 'debug':
+        if key in (flag, 'debug', 'timeout', 'dry_run'):
             next
         # If anything but flag was called, increment
         elif value:
@@ -872,6 +873,9 @@ def main():
         # Parse parameters
         runConfiguration = True
         confFile = None
+
+        controller.CONF['DEFAULT_EXEC_TIMEOUT'] = options.timeout
+        controller.CONF['DRY_RUN'] = options.dry_run
 
         # If --gen-answer-file was supplied, do not run main
         if options.gen_answer_file:
