@@ -53,7 +53,7 @@ class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
         serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_USER"] = ""
         serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_PW"] = ""
 
-        serverprep_901.serverprep()
+        serverprep_901.serverprep(serverprep_901.controller.CONF)
 
         self.assertNotEqual(
             self.fake_popen.data.find('--password="%s"' % password), -1

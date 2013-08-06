@@ -200,9 +200,11 @@ def initConfig(controllerObject):
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
+            ],
+        "QUANTUM_OVS_PLUGIN_VLAN" : [
             {"CMD_OPTION"      : "quantum-ovs-vlan-ranges",
-             "USAGE"           : "A comma separated list of VLAN ranges for the Quantum openvswitch plugin",
-             "PROMPT"          : "Enter a comma separated list of VLAN ranges for the Quantum openvswitch plugin",
+             "USAGE"           : "A comma separated list of VLAN ranges for the Neutron openvswitch plugin",
+             "PROMPT"          : "Enter a comma separated list of VLAN ranges for the Neutron openvswitch plugin",
              "OPTION_LIST"     : [],
              "VALIDATORS"      : [],
              "DEFAULT_VALUE"   : "",
@@ -237,6 +239,32 @@ def initConfig(controllerObject):
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
             ],
+        "QUANTUM_OVS_PLUGIN_GRE" : [
+            {"CMD_OPTION"      : "quantum-ovs-tunnel-ranges",
+             "USAGE"           : "A comma separated list of tunnel ranges for the Neutron openvswitch plugin",
+             "PROMPT"          : "Enter a comma separated list of tunnel ranges for the Neutron openvswitch plugin",
+             "OPTION_LIST"     : [],
+             "VALIDATORS"      : [],
+             "DEFAULT_VALUE"   : "",
+             "MASK_INPUT"      : False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME"       : "CONFIG_QUANTUM_OVS_TUNNEL_RANGES",
+             "USE_DEFAULT"     : False,
+             "NEED_CONFIRM"    : False,
+             "CONDITION"       : False },
+            {"CMD_OPTION"      : "quantum-ovs-tunnel-if",
+             "USAGE"           : "Override the IP used for GRE tunnels on this hypervisor to the IP found on the specified interface (defaults to the HOST IP)",
+             "PROMPT"          : "Enter interface with IP to override the default the GRE local_ip (defaults to HOST IP)",
+             "OPTION_LIST"     : [],
+             "VALIDATORS"      : [],
+             "DEFAULT_VALUE"   : "",
+             "MASK_INPUT"      : False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME"       : "CONFIG_QUANTUM_OVS_TUNNEL_IF",
+             "USE_DEFAULT"     : False,
+             "NEED_CONFIRM"    : False,
+             "CONDITION"       : False },
+            ],
         }
 
     def use_linuxbridge(config):
@@ -246,6 +274,14 @@ def initConfig(controllerObject):
     def use_openvswitch(config):
         return config['CONFIG_QUANTUM_INSTALL'] == 'y' and \
                config['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch'
+
+    def use_openvswitch_vlans(config):
+        return use_openvswitch(config) and \
+               config['CONFIG_QUANTUM_OVS_TENANT_NETWORK_TYPE'] == 'vlan'
+
+    def use_openvswitch_gre(config):
+        return use_openvswitch(config) and \
+               config['CONFIG_QUANTUM_OVS_TENANT_NETWORK_TYPE'] == 'gre'
 
     conf_groups = [
         { "GROUP_NAME"            : "QUANTUM",
@@ -263,6 +299,18 @@ def initConfig(controllerObject):
         { "GROUP_NAME"            : "QUANTUM_OVS_PLUGIN",
           "DESCRIPTION"           : "Quantum OVS plugin config",
           "PRE_CONDITION"         : use_openvswitch,
+          "PRE_CONDITION_MATCH"   : True,
+          "POST_CONDITION"        : False,
+          "POST_CONDITION_MATCH"  : True },
+        { "GROUP_NAME"            : "QUANTUM_OVS_PLUGIN_VLAN",
+          "DESCRIPTION"           : "Neutron OVS plugin config for VLANs",
+          "PRE_CONDITION"         : use_openvswitch_vlans,
+          "PRE_CONDITION_MATCH"   : True,
+          "POST_CONDITION"        : False,
+          "POST_CONDITION_MATCH"  : True },
+        { "GROUP_NAME"            : "QUANTUM_OVS_PLUGIN_GRE",
+          "DESCRIPTION"           : "Neutron OVS plugin config for GRE tunnels",
+          "PRE_CONDITION"         : use_openvswitch_gre,
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
@@ -339,7 +387,8 @@ def createManifest(config):
         # Set up any l2 plugin configs we need anywhere we install quantum
         # XXX I am not completely sure about this, but it seems necessary
         if controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch':
-            manifest_data = getManifestTemplate("quantum_ovs_plugin.pp")
+            nettype = config.get("CONFIG_QUANTUM_OVS_TENANT_NETWORK_TYPE", "local")
+            manifest_data = getManifestTemplate("quantum_ovs_plugin_%s.pp" % (nettype,))
             appendManifestFile(manifest_file, manifest_data, 'quantum')
         elif controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'linuxbridge':
             manifest_data = getManifestTemplate("quantum_lb_plugin.pp")
@@ -385,17 +434,19 @@ def createL2AgentManifests(config):
 
     if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch":
         host_var = 'CONFIG_QUANTUM_OVS_HOST'
-        template_name = 'quantum_ovs_agent.pp'
+        template_name = "quantum_ovs_agent_%s.pp" % (
+            config.get('CONFIG_QUANTUM_OVS_TENANT_NETWORK_TYPE', 'local'),
+        )
+        if config['CONFIG_QUANTUM_OVS_TENANT_NETWORK_TYPE'] == 'vlan':
+            bm_arr = get_values(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"])
+            iface_arr = get_values(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_IFACES"])
 
-        bm_arr = get_values(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"])
-        iface_arr = get_values(controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_IFACES"])
-
-        # The CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS parameter contains a
-        # comma-separated list of bridge mappings. Since the puppet module
-        # expects this parameter to be an array, this parameter must be properly
-        # formatted by packstack, then consumed by the puppet module.
-        # For example, the input string 'A, B, C' should formatted as '['A','B','C']'.
-        controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"] = str(bm_arr)
+            # The CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS parameter contains a
+            # comma-separated list of bridge mappings. Since the puppet module
+            # expects this parameter to be an array, this parameter must be properly
+            # formatted by packstack, then consumed by the puppet module.
+            # For example, the input string 'A, B, C' should formatted as '['A','B','C']'.
+            controller.CONF["CONFIG_QUANTUM_OVS_BRIDGE_MAPPINGS"] = str(bm_arr)
 
     elif controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "linuxbridge":
         host_var = 'CONFIG_QUANTUM_LB_HOST'
@@ -410,7 +461,8 @@ def createL2AgentManifests(config):
         manifestfile = "%s_quantum.pp" % (host,)
         manifestdata = getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
-        if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch":
+        if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch" and \
+           controller.CONF['CONFIG_QUANTUM_OVS_TENANT_NETWORK_TYPE'] == 'vlan':
             for if_map in iface_arr:
                 controller.CONF['CONFIG_QUANTUM_OVS_BRIDGE'], controller.CONF['CONFIG_QUANTUM_OVS_IFACE'] = if_map.split(':')
                 manifestdata = getManifestTemplate("quantum_ovs_port.pp")
