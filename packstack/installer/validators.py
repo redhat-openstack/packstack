@@ -69,6 +69,16 @@ def validate_regexp(param, options=None):
         raise ParamValidationError(msg % param)
 
 
+def validate_multi_regexp(param, options=None):
+    """
+    Raises ParamValidationError if any of the comma separated values given
+    in param doesn't match one of the regular expressions given in options.
+    """
+    options = options or []
+    for i in param.split(','):
+        validate_regexp(i.strip(), options=options)
+
+
 def validate_port(param, options=None):
     """
     Raises ParamValidationError if given param is not a decimal number

@@ -86,12 +86,27 @@ Cinder Config parameters
 
 **CONFIG_CINDER_KS_PW**        : The password to use for the Cinder to authenticate with Keystone
 
-**CONFIG_CINDER_VOLUMES_CREATE** : Create Cinder's volumes group ['y', 'n']
+**CONFIG_CINDER_BACKEND**      : The Cinder backend to use ['lvm', 'gluster', 'nfs']
 
 Cinder volume create Config parameters
 --------------------------------------
 
+**CONFIG_CINDER_VOLUMES_CREATE** : Create Cinder's volumes group ['y', 'n']
+
+Cinder volume size Config parameters
+------------------------------------
+
 **CONFIG_CINDER_VOLUMES_SIZE** : Cinder's volumes group size
+
+Cinder gluster Config parameters
+--------------------------------
+
+**CONFIG_CINDER_GLUSTER_MOUNTS** : A single or comma separated list of gluster volume shares
+
+Cinder NFS Config parameters
+----------------------------
+
+**CONFIG_CINDER_NFS_MOUNTS**   : A single or comma seprated list of NFS exports to mount
 
 Nova Options
 ------------

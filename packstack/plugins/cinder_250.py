@@ -7,6 +7,7 @@ import uuid
 import logging
 
 from packstack.installer import exceptions
+from packstack.installer import processors
 from packstack.installer import validators
 
 from packstack.installer import basedefs
@@ -70,9 +71,9 @@ def initConfig(controllerObject):
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "cinder-backend",
                    "USAGE"           : ("The Cinder backend to use, valid options are: "
-                                        "lvm, gluster"),
+                                        "lvm, gluster, nfs"),
                    "PROMPT"          : "Enter the Cinder backend to be configured",
-                   "OPTION_LIST"     : ["lvm", "gluster"],
+                   "OPTION_LIST"     : ["lvm", "gluster", "nfs"],
                    "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "lvm",
                    "MASK_INPUT"      : False,
@@ -159,13 +160,13 @@ def initConfig(controllerObject):
 
     paramsList = [
                   {"CMD_OPTION"      : "cinder-gluster-mounts",
-                   "USAGE"           : ("A gluster volume to mount, eg: "
-                                        "ip-address:/vol-name "
-                                        "You don't need to create a local volume group when "
-                                        "using gluster."),
-                   "PROMPT"          : "Enter a gluster volume for use with Cinder",
-                   "OPTION_LIST"     : ["^([\d]{1,3}\.){3}[\d]{1,3}:/.*"],
-                   "VALIDATORS"      : [validators.validate_regexp],
+                   "USAGE"           : ("A single or comma separated list of gluster volume shares "
+                                        "to mount, eg: ip-address:/vol-name "),
+                   "PROMPT"          : ("Enter a single or comma separated list of gluster volume "
+                                        "shares to use with Cinder"),
+                   "OPTION_LIST"     : ["^'([\d]{1,3}\.){3}[\d]{1,3}:/.*'"],
+                   "VALIDATORS"      : [validators.validate_multi_regexp],
+                   "PROCESSORS"      : [processors.process_add_quotes_around_values],
                    "DEFAULT_VALUE"   : "",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
@@ -176,8 +177,39 @@ def initConfig(controllerObject):
                   ]
 
     groupDict = { "GROUP_NAME"            : "CINDERGLUSTERMOUNTS",
-                  "DESCRIPTION"           : "Cinder gluster mounts",
+                  "DESCRIPTION"           : "Cinder gluster Config parameters",
                   "PRE_CONDITION"         : check_gluster_options,
+                  "PRE_CONDITION_MATCH"   : True,
+                  "POST_CONDITION"        : False,
+                  "POST_CONDITION_MATCH"  : True}
+
+    controller.addGroup(groupDict, paramsList)
+
+    def check_nfs_options(config):
+        return (config.get('CONFIG_CINDER_INSTALL', 'n') == 'y' and
+                config.get('CONFIG_CINDER_BACKEND', 'lvm') == 'nfs')
+
+    paramsList = [
+                  {"CMD_OPTION"      : "cinder-nfs-mounts",
+                   "USAGE"           : ("A single or comma seprated list of NFS exports to mount, "
+                                        "eg: ip-address:/export-name "),
+                   "PROMPT"          : ("Enter a single or comma seprated list of NFS exports to "
+                                        "use with Cinder"),
+                   "OPTION_LIST"     : ["^'([\d]{1,3}\.){3}[\d]{1,3}:/.*'"],
+                   "VALIDATORS"      : [validators.validate_multi_regexp],
+                   "PROCESSORS"      : [processors.process_add_quotes_around_values],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_CINDER_NFS_MOUNTS",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  ]
+
+    groupDict = { "GROUP_NAME"            : "CINDERNFSMOUNTS",
+                  "DESCRIPTION"           : "Cinder NFS Config parameters",
+                  "PRE_CONDITION"         : check_nfs_options,
                   "PRE_CONDITION_MATCH"   : True,
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
@@ -316,5 +348,7 @@ def create_manifest(config):
 
     if controller.CONF['CONFIG_CINDER_BACKEND'] == "gluster":
         manifestdata += getManifestTemplate("cinder_gluster.pp")
+    if controller.CONF['CONFIG_CINDER_BACKEND'] == "nfs":
+        manifestdata += getManifestTemplate("cinder_nfs.pp")
 
     appendManifestFile(manifestfile, manifestdata)

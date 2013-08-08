@@ -370,6 +370,8 @@ def createcomputemanifest(config):
         manifestdata = getManifestTemplate("nova_compute.pp")
         if controller.CONF['CONFIG_CINDER_INSTALL'] == 'y' and controller.CONF['CONFIG_CINDER_BACKEND'] == 'gluster':
             manifestdata += getManifestTemplate("nova_gluster.pp")
+        if controller.CONF['CONFIG_CINDER_INSTALL'] == 'y' and controller.CONF['CONFIG_CINDER_BACKEND'] == 'nfs':
+            manifestdata += getManifestTemplate("nova_nfs.pp")
         manifestfile = "%s_nova.pp"%host
 
         nova_config_options = NovaConfig()
