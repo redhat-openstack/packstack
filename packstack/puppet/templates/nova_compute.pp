@@ -85,3 +85,16 @@ file_line { 'libvirt-guests':
     match => '^[\s#]*ON_BOOT=.*',
     require => Class['nova::compute::libvirt']
 }
+
+# Remove libvirt's default network (usually virbr0) as it's unnecessary and can be confusing
+exec {'virsh-net-destroy-default':
+    onlyif  => '/usr/bin/virsh net-list | grep default',
+    command => '/usr/bin/virsh net-destroy default',
+    require => Package['libvirt'],
+}
+
+exec {'virsh-net-undefine-default':
+    onlyif  => '/usr/bin/virsh net-list --inactive | grep default',
+    command => '/usr/bin/virsh net-undefine default',
+    require => Exec['virsh-net-destroy-default'],
+}
