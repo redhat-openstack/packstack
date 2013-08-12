@@ -3,9 +3,3 @@ class { 'neutron::plugins::ovs':
   network_vlan_ranges => '%(CONFIG_NEUTRON_OVS_VLAN_RANGES)s',
   sql_connection      => $neutron_sql_connection
 }
-
-if $::operatingsystem != 'Fedora' {
-  neutron_config {
-    'DEFAULT/ovs_use_veth': value => 'True';
-  }
-}
