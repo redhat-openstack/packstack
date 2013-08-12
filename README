@@ -8,6 +8,7 @@ This utility is still in the early stages, a lot of the configuration
 options have yet to be added
 
 Installation
+$ rpm -Uvh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
 $ yum install -y git
 $ git clone --recursive git://github.com/stackforge/packstack.git
 $ cd packstack
