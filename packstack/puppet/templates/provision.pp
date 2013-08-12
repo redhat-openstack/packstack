@@ -3,7 +3,7 @@ class { 'openstack::provision':
   password            => '%(CONFIG_KEYSTONE_DEMO_PW)s',
   configure_tempest   => %(CONFIG_PROVISION_TEMPEST)s,
   setup_ovs_bridge    => %(CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE)s,
-  public_bridge_name  => '%(CONFIG_QUANTUM_L3_EXT_BRIDGE)s'
+  public_bridge_name  => '%(CONFIG_NEUTRON_L3_EXT_BRIDGE)s'
 }
 
 firewall { '000 nat':
@@ -18,13 +18,13 @@ firewall { '000 nat':
 firewall { '000 forward out':
   chain => 'FORWARD',
   action  => 'accept',
-  outiface => '%(CONFIG_QUANTUM_L3_EXT_BRIDGE)s',
+  outiface => '%(CONFIG_NEUTRON_L3_EXT_BRIDGE)s',
   proto => 'all',
 }
 
 firewall { '000 forward in':
   chain => 'FORWARD',
   action  => 'accept',
-  iniface => '%(CONFIG_QUANTUM_L3_EXT_BRIDGE)s',
+  iniface => '%(CONFIG_NEUTRON_L3_EXT_BRIDGE)s',
   proto => 'all',
 }

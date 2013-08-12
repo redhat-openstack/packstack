@@ -252,7 +252,7 @@ def initConfig(controllerObject):
 
     def use_nova_network(config):
         return config['CONFIG_NOVA_INSTALL'] == 'y' and \
-               config['CONFIG_QUANTUM_INSTALL'] != 'y'
+               config['CONFIG_NEUTRON_INSTALL'] != 'y'
 
     nova_groups = [
         { "GROUP_NAME"            : "NOVA",
@@ -288,8 +288,8 @@ def initSequences(controller):
              {'title': 'Adding Nova Common manifest entries', 'functions':[createcommonmanifest]},
     ]
 
-    if controller.CONF['CONFIG_QUANTUM_INSTALL'] == 'y':
-        novaapisteps.append({'title': 'Adding Openstack Network-related Nova manifest entries', 'functions':[createquantummanifest]})
+    if controller.CONF['CONFIG_NEUTRON_INSTALL'] == 'y':
+        novaapisteps.append({'title': 'Adding Openstack Network-related Nova manifest entries', 'functions':[createneutronmanifest]})
     else:
         novaapisteps.append({'title': 'Adding Nova Network manifest entries', 'functions':[createnetworkmanifest]})
 
@@ -297,16 +297,16 @@ def initSequences(controller):
 
 
 def createapimanifest(config):
-    # This is a hack around us needing to generate the quantum metadata
+    # This is a hack around us needing to generate the neutron metadata
     # password, but the nova puppet plugin uses the existence of that
-    # password to determine whether or not to configure quantum metadata
+    # password to determine whether or not to configure neutron metadata
     # proxy support. So the nova_api.pp template needs unquoted 'undef'
-    # to disable metadata support if quantum is not being installed.
-    if controller.CONF['CONFIG_QUANTUM_INSTALL'] != 'y':
-        controller.CONF['CONFIG_QUANTUM_METADATA_PW_UNQUOTED'] = 'undef'
+    # to disable metadata support if neutron is not being installed.
+    if controller.CONF['CONFIG_NEUTRON_INSTALL'] != 'y':
+        controller.CONF['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = 'undef'
     else:
-        controller.CONF['CONFIG_QUANTUM_METADATA_PW_UNQUOTED'] = \
-            "'%s'" % controller.CONF['CONFIG_QUANTUM_METADATA_PW']
+        controller.CONF['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = \
+            "'%s'" % controller.CONF['CONFIG_NEUTRON_METADATA_PW']
     manifestfile = "%s_api_nova.pp"%controller.CONF['CONFIG_NOVA_API_HOST']
     manifestdata = getManifestTemplate("nova_api.pp")
     appendManifestFile(manifestfile, manifestdata, 'novaapi')
@@ -373,7 +373,7 @@ def createcomputemanifest(config):
         manifestfile = "%s_nova.pp"%host
 
         nova_config_options = NovaConfig()
-        if controller.CONF['CONFIG_QUANTUM_INSTALL'] != 'y':
+        if controller.CONF['CONFIG_NEUTRON_INSTALL'] != 'y':
             if host != controller.CONF["CONFIG_NOVA_NETWORK_HOST"]:
                 nova_config_options.addOption("DEFAULT/flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
             check_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
@@ -387,7 +387,7 @@ def createcomputemanifest(config):
 
 
 def createnetworkmanifest(config):
-    if controller.CONF['CONFIG_QUANTUM_INSTALL'] == "y":
+    if controller.CONF['CONFIG_NEUTRON_INSTALL'] == "y":
         return
 
     host = controller.CONF['CONFIG_NOVA_NETWORK_HOST']
@@ -456,16 +456,16 @@ def createcommonmanifest(config):
             appendManifestFile(os.path.split(manifestfile)[1], data)
 
 
-def createquantummanifest(config):
-    if controller.CONF['CONFIG_QUANTUM_INSTALL'] != "y":
+def createneutronmanifest(config):
+    if controller.CONF['CONFIG_NEUTRON_INSTALL'] != "y":
         return
 
-    if controller.CONF['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch':
+    if controller.CONF['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch':
         controller.CONF['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = 'nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver'
     else:
         controller.CONF['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = 'nova.virt.libvirt.vif.LibvirtGenericVIFDriver'
 
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
-            data = getManifestTemplate("nova_quantum.pp")
+            data = getManifestTemplate("nova_neutron.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)

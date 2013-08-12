@@ -1,5 +1,5 @@
 """
-Installs and configures quantum
+Installs and configures neutron
 """
 
 import logging
@@ -83,14 +83,14 @@ def initConfig(controllerObject):
     def allow_provisioning(config):
         # Provisioning is currently supported only for all-in-one (due
         # to a limitation with how the custom types for OpenStack
-        # resources are implemented) and quantum with namespaces (due
+        # resources are implemented) and neutron with namespaces (due
         # to the provisioning manifest assuming this configuration).
         return is_all_in_one(config) and \
-               config['CONFIG_QUANTUM_INSTALL'] == 'y'
+               config['CONFIG_NEUTRON_INSTALL'] == 'y'
 
     def allow_all_in_one_ovs_bridge(config):
         return allow_provisioning(config) and \
-               config['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch'
+               config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch'
 
     conf_groups = [
         { "GROUP_NAME"            : "PROVISION_DEMO",
@@ -149,7 +149,7 @@ def initSequences(controller):
 def create_manifest(config):
     # Using the server host will suffice for the all-in-one case.
     manifest_file = '%s_provision.pp' % (
-        controller.CONF['CONFIG_QUANTUM_SERVER_HOST']
+        controller.CONF['CONFIG_NEUTRON_SERVER_HOST']
     )
     manifest_data = getManifestTemplate("provision.pp")
     appendManifestFile(manifest_file, manifest_data)

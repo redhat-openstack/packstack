@@ -89,8 +89,8 @@ def add_veth_pair(ns1, ns2, veth1, veth2, address1, address2):
 
 class TestNetns(unittest.TestCase):
 
-    def test_quantum_netns_cmds(self):
-        """Exercise the netns functionality required by quantum.
+    def test_neutron_netns_cmds(self):
+        """Exercise the netns functionality required by neutron.
 
           - Check that a veth pair can be configured to transit traffic
             between 2 namespaces
@@ -152,17 +152,17 @@ class TestNetns(unittest.TestCase):
     def test_domain_socket_access(self):
         """Check that a domain socket can be accessed regardless of namespace.
 
-        Quantum extends nova' metadata service - which identifies VM's
+        Neutron extends nova' metadata service - which identifies VM's
         by their ip addresses - to configurations with overlapping
         ips.  Support is provided by:
 
-          - a proxy in each namespace (quantum-ns-metadata-proxy)
+          - a proxy in each namespace (neutron-ns-metadata-proxy)
 
             - the proxy can uniquely identify a given VM by its ip
               address in the context of the router or network of the
               namespace.
 
-          - a metadata agent (quantum-metadata-agent) that forwards
+          - a metadata agent (neutron-metadata-agent) that forwards
             requests from the namespace proxies to nova's metadata
             service.
 
