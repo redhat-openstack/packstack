@@ -826,7 +826,14 @@ def validateSingleFlag(options, flag):
         raise FlagValidationError(msg)
 
 def setProvisioningDefaults():
-    pnames = ['CONFIG_PROVISION_' + x for x in ['DEMO', 'TEMPEST', 'ALL_IN_ONE_OVS_BRIDGE']]
+    conf_ids = [
+        'DEMO',
+        'TEMPEST',
+        'TEMPEST_REPO_URI',
+        'TEMPEST_REPO_REVISION',
+        'ALL_IN_ONE_OVS_BRIDGE',
+    ]
+    pnames = ['CONFIG_PROVISION_' + x for x in conf_ids]
     params = [controller.getParamByName(x) for x in pnames]
     for param in params:
         controller.CONF[param.CONF_NAME] = (
