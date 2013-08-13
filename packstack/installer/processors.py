@@ -46,3 +46,19 @@ def process_ssh_key(param, process_args=None):
         param = param.endswith('.pub') and param or ('%s.pub' % param)
         create_key(key_file)
     return param
+
+
+def process_add_quotes_around_values(param, process_args=None):
+    """
+    Add a single quote character around each element of a comma
+    separated list of values
+    """
+    params_list = param.split(',')
+    for index, elem in enumerate(params_list):
+        if not elem.startswith("'"):
+            elem = "'" + elem
+        if not elem.endswith("'"):
+            elem = elem + "'"
+        params_list[index] = elem
+    param = ','.join(params_list)
+    return param
