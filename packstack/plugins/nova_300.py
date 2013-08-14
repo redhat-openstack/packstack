@@ -394,6 +394,9 @@ def createcomputemanifest(config):
                 # just warn user to do it by himself
                 controller.MESSAGES.append(str(ScriptRuntimeError))
 
+        if controller.CONF['CONFIG_CEILOMETER_INSTALL'] == 'y':
+            manifestdata += getManifestTemplate("nova_ceilometer.pp")
+
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
 
