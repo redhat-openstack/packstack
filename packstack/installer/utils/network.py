@@ -3,6 +3,7 @@
 import re
 import socket
 
+from ..exceptions import NetworkError
 from .shell import execute, ScriptRunner
 
 
@@ -34,6 +35,8 @@ def get_localhost_ip():
             continue
         else:
             return loc_ip
+    raise NetworkError('Local IP address discovery failed. Please set '
+                       'nameserver correctly.')
 
 
 def host2ip(hostname, allow_localhost=False):
@@ -55,10 +58,7 @@ def host2ip(hostname, allow_localhost=False):
             return ip
     except NameError:
         # given hostname is localhost, return appropriate IP address
-        ip = get_localhost_ip()
-        if not ip:
-            raise NetworkError('Failed to get local IP address.')
-        return ip
+        return get_localhost_ip()
     except socket.error:
         raise NetworkError('Unknown hostname %s.' % hostname)
     except Exception, ex:
