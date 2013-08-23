@@ -27,14 +27,14 @@ def initConfig(controllerObject):
     logging.debug("Adding OpenStack Swift configuration")
     paramsList = [
                   {"CMD_OPTION"      : "os-swift-proxy",
-                   "USAGE"           : "The IP address on which to install the Swift proxy service",
+                   "USAGE"           : "The IP address on which to install the Swift proxy service (currently only single proxy is supported)",
                    "PROMPT"          : "Enter the IP address of the Swift proxy service",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_multi_ip, validators.validate_multi_ssh],
                    "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_SWIFT_PROXY_HOSTS", #XXX: Shouldn't be here CONFIG_SWIFT_PROXY_HOST?
+                   "CONF_NAME"       : "CONFIG_SWIFT_PROXY_HOSTS",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
