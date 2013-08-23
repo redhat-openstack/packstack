@@ -3,6 +3,7 @@ Installs and configures Cinder
 """
 
 import os
+import re
 import uuid
 import logging
 
@@ -14,7 +15,7 @@ from packstack.installer import basedefs
 from packstack.installer import utils
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
-from packstack.installer.exceptions import ScriptRuntimeError
+from packstack.installer import exceptions
 from packstack.installer import output_messages
 
 # Controller object will
@@ -132,10 +133,11 @@ def initConfig(controllerObject):
 
     paramsList = [
                   {"CMD_OPTION"      : "cinder-volumes-size",
-                   "USAGE"           : "Cinder's volumes group size",
-                   "PROMPT"          : "Enter Cinder's volumes group size",
+                   "USAGE"           : ("Cinder's volumes group size. Note that actual volume size "
+                                        "will be extended with 3% more space for VG metadata."),
+                   "PROMPT"          : "Enter Cinder's volumes group usable size",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS" : [validators.validate_not_empty],
+                   "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : "20G",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
@@ -232,30 +234,29 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Cinder", [], [], cinder_steps)
 
 def install_cinder_deps(config):
-    server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
+    server = utils.ScriptRunner(config['CONFIG_CINDER_HOST'])
     pkgs = []
-    if controller.CONF['CONFIG_CINDER_BACKEND'] == 'lvm':
+    if config['CONFIG_CINDER_BACKEND'] == 'lvm':
         pkgs.append('lvm2')
     for p in pkgs:
         server.append("rpm -q %(package)s || yum install -y %(package)s" % dict(package=p))
     server.execute()
 
 def check_cinder_vg(config):
-
     cinders_volume = 'cinder-volumes'
 
     # Do we have a cinder-volumes vg?
     have_cinders_volume = False
-    server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
+    server = utils.ScriptRunner(config['CONFIG_CINDER_HOST'])
     server.append('vgdisplay %s' % cinders_volume)
     try:
         server.execute()
         have_cinders_volume = True
-    except ScriptRuntimeError:
+    except exceptions.ScriptRuntimeError:
         pass
 
     # Configure system LVM settings (snapshot_autoextend)
-    server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
+    server = utils.ScriptRunner(config['CONFIG_CINDER_HOST'])
     server.append('sed -i -r "s/^ *snapshot_autoextend_threshold +=.*/'
                   '    snapshot_autoextend_threshold = 80/" '
                   '/etc/lvm/lvm.conf')
@@ -264,11 +265,11 @@ def check_cinder_vg(config):
                   '/etc/lvm/lvm.conf')
     try:
         server.execute()
-    except ScriptRuntimeError:
+    except exceptions.ScriptRuntimeError:
         logging.info("Warning: Unable to set system LVM settings.")
 
 
-    if controller.CONF["CONFIG_CINDER_VOLUMES_CREATE"] != "y":
+    if config["CONFIG_CINDER_VOLUMES_CREATE"] != "y":
         if not have_cinders_volume:
             raise exceptions.MissingRequirements("The cinder server should"
                 " contain a cinder-volumes volume group")
@@ -278,12 +279,12 @@ def check_cinder_vg(config):
                 output_messages.INFO_CINDER_VOLUMES_EXISTS)
             return
 
-        server = utils.ScriptRunner(controller.CONF['CONFIG_CINDER_HOST'])
+        server = utils.ScriptRunner(config['CONFIG_CINDER_HOST'])
         server.append('systemctl')
         try:
             server.execute()
             rst_cmd = 'systemctl restart openstack-cinder-volume.service'
-        except ScriptRuntimeError:
+        except exceptions.ScriptRuntimeError:
             rst_cmd = 'service openstack-cinder-volume restart'
 
         server.clear()
@@ -295,10 +296,19 @@ def check_cinder_vg(config):
         server.append('mkdir -p  %s' % cinders_volume_path)
         logging.debug("Volume's path: %s" % cinders_volume_path)
 
+        match = re.match('^(?P<size>\d+)G$',
+                         config['CONFIG_CINDER_VOLUMES_SIZE'].strip())
+        if not match:
+            msg = 'Invalid Cinder volumes VG size.'
+            raise exceptions.ParamValidationError(msg)
+
+        cinders_volume_size = int(match.group('size')) * 1024
+        cinders_reserve = int(cinders_volume_size * 0.03)
+
+        cinders_volume_size = int(match.group('size')) + cinders_reserve
         cinders_volume_path = os.path.join(cinders_volume_path, cinders_volume)
-        server.append('dd if=/dev/zero of=%s bs=1 count=0 seek=%s' % \
-            (cinders_volume_path,
-             controller.CONF['CONFIG_CINDER_VOLUMES_SIZE']))
+        server.append('dd if=/dev/zero of=%s bs=1 count=0 seek=%sM'
+                       % (cinders_volume_path, cinders_volume_size))
         server.append('LOFI=$(losetup --show -f  %s)' % cinders_volume_path)
         server.append('pvcreate $LOFI')
         server.append('vgcreate %s $LOFI' % cinders_volume)
@@ -320,7 +330,7 @@ def check_cinder_vg(config):
 
         try:
             server.execute()
-        except ScriptRuntimeError:
+        except exceptions.ScriptRuntimeError:
             # Release loop device if cinder's volume creation
             # fails.
             try:
