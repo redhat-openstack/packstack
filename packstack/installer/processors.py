@@ -15,6 +15,9 @@ def process_cidr(param, process_args=None):
     """
     Corrects given CIDR if necessary.
     """
+    if '/' not in param:
+        # we need to skip this if single IP address has been given
+        return param
     try:
         return str(netaddr.IPNetwork(param).cidr)
     except Exception, ex:
