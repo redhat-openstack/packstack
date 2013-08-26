@@ -11,19 +11,15 @@ class packstack::neutron::bridge {
 
     file_line { '/etc/sysctl.conf bridge-nf-call-ip6tables':
         path  => '/etc/sysctl.conf',
-        line  => 'net.bridge.bridge-nf-call-ip6tables = 1',
+        line  => 'net.bridge.bridge-nf-call-ip6tables=1',
         match => 'net.bridge.bridge-nf-call-ip6tables\s*=',
-    }
-
-    file_line { '/etc/sysctl.conf bridge-nf-call-iptables':
+    } -> file_line { '/etc/sysctl.conf bridge-nf-call-iptables':
         path  => '/etc/sysctl.conf',
-        line  => 'net.bridge.bridge-nf-call-iptables = 1',
+        line  => 'net.bridge.bridge-nf-call-iptables=1',
         match => 'net.bridge.bridge-nf-call-iptables\s*=',
-    }
-
-    file_line { '/etc/sysctl.conf bridge-nf-call-arptables':
+    } -> file_line { '/etc/sysctl.conf bridge-nf-call-arptables':
         path  => '/etc/sysctl.conf',
-        line  => 'net.bridge.bridge-nf-call-arptables = 1',
+        line  => 'net.bridge.bridge-nf-call-arptables=1',
         match => 'net.bridge.bridge-nf-call-arptables\s*=',
     }
 }
