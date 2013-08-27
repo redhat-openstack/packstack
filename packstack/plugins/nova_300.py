@@ -5,6 +5,7 @@ Installs and configures nova
 import os
 import uuid
 import logging
+import platform
 
 from packstack.installer import processors, utils, validators
 from packstack.installer.exceptions import ScriptRuntimeError
@@ -21,6 +22,13 @@ logging.debug("plugin %s loaded", __name__)
 def initConfig(controllerObject):
     global controller
     controller = controllerObject
+
+    if platform.linux_distribution()[0] == "Fedora":
+      primary_netif = "em1"
+      secondary_netif = "em2"
+    else:
+      primary_netif = "eth0"
+      secondary_netif = "eth1"
 
     nova_params = {
             "NOVA" : [
@@ -155,7 +163,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the Private interface for Flat DHCP on the Nova compute servers",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "eth1",
+                   "DEFAULT_VALUE"   : secondary_netif,
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_COMPUTE_PRIVIF",
@@ -179,7 +187,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the Public interface on the Nova network server",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "eth0",
+                   "DEFAULT_VALUE"   : primary_netif,
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_NETWORK_PUBIF",
@@ -191,7 +199,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Enter the Private interface for Flat DHCP on the Nova network server",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "eth1",
+                   "DEFAULT_VALUE"   : secondary_netif,
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_NOVA_NETWORK_PRIVIF",
