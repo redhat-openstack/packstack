@@ -73,3 +73,6 @@
 [submodule "packstack/puppet/modules/neutron"]
 	path = packstack/puppet/modules/neutron
 	url = https://github.com/stackforge/puppet-neutron.git
+[submodule "packstack/puppet/modules/haproxy"]
+	path = packstack/puppet/modules/haproxy
+	url = https://github.com/puppetlabs/puppetlabs-haproxy.git
