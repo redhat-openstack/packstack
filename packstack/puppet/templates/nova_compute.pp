@@ -27,8 +27,9 @@ class {"nova::compute":
     vncserver_proxyclient_address => "%(CONFIG_NOVA_COMPUTE_HOST)s",
 }
 
-package { 'qemu-kvm':
-    ensure => present,
+exec { 'qemu-kvm':
+    path => '/usr/bin',
+    command => 'yum install -y qemu-kvm',
     before => Class['nova::compute::libvirt']
 }
 
