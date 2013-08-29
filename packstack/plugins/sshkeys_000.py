@@ -5,14 +5,12 @@ Installs and configures ssh keys
 import glob
 import logging
 import os
-import tempfile
 
 from packstack.installer import processors
 from packstack.installer import validators
-from packstack.installer import basedefs
 from packstack.installer import utils
 
-from packstack.modules.ospluginutils import gethostlist
+from packstack.modules.common import filtered_hosts
 
 # Controller object will be initialized from main flow
 controller = None
@@ -62,11 +60,9 @@ def initSequences(controller):
 
 
 def installKeys(config):
-    with open(controller.CONF["CONFIG_SSH_KEY"]) as fp:
+    with open(config["CONFIG_SSH_KEY"]) as fp:
         sshkeydata = fp.read().strip()
-    for hostname in gethostlist(controller.CONF):
-        if '/' in hostname:
-            hostname = hostname.split('/')[0]
+    for hostname in filtered_hosts(config):
         server = utils.ScriptRunner(hostname)
         # TODO replace all that with ssh-copy-id
         server.append("mkdir -p ~/.ssh")

@@ -4,13 +4,9 @@ Installs and configures an OpenStack Client
 
 import logging
 
-from packstack.installer import validators
-from packstack.installer import basedefs, output_messages
-from packstack.installer import utils
-
-from packstack.modules.ospluginutils import gethostlist,\
-                                            getManifestTemplate, \
-                                            appendManifestFile
+from packstack.modules.common import filtered_hosts
+from packstack.modules.ospluginutils import (getManifestTemplate,
+                                             appendManifestFile)
 
 # Controller object will be initialized from main flow
 controller = None
@@ -42,8 +38,9 @@ def initSequences(controller):
     ]
     controller.addSequence("Running post install scripts", [], [], osclientsteps)
 
+
 def createmanifest(config):
-    for hostname in gethostlist(controller.CONF):
+    for hostname in filtered_hosts(config):
         manifestfile = "%s_postscript.pp" % hostname
         manifestdata = getManifestTemplate("postscript.pp")
         appendManifestFile(manifestfile, manifestdata, 'postscript')

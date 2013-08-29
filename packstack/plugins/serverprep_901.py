@@ -5,7 +5,6 @@ prepare server
 import os
 import uuid
 import logging
-import datetime
 import platform
 
 from packstack.installer import basedefs
@@ -13,8 +12,7 @@ from packstack.installer import exceptions
 from packstack.installer import utils
 from packstack.installer import validators
 
-
-from packstack.modules.ospluginutils import gethostlist
+from packstack.modules.common import filtered_hosts
 
 # Controller object will be initialized from main flow
 controller = None
@@ -399,10 +397,7 @@ def serverprep(config):
                         'proxy_pass': sat_proxy_pass.strip(),
                         'flags': sat_flags}
 
-    for hostname in gethostlist(config):
-        if '/' in hostname:
-            hostname = hostname.split('/')[0]
-
+    for hostname in filtered_hosts(config):
         # Subscribe to Red Hat Repositories if configured
         if rh_username:
             run_rhsm_reg(hostname, rh_username, rh_password, config["CONFIG_RH_BETA_REPO"] == 'y')

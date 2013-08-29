@@ -3,18 +3,12 @@ Installs and configures neutron
 """
 
 import logging
-import os
-import re
-import uuid
 
-from packstack.installer import utils
 from packstack.installer import validators
 
-from packstack.modules.ospluginutils import (
-    appendManifestFile,
-    getManifestTemplate,
-    gethostlist,
-    )
+from packstack.modules.common import is_all_in_one
+from packstack.modules.ospluginutils import (appendManifestFile,
+                                             getManifestTemplate)
 
 
 # Controller object will be initialized from main flow
@@ -113,9 +107,6 @@ def initConfig(controllerObject):
             ],
         }
 
-    def is_all_in_one(config):
-        return len(gethostlist(config)) == 1
-
     def allow_provisioning(config):
         # Provisioning is currently supported only for all-in-one (due
         # to a limitation with how the custom types for OpenStack
@@ -168,7 +159,7 @@ def initSequences(controller):
         controller.CONF['CONFIG_PROVISION_TEMPEST'] == 'y'
     )
     if not provisioning_required:
-       return
+        return
     marshall_conf_bool(controller.CONF, 'CONFIG_PROVISION_TEMPEST')
     marshall_conf_bool(controller.CONF,
                        'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
