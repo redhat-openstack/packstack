@@ -4,7 +4,7 @@
 Container set for groups and parameters
 """
 
-from .utils.datastructures import SortedDict
+from ..utils.datastructures import SortedDict
 
 
 class Parameter(object):
