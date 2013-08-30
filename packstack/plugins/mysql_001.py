@@ -58,7 +58,7 @@ def initConfig(controllerObject):
                    "LOOSE_VALIDATION": True,
                    "CONF_NAME"       : "CONFIG_MYSQL_PW",
                    "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
+                   "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
                  ]
 
