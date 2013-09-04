@@ -182,6 +182,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novanetwork-manager",
+                   "USAGE"           : "Nova network manager",
+                   "PROMPT"          : "Enter the Nova network manager",
+                   "OPTION_LIST"     : [r'^nova\.network\.manager\.\w+Manager$'],
+                   "VALIDATORS"      : [validators.validate_regexp],
+                   "DEFAULT_VALUE"   : "nova.network.manager.FlatDHCPManager",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_MANAGER",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                   {"CMD_OPTION"      : "novanetwork-pubif",
                    "USAGE"           : "Public interface on the Nova network server",
                    "PROMPT"          : "Enter the Public interface on the Nova network server",
@@ -195,8 +207,8 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "novanetwork-privif",
-                   "USAGE"           : "Private interface for Flat DHCP on the Nova network server",
-                   "PROMPT"          : "Enter the Private interface for Flat DHCP on the Nova network server",
+                   "USAGE"           : "Private interface for network manager on the Nova network server",
+                   "PROMPT"          : "Enter the Private interface for network manager on the Nova network server",
                    "OPTION_LIST"     : [],
                    "VALIDATORS"      : [validators.validate_not_empty],
                    "DEFAULT_VALUE"   : secondary_netif,
@@ -207,8 +219,8 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "novanetwork-fixed-range",
-                   "USAGE"           : "IP Range for Flat DHCP",
-                   "PROMPT"          : "Enter the IP Range for Flat DHCP",
+                   "USAGE"           : "IP Range for network manager",
+                   "PROMPT"          : "Enter the IP Range for network manager",
                    "OPTION_LIST"     : ["^[\:\.\da-fA-f]+(\/\d+){0,1}$"],
                    "PROCESSORS"      : [processors.process_cidr],
                    "VALIDATORS"      : [validators.validate_regexp],
@@ -257,22 +269,72 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   ],
+             "NOVA_NETWORK_VLAN" : [
+                  {"CMD_OPTION"      : "novanetwork-vlan-start",
+                   "USAGE"           : "First VLAN for private networks",
+                   "PROMPT"          : "Enter first VLAN for private networks",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "DEFAULT_VALUE"   : 100,
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_VLAN_START",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novanetwork-num-networks",
+                   "USAGE"           : "Number of networks to support",
+                   "PROMPT"          : "How many networks should be supported",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "DEFAULT_VALUE"   : 1,
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_NUMBER",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "novanetwork-network-size",
+                   "USAGE"           : "Number of addresses in each private subnet",
+                   "PROMPT"          : "How many addresses should be in each private subnet",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "DEFAULT_VALUE"   : 255,
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_SIZE",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  ],
               }
 
     def use_nova_network(config):
         return config['CONFIG_NOVA_INSTALL'] == 'y' and \
                config['CONFIG_NEUTRON_INSTALL'] != 'y'
 
+    def use_nova_network_vlan(config):
+        manager = 'nova.network.manager.VlanManager'
+        return config['CONFIG_NOVA_INSTALL'] == 'y' and \
+               config['CONFIG_NEUTRON_INSTALL'] != 'y' and \
+               config['CONFIG_NOVA_NETWORK_MANAGER'] == manager
+
     nova_groups = [
-        { "GROUP_NAME"            : "NOVA",
+         {"GROUP_NAME"            : "NOVA",
           "DESCRIPTION"           : "Nova Options",
           "PRE_CONDITION"         : "CONFIG_NOVA_INSTALL",
           "PRE_CONDITION_MATCH"   : "y",
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True},
-        { "GROUP_NAME"            : "NOVA_NETWORK",
+         {"GROUP_NAME"            : "NOVA_NETWORK",
           "DESCRIPTION"           : "Nova Network Options",
           "PRE_CONDITION"         : use_nova_network,
+          "PRE_CONDITION_MATCH"   : True,
+          "POST_CONDITION"        : False,
+          "POST_CONDITION_MATCH"  : True},
+         {"GROUP_NAME"            : "NOVA_NETWORK_VLAN",
+          "DESCRIPTION"           : "Nova Network VLAN Options",
+          "PRE_CONDITION"         : use_nova_network_vlan,
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True},
@@ -390,9 +452,9 @@ def createcomputemanifest(config):
             check_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
             try:
                 bring_up_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
-            except ScriptRuntimeError, ex:
+            except ScriptRuntimeError as ex:
                 # just warn user to do it by himself
-                controller.MESSAGES.append(str(ScriptRuntimeError))
+                controller.MESSAGES.append(str(ex))
 
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
@@ -406,9 +468,9 @@ def createnetworkmanifest(config):
         check_ifcfg(host, controller.CONF[i])
         try:
             bring_up_ifcfg(host, controller.CONF[i])
-        except ScriptRuntimeError, ex:
+        except ScriptRuntimeError as ex:
             # just warn user to do it by himself
-            controller.MESSAGES.append(str(ScriptRuntimeError))
+            controller.MESSAGES.append(str(ex))
 
     if controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] == "y":
       controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] = True
