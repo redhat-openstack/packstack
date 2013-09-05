@@ -430,7 +430,7 @@ def get_values(val):
     return [x.strip() for x in val.split(',')] if val else []
 
 def createL2AgentManifests(config):
-    global compute_hosts, dhcp_host, l3_hosts
+    global api_hosts, compute_hosts, dhcp_host, l3_hosts
 
     if controller.CONF["CONFIG_QUANTUM_L2_PLUGIN"] == "openvswitch":
         host_var = 'CONFIG_QUANTUM_OVS_HOST'
@@ -456,7 +456,7 @@ def createL2AgentManifests(config):
 
     # Install l2 agents on every compute host in addition to any hosts listed
     # specifically for the l2 agent
-    for host in compute_hosts | dhcp_hosts | l3_hosts:
+    for host in api_hosts | compute_hosts | dhcp_hosts | l3_hosts:
         controller.CONF[host_var] = host
         manifestfile = "%s_quantum.pp" % (host,)
         manifestdata = getManifestTemplate(template_name)
