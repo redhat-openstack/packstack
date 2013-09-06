@@ -356,9 +356,11 @@ def create_manifest(config):
     manifestfile = "%s_cinder.pp" % controller.CONF['CONFIG_CINDER_HOST']
     manifestdata = getManifestTemplate("cinder.pp")
 
-    if controller.CONF['CONFIG_CINDER_BACKEND'] == "gluster":
+    if config['CONFIG_CINDER_BACKEND'] == "gluster":
         manifestdata += getManifestTemplate("cinder_gluster.pp")
-    if controller.CONF['CONFIG_CINDER_BACKEND'] == "nfs":
+    if config['CONFIG_CINDER_BACKEND'] == "nfs":
         manifestdata += getManifestTemplate("cinder_nfs.pp")
+    if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
+        manifestdata += getManifestTemplate('glance_ceilometer.pp')
 
     appendManifestFile(manifestfile, manifestdata)
