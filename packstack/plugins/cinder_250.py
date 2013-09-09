@@ -305,7 +305,7 @@ def check_cinder_vg(config):
         cinders_volume_size = int(match.group('size')) * 1024
         cinders_reserve = int(cinders_volume_size * 0.03)
 
-        cinders_volume_size = int(match.group('size')) + cinders_reserve
+        cinders_volume_size = cinders_volume_size + cinders_reserve
         cinders_volume_path = os.path.join(cinders_volume_path, cinders_volume)
         server.append('dd if=/dev/zero of=%s bs=1 count=0 seek=%sM'
                        % (cinders_volume_path, cinders_volume_size))
