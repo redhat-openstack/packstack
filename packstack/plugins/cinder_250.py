@@ -361,6 +361,6 @@ def create_manifest(config):
     if config['CONFIG_CINDER_BACKEND'] == "nfs":
         manifestdata += getManifestTemplate("cinder_nfs.pp")
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
-        manifestdata += getManifestTemplate('glance_ceilometer.pp')
+        manifestdata += getManifestTemplate('cinder_ceilometer.pp')
 
     appendManifestFile(manifestfile, manifestdata)
