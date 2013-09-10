@@ -485,6 +485,14 @@ def createnetworkmanifest(config):
     net_size = 2**(32 - int(routing_prefix))
     controller.CONF['CONFIG_NOVA_NETWORK_FIXEDSIZE'] = str(net_size)
 
+    # Default VLAN parameters to avoid KeyError exceptions in case of VlanManager
+    # is not used
+    vlan_manager = 'nova.network.manager.VlanManager'
+    if config['CONFIG_NOVA_NETWORK_MANAGER'] != vlan_manager:
+        config['CONFIG_NOVA_NETWORK_VLAN_START'] = 100
+        config['CONFIG_NOVA_NETWORK_SIZE'] = 255
+        config['CONFIG_NOVA_NETWORK_NUMBER'] = 1
+
     manifestfile = "%s_nova.pp" % host
     manifestdata = getManifestTemplate("nova_network.pp")
     appendManifestFile(manifestfile, manifestdata)
