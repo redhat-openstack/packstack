@@ -6,7 +6,7 @@ class { 'heat':
     rpc_backend   => 'heat.openstack.common.rpc.impl_qpid',
     qpid_hostname => '%(CONFIG_QPID_HOST)s',
     verbose       => true,
-    debug         => true
+    debug         => false
 }
 
 class {"heat::db":

@@ -4,7 +4,7 @@ class { 'ceilometer':
     qpid_hostname   => '%(CONFIG_QPID_HOST)s',
     rpc_backend     => 'ceilometer.openstack.common.rpc.impl_qpid',
     verbose         => true,
-    debug           => true,
+    debug           => false
 }
 
 class { 'ceilometer::agent::compute':
