@@ -24,11 +24,11 @@ def initConfig(controllerObject):
     controller = controllerObject
 
     if platform.linux_distribution()[0] == "Fedora":
-      primary_netif = "em1"
-      secondary_netif = "em2"
+        primary_netif = "em1"
+        secondary_netif = "em2"
     else:
-      primary_netif = "eth0"
-      secondary_netif = "eth1"
+        primary_netif = "eth0"
+        secondary_netif = "eth1"
 
     nova_params = {
             "NOVA" : [
@@ -170,15 +170,15 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "novanetwork-host",
-                   "USAGE"           : "The IP address of the server on which to install the Nova Network service",
-                   "PROMPT"          : "Enter the IP address of the Nova Network service",
+                  {"CMD_OPTION"      : "novanetwork-hosts",
+                   "USAGE"           : "The list of IP addresses of the server on which to install the Nova Network service",
+                   "PROMPT"          : "Enter list of IP addresses on which to install the Nova Network service",
                    "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_ip, validators.validate_ssh],
+                   "VALIDATORS"      : [validators.validate_multi_ip, validators.validate_multi_ssh],
                    "DEFAULT_VALUE"   : utils.get_localhost_ip(),
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOST",
+                   "CONF_NAME"       : "CONFIG_NOVA_NETWORK_HOSTS",
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
@@ -368,6 +368,14 @@ def initSequences(controller):
 
 
 def createapimanifest(config):
+    # Since this step is running first, let's create necesary variables here
+    # and make them global
+    global compute_hosts, network_hosts
+    com_var = config.get("CONFIG_NOVA_COMPUTE_HOSTS", "")
+    compute_hosts = set([i.strip() for i in com_var.split(",") if i.strip()])
+    net_var = config.get("CONFIG_NOVA_NETWORK_HOSTS", "")
+    network_hosts = set([i.strip() for i in net_var.split(",") if i.strip()])
+
     # This is a hack around us needing to generate the neutron metadata
     # password, but the nova puppet plugin uses the existence of that
     # password to determine whether or not to configure neutron metadata
@@ -434,29 +442,29 @@ def bring_up_ifcfg(host, device):
 
 
 def createcomputemanifest(config):
-    dirty = controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(",")
-    hostlist = [i.strip() for i in dirty if i.strip()]
-    for host in hostlist:
-        controller.CONF["CONFIG_NOVA_COMPUTE_HOST"] = host
+    global compute_hosts, network_hosts
+    for host in compute_hosts:
+        config["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
-        if controller.CONF['CONFIG_CINDER_INSTALL'] == 'y' and controller.CONF['CONFIG_CINDER_BACKEND'] == 'gluster':
+        if config['CONFIG_CINDER_INSTALL'] == 'y' and config['CONFIG_CINDER_BACKEND'] == 'gluster':
             manifestdata += getManifestTemplate("nova_gluster.pp")
-        if controller.CONF['CONFIG_CINDER_INSTALL'] == 'y' and controller.CONF['CONFIG_CINDER_BACKEND'] == 'nfs':
+        if config['CONFIG_CINDER_INSTALL'] == 'y' and config['CONFIG_CINDER_BACKEND'] == 'nfs':
             manifestdata += getManifestTemplate("nova_nfs.pp")
-        manifestfile = "%s_nova.pp"%host
+        manifestfile = "%s_nova.pp" % host
 
         nova_config_options = NovaConfig()
-        if controller.CONF['CONFIG_NEUTRON_INSTALL'] != 'y':
-            if host != controller.CONF["CONFIG_NOVA_NETWORK_HOST"]:
-                nova_config_options.addOption("DEFAULT/flat_interface", controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
-            check_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+        if config['CONFIG_NEUTRON_INSTALL'] != 'y':
+            if host not in network_hosts:
+                nova_config_options.addOption("DEFAULT/flat_interface",
+                                        config['CONFIG_NOVA_COMPUTE_PRIVIF'])
+            check_ifcfg(host, config['CONFIG_NOVA_COMPUTE_PRIVIF'])
             try:
-                bring_up_ifcfg(host, controller.CONF['CONFIG_NOVA_COMPUTE_PRIVIF'])
+                bring_up_ifcfg(host, config['CONFIG_NOVA_COMPUTE_PRIVIF'])
             except ScriptRuntimeError as ex:
                 # just warn user to do it by himself
                 controller.MESSAGES.append(str(ex))
 
-        if controller.CONF['CONFIG_CEILOMETER_INSTALL'] == 'y':
+        if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
             manifestdata += getManifestTemplate("nova_ceilometer.pp")
 
         # According to the docs the only element that connects directly to nova compute
@@ -467,43 +475,48 @@ def createcomputemanifest(config):
         config['FIREWALL_PORTS'] = "'5900-5999'"
         manifestdata += getManifestTemplate("firewall.pp")
 
-        appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
+        manifestdata += "\n" + nova_config_options.getManifestEntry()
+        appendManifestFile(manifestfile, manifestdata)
 
 
 def createnetworkmanifest(config):
-    if controller.CONF['CONFIG_NEUTRON_INSTALL'] == "y":
+    global compute_hosts, network_hosts
+    if config['CONFIG_NEUTRON_INSTALL'] == "y":
         return
 
-    host = controller.CONF['CONFIG_NOVA_NETWORK_HOST']
-    for i in ('CONFIG_NOVA_NETWORK_PRIVIF', 'CONFIG_NOVA_NETWORK_PUBIF'):
-        check_ifcfg(host, controller.CONF[i])
-        try:
-            bring_up_ifcfg(host, controller.CONF[i])
-        except ScriptRuntimeError as ex:
-            # just warn user to do it by himself
-            controller.MESSAGES.append(str(ex))
+    # set default values for VlanManager in case this values are not in config
+    for key, value in [('CONFIG_NOVA_NETWORK_VLAN_START', 100),
+                       ('CONFIG_NOVA_NETWORK_SIZE', 255),
+                       ('CONFIG_NOVA_NETWORK_NUMBER', 1)]:
+        config[key] = config.get(key, value)
 
-    if controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] == "y":
-      controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] = True
-    else:
-      controller.CONF['CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'] = False
+    api_host = config['CONFIG_NOVA_API_HOST']
+    multihost = len(network_hosts) > 1
+    config['CONFIG_NOVA_NETWORK_MULTIHOST'] = multihost and 'true' or 'false'
+    for host in network_hosts:
+        for i in ('CONFIG_NOVA_NETWORK_PRIVIF', 'CONFIG_NOVA_NETWORK_PUBIF'):
+            check_ifcfg(host, config[i])
+            try:
+                bring_up_ifcfg(host, config[i])
+            except ScriptRuntimeError as ex:
+                # just warn user to do it by himself
+                controller.MESSAGES.append(str(ex))
 
-    # We need to explicitly set the network size
-    routing_prefix = controller.CONF['CONFIG_NOVA_NETWORK_FIXEDRANGE'].split('/')[1]
-    net_size = 2**(32 - int(routing_prefix))
-    controller.CONF['CONFIG_NOVA_NETWORK_FIXEDSIZE'] = str(net_size)
+        key = 'CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'
+        config[key] = config[key] == "y"
 
-    # Default VLAN parameters to avoid KeyError exceptions in case of VlanManager
-    # is not used
-    vlan_manager = 'nova.network.manager.VlanManager'
-    if config['CONFIG_NOVA_NETWORK_MANAGER'] != vlan_manager:
-        config['CONFIG_NOVA_NETWORK_VLAN_START'] = 100
-        config['CONFIG_NOVA_NETWORK_SIZE'] = 255
-        config['CONFIG_NOVA_NETWORK_NUMBER'] = 1
+        # We need to explicitly set the network size
+        routing_prefix = config['CONFIG_NOVA_NETWORK_FIXEDRANGE'].split('/')[1]
+        net_size = 2**(32 - int(routing_prefix))
+        config['CONFIG_NOVA_NETWORK_FIXEDSIZE'] = str(net_size)
 
-    manifestfile = "%s_nova.pp" % host
-    manifestdata = getManifestTemplate("nova_network.pp")
-    appendManifestFile(manifestfile, manifestdata)
+        manifestfile = "%s_nova.pp" % host
+        manifestdata = getManifestTemplate("nova_network.pp")
+
+        # in multihost mode each compute host runs nova-api-metadata
+        if multihost and host != api_host and host in compute_hosts:
+            manifestdata += getManifestTemplate("nova_metadata.pp")
+        appendManifestFile(manifestfile, manifestdata)
 
 
 def createschedmanifest(config):
@@ -519,30 +532,40 @@ def createvncproxymanifest(config):
 
 
 def createcommonmanifest(config):
-    dbhost = config['CONFIG_MYSQL_HOST']
-    dirty = controller.CONF["CONFIG_NOVA_COMPUTE_HOSTS"].split(",")
-    nopass_nodes = [i.strip() for i in dirty if i.strip()]
+    global compute_hosts, network_hosts
+    network_type = (config['CONFIG_NEUTRON_INSTALL'] == "y" and
+                    'neutron' or 'nova')
+    network_multi = len(network_hosts) > 1
     dirty = [config.get('CONFIG_NOVA_CONDUCTOR_HOST'),
              config.get('CONFIG_NOVA_API_HOST'),
              config.get('CONFIG_NOVA_CERT_HOST'),
              config.get('CONFIG_NOVA_VNCPROXY_HOST'),
-             config.get('CONFIG_NOVA_SCHED_HOST'),
-             config.get('CONFIG_NOVA_NETWORK_HOST')]
-    dbpass_nodes = [i.strip() for i in dirty if i and i.strip()]
+             config.get('CONFIG_NOVA_SCHED_HOST')]
+    dbacces_hosts = set([i.strip() for i in dirty if i and i.strip()])
+    dbacces_hosts |= network_hosts
 
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
             host, manifest = manifestfile.split('_', 1)
             host = host.strip()
 
-            if host in nopass_nodes and host not in dbpass_nodes:
+            if host in compute_hosts and host not in dbacces_hosts:
                 # we should omit password in case we are installing only
                 # nova-compute to the host
                 perms = "nova"
             else:
-                perms = "nova:%(CONFIG_NOVA_DB_PW)s" % config
-            config['CONFIG_NOVA_SQL_CONN'] = ("mysql://%s@%s/nova"
-                                              % (perms, dbhost))
+                perms = "nova:%(CONFIG_NOVA_DB_PW)s"
+            sqlconn = "mysql://%s@%%(CONFIG_MYSQL_HOST)s/nova" % perms
+            config['CONFIG_NOVA_SQL_CONN'] = sqlconn % config
+
+            # for nova-network in multihost mode each compute host is metadata
+            # host otherwise we use api host
+            if (network_type == 'nova' and network_multi and
+                host in compute_hosts):
+                metadata = host
+            else:
+                metadata = config['CONFIG_NOVA_API_HOST']
+            config['CONFIG_NOVA_METADATA_HOST'] = metadata
 
             data = getManifestTemplate("nova_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)

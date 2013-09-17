@@ -121,7 +121,7 @@ Nova Options
 
 **CONFIG_NOVA_COMPUTE_PRIVIF** : Private interface for Flat DHCP on the Nova compute servers
 
-**CONFIG_NOVA_NETWORK_HOST**   : The IP address of the server on which to install the Nova Network service
+**CONFIG_NOVA_NETWORK_HOSTS**  : List of IP address of the servers on which to install the Nova Network service
 
 **CONFIG_NOVA_DB_PW**          : The password to use for the Nova to access DB
 

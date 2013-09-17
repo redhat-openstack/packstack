@@ -1,8 +1,16 @@
-nova_config{
+
+nova_config {
     "DEFAULT/default_floating_pool": value => '%(CONFIG_NOVA_NETWORK_DEFAULTFLOATINGPOOL)s';
     "DEFAULT/auto_assign_floating_ip": value => '%(CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP)s';
 }
 
+$multihost = %(CONFIG_NOVA_NETWORK_MULTIHOST)s
+if $multihost {
+    nova_config {
+        "DEFAULT/multi_host": value => true;
+        "DEFAULT/send_arp_for_ha": value => true;
+    }
+}
 
 $manager = '%(CONFIG_NOVA_NETWORK_MANAGER)s'
 $overrides = {}
@@ -17,7 +25,7 @@ if $manager == 'nova.network.manager.VlanManager' {
     $net_size = '%(CONFIG_NOVA_NETWORK_FIXEDSIZE)s'
     $net_num = 1
 }
-class {"nova::network":
+class { "nova::network":
     enabled => true,
     network_manager => $manager,
     num_networks => $net_num ,
