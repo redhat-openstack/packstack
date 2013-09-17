@@ -21,8 +21,3 @@ if ($::fqdn != $::hostname and $::hostname != "localhost") {
     }
 }
 
-firewall { '001 mysql incoming':
-    proto  => 'tcp',
-    dport  => ['3306'],
-    action => 'accept',
-}

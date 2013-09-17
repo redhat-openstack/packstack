@@ -103,8 +103,31 @@ def createmanifest(config):
         manifestdata.append(getManifestTemplate(template))
 
     append_for("keystone", suffix)
+    hosts = set()
     for mod in ['nova', 'cinder', 'glance', 'neutron', 'heat']:
         if config['CONFIG_%s_INSTALL' % mod.upper()] == 'y':
             append_for(mod, suffix)
+            # Check wich modules are enabled so we can allow their
+            # hosts on the firewall
+            if mod != 'nova' and mod != 'neutron':
+                hosts.add(config.get('CONFIG_%s_HOST' % mod.upper()).strip())
+            elif mod == 'neutron':
+                hosts.add(config.get('CONFIG_NEUTRON_SERVER_HOST').strip())
+            else:
+                #In that remote case that we have lot's of nova hosts
+                hosts.add(config.get('CONFIG_NOVA_API_HOST').strip())
+                hosts.add(config.get('CONFIG_NOVA_CERT_HOST').strip())
+                hosts.add(config.get('CONFIG_NOVA_VNCPROXY_HOST').strip())
+                hosts.add(config.get('CONFIG_NOVA_CONDUCTOR_HOST').strip())
+                hosts.add(config.get('CONFIG_NOVA_SCHED_HOST').strip())
+                if config['CONFIG_NEUTRON_INSTALL'] != 'y':
+                    hosts.add(config.get('CONFIG_NOVA_NETWORK_HOST').strip())
+                for host in config.get('CONFIG_NOVA_COMPUTE_HOSTS').split(','):
+                    hosts.add(host.strip())
+
+    config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
+    config['FIREWALL_SERVICE_NAME'] = "mysql"
+    config['FIREWALL_PORTS'] = "'3306'"
+    manifestdata.append(getManifestTemplate("firewall.pp"))
 
     appendManifestFile(manifestfile, "\n".join(manifestdata), 'pre')
