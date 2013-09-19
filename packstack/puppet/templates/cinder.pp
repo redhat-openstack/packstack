@@ -31,8 +31,4 @@ class {'cinder::volume::iscsi':
     iscsi_ip_address => '%(CONFIG_CINDER_HOST)s'
 }
 
-firewall { '001 cinder incoming':
-    proto    => 'tcp',
-    dport    => ['3260', '8776'],
-    action   => 'accept',
-}
+
