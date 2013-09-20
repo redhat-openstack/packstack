@@ -16,9 +16,3 @@ class {"keystone::endpoint":
     admin_address  => "%(CONFIG_KEYSTONE_HOST)s",
     internal_address  => "%(CONFIG_KEYSTONE_HOST)s",
 }
-
-firewall { '001 keystone incoming':
-    proto    => 'tcp',
-    dport    => ['5000', '35357'],
-    action   => 'accept',
-}

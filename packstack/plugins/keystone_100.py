@@ -10,6 +10,7 @@ from packstack.installer import basedefs
 from packstack.installer import utils
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
+from packstack.installer.utils import host_iter
 
 # Controller object will be initialized from main flow
 controller = None
@@ -120,4 +121,13 @@ def initSequences(controller):
 def create_manifest(config):
     manifestfile = "%s_keystone.pp" % config['CONFIG_KEYSTONE_HOST']
     manifestdata = getManifestTemplate("keystone.pp")
+    hosts = set()
+    for key, value in host_iter(config):
+        if (key.find("MYSQL") != -1) or (key.find("QPID") != -1):
+            continue
+        hosts.add(value.strip())
+    config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
+    config['FIREWALL_SERVICE_NAME'] = "keystone"
+    config['FIREWALL_PORTS'] = "'5000', '35357'"
+    manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata)
