@@ -10,5 +10,6 @@ class { 'neutron':
   rpc_backend => 'neutron.openstack.common.rpc.impl_qpid',
   qpid_hostname => '%(CONFIG_QPID_HOST)s',
   core_plugin => '%(CONFIG_NEUTRON_CORE_PLUGIN)s',
+  allow_overlapping_ips => true,
   verbose => true,
 }
