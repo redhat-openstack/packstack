@@ -57,13 +57,6 @@ if $::is_virtual_packstack == "true" and $::osfamily == "RedHat" and
     }
 }
 
-firewall { '001 nova compute incoming':
-    proto    => 'tcp',
-    dport    => '5900-5999',
-    action   => 'accept',
-}
-
-
 # Tune the host with a virtual hosts profile
 package {'tuned':
     ensure => present,

@@ -459,6 +459,14 @@ def createcomputemanifest(config):
         if controller.CONF['CONFIG_CEILOMETER_INSTALL'] == 'y':
             manifestdata += getManifestTemplate("nova_ceilometer.pp")
 
+        # According to the docs the only element that connects directly to nova compute
+        # is nova scheduler
+        # http://docs.openstack.org/developer/nova/nova.concepts.html#concept-system-architecture
+        config['FIREWALL_ALLOWED'] = "'%s'" % (config['CONFIG_NOVA_SCHED_HOST'].strip())
+        config['FIREWALL_SERVICE_NAME'] = "nova compute"
+        config['FIREWALL_PORTS'] = "'5900-5999'"
+        manifestdata += getManifestTemplate("firewall.pp")
+
         appendManifestFile(manifestfile, manifestdata + "\n" + nova_config_options.getManifestEntry())
 
 
