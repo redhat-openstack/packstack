@@ -97,4 +97,11 @@ def createmanifest(config):
     manifestdata = getManifestTemplate("glance.pp")
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
         manifestdata += getManifestTemplate('glance_ceilometer.pp')
+    hosts = set()
+    for host in config['CONFIG_NOVA_COMPUTE_HOSTS'].split(','):
+        hosts.add(host.strip())
+    config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
+    config['FIREWALL_SERVICE_NAME'] = "glance"
+    config['FIREWALL_PORTS'] = "'9292'"
+    manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata)
