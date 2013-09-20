@@ -5,12 +5,13 @@ if $::operatingsystem != "Fedora" {
     }
 }
 
+$info = "The RDO kernel that includes network namespace (netns) support has been installed on host $::ipaddress."
 if $::operatingsystem == 'RedHat' {
-    $warning = "Kernel package with netns support has been installed on host $::ipaddress. Please note that with this action you are losing Red Hat support for this host. Because of the kernel update the host mentioned above requires reboot."
+    $warning = " This is a community supplied kernel and is not officially supported by Red Hat. Installing this kernel on RHEL systems may impact your ability to get support from Red Hat."
 } else {
-    $warning = "Kernel package with netns support has been installed on host $::ipaddress. Because of the kernel update the host mentioned above requires reboot."
+    $warning = ""
 }
 
 class { 'packstack::netns':
-    warning => $warning
+    warning => "${info}${warning}"
 }
