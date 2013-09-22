@@ -4,8 +4,3 @@ class { 'neutron::server':
   enabled => true,
 }
 
-firewall { '001 neutron incoming':
-    proto    => 'tcp',
-    dport    => ['9696'],
-    action   => 'accept',
-}
