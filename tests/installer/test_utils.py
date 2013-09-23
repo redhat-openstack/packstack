@@ -106,3 +106,11 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
                              mask_list=["'text'"],
                              replace_list=[("'", "'\\''")])
         self.assertEqual(masked, 'test %s' % STR_MASK)
+
+    def test_shortcuts(self):
+        """Test packstack.installer.utils.shortcuts functions"""
+        conf = {"A_HOST": "1.1.1.1", "B_HOSTS": "2.2.2.2,1.1.1.1",
+                "C_HOSTS": "3.3.3.3/vdc"}
+        hostlist = list(hosts(conf))
+        hostlist.sort()
+        self.assertEquals(['1.1.1.1', '2.2.2.2', '3.3.3.3'], hostlist)
