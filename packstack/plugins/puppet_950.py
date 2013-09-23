@@ -80,10 +80,9 @@ def installdeps(config):
 
 def copyPuppetModules(config):
     os_modules = ' '.join(('apache', 'ceilometer', 'cinder', 'concat',
-                           'create_resources', 'firewall', 'glance',
-                           'heat', 'horizon', 'inifile', 'keystone',
-                           'memcached', 'mongodb', 'mysql', 'neutron',
-                           'nova', 'openstack', 'packstack', 'qpid',
+                           'firewall', 'glance', 'heat', 'horizon', 'inifile',
+                           'keystone', 'memcached', 'mongodb', 'mysql',
+                           'neutron', 'nova', 'openstack', 'packstack', 'qpid',
                            'rsync', 'ssh', 'stdlib', 'swift', 'sysctl',
                            'tempest', 'vcsrepo', 'vlan', 'vswitch',
                            'xinetd'))
@@ -92,23 +91,20 @@ def copyPuppetModules(config):
     manifestfiles.writeManifests()
 
     server = utils.ScriptRunner()
-    tar_opts = ""
-    if platform.linux_distribution()[0] == "Fedora":
-        tar_opts += "--exclude create_resources "
     for hostname in filtered_hosts(config):
         host_dir = controller.temp_map[hostname]
         server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
         # copy Packstack facts
-        server.append("tar %s --dereference -cpzf - facts | "
+        server.append("tar --dereference -cpzf - facts | "
                       "ssh -o StrictHostKeyChecking=no "
                           "-o UserKnownHostsFile=/dev/null "
-                          "root@%s tar -C %s -xpzf -" % (tar_opts, hostname, host_dir))
+                          "root@%s tar -C %s -xpzf -" % (hostname, host_dir))
         # copy Packstack manifests
         server.append("cd %s" % basedefs.PUPPET_MANIFEST_DIR)
-        server.append("tar %s --dereference -cpzf - ../manifests | "
+        server.append("tar --dereference -cpzf - ../manifests | "
                       "ssh -o StrictHostKeyChecking=no "
                           "-o UserKnownHostsFile=/dev/null "
-                          "root@%s tar -C %s -xpzf -" % (tar_opts, hostname, host_dir))
+                          "root@%s tar -C %s -xpzf -" % (hostname, host_dir))
 
         # copy resources
         for path, localname in controller.resources.get(hostname, []):
@@ -118,12 +114,11 @@ def copyPuppetModules(config):
 
         # copy Puppet modules required by Packstack
         server.append("cd %s/puppet/modules" % basedefs.DIR_PROJECT_DIR)
-        server.append("tar %s --dereference -cpzf - %s | "
+        server.append("tar --dereference -cpzf - %s | "
                       "ssh -o StrictHostKeyChecking=no "
                           "-o UserKnownHostsFile=/dev/null "
                           "root@%s tar -C %s -xpzf -" %
-                                (tar_opts, os_modules, hostname,
-                                 os.path.join(host_dir, 'modules')))
+                      (os_modules, hostname, os.path.join(host_dir, 'modules')))
     server.execute()
 
 

@@ -31,9 +31,6 @@
 [submodule "packstack/puppet/modules/concat"]
 	path = packstack/puppet/modules/concat
 	url = https://github.com/ripienaar/puppet-concat.git
-[submodule "packstack/puppet/modules/create_resources"]
-	path = packstack/puppet/modules/create_resources
-	url = https://github.com/puppetlabs/puppetlabs-create_resources.git
 [submodule "packstack/puppet/modules/rsync"]
 	path = packstack/puppet/modules/rsync
 	url = https://github.com/puppetlabs/puppetlabs-rsync.git
