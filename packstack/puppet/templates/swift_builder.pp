@@ -15,13 +15,6 @@ class { 'swift::ringserver':
  ring_server => $swift_local_net_ip
 }
 
-
-firewall { '001 rsync incoming':
-    proto    => 'tcp',
-    dport    => ['873'],
-    action   => 'accept',
-}
-
 if ($::selinux != "false"){
     selboolean{'rsync_export_all_ro':
         value => on,

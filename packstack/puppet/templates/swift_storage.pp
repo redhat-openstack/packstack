@@ -20,10 +20,4 @@ swift::ringsync{["account","container","object"]:
     require => Class['swift'],
 }
 
-firewall { '001 swift storage incoming':
-    proto    => 'tcp',
-    dport    => ['6000', '6001', '6002', '873'],
-    action   => 'accept',
-}
-
 
