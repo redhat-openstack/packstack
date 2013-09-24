@@ -356,7 +356,6 @@ def _handleAnswerFileParams(answerFile):
                 preConditionValue = _handleGroupCondition(fconf, group.PRE_CONDITION, preConditionValue)
 
             # Handle pre condition match with case insensitive values
-            logging.info("Comparing pre- conditions, value: '%s', and match: '%s'" % (preConditionValue, group.PRE_CONDITION_MATCH))
             if preConditionValue == group.PRE_CONDITION_MATCH:
                 for param in group.parameters.itervalues():
                     _loadParamFromFile(fconf, "general", param.CONF_NAME)
@@ -396,7 +395,6 @@ def _getanswerfilepath():
         msg = "A new answerfile was created in: %s" % path
 
     controller.MESSAGES.append(msg)
-    logging.info(msg)
     return path
 
 def _handleInteractiveParams():
@@ -414,7 +412,6 @@ def _handleInteractiveParams():
             inputLoop = True
 
             # If we have a match, i.e. condition returned True, go over all params in the group
-            logging.info("Comparing pre-conditions; condition: '%s', and match: '%s'" % (preConditionValue, group.PRE_CONDITION_MATCH))
             if preConditionValue == group.PRE_CONDITION_MATCH:
                 while inputLoop:
                     for param in group.parameters.itervalues():
@@ -529,7 +526,6 @@ def _printAdditionalMessages():
     if len(controller.MESSAGES) > 0:
         print "\n",output_messages.INFO_ADDTIONAL_MSG
     for msg in controller.MESSAGES:
-        logging.info(output_messages.INFO_ADDTIONAL_MSG_BULLET%(msg))
         print output_messages.INFO_ADDTIONAL_MSG_BULLET%(msg)
 
 def _addFinalInfoMsg():
@@ -554,7 +550,6 @@ def runSequences():
     controller.runAllSequences()
 
 def _main(configFile=None):
-    logging.debug("Entered main(configFile='%s')"%(configFile))
     print output_messages.INFO_HEADER
 
     # Get parameters
@@ -567,7 +562,6 @@ def _main(configFile=None):
     logging.debug(mask(controller.CONF))
 
     # Start configuration stage
-    logging.debug("Entered Configuration stage")
     print "\n",output_messages.INFO_INSTALL
 
     # Initialize Sequences
@@ -595,7 +589,7 @@ def remove_remote_var_dirs():
         except KeyError:
             # Nothing was added to this host yet, so we have nothing to delete
             continue
-        logging.info(output_messages.INFO_REMOVE_REMOTE_VAR % (host_dir, host))
+        logging.debug(output_messages.INFO_REMOVE_REMOTE_VAR % (host_dir, host))
         server = utils.ScriptRunner(host)
         server.append('rm -rf %s' % host_dir)
         try:
@@ -703,7 +697,6 @@ def initCmdLineParser():
     """
 
     # Init parser and all general flags
-    logging.debug("initiating command line option parser")
     usage = "usage: %prog [options] [--help]"
     parser = OptionParser(usage)
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other options")

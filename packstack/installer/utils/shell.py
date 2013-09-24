@@ -10,8 +10,12 @@ from ..exceptions import (ExecuteRuntimeError, ScriptRuntimeError,
 from .strings import mask_string
 
 
+block_fmt = ("\n============= %(title)s ==========\n%(content)s\n"
+             "======== END OF %(title)s ========")
+
+
 def execute(cmd, workdir=None, can_fail=False, mask_list=None,
-            use_shell=False):
+            use_shell=False, log=True):
     """
     Runs shell command cmd. If can_fail is set to False
     ExecuteRuntimeError is raised if command returned non-zero return
@@ -26,19 +30,25 @@ def execute(cmd, workdir=None, can_fail=False, mask_list=None,
     else:
         masked = cmd
     masked = mask_string(masked, mask_list, repl_list)
-    logging.debug("Executing command: %s" % masked)
+    if log:
+        logging.info("Executing command:\n%s" % masked)
 
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, cwd=workdir,
                             shell=use_shell, close_fds=True)
     out, err = proc.communicate()
-    logging.debug("rc: %s" % proc.returncode)
-    logging.debug("stdout:\n%s" % mask_string(out, mask_list, repl_list))
-    logging.debug("stderr:\n%s" % mask_string(err, mask_list, repl_list))
+    masked_out = mask_string(out, mask_list, repl_list)
+    masked_err = mask_string(err, mask_list, repl_list)
+    if log:
+        logging.debug(block_fmt % {'title': 'STDOUT', 'content': masked_out})
 
-    if not can_fail and proc.returncode != 0:
-        msg = 'Failed to execute command: %s' % masked
-        raise ExecuteRuntimeError(msg, stdout=out, stderr=err)
+    if proc.returncode:
+        if log:
+            logging.debug(block_fmt % {'title': 'STDERR',
+                                       'content': masked_err})
+        if not can_fail:
+            msg = 'Failed to execute command: %s' % masked_out
+            raise ExecuteRuntimeError(msg, stdout=out, stderr=err)
     return proc.returncode, out
 
 
@@ -55,10 +65,15 @@ class ScriptRunner(object):
     def clear(self):
         self.script = []
 
-    def execute(self, logerrors=True, maskList=None):
-        maskList = maskList or []
+    def execute(self, can_fail=True, mask_list=None, log=True):
+        mask_list = mask_list or []
+        repl_list = [("'", "'\\''")]
         script = "\n".join(self.script)
-        logging.debug("# ============ ssh : %r ==========" % self.ip)
+
+        masked = mask_string(script, mask_list, repl_list)
+        if log:
+            logging.info("[%s] Executing script:\n%s" %
+                         (self.ip or 'localhost', masked))
 
         _PIPE = subprocess.PIPE  # pylint: disable=E1101
         if self.ip:
@@ -67,32 +82,29 @@ class ScriptRunner(object):
                           "root@%s" % self.ip, "bash -x"]
         else:
             cmd = ["bash", "-x"]
-        obj = subprocess.Popen(cmd, stdin=_PIPE, stdout=_PIPE,
-                               stderr=_PIPE, close_fds=True,
-                               shell=False)
+        obj = subprocess.Popen(cmd, stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
+                               close_fds=True, shell=False)
 
-        replace_list = [("'", "'\\''")]
-        logging.debug(mask_string(script, maskList, replace_list))
         script = "function t(){ exit $? ; } \n trap t ERR \n" + script
-        stdoutdata, stderrdata = obj.communicate(script)
-        logging.debug("============ STDOUT ==========")
-        logging.debug(mask_string(stdoutdata, maskList, replace_list))
-        returncode = obj.returncode
-        if returncode:
-            if logerrors:
-                logging.error("============= STDERR ==========")
-                logging.error(mask_string(stderrdata, maskList,
-                                          replace_list))
+        out, err = obj.communicate(script)
+        masked_out = mask_string(out, mask_list, repl_list)
+        masked_err = mask_string(err, mask_list, repl_list)
+        if log:
+            logging.debug(block_fmt % {'title': 'STDOUT',
+                                       'content': masked_out})
 
-            pattern = (r'^ssh\:')
-            if re.search(pattern, stderrdata):
-                raise NetworkError(stderrdata, stdout=stdoutdata,
-                                   stderr=stderrdata)
-            else:
-                msg = 'Error running remote script: %s' % stdoutdata
-                raise ScriptRuntimeError(msg, stdout=stdoutdata,
-                                         stderr=stderrdata)
-        return returncode, stdoutdata
+        if obj.returncode:
+            if log:
+                logging.debug(block_fmt % {'title': 'STDERR',
+                                           'content': masked_err})
+            if not can_fail:
+                pattern = (r'^ssh\:')
+                if re.search(pattern, err):
+                    raise NetworkError(masked_err, stdout=out, stderr=err)
+                else:
+                    msg = 'Failed to run remote script: %s' % masked_out
+                    raise ScriptRuntimeError(msg, stdout=out, stderr=err)
+        return obj.returncode, out
 
     def template(self, src, dst, varsdict):
         with open(src) as fp:
@@ -115,4 +127,4 @@ class ScriptRunner(object):
         self.append("chown %s:%s %s" % (uid, gid, target))
 
     def chmod(self, target, mode):
-        self.append("chown %s %s" % (mode, target))
+        self.append("chmod %s %s" % (mode, target))

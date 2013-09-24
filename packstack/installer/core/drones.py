@@ -357,7 +357,7 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
         try:
             # once a remote puppet run has finished, we retrieve
             # the log file and check it for errors
-            local.execute(logerrors=False)
+            local.execute(log=False)
             # if we got to this point the puppet apply has finished
             return True
         except utils.ScriptRuntimeError, e:
