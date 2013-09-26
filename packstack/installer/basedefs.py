@@ -10,6 +10,8 @@ import sys
 import datetime
 import tempfile
 
+from .utils import get_current_user
+
 
 APP_NAME = "Installer"
 
@@ -26,13 +28,7 @@ except OSError:
                'ownership and try again.' % PACKSTACK_VAR_DIR)
         sys.exit(1)
 finally:
-    # in case user switched to root, change ownership back
-    try:
-        user = pwd.getpwnam(os.getlogin())
-        uid, gid = user.pw_uid, user.pw_gid
-    except OSError:
-        # in case Packstack is run by a script
-        uid, gid = os.getuid(), os.getgid()
+    uid, gid = get_current_user()
 
     if uid != 0 and os.getuid() == 0:
         try:
