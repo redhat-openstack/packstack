@@ -18,8 +18,3 @@ class {"glance::registry":
     sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/glance"
 }
 
-firewall { '001 glance incoming':
-    proto    => 'tcp',
-    dport    => ['9292'],
-    action   => 'accept',
-}
