@@ -12,4 +12,4 @@ define add_allow_host {
     }
 }
 
-add_allow_host { $hosts:}
+add_allow_host {$hosts:}
