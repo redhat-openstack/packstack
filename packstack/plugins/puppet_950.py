@@ -53,9 +53,14 @@ def initSequences(controller):
     controller.insertSequence("Clean Up", [], [], puppetpresteps, index=0)
 
     puppetsteps = [
-             {'title': 'Installing Dependencies', 'functions':[installdeps]},
-             {'title': 'Copying Puppet modules and manifests', 'functions':[copyPuppetModules]},
-             {'title': 'Applying Puppet manifests', 'functions':[applyPuppetManifest]},
+        {'title': 'Installing Dependencies',
+            'functions': [installdeps]},
+        {'title': 'Copying Puppet modules and manifests',
+            'functions': [copyPuppetModules]},
+        {'title': 'Applying Puppet manifests',
+            'functions': [applyPuppetManifest]},
+        {'title': 'Finalizing',
+            'functions': [finalize]}
     ]
     controller.addSequence("Puppet", [], [], puppetsteps)
 
@@ -212,3 +217,17 @@ def applyPuppetManifest(config):
 
     # wait for outstanding puppet runs befor exiting
     waitforpuppet(currently_running)
+
+
+def finalize(config):
+    for hostname in filtered_hosts(config):
+        server = utils.ScriptRunner(hostname)
+        server.append("installed=$(rpm -q kernel --last | head -n1 | "
+                      "sed 's/kernel-\([a-z0-9\.\_\-]*\).*/\\1/g')")
+        server.append("loaded=$(uname -r | head -n1)")
+        server.append('[ "$loaded" == "$installed" ]')
+        try:
+            rc, out = server.execute()
+        except ScriptRuntimeError:
+            controller.MESSAGES.append('Because of the kernel update the host '
+                                       '%s requires reboot.' % hostname)
