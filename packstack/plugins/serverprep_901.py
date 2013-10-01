@@ -355,10 +355,10 @@ def run_rhsm_reg(host, username, password, beta):
             "grep -e 'Red Hat OpenStack' -m 1 -A 2 | grep 'Pool Id' | "
             "awk '{print $3}')")
     server.append(cmd % pool)
+    server.append("subscription-manager repos --enable rhel-6-server-optional-rpms")
 
     server.append("yum clean all")
     server.append("rpm -q yum-utils || yum install -y yum-utils")
-    server.append("yum-config-manager --enable rhel-server-ost-6-folsom-rpms")
     if beta:
         server.append("yum-config-manager --enable rhel-6-server-beta-rpms")
     server.append("yum clean metadata")
