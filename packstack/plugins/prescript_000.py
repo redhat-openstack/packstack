@@ -143,7 +143,7 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
-                  {"CMD_OPTION"      : "ntp-severs",
+                  {"CMD_OPTION"      : "ntp-servers",
                    "USAGE"           : "Comma separated list of NTP servers. Leave plain if Packstack should not install ntpd on instances.",
                    "PROMPT"          : "Enter a comma separated list of NTP server(s). Leave plain if Packstack should not install ntpd on instances.",
                    "OPTION_LIST"     : [],
