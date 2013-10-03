@@ -150,8 +150,8 @@ def waitforpuppet(currently_running):
                 log = os.path.join(basedefs.PUPPET_MANIFEST_DIR,
                                    os.path.basename(finished_logfile).replace(".finished", ".log"))
                 local_server.append('scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s:%s %s' % (hostname, finished_logfile, log))
-                # Errors are expected here if the puppet run isn't finished so we suppress logging them
-                local_server.execute(logerrors=False)
+                # To not pollute logs we turn of logging of command execution
+                local_server.execute(log=False)
 
                 # If we got to this point the puppet apply has finished
                 currently_running.remove((hostname, finished_logfile))

@@ -87,8 +87,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
                     use_shell=True, mask_list=['password'])
             raise AssertionError('Masked execution failed.')
         except ExecuteRuntimeError, ex:
-            should_be = ('Failed to execute command: '
-                         'echo "mask the %s" && exit 1' % STR_MASK)
+            should_be = ('Failed to execute command: mask the %s\n' % STR_MASK)
             self.assertEqual(str(ex), should_be)
 
         script = ScriptRunner()
