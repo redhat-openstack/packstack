@@ -24,6 +24,9 @@ class PackStackError(Exception):
         self.stderr = kwargs.get('stderr', None)
 
 
+class PuppetError(Exception):
+    """Raised when Puppet will have some problems."""
+
 
 class MissingRequirements(PackStackError):
     """Raised when minimum install requirements are not met."""

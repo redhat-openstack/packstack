@@ -20,7 +20,7 @@ import shutil
 import sys
 from unittest import TestCase
 
-from packstack.modules import ospluginutils
+from packstack.modules import ospluginutils, puppet
 from packstack.installer import run_setup, basedefs
 
 from ..test_base import PackstackTestCaseMixin
@@ -55,9 +55,9 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
 
         # There is no puppet logfile to validate, so replace
         # ospluginutils.validate_puppet_logfile with a mock function
-        orig_validate_logfile = ospluginutils.validate_puppet_logfile
-        ospluginutils.validate_puppet_logfile = lambda a: None
-        ospluginutils.scan_puppet_logfile = lambda a: []
+        orig_validate_logfile = puppet.validate_logfile
+        puppet.validate_logfile = lambda a: None
+        puppet.scan_logfile = lambda a: []
 
         # If there is a error in a plugin sys.exit() gets called, this masks
         # the actual error that should be reported, so we replace it to

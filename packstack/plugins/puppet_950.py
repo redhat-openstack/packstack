@@ -12,9 +12,8 @@ from packstack.installer import basedefs, output_messages
 from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.common import filtered_hosts
-from packstack.modules.ospluginutils import (manifestfiles,
-                                             scan_puppet_logfile,
-                                             validate_puppet_logfile)
+from packstack.modules.ospluginutils import manifestfiles
+from packstack.modules.puppet import scan_logfile, validate_logfile
 
 # Controller object will be initialized from main flow
 controller = None
@@ -167,10 +166,10 @@ def waitforpuppet(currently_running):
                 continue
 
             # check log file for relevant notices
-            controller.MESSAGES.extend(scan_puppet_logfile(log))
+            controller.MESSAGES.extend(scan_logfile(log))
 
             # check the log file for errors
-            validate_puppet_logfile(log)
+            validate_logfile(log)
             sys.stdout.write(("\r%s : " % log_file).ljust(space_len))
             print ("[ " + utils.color_text(output_messages.INFO_DONE, 'green') + " ]")
 
