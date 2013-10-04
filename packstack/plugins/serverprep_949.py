@@ -3,6 +3,7 @@ prepare server
 """
 
 import os
+import re
 import uuid
 import logging
 import platform
@@ -12,7 +13,7 @@ from packstack.installer import exceptions
 from packstack.installer import utils
 from packstack.installer import validators
 
-from packstack.modules.common import filtered_hosts
+from packstack.modules.common import filtered_hosts, is_all_in_one
 
 # Controller object will be initialized from main flow
 controller = None
@@ -242,7 +243,8 @@ def initConfig(controllerObject):
               "POST_CONDITION_MATCH"  : True},
         ]
 
-    if is_rhel():
+    if ((is_all_in_one(controller.CONF) and is_rhel()) or
+        not is_all_in_one(controller.CONF)):
         conf_groups.append({"GROUP_NAME"            : "RHEL",
                             "DESCRIPTION"           : "RHEL config",
                             "PRE_CONDITION"         : lambda x: 'yes',
@@ -365,6 +367,87 @@ def run_rhsm_reg(host, username, password, beta):
     server.execute(maskList=[password])
 
 
+def manage_epel(host, config):
+    """
+    Installs and/or enables EPEL repo if it is required or disables it if it
+    is not required.
+    """
+    mirrors = ('https://mirrors.fedoraproject.org/metalink?repo=epel-6&'
+               'arch=$basearch')
+    server = utils.ScriptRunner(host)
+    if (config['CONFIG_USE_EPEL'] == 'y' and
+        config['HOST_DETAILS'][host]['os'] != 'Fedora'):
+        server.append('REPOFILE=$(mktemp)')
+        server.append('cat /etc/yum.conf > $REPOFILE')
+        server.append("echo -e '[packstack-epel]\nname=packstack-epel\n"
+                      "enabled=1\nmirrorlist=%(mirrors)s' >> $REPOFILE"
+                      % locals())
+        server.append('( rpm -q epel-release ||'
+                      ' yum install -y --nogpg -c $REPOFILE epel-release ) '
+                      '|| true')
+        server.append('rm -rf $REPOFILE')
+    try:
+        server.execute()
+    except exceptions.ScriptRuntimeError as ex:
+        msg = 'Failed to set EPEL repo on host %s:\n%s' % (host, ex)
+        raise exceptions.ScriptRuntimeError(msg)
+
+    if config['CONFIG_USE_EPEL'] == 'y':
+        cmd = 'enable'
+        enabled = '(1|True)'
+    else:
+        cmd = 'disable'
+        enabled = '(0|False)'
+    server.clear()
+    server.append('yum-config-manager --%(cmd)s epel' % locals())
+    # yum-config-manager returns 0 always, but returns current setup if succeeds
+    rc, out = server.execute()
+    match = re.search('enabled\s*\=\s*%(enabled)s' % locals(), out)
+    if not match:
+        msg = ('Failed to set EPEL repo on host %s:\nRPM file seems to be '
+               'installed, but appropriate repo file is probably missing '
+               'in /etc/yum.repos.d/' % host)
+        raise exceptions.ScriptRuntimeError(msg)
+
+
+def manage_rdo(host, config):
+    """
+    Installs and enables RDO repo on host in case it is installed locally.
+    """
+    try:
+        cmd = "rpm -q rdo-release --qf='%{version}-%{release}.%{arch}\n'"
+        rc, out = utils.execute(cmd, use_shell=True)
+    except exceptions.ExecuteRuntimeError:
+        # RDO repo is not installed, so we don't need to continue
+        return
+    match = re.match(r'^(?P<version>\w+)\-(?P<release>\d+\.[\d\w]+)\n', out)
+    version, release = match.group('version'), match.group('release')
+    rdo_url = ("http://rdo.fedorapeople.org/openstack/openstack-%(version)s/"
+               "rdo-release-%(version)s-%(release)s.rpm" % locals())
+
+    server = utils.ScriptRunner(host)
+    server.append("(rpm -q 'rdo-release-%(version)s' ||"
+                  " yum install -y --nogpg %(rdo_url)s) || true"
+                  % locals())
+    try:
+        server.execute()
+    except exceptions.ScriptRuntimeError as ex:
+        msg = 'Failed to set RDO repo on host %s:\n%s' % (host, ex)
+        raise exceptions.ScriptRuntimeError(msg)
+
+    reponame = 'openstack-%s' % version
+    server.clear()
+    server.append('yum-config-manager --enable %(reponame)s' % locals())
+    # yum-config-manager returns 0 always, but returns current setup if succeeds
+    rc, out = server.execute()
+    match = re.search('enabled\s*=\s*(1|True)', out)
+    if not match:
+        msg = ('Failed to set RDO repo on host %s:\nRPM file seems to be '
+               'installed, but appropriate repo file is probably missing '
+               'in /etc/yum.repos.d/' % host)
+        raise exceptions.ScriptRuntimeError(msg)
+
+
 def initSequences(controller):
     preparesteps = [
              {'title': 'Preparing servers', 'functions':[serverprep]}
@@ -400,7 +483,8 @@ def serverprep(config):
     for hostname in filtered_hosts(config):
         # Subscribe to Red Hat Repositories if configured
         if rh_username:
-            run_rhsm_reg(hostname, rh_username, rh_password, config["CONFIG_RH_BETA_REPO"] == 'y')
+            run_rhsm_reg(hostname, rh_username, rh_password,
+                         config["CONFIG_RH_BETA_REPO"] == 'y')
 
         # Subscribe to RHN Satellite if configured
         if sat_url and hostname not in sat_registered:
@@ -408,58 +492,33 @@ def serverprep(config):
             sat_registered.add(hostname)
 
         server = utils.ScriptRunner(hostname)
+        server.append('rpm -q --whatprovides yum-utils || '
+                      'yum install -y yum-utils')
+        server.execute()
 
-        # install epel if on rhel (or popular derivative thereof) and epel is configured
-        if config["CONFIG_USE_EPEL"] == 'y':
-            server.append("REPOFILE=$(mktemp)")
-            server.append("cat /etc/yum.conf > $REPOFILE")
-            server.append("echo -e '[packstack-epel]\nname=packstack-epel\n"
-                          "enabled=1\n"
-                          "mirrorlist=https://mirrors.fedoraproject.org/metalink?repo=epel-6&arch=$basearch'"
-                          ">> $REPOFILE")
+        # enable or disable EPEL according to configuration
+        manage_epel(hostname, config)
+        # enable RDO if it is installed locally
+        manage_rdo(hostname, config)
 
-            server.append("grep -e 'Red Hat Enterprise Linux' -e 'CentOS' -e 'Scientific Linux' /etc/redhat-release && "
-                          "( rpm -q epel-release || yum install -y --nogpg -c $REPOFILE epel-release ) || echo -n ''")
-            server.append("rm -rf $REPOFILE")
-
-
-        # set highest priority of RHOS repository if EPEL is installed and
-        # the repo rhel-server-ost-6-folsom-rpms exists in redhat.repo
-
-        # If RHOS has been installed we can diable EPEL when installing openstack-utils
-        yum_opts = ""
-        if rh_username:
-            yum_opts += "--disablerepo='epel*'"
-
-        server.append("rpm -q epel-release && "
-                      "yum install -y %s openstack-utils yum-plugin-priorities || true" % yum_opts)
-        subs_cmd = ('rpm -q epel-release && '
-                    'grep %(repo)s %(repo_file)s && '
-                    'openstack-config --set %(repo_file)s %(repo)s priority %(priority)s || true')
-        server.append(subs_cmd % {"repo_file": "/etc/yum.repos.d/redhat.repo",
-                                  "repo": "rhel-server-ost-6-folsom-rpms",
-                                  "priority": 1})
-
-        # Create the packstack tmp directory
-        if hostname not in controller.temp_map:
-            # TO-DO: Move this to packstack.installer.setup_controller
-            server.append("mkdir -p %s" % basedefs.PACKSTACK_VAR_DIR)
-            # Separately create the tmp directory for this packstack run, this will fail if
-            # the directory already exists
-            host_dir = os.path.join(basedefs.PACKSTACK_VAR_DIR, uuid.uuid4().hex)
-            server.append("mkdir --mode 0700 %s" % host_dir)
-            server.append("mkdir %s/resources" % host_dir)
-            server.append("mkdir --mode 0700 %s" %
-                          os.path.join(host_dir, 'modules'))
-            controller.temp_map[hostname] = host_dir
+        reponame = 'rhel-server-ost-6-4-rpms'
+        server.clear()
+        server.append('yum install -y yum-plugin-priorities || true')
+        # TO-DO: enable this once we will have RHN channel for Havana
+        #server.append('rpm -q epel-release && yum-config-manager '
+        #                '--setopt="%(reponame)s.priority=1" '
+        #                '--save %(reponame)s' % locals())
 
         # Add yum repositories if configured
         CONFIG_REPO = config["CONFIG_REPO"].strip()
         if CONFIG_REPO:
-            for i, url in enumerate(CONFIG_REPO.split(',')):
+            for i, repourl in enumerate(CONFIG_REPO.split(',')):
                 reponame = 'packstack_%d' % i
-                server.append('echo "[%s]\nname=%s\nbaseurl=%s\nenabled=1\npriority=1\ngpgcheck=0"'
-                              ' > /etc/yum.repos.d/%s.repo' % (reponame, reponame, url, reponame))
+                server.append('echo "[%(reponame)s]\nname=%(reponame)s\n'
+                                    'baseurl=%(repourl)s\nenabled=1\n'
+                                    'priority=1\ngpgcheck=0"'
+                              ' > /etc/yum.repos.d/%(reponame)s.repo'
+                              % locals())
 
         server.append("yum clean metadata")
         server.execute()

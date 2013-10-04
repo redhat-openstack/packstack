@@ -587,7 +587,7 @@ def remove_remote_var_dirs():
     """
     for host in gethostlist(controller.CONF):
         try:
-            host_dir = controller.temp_map[host]
+            host_dir = controller.CONF['HOST_DETAILS'][host]['tmpdir']
         except KeyError:
             # Nothing was added to this host yet, so we have nothing to delete
             continue

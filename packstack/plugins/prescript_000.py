@@ -279,6 +279,11 @@ def disable_nm(config):
 
 
 def discover(config):
+    """
+    Discovers details about hosts.
+    """
+    # TODO: Once Controller is refactored, move this function to it (facter can
+    #       be used for that too).
     details = {}
     release_regexp = re.compile(r'^(?P<OS>.*) release (?P<release>[\d\.]*)')
     for host in filtered_hosts(config):
@@ -303,6 +308,18 @@ def discover(config):
                 opsys = re.sub(pattern, surr, opsys)
             details[host]['os'] = opsys
             details[host]['release'] = match.group('release')
+
+        # Create the packstack tmp directory
+        server.clear()
+        server.append("mkdir -p %s" % basedefs.PACKSTACK_VAR_DIR)
+        # Separately create the tmp directory for this packstack run, this will
+        # fail if the directory already exists
+        host_dir = os.path.join(basedefs.PACKSTACK_VAR_DIR, uuid.uuid4().hex)
+        server.append("mkdir --mode 0700 %s" % host_dir)
+        for i in ('modules', 'resources'):
+            server.append("mkdir --mode 0700 %s" % os.path.join(host_dir, i))
+        server.execute()
+        details[host]['tmpdir'] = host_dir
     config['HOST_DETAILS'] = details
 
 

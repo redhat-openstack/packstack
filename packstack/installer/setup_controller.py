@@ -36,17 +36,11 @@ class Controller(object):
         return self.__single
 
     def __init__(self):
-        # XXX: Right now this will only hold all temp dirs on each host.
-        #      Method for temp dir creation should be implemented in this
-        #      class, when it will start behaving like controller and not
-        #      only like data container
-        self.temp_map = {}
-
         # Resources that should be copied to each host along with the puppet
         # files, on the remote host the file will be placed in
-        # $PACKSTACK_VAR_DIR/resources. As with temp_map, this controller
-        # should copy the files, for now the puppet plugin is doing it
-        # format {'host':[('/path/to/fileordirectory', 'filenameonremotehost'), ..]}
+        # $PACKSTACK_VAR_DIR/resources. This controller should copy the files,
+        # for now the puppet plugin is doing it format
+        # {'host':[('/path/to/fileordirectory', 'filenameonremotehost'), ..]}
         self.resources = {}
 
 
