@@ -14,7 +14,7 @@ block_fmt = ("\n============= %(title)s ==========\n%(content)s\n"
              "======== END OF %(title)s ========")
 
 
-def execute(cmd, workdir=None, can_fail=False, mask_list=None,
+def execute(cmd, workdir=None, can_fail=True, mask_list=None,
             use_shell=False, log=True):
     """
     Runs shell command cmd. If can_fail is set to False
@@ -46,7 +46,7 @@ def execute(cmd, workdir=None, can_fail=False, mask_list=None,
         if log:
             logging.debug(block_fmt % {'title': 'STDERR',
                                        'content': masked_err})
-        if not can_fail:
+        if can_fail:
             msg = 'Failed to execute command: %s' % masked_out
             raise ExecuteRuntimeError(msg, stdout=out, stderr=err)
     return proc.returncode, out
@@ -97,7 +97,7 @@ class ScriptRunner(object):
             if log:
                 logging.debug(block_fmt % {'title': 'STDERR',
                                            'content': masked_err})
-            if not can_fail:
+            if can_fail:
                 pattern = (r'^ssh\:')
                 if re.search(pattern, err):
                     raise NetworkError(masked_err, stdout=out, stderr=err)

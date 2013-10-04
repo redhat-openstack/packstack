@@ -186,7 +186,7 @@ def validate_ping(param, options=None):
     validate_not_empty(param)
 
     rc, out = utils.execute(['/bin/ping', '-c', '1', str(param)],
-                            can_fail=True)
+                            can_fail=False)
     if rc != 0:
         logging.debug('validate_ping(%s, options=%s) failed.' %
                       (param, options))
