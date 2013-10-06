@@ -19,7 +19,7 @@ setup(
     description=("A utility to install openstack"),
     license="ASL 2.0",
     keywords="openstack",
-    url="https://github.com/fedora-openstack/packstack",
+    url="https://github.com/stackforge/packstack",
     packages=find_packages('.'),
     include_package_data=True,
     long_description=read('README'),
