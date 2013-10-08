@@ -363,4 +363,10 @@ def create_manifest(config):
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
         manifestdata += getManifestTemplate('cinder_ceilometer.pp')
 
+    hosts = config['CONFIG_NOVA_COMPUTE_HOSTS'].split(",")
+    config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i.strip() for i in hosts if i.strip()])
+    config['FIREWALL_SERVICE_NAME'] = "cinder"
+    config['FIREWALL_PORTS'] = "'3260', '8776'"
+    manifestdata += getManifestTemplate("firewall.pp")
+
     appendManifestFile(manifestfile, manifestdata)
