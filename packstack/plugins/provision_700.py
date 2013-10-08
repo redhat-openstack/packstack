@@ -71,7 +71,7 @@ def initConfig(controllerObject):
              "PROMPT"          : "What is the uri of the Tempest git repository?",
              "OPTION_LIST"     : [],
              "VALIDATORS"      : [validators.validate_not_empty],
-             "DEFAULT_VALUE"   : "https://github.com/redhat-openstack/tempest.git",
+             "DEFAULT_VALUE"   : "https://github.com/openstack/tempest.git",
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_PROVISION_TEMPEST_REPO_URI",
