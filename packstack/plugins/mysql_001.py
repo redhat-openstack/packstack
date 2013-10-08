@@ -121,7 +121,9 @@ def createmanifest(config):
                 hosts.add(config.get('CONFIG_NOVA_CONDUCTOR_HOST').strip())
                 hosts.add(config.get('CONFIG_NOVA_SCHED_HOST').strip())
                 if config['CONFIG_NEUTRON_INSTALL'] != 'y':
-                    hosts.add(config.get('CONFIG_NOVA_NETWORK_HOST').strip())
+                    dbhosts = config['CONFIG_NOVA_NETWORK_HOSTS'].split(',')
+                    dbhosts = set([i.strip() for i in dbhosts if i.strip()])
+                    hosts |= dbhosts
                 for host in config.get('CONFIG_NOVA_COMPUTE_HOSTS').split(','):
                     hosts.add(host.strip())
 
