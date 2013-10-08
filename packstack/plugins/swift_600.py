@@ -107,6 +107,7 @@ def initConfig(controllerObject):
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
 
+
     controller.addGroup(groupDict, paramsList)
 
 
@@ -127,6 +128,7 @@ def initSequences(controller):
              {'title': 'Adding Swift storage manifest entries', 'functions':[createstoragemanifest]},
              {'title': 'Adding Swift common manifest entries', 'functions':[createcommonmanifest]},
     ]
+
     controller.addSequence("Installing OpenStack Swift", [], [], steps)
 
 
@@ -235,11 +237,25 @@ def createstoragemanifest(config):
         else:
             controller.CONF["SWIFT_STORAGE_DEVICES"] = "'%s'"%devicename
             manifestdata = "\n" + getManifestTemplate("swift_loopback.pp")
-        appendManifestFile(manifestfile, manifestdata)
+        # Allowed host list for firewall
+        hosts = set()
+        for host in config['CONFIG_SWIFT_STORAGE_HOSTS'].split(','):
+            hosts.add(host.strip())
+        for host in config['CONFIG_SWIFT_PROXY_HOSTS'].split(','):
+            hosts.add(host.strip())
+        for host in config['CONFIG_NOVA_COMPUTE_HOSTS'].split(','):
+            hosts.add(host.strip())
+        config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
+        # Firewall rules for storage and rsync
+        config['FIREWALL_SERVICE_NAME'] = "swift storage and rsync"
+        config['FIREWALL_PORTS'] = "'6000', '6001', '6002', '873'"
+        manifestdata += getManifestTemplate("firewall.pp")
 
+        appendManifestFile(manifestfile, manifestdata)
 
 def createcommonmanifest(config):
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_swift.pp"):
             data = getManifestTemplate("swift_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
+
