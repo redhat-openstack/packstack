@@ -5,7 +5,6 @@ Installs and configures Keystone
 import logging
 import uuid
 
-
 from packstack.installer import validators
 from packstack.installer import basedefs
 from packstack.installer import utils
@@ -112,11 +111,13 @@ def initConfig(controllerObject):
 
 def initSequences(controller):
     keystonesteps = [
-             {'title': 'Adding Keystone manifest entries', 'functions':[createmanifest]}
+        {'title': 'Adding Keystone manifest entries',
+            'functions': [create_manifest]},
     ]
-    controller.addSequence("Installing OpenStack Keystone", [], [], keystonesteps)
+    controller.addSequence("Installing OpenStack Keystone", [], [],
+                           keystonesteps)
 
-def createmanifest(config):
-    manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
+def create_manifest(config):
+    manifestfile = "%s_keystone.pp" % config['CONFIG_KEYSTONE_HOST']
     manifestdata = getManifestTemplate("keystone.pp")
     appendManifestFile(manifestfile, manifestdata)
