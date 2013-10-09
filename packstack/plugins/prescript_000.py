@@ -2,9 +2,13 @@
 Plugin responsible for setting OpenStack global options
 """
 
+import glob
 import logging
+import os
 import uuid
 
+from packstack.installer import processors
+from packstack.installer import utils
 from packstack.installer import validators
 
 from packstack.modules.common import filtered_hosts
@@ -23,7 +27,20 @@ def initConfig(controllerObject):
     global controller
     controller = controllerObject
 
-    paramsList = [{"CMD_OPTION"      : "os-mysql-install",
+    paramsList = [{"CMD_OPTION"      : "ssh-public-key",
+                   "USAGE"           : "Path to a Public key to install on servers. If a usable key has not been installed on the remote servers the user will be prompted for a password and this key will be installed so the password will not be required again",
+                   "PROMPT"          : "Enter the path to your ssh Public key to install on servers",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_file],
+                   "PROCESSORS"      : [processors.process_ssh_key],
+                   "DEFAULT_VALUE"   : (glob.glob(os.path.join(os.environ["HOME"], ".ssh/*.pub"))+[""])[0],
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_SSH_KEY",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-mysql-install",
                    "USAGE"           : "Set to 'y' if you would like Packstack to install MySQL",
                    "PROMPT"          : "Should Packstack install MySQL DB",
                    "OPTION_LIST"     : ["y", "n"],
@@ -186,28 +203,82 @@ def initConfig(controllerObject):
                   "POST_CONDITION_MATCH"  : True}
     controller.addGroup(groupDict, paramsList)
 
+
 def initSequences(controller):
-    osclientsteps = [
-             {'title': 'Adding pre install manifest entries', 'functions':[createmanifest]},
+    prescriptsteps = [
+        {'title': 'Setting up ssh keys',
+            'functions':[install_keys]},
+        {'title': 'Disabling NetworkManager',
+            'functions':[disable_nm]},
+        {'title': 'Adding pre install manifest entries',
+            'functions':[create_manifest]},
     ]
-    controller.addSequence("Running pre install scripts", [], [], osclientsteps)
 
     if controller.CONF['CONFIG_NTP_SERVERS']:
-        ntp_step = [{'functions': [create_ntp_manifest],
-                     'title': 'Installing time synchronization via NTP'}]
-        controller.addSequence('Installing time synchronization via NTP', [], [], ntp_step)
+        prescriptsteps.append({'functions': [create_ntp_manifest],
+                               'title': ('Installing time synchronization '
+                                         'via NTP')})
     else:
         controller.MESSAGES.append('Time synchronization installation '
                                    'was skipped. Please note that '
                                    'unsynchronized time on server '
                                    'instances might be problem for '
                                    'some OpenStack components.')
+    controller.addSequence("Running pre install scripts",
+                           [], [], prescriptsteps)
 
-def createmanifest(config):
+
+def install_keys(config):
+    with open(config["CONFIG_SSH_KEY"]) as fp:
+        sshkeydata = fp.read().strip()
+    for hostname in filtered_hosts(config):
+        if '/' in hostname:
+            hostname = hostname.split('/')[0]
+        server = utils.ScriptRunner(hostname)
+        # TODO replace all that with ssh-copy-id
+        server.append("mkdir -p ~/.ssh")
+        server.append("chmod 500 ~/.ssh")
+        server.append("grep '%s' ~/.ssh/authorized_keys > /dev/null 2>&1 || "
+                      "echo %s >> ~/.ssh/authorized_keys"
+                      % (sshkeydata, sshkeydata))
+        server.append("chmod 400 ~/.ssh/authorized_keys")
+        server.append("restorecon -r ~/.ssh")
+        server.execute()
+
+
+def disable_nm(config):
+    """
+    Sets NM_CONTROLLED="no" in existing network scripts on all nodes.
+    """
+    for hostname in filtered_hosts(config):
+        server = utils.ScriptRunner(hostname)
+        server.append('ip a | grep -e "^[0-9]\: [a-zA-Z0-9\-]*\:" | '
+                      'sed -e "s/.*: \\(.*\\):.*/\\1/g"')
+        rc, out = server.execute()
+        devices = [i.strip() for i in out.split('\n') if i.strip()]
+
+        devre = '\|'.join(devices)
+        path = '/etc/sysconfig/network-scripts/'
+        server.clear()
+        server.append('ls -1 %(path)s | grep -e "ifcfg-\(%(devre)s\)"'
+                      % locals())
+        rc, out = server.execute()
+        netscripts = [i.strip() for i in out.split('\n') if i.strip()]
+
+        opt = 'NM_CONTROLLED'
+        server.clear()
+        for script in netscripts:
+            server.append('sed -i \'s/^%(opt)s=.*/%(opt)s="no"/g\' '
+                          '%(path)s%(script)s' % locals())
+        server.execute()
+
+
+def create_manifest(config):
     for hostname in filtered_hosts(config):
         manifestfile = "%s_prescript.pp" % hostname
         manifestdata = getManifestTemplate("prescript.pp")
         appendManifestFile(manifestfile, manifestdata)
+
 
 def create_ntp_manifest(config):
     srvlist = [i.strip()

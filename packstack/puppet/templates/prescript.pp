@@ -15,3 +15,8 @@ if $::operatingsystem == 'RedHat' {
 class { 'packstack::netns':
     warning => "${info}${warning}"
 }
+
+service { 'NetworkManager':
+    ensure => 'stopped',
+    enable => false
+}
