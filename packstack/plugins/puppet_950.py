@@ -232,8 +232,8 @@ def applyPuppetManifest(config):
 def finalize(config):
     for hostname in getinstallhostlist(config):
         server = utils.ScriptRunner(hostname)
-        server.append("installed=$(rpm -q kernel | tail -n1 | "
-                      "sed 's/kernel-\(.*\)/\\1/g')")
+        server.append("installed=$(rpm -q kernel --last | head -n1 | "
+                      "sed 's/kernel-\([a-z0-9\.\_\-]*\).*/\\1/g')")
         server.append("loaded=$(uname -r | head -n1)")
         server.append('[ "$loaded" == "$installed" ]')
         try:
