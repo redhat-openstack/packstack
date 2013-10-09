@@ -85,3 +85,6 @@
 [submodule "packstack/puppet/modules/heat"]
 	path = packstack/puppet/modules/heat
 	url = https://github.com/packstack/puppet-heat.git
+[submodule "packstack/puppet/modules/pacemaker"]
+	path = packstack/puppet/modules/pacemaker
+	url = https://github.com/radez/puppet-pacemaker.git
