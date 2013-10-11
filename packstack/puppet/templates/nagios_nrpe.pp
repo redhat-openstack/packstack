@@ -3,6 +3,14 @@ package{'nrpe':
     before => Class['nagios_configs']
 }
 
+file{'/etc/nagios/nrpe.cfg':
+    ensure => 'present',
+    mode => '0644',
+    owner => 'nagios',
+    group => 'nagios',
+    require => Package['nrpe'],
+}
+
 class nagios_configs(){
     file_line{'allowed_hosts':
         path => '/etc/nagios/nrpe.cfg',
