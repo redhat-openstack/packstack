@@ -74,7 +74,7 @@ def installdeps(config):
     for hostname in filtered_hosts(config):
         server = utils.ScriptRunner(hostname)
         for package in ("puppet", "openssh-clients", "tar", "nc"):
-            server.append("rpm -q %s || yum install -y %s" % (package, package))
+            server.append("rpm -q --whatprovides %s || yum install -y %s" % (package, package))
         server.execute()
 
 
