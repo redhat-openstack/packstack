@@ -5,15 +5,16 @@ Plugin responsible for setting OpenStack global options
 import glob
 import logging
 import os
+import re
 import uuid
 
-from packstack.installer import processors
-from packstack.installer import utils
-from packstack.installer import validators
+from packstack.installer import (basedefs, exceptions, processors, utils,
+                                 validators)
 
 from packstack.modules.common import filtered_hosts
 from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
+
 
 # Controller object will be initialized from main flow
 controller = None
@@ -22,6 +23,7 @@ controller = None
 PLUGIN_NAME = "OS-PRESCRIPT"
 
 logging.debug("plugin %s loaded", __name__)
+
 
 def initConfig(controllerObject):
     global controller
@@ -205,9 +207,11 @@ def initConfig(controllerObject):
 
 
 def initSequences(controller):
-    prescriptsteps = [
+    prescript_steps = [
         {'title': 'Setting up ssh keys',
             'functions':[install_keys]},
+        {'title': 'Discovering hosts\' details',
+            'functions': [discover]},
         {'title': 'Disabling NetworkManager',
             'functions':[disable_nm]},
         {'title': 'Adding pre install manifest entries',
@@ -215,17 +219,18 @@ def initSequences(controller):
     ]
 
     if controller.CONF['CONFIG_NTP_SERVERS']:
-        prescriptsteps.append({'functions': [create_ntp_manifest],
-                               'title': ('Installing time synchronization '
-                                         'via NTP')})
+        prescript_steps.append({
+            'title': 'Installing time synchronization via NTP',
+            'functions': [create_ntp_manifest],
+        })
     else:
         controller.MESSAGES.append('Time synchronization installation '
                                    'was skipped. Please note that '
                                    'unsynchronized time on server '
                                    'instances might be problem for '
                                    'some OpenStack components.')
-    controller.addSequence("Running pre install scripts",
-                           [], [], prescriptsteps)
+    controller.addSequence("Running pre install scripts", [], [],
+                           prescript_steps)
 
 
 def install_keys(config):
@@ -271,6 +276,34 @@ def disable_nm(config):
             server.append('sed -i \'s/^%(opt)s=.*/%(opt)s="no"/g\' '
                           '%(path)s%(script)s' % locals())
         server.execute()
+
+
+def discover(config):
+    details = {}
+    release_regexp = re.compile(r'^(?P<OS>.*) release (?P<release>[\d\.]*)')
+    for host in filtered_hosts(config):
+        details.setdefault(host, {})
+        server = utils.ScriptRunner(host)
+        # discover OS and release
+        server.append('cat /etc/redhat-release')
+        try:
+            rc, out = server.execute()
+            match = release_regexp.search(out)
+            if not match:
+                raise exceptions.ScriptRuntimeError()
+        except exceptions.ScriptRuntimeError:
+            details[host]['os'] = 'Unknown'
+            details[host]['release'] = 'Unknown'
+        else:
+            opsys = match.group('OS')
+            for pattern, surr in [('^Red Hat Enterprise Linux.*', 'RHEL'),
+                                  ('^Fedora.*', 'Fedora'),
+                                  ('^CentOS.*', 'CentOS'),
+                                  ('^Scientific Linux.*', 'SL')]:
+                opsys = re.sub(pattern, surr, opsys)
+            details[host]['os'] = opsys
+            details[host]['release'] = match.group('release')
+    config['HOST_DETAILS'] = details
 
 
 def create_manifest(config):
