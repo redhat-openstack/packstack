@@ -1,6 +1,5 @@
 
 class {'apache::mod::ssl': }
-file {'/etc/httpd/conf.d/ssl.conf':}
 
 file {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
     content => template('packstack/ssl/generate_ssl_certs.sh.erb'),
@@ -16,8 +15,27 @@ exec {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
 # close port 80
 file_line{'nohttp':
     path => '/etc/httpd/conf/httpd.conf',
-    match => '^#?Listen 80',
+    match => '^.*Listen 80',
     line => '#Listen 80',
+    require =>  Class['apache::mod::ssl']
+}
+
+# if the mod_ssl apache puppet module does not install
+# this file, we ensure it haves the minimum
+# requirements for SSL to work
+file {'/etc/httpd/conf.d/ssl.conf':
+    path => '/etc/httpd/conf.d/ssl.conf',
+    ensure => file,
+    mode => '0644'
+} -> file_line{'ssl_port':
+    path  => '/etc/httpd/conf.d/ssl.conf',
+    match => 'Listen .+',
+    line  => 'Listen 443',
+    require =>  Class['apache::mod::ssl']
+} -> file_line{'ssl_engine':
+    path => '/etc/httpd/conf.d/ssl.conf',
+    match => 'SSLEngine .+',
+    line => 'SSLEngine on',
     require =>  Class['apache::mod::ssl']
 }
 
