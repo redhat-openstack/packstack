@@ -122,11 +122,12 @@ def initConfig(controllerObject):
         # resources are implemented) and quantum with namespaces (due
         # to the provisioning manifest assuming this configuration).
         return is_all_in_one(config) and \
-               config['CONFIG_QUANTUM_INSTALL'] == 'y' and \
-               config['CONFIG_QUANTUM_USE_NAMESPACES'] == 'y'
+               (config['CONFIG_QUANTUM_INSTALL'] == 'n' or \
+                config['CONFIG_QUANTUM_USE_NAMESPACES'] == 'y')
 
     def allow_all_in_one_ovs_bridge(config):
         return allow_provisioning(config) and \
+               config['CONFIG_QUANTUM_INSTALL'] == 'y' and \
                config['CONFIG_QUANTUM_L2_PLUGIN'] == 'openvswitch'
 
     conf_groups = [
@@ -184,9 +185,24 @@ def initSequences(controller):
 
 
 def create_manifest(config):
-    # Using the server host will suffice for the all-in-one case.
-    manifest_file = '%s_provision.pp' % (
-        controller.CONF['CONFIG_QUANTUM_SERVER_HOST']
-    )
+    # Using the quantum or nova api servers as the provisioning target
+    # will suffice for the all-in-one case.
+    if config['CONFIG_QUANTUM_INSTALL'] == "y":
+        host = config['CONFIG_QUANTUM_SERVER_HOST']
+    else:
+        host = config['CONFIG_NOVA_API_HOST']
+        # The provisioning template requires the name of the external
+        # bridge but the value will be missing if quantum isn't
+        # configured to be installed.
+        config['CONFIG_QUANTUM_L3_EXT_BRIDGE'] = 'br-ex'
+
+    # Set template-specific parameter to configure whether quantum is
+    # available.  The value needs to be true/false rather than the y/n.
+    # provided by CONFIG_QUANTUM_INSTALL.
+    config['PROVISION_QUANTUM_AVAILABLE'] = config['CONFIG_QUANTUM_INSTALL']
+    marshall_conf_bool(config, 'PROVISION_QUANTUM_AVAILABLE')
+
+    manifest_file = '%s_provision.pp' % host
+
     manifest_data = getManifestTemplate("provision.pp")
     appendManifestFile(manifest_file, manifest_data)
