@@ -110,13 +110,12 @@ def initConfig(controllerObject):
     def allow_provisioning(config):
         # Provisioning is currently supported only for all-in-one (due
         # to a limitation with how the custom types for OpenStack
-        # resources are implemented) and neutron with namespaces (due
-        # to the provisioning manifest assuming this configuration).
-        return is_all_in_one(config) and \
-               config['CONFIG_NEUTRON_INSTALL'] == 'y'
+        # resources are implemented).
+        return is_all_in_one(config)
 
     def allow_all_in_one_ovs_bridge(config):
         return allow_provisioning(config) and \
+               config['CONFIG_NEUTRON_INSTALL'] == 'y' and \
                config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch'
 
     conf_groups = [
@@ -174,9 +173,24 @@ def initSequences(controller):
 
 
 def create_manifest(config):
-    # Using the server host will suffice for the all-in-one case.
-    manifest_file = '%s_provision.pp' % (
-        controller.CONF['CONFIG_NEUTRON_SERVER_HOST']
-    )
+    # Using the neutron or nova api servers as the provisioning target
+    # will suffice for the all-in-one case.
+    if config['CONFIG_NEUTRON_INSTALL'] == "y":
+        host = config['CONFIG_NEUTRON_SERVER_HOST']
+    else:
+        host = config['CONFIG_NOVA_API_HOST']
+        # The provisioning template requires the name of the external
+        # bridge but the value will be missing if neutron isn't
+        # configured to be installed.
+        config['CONFIG_NEUTRON_L3_EXT_BRIDGE'] = 'br-ex'
+
+    # Set template-specific parameter to configure whether neutron is
+    # available.  The value needs to be true/false rather than the y/n.
+    # provided by CONFIG_NEUTRON_INSTALL.
+    config['PROVISION_NEUTRON_AVAILABLE'] = config['CONFIG_NEUTRON_INSTALL']
+    marshall_conf_bool(config, 'PROVISION_NEUTRON_AVAILABLE')
+
+    manifest_file = '%s_provision.pp' % host
+
     manifest_data = getManifestTemplate("provision.pp")
     appendManifestFile(manifest_file, manifest_data)
