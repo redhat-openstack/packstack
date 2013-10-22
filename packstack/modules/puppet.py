@@ -39,6 +39,8 @@ surrogates = [
     # Package is not found in yum repos
     ('Package\[.*\]\/ensure.*yum.*install (?P<arg1>.*)\'.*Nothing to do',
         'Package %(arg1)s has not been found in enabled Yum repos.'),
+    ('Execution of \'.*yum.*install (?P<arg1>.*)\'.*Nothing to do',
+        'Package %(arg1)s has not been found in enabled Yum repos.'),
     # Packstack does not cooperate with jruby
     ('jruby', 'Your Puppet installation uses jruby instead of ruby. Package '
               'jruby does not cooperate with Packstack well. You will have to '
