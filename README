@@ -28,7 +28,7 @@ $ ./bin/packstack --answer-file=ans.txt
 Option 2 (prompts for configuration options)
 $ ./bin/packstack
 
-thats it, if everything went well you can now start using openstack
+that's it, if everything went well you can now start using openstack
 $ cd
 $ . keystonerc_admin
 $ nova list
@@ -42,3 +42,17 @@ CONFIG_SWIFT_STORAGE_HOSTS :
         a comma seperate list of swift storage devices
         1.1.1.1  : create a testing loopback device and use this for storage
         1.1.1.1/sdb : use /dev/sdb on 1.1.1.1 as a storage device
+
+Logging
+
+The location of the log files and generated puppet manifests are in the 
+/var/tmp/packstack directory under a directory named by the date in which 
+packstack was run and a random string (e.g. /var/tmp/packstack/20131022-204316-Bf3Ek2).
+Inside, we find a manifest directory and the openstack-setup.log file; puppet
+manifests and a log file for each one are found inside the manifest directory.
+
+Debugging
+
+To make packstack write more detailed information into the log file you can use the -d switch:
+
+$ packstack -d --allinone
