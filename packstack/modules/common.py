@@ -15,6 +15,8 @@ def filtered_hosts(config, exclude=True, dbhost=True):
     result = set()
     dbinst = config.get('CONFIG_MYSQL_INSTALL') == 'y'
     for hosttype, hostname in utils.host_iter(config):
+        # if dbhost is being taken into account and we are not installing MySQL
+        # then we should omit the MySQL host
         if dbhost and not dbinst and hosttype == 'CONFIG_MYSQL_HOST':
             continue
         result.add(hostname)
@@ -28,4 +30,7 @@ def is_all_in_one(config):
     Returns True if packstack is running allinone setup, otherwise
     returns False.
     """
-    return len(filtered_hosts(config, exclude=False)) == 1
+    # Even if some host have been excluded from installation, we must count
+    # with them when checking all-in-one. MySQL host should however be omitted
+    # if we are not installing MySQL
+    return len(filtered_hosts(config, exclude=False, dbhost=True)) == 1

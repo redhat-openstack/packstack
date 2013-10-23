@@ -18,10 +18,10 @@ import os
 from unittest import TestCase
 
 from test_base import PackstackTestCaseMixin
-from packstack.plugins import serverprep_901
+from packstack.plugins import serverprep_949
 from packstack.installer.setup_controller import Controller
 
-serverprep_901.controller = Controller()
+serverprep_949.controller = Controller()
 
 
 class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
@@ -30,30 +30,30 @@ class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
 
         # On non-RHEL, the CONFIG_{RH,SATELLITE} options are never set,
         # i.e. this test would always fail. Therefore, only run it on RHEL.
-        if not serverprep_901.is_rhel():
+        if not serverprep_949.is_rhel():
             return
 
         password = "dasd|'asda%><?"
 
-        serverprep_901.controller.CONF["CONFIG_KEYSTONE_HOST"] = "1.2.3.4"
-        serverprep_901.controller.CONF["CONFIG_USE_EPEL"] = "n"
-        serverprep_901.controller.CONF["CONFIG_REPO"] = ""
-        serverprep_901.controller.CONF["CONFIG_RH_USER"] = "testuser"
-        serverprep_901.controller.CONF["CONFIG_RH_PW"] = password
-        serverprep_901.controller.CONF["CONFIG_RH_BETA_REPO"] = "n"
+        serverprep_949.controller.CONF["CONFIG_KEYSTONE_HOST"] = "1.2.3.4"
+        serverprep_949.controller.CONF["CONFIG_USE_EPEL"] = "n"
+        serverprep_949.controller.CONF["CONFIG_REPO"] = ""
+        serverprep_949.controller.CONF["CONFIG_RH_USER"] = "testuser"
+        serverprep_949.controller.CONF["CONFIG_RH_PW"] = password
+        serverprep_949.controller.CONF["CONFIG_RH_BETA_REPO"] = "n"
 
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_FLAGS"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_URL"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_USER"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PW"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_CACERT"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_AKEY"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROFILE"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_USER"] = ""
-        serverprep_901.controller.CONF["CONFIG_SATELLITE_PROXY_PW"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_FLAGS"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_URL"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_USER"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_PW"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_CACERT"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_AKEY"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_PROFILE"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_PROXY"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_PROXY_USER"] = ""
+        serverprep_949.controller.CONF["CONFIG_SATELLITE_PROXY_PW"] = ""
 
-        serverprep_901.serverprep(serverprep_901.controller.CONF)
+        serverprep_949.serverprep(serverprep_949.controller.CONF)
 
         self.assertNotEqual(
             self.fake_popen.data.find('--password="%s"' % password), -1

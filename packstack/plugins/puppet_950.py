@@ -92,7 +92,7 @@ def copyPuppetModules(config):
 
     server = utils.ScriptRunner()
     for hostname in filtered_hosts(config):
-        host_dir = controller.temp_map[hostname]
+        host_dir = config['HOST_DETAILS'][hostname]['tmpdir']
         server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
         # copy Packstack facts
         server.append("tar --dereference -cpzf - facts | "
@@ -186,11 +186,11 @@ def applyPuppetManifest(config):
             if "%s_" % hostname not in manifest:
                 continue
 
-            host_dir = controller.temp_map[hostname]
+            host_dir = config['HOST_DETAILS'][hostname]['tmpdir']
             print "Applying " + manifest
             server = utils.ScriptRunner(hostname)
 
-            man_path = os.path.join(controller.temp_map[hostname],
+            man_path = os.path.join(config['HOST_DETAILS'][hostname]['tmpdir'],
                                     basedefs.PUPPET_MANIFEST_RELATIVE,
                                     manifest)
 
