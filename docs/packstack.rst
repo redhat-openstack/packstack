@@ -214,6 +214,24 @@ Nagios Config parameters
 
 **CONFIG_NAGIOS_PW**           : The password of the nagiosadmin user on the Nagios server
 
+Log files and Debug info
+------------------------
+
+The location of the log files and generated puppet manifests are in the /var/tmp/packstack directory under a directory named by the date in which packstack was run and a random string (e.g. /var/tmp/packstack/20131022-204316-Bf3Ek2). Inside, we find a manifest directory and the openstack-setup.log file; puppet manifests and a log file for each one are found inside the manifest directory.
+
+In case debugging info is needed while running packstack the -d switch will make it write more detailed information about the installation.
+
+Examples:
+
+If we need an allinone debug session:
+
+packstack -d --allinone
+
+If we need a answer file to tailor it and then debug:
+
+packstack --gen-answer-file=ans.txt
+packstack -d --answer-file=ans.txt
+
 
 SOURCE
 ======
