@@ -45,7 +45,8 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
 
         # create a dummy public key
         dummy_public_key = os.path.join(self.tempdir, 'id_rsa.pub')
-        open(dummy_public_key, 'w').close()
+        with open(dummy_public_key, 'w') as dummy:
+            dummy.write('ssh-rsa AAAAblablabla')
 
         # Save sys.argv and replace it with the args we want optparse to use
         orig_argv = sys.argv
