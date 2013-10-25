@@ -34,8 +34,4 @@ service{'nrpe':
     hasstatus => true,
 }
 
-firewall { '001 nrpe incoming':
-    proto    => 'tcp',
-    dport    => ['5666'],
-    action   => 'accept',
-}
+

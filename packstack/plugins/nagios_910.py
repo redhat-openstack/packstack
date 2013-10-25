@@ -172,6 +172,11 @@ def createnrpemanifests(config):
         controller.CONF['CONFIG_NRPE_HOST'] = hostname
         manifestfile = "%s_nagios_nrpe.pp" % hostname
         manifestdata = getManifestTemplate("nagios_nrpe.pp")
+        #Only the Nagios host is allowed to talk to nrpe
+        config['FIREWALL_ALLOWED'] = "'%s'" % config['CONFIG_NAGIOS_HOST']
+        config['FIREWALL_SERVICE_NAME'] = "nagios-nrpe"
+        config['FIREWALL_PORTS'] = '5666'
+        manifestdata += getManifestTemplate("firewall.pp")
         appendManifestFile(manifestfile, manifestdata)
 
     controller.MESSAGES.append("To use Nagios, browse to http://%s/nagios "
