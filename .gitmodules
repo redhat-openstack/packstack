@@ -88,3 +88,6 @@
 [submodule "packstack/puppet/modules/certmonger"]
 	path = packstack/puppet/modules/certmonger
 	url = git://github.com/rcritten/puppet-certmonger.git
+[submodule "packstack/puppet/modules/nssdb"]
+	path = packstack/puppet/modules/nssdb
+	url = https://github.com/rcritten/puppet-nssdb.git
