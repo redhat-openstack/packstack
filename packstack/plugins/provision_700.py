@@ -66,6 +66,8 @@ def initConfig(controllerObject):
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
+            ],
+        "TEMPEST_GIT_REFS" : [
             {"CMD_OPTION"      : "provision-tempest-repo-uri",
              "USAGE"           : "The uri of the tempest git repository to use",
              "PROMPT"          : "What is the uri of the Tempest git repository?",
@@ -75,7 +77,7 @@ def initConfig(controllerObject):
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_PROVISION_TEMPEST_REPO_URI",
-             "USE_DEFAULT"     : True,
+             "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
             {"CMD_OPTION"      : "provision-tempest-repo-revision",
@@ -87,7 +89,7 @@ def initConfig(controllerObject):
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_PROVISION_TEMPEST_REPO_REVISION",
-             "USE_DEFAULT"     : True,
+             "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
             ],
@@ -113,6 +115,10 @@ def initConfig(controllerObject):
         # resources are implemented).
         return is_all_in_one(config)
 
+    def check_provisioning_tempest(config):
+        return allow_provisioning(config) and \
+               config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y'
+
     def allow_all_in_one_ovs_bridge(config):
         return allow_provisioning(config) and \
                config['CONFIG_NEUTRON_INSTALL'] == 'y' and \
@@ -128,6 +134,12 @@ def initConfig(controllerObject):
         { "GROUP_NAME"            : "PROVISION_TEMPEST",
           "DESCRIPTION"           : "Provisioning tempest config",
           "PRE_CONDITION"         : allow_provisioning,
+          "PRE_CONDITION_MATCH"   : True,
+          "POST_CONDITION"        : False,
+          "POST_CONDITION_MATCH"  : True },
+        { "GROUP_NAME"            : "TEMPEST_GIT_REFS",
+          "DESCRIPTION"           : "Optional tempest git uri and branch",
+          "PRE_CONDITION"         : check_provisioning_tempest,
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
