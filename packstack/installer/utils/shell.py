@@ -53,7 +53,7 @@ def execute(cmd, workdir=None, can_fail=True, mask_list=None,
 
 
 class ScriptRunner(object):
-    _pkg_search = 'rpm -q'
+    _pkg_search = 'rpm -q --whatprovides'
 
     def __init__(self, ip=None):
         self.script = []

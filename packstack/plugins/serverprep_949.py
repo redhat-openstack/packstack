@@ -360,7 +360,7 @@ def run_rhsm_reg(host, username, password, beta):
     server.append("subscription-manager repos --enable rhel-6-server-optional-rpms")
 
     server.append("yum clean all")
-    server.append("rpm -q yum-utils || yum install -y yum-utils")
+    server.append("rpm -q --whatprovides yum-utils || yum install -y yum-utils")
     if beta:
         server.append("yum-config-manager --enable rhel-6-server-beta-rpms")
     server.append("yum clean metadata")
@@ -382,7 +382,7 @@ def manage_epel(host, config):
         server.append("echo -e '[packstack-epel]\nname=packstack-epel\n"
                       "enabled=1\nmirrorlist=%(mirrors)s' >> $REPOFILE"
                       % locals())
-        server.append('( rpm -q epel-release ||'
+        server.append('( rpm -q --whatprovides epel-release ||'
                       ' yum install -y --nogpg -c $REPOFILE epel-release ) '
                       '|| true')
         server.append('rm -rf $REPOFILE')
