@@ -366,6 +366,11 @@ def createManifest(config):
         if host in api_hosts:
             manifest_file = "%s_neutron.pp" % (host,)
             manifest_data = getManifestTemplate("neutron_api.pp")
+            # Firewall Rules
+            config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in q_hosts])
+            config['FIREWALL_SERVICE_NAME'] = "neutron"
+            config['FIREWALL_PORTS'] = "'9696'"
+            manifest_data += getManifestTemplate("firewall.pp")
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
         # Set up any l2 plugin configs we need anywhere we install neutron
@@ -377,12 +382,6 @@ def createManifest(config):
         elif controller.CONF['CONFIG_NEUTRON_L2_PLUGIN'] == 'linuxbridge':
             manifest_data = getManifestTemplate("neutron_lb_plugin.pp")
             appendManifestFile(manifest_file, manifest_data, 'neutron')
-    # Firewall Rules
-    config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in q_hosts])
-    config['FIREWALL_SERVICE_NAME'] = "neutron"
-    config['FIREWALL_PORTS'] = "'9696'"
-    manifest_data = getManifestTemplate("firewall.pp")
-    appendManifestFile(manifest_file, manifest_data, 'neutron')
 
 def createKeystoneManifest(config):
     manifestfile = "%s_keystone.pp"%controller.CONF['CONFIG_KEYSTONE_HOST']
