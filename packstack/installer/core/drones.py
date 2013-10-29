@@ -334,8 +334,8 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
         super(PackstackDrone, self).init_node()
         server = utils.ScriptRunner(self.node)
         for pkg in ("puppet", "openssh-clients", "tar"):
-            server.append("rpm -q %(pkg)s || yum install -y %(pkg)s"
-                           % locals())
+            server.append("rpm -q --whatprovides %(pkg)s || "
+                              "yum install -y %(pkg)s" % locals())
         server.execute()
 
     def add_resource(self, path, resource_type=None):

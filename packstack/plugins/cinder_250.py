@@ -239,7 +239,7 @@ def install_cinder_deps(config):
     if config['CONFIG_CINDER_BACKEND'] == 'lvm':
         pkgs.append('lvm2')
     for p in pkgs:
-        server.append("rpm -q %(package)s || yum install -y %(package)s" % dict(package=p))
+        server.append("rpm -q --whatprovides %(package)s || yum install -y %(package)s" % dict(package=p))
     server.execute()
 
 def check_cinder_vg(config):
