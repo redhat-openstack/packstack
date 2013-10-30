@@ -11,9 +11,3 @@ class {"qpid::server":
     ssl_key       => '%(CONFIG_QPID_SSL_KEY_FILE)s',
     ssl_database_password => '%(CONFIG_QPID_NSS_CERTDB_PW)s',
 }
-
-firewall { '001 qpid incoming':
-    proto    => 'tcp',
-    dport    => ['5672'],
-    action   => 'accept',
-}

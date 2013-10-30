@@ -178,5 +178,4 @@ def createmanifest(config):
     config['FIREWALL_SERVICE_NAME'] = "qpid"
     config['FIREWALL_PORTS'] = ','.join(ports)
     manifestdata += getManifestTemplate("firewall.pp")
-
     appendManifestFile(manifestfile, manifestdata, 'pre')
