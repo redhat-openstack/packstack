@@ -15,7 +15,7 @@ def get_localhost_ip():
     #        address.
 
     # find nameservers
-    ns_regex = re.compile('nameserver\s*(?P<ns_ip>[\d\.\:])')
+    ns_regex = re.compile('nameserver\s*(?P<ns_ip>[\d\.\:]+)')
     rc, resolv = execute('cat /etc/resolv.conf | grep nameserver',
                          can_fail=False, use_shell=True, log=False)
     nsrvs = []
