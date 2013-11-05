@@ -521,10 +521,9 @@ def serverprep(config):
         reponame = 'rhel-server-ost-6-4-rpms'
         server.clear()
         server.append('yum install -y yum-plugin-priorities || true')
-        # TO-DO: enable this once we will have RHN channel for Havana
-        #server.append('rpm -q epel-release && yum-config-manager '
-        #                '--setopt="%(reponame)s.priority=1" '
-        #                '--save %(reponame)s' % locals())
+        server.append('rpm -q epel-release && yum-config-manager '
+                        '--setopt="%(reponame)s.priority=1" '
+                        '--save %(reponame)s' % locals())
 
         # Add yum repositories if configured
         CONFIG_REPO = config["CONFIG_REPO"].strip()
