@@ -40,18 +40,20 @@ def initConfig(controllerObject):
 
     groupDict = { "GROUP_NAME"            : "QPIDLANCE",
                   "DESCRIPTION"           : "QPID Config parameters",
-                  "PRE_CONDITION"         : "CONFIG_NOVA_INSTALL",
-                  "PRE_CONDITION_MATCH"   : "y",
+                  "PRE_CONDITION"         : check_enabled,
+                  "PRE_CONDITION_MATCH"   : True,
                   "POST_CONDITION"        : False,
                   "POST_CONDITION_MATCH"  : True}
 
     controller.addGroup(groupDict, paramsList)
 
 
+def check_enabled(config):
+    return (config.get('CONFIG_NOVA_INSTALL') == 'y' or
+        config.get('CONFIG_QPID_HOST') != '')
+
+
 def initSequences(controller):
-    # If we don't want Nova we don't need qpid
-    if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
-        return
     qpidsteps = [
              {'title': 'Adding QPID manifest entries', 'functions':[createmanifest]}
     ]
