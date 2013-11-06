@@ -4,11 +4,15 @@
 $hosts = [ %(FIREWALL_ALLOWED)s ]
 
 define add_allow_host {
+    $source = $title ? {
+        'ALL' => '0.0.0.0/0',
+        default => $title,
+    }
     firewall { "001 %(FIREWALL_SERVICE_NAME)s incoming ${title}":
         proto  => 'tcp',
         dport  => [%(FIREWALL_PORTS)s],
         action => 'accept',
-        source => $title,
+        source => $source,
     }
 }
 

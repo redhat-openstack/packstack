@@ -113,7 +113,7 @@ def createmanifest(config):
                 hosts.add(config.get('CONFIG_%s_HOST' % mod.upper()).strip())
             elif mod == 'neutron':
                 hosts.add(config.get('CONFIG_NEUTRON_SERVER_HOST').strip())
-            else:
+            elif config['CONFIG_NOVA_INSTALL'] != 'n':
                 #In that remote case that we have lot's of nova hosts
                 hosts.add(config.get('CONFIG_NOVA_API_HOST').strip())
                 hosts.add(config.get('CONFIG_NOVA_CERT_HOST').strip())
@@ -121,8 +121,7 @@ def createmanifest(config):
                 hosts.add(config.get('CONFIG_NOVA_CONDUCTOR_HOST').strip())
                 hosts.add(config.get('CONFIG_NOVA_SCHED_HOST').strip())
                 if config['CONFIG_NEUTRON_INSTALL'] != 'y':
-                    dbhosts = config['CONFIG_NOVA_NETWORK_HOSTS'].split(',')
-                    dbhosts = set([i.strip() for i in dbhosts if i.strip()])
+                    dbhosts = split_hosts(config['CONFIG_NOVA_NETWORK_HOSTS'])
                     hosts |= dbhosts
                 for host in config.get('CONFIG_NOVA_COMPUTE_HOSTS').split(','):
                     hosts.add(host.strip())

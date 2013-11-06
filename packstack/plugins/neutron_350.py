@@ -9,6 +9,7 @@ import uuid
 
 from packstack.installer import utils
 from packstack.installer import validators
+from packstack.installer.utils import split_hosts
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
 
@@ -316,20 +317,13 @@ def initSequences(controller):
         controller.CONF['CONFIG_NEUTRON_CORE_PLUGIN'] = 'neutron.plugins.linuxbridge.lb_neutron_plugin.LinuxBridgePluginV2'
 
     global api_hosts, l3_hosts, dhcp_hosts, compute_hosts, meta_hosts, q_hosts
-    dirty = controller.CONF['CONFIG_NEUTRON_SERVER_HOST'].split(',')
-    api_hosts = set([i.strip() for i in dirty if i.strip()])
-
-    dirty = controller.CONF['CONFIG_NEUTRON_L3_HOSTS'].split(',')
-    l3_hosts = set([i.strip() for i in dirty if i.strip()])
-
-    dirty = controller.CONF['CONFIG_NEUTRON_DHCP_HOSTS'].split(',')
-    dhcp_hosts = set([i.strip() for i in dirty if i.strip()])
-
-    dirty = controller.CONF['CONFIG_NEUTRON_METADATA_HOSTS'].split(',')
-    meta_hosts = set([i.strip() for i in dirty if i.strip()])
-
-    dirty = controller.CONF['CONFIG_NOVA_COMPUTE_HOSTS'].split(',')
-    compute_hosts = set([i.strip() for i in dirty if i.strip()])
+    api_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_SERVER_HOST'])
+    l3_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_L3_HOSTS'])
+    dhcp_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_DHCP_HOSTS'])
+    meta_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_METADATA_HOSTS'])
+    compute_hosts = set()
+    if controller.CONF['CONFIG_NOVA_INSTALL'] == 'y':
+        compute_hosts = split_hosts(controller.CONF['CONFIG_NOVA_COMPUTE_HOSTS'])
     q_hosts = api_hosts | l3_hosts | dhcp_hosts | compute_hosts | meta_hosts
 
     neutron_steps = [
@@ -450,7 +444,8 @@ def createL2AgentManifests(config):
 
 def createMetadataManifests(config):
     global meta_hosts
-
+    if config.get('CONFIG_NOVA_INSTALL') == 'n':
+        return
     for host in meta_hosts:
         controller.CONF['CONFIG_NEUTRON_METADATA_HOST'] = host
         manifestdata = getManifestTemplate('neutron_metadata.pp')

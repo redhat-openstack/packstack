@@ -38,3 +38,12 @@ def get_current_username():
     user = pwd.getpwuid(uid).pw_name
     group = grp.getgrgid(gid).gr_name
     return user, group
+
+
+def split_hosts(hosts_string):
+    hosts = set()
+    for host in hosts_string.split(','):
+        shost = host.strip()
+        if shost:
+            hosts.add(shost)
+    return hosts
