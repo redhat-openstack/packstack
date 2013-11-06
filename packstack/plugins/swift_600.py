@@ -252,7 +252,10 @@ def createstoragemanifest(config):
         # Allowed host list for firewall
         hosts = set()
         for host in config['CONFIG_SWIFT_STORAGE_HOSTS'].split(','):
-            hosts.add(host.strip())
+            host = host.strip()
+            if '/' in host:
+                host = host.split('/')[0]
+            hosts.add(host)
         for host in config['CONFIG_SWIFT_PROXY_HOSTS'].split(','):
             hosts.add(host.strip())
         for host in config['CONFIG_NOVA_COMPUTE_HOSTS'].split(','):
