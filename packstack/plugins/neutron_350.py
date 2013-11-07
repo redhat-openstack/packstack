@@ -188,8 +188,6 @@ def initConfig(controllerObject):
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
-            ],
-        "NEUTRON_OVS_PLUGIN_VLAN" : [
             {"CMD_OPTION"      : "neutron-ovs-vlan-ranges",
              "USAGE"           : "A comma separated list of VLAN ranges for the Neutron openvswitch plugin",
              "PROMPT"          : "Enter a comma separated list of VLAN ranges for the Neutron openvswitch plugin",
@@ -263,10 +261,6 @@ def initConfig(controllerObject):
         return config['CONFIG_NEUTRON_INSTALL'] == 'y' and \
                config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch'
 
-    def use_openvswitch_vlans(config):
-        return use_openvswitch(config) and \
-               config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vlan'
-
     def use_openvswitch_gre(config):
         return use_openvswitch(config) and \
                config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'gre'
@@ -287,12 +281,6 @@ def initConfig(controllerObject):
         { "GROUP_NAME"            : "NEUTRON_OVS_PLUGIN",
           "DESCRIPTION"           : "Neutron OVS plugin config",
           "PRE_CONDITION"         : use_openvswitch,
-          "PRE_CONDITION_MATCH"   : True,
-          "POST_CONDITION"        : False,
-          "POST_CONDITION_MATCH"  : True },
-        { "GROUP_NAME"            : "NEUTRON_OVS_PLUGIN_VLAN",
-          "DESCRIPTION"           : "Neutron OVS plugin config for VLANs",
-          "PRE_CONDITION"         : use_openvswitch_vlans,
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
@@ -426,16 +414,15 @@ def createL2AgentManifests(config):
         template_name = "neutron_ovs_agent_%s.pp" % (
             config.get('CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE', 'local'),
         )
-        if config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vlan':
-            bm_arr = get_values(controller.CONF["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"])
-            iface_arr = get_values(controller.CONF["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"])
+        bm_arr = get_values(controller.CONF["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"])
+        iface_arr = get_values(controller.CONF["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"])
 
-            # The CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS parameter contains a
-            # comma-separated list of bridge mappings. Since the puppet module
-            # expects this parameter to be an array, this parameter must be properly
-            # formatted by packstack, then consumed by the puppet module.
-            # For example, the input string 'A, B, C' should formatted as '['A','B','C']'.
-            controller.CONF["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"] = str(bm_arr)
+        # The CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS parameter contains a
+        # comma-separated list of bridge mappings. Since the puppet module
+        # expects this parameter to be an array, this parameter must be properly
+        # formatted by packstack, then consumed by the puppet module.
+        # For example, the input string 'A, B, C' should formatted as '['A','B','C']'.
+        controller.CONF["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"] = str(bm_arr)
 
     elif controller.CONF["CONFIG_NEUTRON_L2_PLUGIN"] == "linuxbridge":
         host_var = 'CONFIG_NEUTRON_LB_HOST'
