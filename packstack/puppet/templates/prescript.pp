@@ -15,14 +15,3 @@ if $::operatingsystem == 'RedHat' {
 class { 'packstack::netns':
     warning => "${info}${warning}"
 }
-
-service { 'NetworkManager':
-    ensure => 'stopped',
-    enable => false
-}
-
-# in case we are installing somewhere where iptables are disabled
-service { 'iptables':
-    ensure => 'running',
-    enable => true,
-}

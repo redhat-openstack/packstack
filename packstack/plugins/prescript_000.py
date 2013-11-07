@@ -212,8 +212,6 @@ def initSequences(controller):
             'functions':[install_keys]},
         {'title': 'Discovering hosts\' details',
             'functions': [discover]},
-        {'title': 'Disabling NetworkManager',
-            'functions':[disable_nm]},
         {'title': 'Adding pre install manifest entries',
             'functions':[create_manifest]},
     ]
@@ -248,33 +246,6 @@ def install_keys(config):
                       % (sshkeydata, sshkeydata))
         server.append("chmod 400 ~/.ssh/authorized_keys")
         server.append("restorecon -r ~/.ssh")
-        server.execute()
-
-
-def disable_nm(config):
-    """
-    Sets NM_CONTROLLED="no" in existing network scripts on all nodes.
-    """
-    for hostname in filtered_hosts(config):
-        server = utils.ScriptRunner(hostname)
-        server.append('ip a | grep -e "^[0-9]\: [a-zA-Z0-9\-]*\:" | '
-                      'sed -e "s/.*: \\(.*\\):.*/\\1/g"')
-        rc, out = server.execute()
-        devices = [i.strip() for i in out.split('\n') if i.strip()]
-
-        devre = '\|'.join(devices)
-        path = '/etc/sysconfig/network-scripts/'
-        server.clear()
-        server.append('ls -1 %(path)s | grep -e "ifcfg-\(%(devre)s\)"'
-                      % locals())
-        rc, out = server.execute()
-        netscripts = [i.strip() for i in out.split('\n') if i.strip()]
-
-        opt = 'NM_CONTROLLED'
-        server.clear()
-        for script in netscripts:
-            server.append('sed -i \'s/^%(opt)s=.*/%(opt)s="no"/g\' '
-                          '%(path)s%(script)s' % locals())
         server.execute()
 
 
