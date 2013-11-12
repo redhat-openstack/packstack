@@ -15,5 +15,6 @@ class { 'neutron':
   allow_overlapping_ips => true,
   verbose => true,
   qpid_port       => '%(CONFIG_QPID_CLIENTS_PORT)s',
-  qpid_protocol   => '%(CONFIG_QPID_PROTOCOL)s'
+  qpid_protocol   => '%(CONFIG_QPID_PROTOCOL)s',
+  service_plugins => [ '%(SERVICE_PLUGINS)s' ]
 }
