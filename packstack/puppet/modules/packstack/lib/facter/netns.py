@@ -114,11 +114,18 @@ class TestNetns(unittest.TestCase):
             e('%(ns2)s ping -c 1 -w 1 %(address1_1)s')
 
             # Check that iptables filtering and save/restore can be performed
-            saved_iptables_state = e('%(ns1)s iptables-save').stdout.read()
-            e('%(ns1)s iptables -A INPUT -p icmp --icmp-type 8 -j DROP')
-            e('%(ns2)s ping -c 1 -w 1 %(address1_1)s', return_code=1)
-            e('%(ns1)s iptables-restore', input=saved_iptables_state)
-            e('%(ns2)s ping -c 1 -w 1 %(address1_1)s')
+            try:
+                iptables_filename = os.path.join(
+                                        tempfile.gettempdir(),
+                                        'iptables-%s' % str(uuid.uuid4()))
+                e('%(ns1)s iptables-save > %s' % iptables_filename)
+                e('%(ns1)s iptables -A INPUT -p icmp --icmp-type 8 -j DROP')
+                e('%(ns2)s ping -c 1 -w 1 %(address1_1)s', return_code=1)
+                e('%(ns1)s iptables-restore < %s' % iptables_filename)
+                e('%(ns2)s ping -c 1 -w 1 %(address1_1)s')
+            finally:
+                if os.path.exists(iptables_filename):
+                    os.unlink(iptables_filename)
 
             # Create another namespace (ns3) that is connected to ns1
             # via a different subnet, so that traffic between ns3 and
