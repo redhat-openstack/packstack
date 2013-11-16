@@ -42,7 +42,7 @@ def initConfig(controllerObject):
              "CONDITION"       : False },
             {"CMD_OPTION"      : "provision-demo-floatrange",
              "USAGE"           : "The CIDR network address for the floating IP subnet",
-             "PROMPT"          : "Enter the network address for the floating IP subet:",
+             "PROMPT"          : "Enter the network address for the floating IP subnet:",
              "OPTION_LIST"     : False,
              "VALIDATORS"      : False,
              "DEFAULT_VALUE"   : "172.24.4.224/28",
