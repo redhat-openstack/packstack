@@ -21,6 +21,8 @@ class { 'ceilometer':
     rpc_backend     => 'ceilometer.openstack.common.rpc.impl_qpid',
     verbose         => true,
     debug           => false,
+    qpid_port       => '%(CONFIG_QPID_CLIENTS_PORT)s',
+    qpid_protocol   => '%(CONFIG_QPID_PROTOCOL)s'
 }
 
 class { 'ceilometer::db':

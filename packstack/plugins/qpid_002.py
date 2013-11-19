@@ -156,6 +156,8 @@ def createmanifest(config):
     if config['CONFIG_QPID_ENABLE_SSL'] == 'y':
         ports.add("'%s'" % (config['CONFIG_QPID_SSL_PORT']))
         config['CONFIG_QPID_ENABLE_SSL'] = 'true'
+        config['CONFIG_QPID_PROTOCOL'] = 'ssl'
+        config['CONFIG_QPID_CLIENTS_PORT'] = "5671"
         if config['CONFIG_QPID_SSL_SELF_SIGNED'] == 'y':
             server.append( "openssl req -batch -new -x509 -nodes -keyout %s -out %s -days 1095"
                 % (config['CONFIG_QPID_SSL_KEY_FILE'], config['CONFIG_QPID_SSL_CERT_FILE']) )
@@ -163,11 +165,13 @@ def createmanifest(config):
         ssl_manifestdata = getManifestTemplate('qpid_ssl.pp')
     else:
         #Set default values 
+        config['CONFIG_QPID_CLIENTS_PORT'] = "5672"
         config['CONFIG_QPID_SSL_PORT'] = "5671"
         config['CONFIG_QPID_SSL_CERT_FILE'] = ""
         config['CONFIG_QPID_SSL_KEY_FILE'] = ""
         config['CONFIG_QPID_NSS_CERTDB_PW'] = ""
         config['CONFIG_QPID_ENABLE_SSL'] = 'false'
+        config['CONFIG_QPID_PROTOCOL'] = 'tcp'
 
     manifestdata = getManifestTemplate('qpid.pp')
     manifestdata += ssl_manifestdata
