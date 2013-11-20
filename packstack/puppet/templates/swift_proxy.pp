@@ -13,10 +13,7 @@ class { 'swift::proxy':
 #    'ratelimit',
     'authtoken',
     'keystone',
-    'proxy-server',
-    'account_quotas',
-    'container_quotas',
-    'tempurl staticweb'
+    'proxy-server'
   ],
   account_autocreate => true,
 }
