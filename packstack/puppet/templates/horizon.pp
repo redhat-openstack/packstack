@@ -13,7 +13,7 @@ file {"/etc/httpd/conf.d/rootredirect.conf":
 class {'horizon':
    secret_key => '%(CONFIG_HORIZON_SECRET_KEY)s',
    keystone_host => '%(CONFIG_KEYSTONE_HOST)s',
-   fqdn => '%(CONFIG_HORIZON_HOST)s',
+   fqdn => ['%(CONFIG_HORIZON_HOST)s', "$::fqdn"],
 }
 
 class {'memcached':}
