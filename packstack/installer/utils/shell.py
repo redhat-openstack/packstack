@@ -47,7 +47,9 @@ def execute(cmd, workdir=None, can_fail=True, mask_list=None,
             logging.debug(block_fmt % {'title': 'STDERR',
                                        'content': masked_err})
         if can_fail:
-            msg = 'Failed to execute command: %s' % masked_out
+            msg = ('Failed to execute command, '
+                   'stdout: %s\nstderr: %s' %
+                   (masked_out, masked_err))
             raise ExecuteRuntimeError(msg, stdout=out, stderr=err)
     return proc.returncode, out
 
@@ -102,7 +104,9 @@ class ScriptRunner(object):
                 if re.search(pattern, err):
                     raise NetworkError(masked_err, stdout=out, stderr=err)
                 else:
-                    msg = 'Failed to run remote script: %s' % masked_out
+                    msg = ('Failed to run remote script, '
+                           'stdout: %s\nstderr: %s' %
+                           (masked_out, masked_err))
                     raise ScriptRuntimeError(msg, stdout=out, stderr=err)
         return obj.returncode, out
 
