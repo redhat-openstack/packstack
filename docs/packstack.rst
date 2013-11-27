@@ -44,7 +44,8 @@ Global Options
 
 **CONFIG_NEUTRON_INSTALL**    : Set to 'y' if you would like Packstack to install OpenStack Networking (Neutron).
 
-**CONFIG_MYSQL_INSTALL**      : Set to 'y' if you would like Packstack to install MySQL
+**CONFIG_MYSQL_INSTALL**      : Set to 'y' if you would like Packstack to install MySQL.
+
 
 SSH Configs
 ------------
@@ -179,8 +180,6 @@ Nova Options
 
 **CONFIG_NOVA_NETWORK_VLAN_START**    : First VLAN for private networks.
 
-
-
 NOVACLIENT Config parameters
 ----------------------------
 
@@ -196,7 +195,6 @@ OpenStack Horizon Config parameters
 **CONFIG_SSL_CERT**    : PEM encoded certificate to be used for ssl on the https server, leave blank if one should be generated, this certificate should not require a passphrase.
 
 **CONFIG_SSL_KEY**    : Keyfile corresponding to the certificate if one was entered.
-
 
 OpenStack Swift Config parameters
 ---------------------------------
@@ -365,3 +363,4 @@ SOURCE
 ======
 * `packstack      https://github.com/stackforge/packstack`
 * `puppet modules https://github.com/puppetlabs and https://github.com/packstack`
+
