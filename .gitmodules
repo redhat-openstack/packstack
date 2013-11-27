@@ -75,7 +75,7 @@
 	url = https://github.com/puppetlabs/puppetlabs-haproxy.git
 [submodule "packstack/puppet/modules/ceilometer"]
 	path = packstack/puppet/modules/ceilometer
-	url = https://github.com/packstack/puppet-ceilometer.git
+	url = https://github.com/stackforge/puppet-ceilometer.git
 [submodule "packstack/puppet/modules/mongodb"]
 	path = packstack/puppet/modules/mongodb
 	url = https://github.com/puppetlabs/puppetlabs-mongodb.git

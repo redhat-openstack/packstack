@@ -1,4 +1,3 @@
-
 class { 'mongodb':
     enable_10gen => false,
     port         => '27017',
@@ -32,9 +31,18 @@ class { 'ceilometer::collector':
     require => Class['mongodb'],
 }
 
-class { 'ceilometer::agent::central':
+class { 'ceilometer::agent::auth':
     auth_url      => 'http://%(CONFIG_KEYSTONE_HOST)s:35357/v2.0',
     auth_password => '%(CONFIG_CEILOMETER_KS_PW)s',
+}
+
+class { 'ceilometer::agent::central':
+}
+
+class { 'ceilometer::alarm::notifier':
+}
+
+class { 'ceilometer::alarm::evaluator':
 }
 
 class { 'ceilometer::api':
