@@ -1,9 +1,14 @@
+$enable_auth = '%(CONFIG_QPID_ENABLE_AUTH)s'
+
 class {"qpid::server":
     config_file => $::operatingsystem? {
         'Fedora' => '/etc/qpid/qpidd.conf',
         default  => '/etc/qpidd.conf',
         },
-    auth => "no",
+    auth => $enable_auth ? {
+        'y'  => 'yes',
+        default => 'no',
+        },
     clustered => false,
     ssl_port      => '%(CONFIG_QPID_SSL_PORT)s',
     ssl           => %(CONFIG_QPID_ENABLE_SSL)s,

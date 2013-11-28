@@ -53,6 +53,19 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "qpid-enable-auth",
+                   "USAGE"           : "Enable Authentication for the QPID service",
+                   "PROMPT"          : "Enable Authentication for the QPID service?",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATORS"      : [validators.validate_options],
+                   "DEFAULT_VALUE"   : "n",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_QPID_ENABLE_AUTH",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+
 
                   ]
 
@@ -138,6 +151,44 @@ def initConfig(controllerObject):
 
     controller.addGroup(groupDict, paramsList)
 
+    paramsList = [
+                  {"CMD_OPTION"      : "qpid-auth-user",
+                   "USAGE"           : "User for qpid authentication",
+                   "PROMPT"          : "Enter the user for qpid authentication",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "DEFAULT_VALUE"   : "qpid_user",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_QPID_AUTH_USER",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "qpid-auth-password",
+                   "USAGE"           : "Password for user authentication",
+                   "PROMPT"          : "Enter the password for user authentication",
+                   "OPTION_LIST"     : ["y", "n"],
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_QPID_AUTH_PASSWORD",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+
+                  ]
+
+    groupDict = { "GROUP_NAME"            : "QPIDAUTH",
+                  "DESCRIPTION"           : "QPID Config Athentication parameters",
+                  "PRE_CONDITION"         : "CONFIG_QPID_ENABLE_AUTH",
+                  "PRE_CONDITION_MATCH"   : "y",
+                  "POST_CONDITION"        : False,
+                  "POST_CONDITION_MATCH"  : True}
+
+
+    controller.addGroup(groupDict, paramsList)
+
 def initSequences(controller):
     # If we don't want Nova we don't need qpid
     if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
@@ -175,6 +226,12 @@ def createmanifest(config):
 
     manifestdata = getManifestTemplate('qpid.pp')
     manifestdata += ssl_manifestdata
+
+    if config['CONFIG_QPID_ENABLE_AUTH'] == 'y':
+        manifestdata += getManifestTemplate('qpid_auth.pp')
+    else:
+        config['CONFIG_QPID_AUTH_PASSWORD'] = 'guest'
+        config['CONFIG_QPID_AUTH_USER'] = 'guest'
 
     #All hosts should be able to talk to qpid
     hosts = ["'%s'" % i for i in filtered_hosts(config, exclude=False)]
