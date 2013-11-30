@@ -14,6 +14,7 @@ class {'horizon':
    secret_key => '%(CONFIG_HORIZON_SECRET_KEY)s',
    keystone_host => '%(CONFIG_KEYSTONE_HOST)s',
    fqdn => ['%(CONFIG_HORIZON_HOST)s', "$::fqdn"],
+   can_set_mount_point => 'False',
 }
 
 class {'memcached':}
