@@ -44,14 +44,15 @@ Global Options
 
 **CONFIG_NEUTRON_INSTALL**    : Set to 'y' if you would like Packstack to install OpenStack Networking (Neutron).
 
+**CONFIG_MYSQL_INSTALL**      : Set to 'y' if you would like Packstack to install MySQL
 
-SSH Configs.
-------------.
+SSH Configs
+------------
 
 **CONFIG_SSH_KEY**             : Path to a Public key to install on servers. If a usable key has not been installed on the remote servers the user will be prompted for a password and this key will be installed so the password will not be required again.
 
-MySQL Config parameters.
------------------------.
+MySQL Config parameters
+-----------------------
 
 **CONFIG_MYSQL_HOST**          : The IP address of the server on which to install MySQL.
 
@@ -59,8 +60,8 @@ MySQL Config parameters.
 
 **CONFIG_MYSQL_PW**            : Password for the MySQL admin user.
 
-QPID Config parameters.
-----------------------.
+QPID Config parameters
+----------------------
 
 **CONFIG_QPID_HOST**            : The IP address of the server on which to install the QPID service.
 
@@ -76,8 +77,8 @@ QPID Config parameters.
 
 **CONFIG_QPID_SSL_SELF_SIGNED** : Auto Generates self signed SSL certificate and key.
 
-Keystone Config parameters.
---------------------------.
+Keystone Config parameters
+--------------------------
 
 **CONFIG_KEYSTONE_HOST**       : The IP address of the server on which to install Keystone.
 
@@ -87,8 +88,12 @@ Keystone Config parameters.
 
 **CONFIG_KEYSTONE_ADMIN_PW**   : The password to use for the Keystone admin user.
 
-Glance Config parameters.
-------------------------.
+**CONFIG_KEYSTONE_DEMO_PW**    : The password to use for the Keystone demo user
+
+**CONFIG_KEYSTONE_TOKEN_FORMAT**    : Kestone token format. Use either UUID or PKI
+
+Glance Config parameters
+------------------------
 
 **CONFIG_GLANCE_HOST**         : The IP address of the server on which to install Glance.
 
@@ -96,8 +101,8 @@ Glance Config parameters.
 
 **CONFIG_GLANCE_KS_PW**        : The password to use for the Glance to authenticate with Keystone.
 
-Cinder Config parameters.
-------------------------.
+Cinder Config parameters
+------------------------
 
 **CONFIG_CINDER_HOST**         : The IP address of the server on which to install Cinder.
 
@@ -107,28 +112,28 @@ Cinder Config parameters.
 
 **CONFIG_CINDER_BACKEND**      : The Cinder backend to use ['lvm', 'gluster', 'nfs'].
 
-Cinder volume create Config parameters.
---------------------------------------.
+Cinder volume create Config parameters
+--------------------------------------
 
 **CONFIG_CINDER_VOLUMES_CREATE** : Create Cinder's volumes group ['y', 'n'].
 
-Cinder volume size Config parameters.
-------------------------------------.
+Cinder volume size Config parameters
+------------------------------------
 
 **CONFIG_CINDER_VOLUMES_SIZE** : Cinder's volumes group size.
 
-Cinder gluster Config parameters.
---------------------------------.
+Cinder gluster Config parameters
+--------------------------------
 
 **CONFIG_CINDER_GLUSTER_MOUNTS** : A single or comma separated list of gluster volume shares.
 
-Cinder NFS Config parameters.
-----------------------------.
+Cinder NFS Config parameters
+----------------------------
 
 **CONFIG_CINDER_NFS_MOUNTS**   : A single or comma seprated list of NFS exports to mount.
 
-Nova Options.
-------------.
+Nova Options
+------------
 
 **CONFIG_NOVA_API_HOST**       : The IP address of the server on which to install the Nova API service.
 
@@ -160,20 +165,41 @@ Nova Options.
 
 **CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO** : The overcommitment ratio for virtual to physical RAM. Set to 1.0 to disable RAM overcommitment.
 
-NOVACLIENT Config parameters.
-----------------------------.
+**CONFIG_NOVA_CONDUCTOR_HOST**    : The IP address of the server on which to install the Nova Conductor service.
+
+**CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP**    : Automatically assign a floating IP to new instances.
+
+**CONFIG_NOVA_NETWORK_DEFAULTFLOATINGPOOL**    : Name of the default floating pool to which the specified floating ranges are added to.
+
+**CONFIG_NOVA_NETWORK_MANAGER**   : Nova network manager.
+
+**CONFIG_NOVA_NETWORK_NUMBER**    : Number of networks to support.
+
+**CONFIG_NOVA_NETWORK_SIZE**      : Number of addresses in each private subnet.
+
+**CONFIG_NOVA_NETWORK_VLAN_START**    : First VLAN for private networks.
+
+
+
+NOVACLIENT Config parameters
+----------------------------
 
 **CONFIG_OSCLIENT_HOST**       : The IP address of the server on which to install the OpenStack client packages. An admin "rc" file will also be installed.
 
-OpenStack Horizon Config parameters.
------------------------------------.
+OpenStack Horizon Config parameters
+-----------------------------------
 
 **CONFIG_HORIZON_HOST**        : The IP address of the server on which to install Horizon.
 
 **CONFIG_HORIZON_SSL**         : To set up Horizon communication over https set this to "y" ['y', 'n'].
 
-OpenStack Swift Config parameters.
----------------------------------.
+**CONFIG_SSL_CERT**    : PEM encoded certificate to be used for ssl on the https server, leave blank if one should be generated, this certificate should not require a passphrase.
+
+**CONFIG_SSL_KEY**    : Keyfile corresponding to the certificate if one was entered.
+
+
+OpenStack Swift Config parameters
+---------------------------------
 
 **CONFIG_SWIFT_PROXY_HOSTS**   : The IP address on which to install the Swift proxy service.
 
@@ -186,6 +212,8 @@ OpenStack Swift Config parameters.
 **CONFIG_SWIFT_STORAGE_REPLICAS** : Number of swift storage replicas, this number MUST be no bigger than the number of storage zones configured.
 
 **CONFIG_SWIFT_STORAGE_FSTYPE** : FileSystem type for storage nodes ['xfs', 'ext4'].
+
+**CONFIG_SWIFT_HASH**    : Shared secret for Swift.
 
 Server Prepare Configs
 -----------------------
@@ -259,7 +287,7 @@ Heat Config Parameters
 
 **CONFIG_HEAT_CFN_HOST**           : The IP address of the server on which to install Heat CloudFormation API.
 
-Neutron Config Parameters
+Neutron Config Parameters.
 ------------------------
 
 **CONFIG_NEUTRON_SERVER_HOST**            : The IP addresses of the server on which to install the Neutron server.
@@ -298,6 +326,20 @@ Neutron Config Parameters
 
 **CONFIG_NEUTRON_OVS_TUNNEL_IF**          : Override the IP used for GRE tunnels on this hypervisor to the IP found on the specified interface (defaults to the HOST IP).
 
+
+Provision Config Parameters.
+------------------------
+**CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE**    : Whether to configure the ovs external bridge in an all-in-one deployment.
+
+**CONFIG_PROVISION_DEMO**    : Whether to provision for demo usage and testing.
+
+**CONFIG_PROVISION_DEMO_FLOATRANGE**    : The CIDR network address for the floating IP subnet.
+
+**CONFIG_PROVISION_TEMPEST**    : Whether to configure tempest for testing.
+
+**CONFIG_PROVISION_TEMPEST_REPO_REVISION**    : The revision of the tempest git repository to use.
+
+**CONFIG_PROVISION_TEMPEST_REPO_URI**    : The uri of the tempest git repository to use.
 
 
 Log files and Debug info
