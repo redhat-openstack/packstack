@@ -14,4 +14,6 @@ class { "nova":
     rpc_backend => 'nova.openstack.common.rpc.impl_qpid',
     verbose     => true,
     debug       => true,
+    qpid_port       => '%(CONFIG_QPID_CLIENTS_PORT)s',
+    qpid_protocol   => '%(CONFIG_QPID_PROTOCOL)s'
 }

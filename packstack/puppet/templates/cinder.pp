@@ -3,6 +3,8 @@ class {'cinder':
     rpc_backend    => 'cinder.openstack.common.rpc.impl_qpid',
     qpid_hostname  => "%(CONFIG_QPID_HOST)s",
     qpid_password  => "notused",
+    qpid_port       => '%(CONFIG_QPID_CLIENTS_PORT)s',
+    qpid_protocol   => '%(CONFIG_QPID_PROTOCOL)s',
     sql_connection => "mysql://cinder:%(CONFIG_CINDER_DB_PW)s@%(CONFIG_MYSQL_HOST)s/cinder"
 }
 
