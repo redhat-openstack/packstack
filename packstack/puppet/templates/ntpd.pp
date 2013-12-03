@@ -80,6 +80,7 @@ exec {'stop-ntpd':
 
 exec {'ntpdate':
     command => '/usr/sbin/ntpdate %(CONFIG_NTP_SERVERS)s',
+    tries   => 3,
 }
 
 service {'ntpd':
