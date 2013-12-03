@@ -2,6 +2,7 @@
 #
 
 git reset --hard
+git submodule sync
 git submodule update --init
 git status -s | grep "." && ( echo "Contains unknown files" ; exit 1 )
 
