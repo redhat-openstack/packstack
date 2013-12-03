@@ -20,6 +20,16 @@ file_line{'nohttp':
     require =>  Class['apache::mod::ssl']
 }
 
+# close port 80 on 0.0.0.0
+# this line is added by the horizon class
+file_line{'nohttp_ip':
+    path => '/etc/httpd/conf/httpd.conf',
+    match => '^.*Listen 0.0.0.0:80',
+    line => '#Listen 0.0.0.0:80',
+    require =>  Class['horizon']
+}
+
+
 # if the mod_ssl apache puppet module does not install
 # this file, we ensure it haves the minimum
 # requirements for SSL to work
