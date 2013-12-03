@@ -163,10 +163,11 @@ def initConfig(controllerObject):
     paramsList = [
                   {"CMD_OPTION"      : "cinder-gluster-mounts",
                    "USAGE"           : ("A single or comma separated list of gluster volume shares "
-                                        "to mount, eg: ip-address:/vol-name "),
+                                        "to mount, eg: ip-address:/vol-name, domain:/vol-name "),
                    "PROMPT"          : ("Enter a single or comma separated list of gluster volume "
                                         "shares to use with Cinder"),
-                   "OPTION_LIST"     : ["^'([\d]{1,3}\.){3}[\d]{1,3}:/.*'"],
+                   "OPTION_LIST"     : ["^'([\d]{1,3}\.){3}[\d]{1,3}:/.*'", \
+                    "^'[a-zA-Z0-9][\-\.\w]*:/.*'"],
                    "VALIDATORS"      : [validators.validate_multi_regexp],
                    "PROCESSORS"      : [processors.process_add_quotes_around_values],
                    "DEFAULT_VALUE"   : "",
