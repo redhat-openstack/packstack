@@ -2,11 +2,13 @@
 Installs and configures an OpenStack Swift
 """
 
+import os
+import re
 import uuid
 import logging
-import os
 
 from packstack.installer import validators
+from packstack.installer.exceptions import ParamValidationError
 from packstack.installer import basedefs
 from packstack.installer import utils
 
@@ -110,6 +112,19 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : True,
                    "NEED_CONFIRM"    : True,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-swift-storage-size",
+                   "USAGE"           : "Size of the swift loopback file storage device",
+                   "PROMPT"          : "Enter the size of the storage device (eg. 2G, 2000M, 2000000K)",
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validate_storage_size],
+                   "DEFAULT_VALUE"   : "2G",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_SWIFT_STORAGE_SIZE",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+
                  ]
 
     groupDict = { "GROUP_NAME"            : "OSSWIFT",
@@ -128,6 +143,11 @@ def validate_storage(param, options=None):
         host = host.split('/', 1)[0]
         validators.validate_ip(host.strip(), options)
 
+def validate_storage_size(param, options=None):
+    match = re.match(r'\d+G|\d+M|\d+K', param, re.IGNORECASE)
+    if not match:
+        msg = 'Storage size not have a valid value (eg. 1G, 1000M, 1000000K)'
+        raise ParamValidationError(msg)
 
 def initSequences(controller):
     if controller.CONF['CONFIG_SWIFT_INSTALL'] != 'y':
@@ -225,6 +245,13 @@ def check_device(host, device):
     server.execute()
     return False
 
+def get_storage_size(size):
+    ranges = {'G': 1048576, 'M': 1024, 'K': 1}
+    size.strip()
+    for measure in ['G', 'M', 'K']:
+        if re.match('\d+' + measure, size, re.IGNORECASE):
+            intsize = int(size.rstrip(measure)) * ranges[measure]
+            return intsize
 
 def createstoragemanifest(config):
 
@@ -247,6 +274,7 @@ def createstoragemanifest(config):
         if device:
             manifestdata = "\n" + 'swift::storage::%s{"%s":\n  device => "/dev/%s",\n}'% (controller.CONF["CONFIG_SWIFT_STORAGE_FSTYPE"], devicename, device)
         else:
+            config['SWIFT_STORAGE_SEEK'] = get_storage_size(config['CONFIG_SWIFT_STORAGE_SIZE'])
             controller.CONF["SWIFT_STORAGE_DEVICES"] = "'%s'"%devicename
             manifestdata = "\n" + getManifestTemplate("swift_loopback.pp")
         # Allowed host list for firewall
