@@ -362,6 +362,9 @@ def create_manifest(config):
         manifestdata += getManifestTemplate("cinder_nfs.pp")
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
         manifestdata += getManifestTemplate('cinder_ceilometer.pp')
+    if config['CONFIG_SWIFT_INSTALL'] == 'y':
+        config['CONFIG_SWIFT_PROXY'] = config['CONFIG_SWIFT_PROXY_HOSTS'].split(',')[0].strip()
+        manifestdata += getManifestTemplate('cinder_backup.pp')
 
     hosts = config['CONFIG_NOVA_COMPUTE_HOSTS'].split(",")
     config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i.strip() for i in hosts if i.strip()])
