@@ -17,9 +17,3 @@ class { 'ceilometer::agent::auth':
 class { 'ceilometer::agent::compute':
 }
 
-# if fqdn is not set correctly we have to tell compute agent which host it should query
-if !$::fqdn or $::fqdn != $::hostname {
-    ceilometer_config {
-        'DEFAULT/host': value => $::hostname
-    }
-}
