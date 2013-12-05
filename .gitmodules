@@ -91,3 +91,6 @@
 [submodule "packstack/puppet/modules/nssdb"]
 	path = packstack/puppet/modules/nssdb
 	url = https://github.com/rcritten/puppet-nssdb.git
+[submodule "packstack/puppet/modules/gluster"]
+	path = packstack/puppet/modules/gluster
+	url = https://github.com/redhat-openstack/puppet-openstack-storage.git
