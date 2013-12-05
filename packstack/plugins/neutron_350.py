@@ -382,7 +382,10 @@ def createL3Manifests(config):
         manifestdata = getManifestTemplate("neutron_l3.pp")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + '\n')
-        if controller.CONF['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch' and controller.CONF['CONFIG_NEUTRON_L3_EXT_BRIDGE']:
+        if controller.CONF['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch' and \
+                controller.CONF['CONFIG_NEUTRON_L3_EXT_BRIDGE'] and \
+                not find_mapping(config['CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'],
+                                 config['CONFIG_NEUTRON_L3_EXT_BRIDGE']):
             controller.CONF['CONFIG_NEUTRON_OVS_BRIDGE'] = controller.CONF['CONFIG_NEUTRON_L3_EXT_BRIDGE']
             manifestdata = getManifestTemplate('neutron_ovs_bridge.pp')
             appendManifestFile(manifestfile, manifestdata + '\n')
@@ -399,6 +402,9 @@ def createDHCPManifests(config):
 
 def get_values(val):
     return [x.strip() for x in val.split(',')] if val else []
+
+def find_mapping(haystack, needle):
+    return needle in [x.split(':')[1].strip() for x in get_values(haystack)]
 
 def createL2AgentManifests(config):
     global api_hosts, compute_hosts, dhcp_host, l3_hosts
