@@ -141,7 +141,7 @@ def waitforpuppet(currently_running):
                 # Once a remote puppet run has finished, we retrieve the log
                 # file and check it for errors
                 local_server = utils.ScriptRunner()
-                log = os.path.join(basedefs.PUPPET_MANIFEST_DIR,
+                log = os.path.join(basedefs.LOG_DIR,
                                    os.path.basename(finished_logfile).replace(".finished", ".log"))
                 local_server.append('scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s:%s %s' % (hostname, finished_logfile, log))
                 # To not pollute logs we turn of logging of command execution
