@@ -15,6 +15,7 @@ class {'horizon':
    keystone_host => '%(CONFIG_KEYSTONE_HOST)s',
    fqdn => ['%(CONFIG_HORIZON_HOST)s', "$::fqdn"],
    can_set_mount_point => 'False',
+   help_url =>'https://access.redhat.com/site/documentation//en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/4/index.html'
 }
 
 class {'memcached':}
