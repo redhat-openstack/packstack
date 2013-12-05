@@ -119,10 +119,15 @@ def initConfig(controllerObject):
          "NEED_CONFIRM"    : False,
          "CONDITION"       : False },
     ]
+
+    def check_cloudwatch(config):
+        return config["CONFIG_HEAT_INSTALL"] == 'y' and \
+            config["CONFIG_HEAT_CLOUDWATCH_INSTALL"] == 'y'
+
     group = {"GROUP_NAME"          : "Heat CloudWatch API",
              "DESCRIPTION"         : "Heat CloudWatch API config parameters",
-             "PRE_CONDITION"       : "CONFIG_HEAT_CLOUDWATCH_INSTALL",
-             "PRE_CONDITION_MATCH" : "y",
+             "PRE_CONDITION"       : check_cloudwatch,
+             "PRE_CONDITION_MATCH" : True,
              "POST_CONDITION"      : False,
              "POST_CONDITION_MATCH": True}
     controller.addGroup(group, parameters)
@@ -143,10 +148,15 @@ def initConfig(controllerObject):
          "NEED_CONFIRM"    : False,
          "CONDITION"       : False },
     ]
+
+    def check_cloudformation(config):
+        return config["CONFIG_HEAT_INSTALL"] == 'y' and \
+            config["CONFIG_HEAT_CFN_INSTALL"] == 'y'
+
     group = {"GROUP_NAME"          : "Heat CloudFormation API",
              "DESCRIPTION"         : "Heat CloudFormation API config parameters",
-             "PRE_CONDITION"       : "CONFIG_HEAT_CFN_INSTALL",
-             "PRE_CONDITION_MATCH" : "y",
+             "PRE_CONDITION"       : check_cloudformation,
+             "PRE_CONDITION_MATCH" : True,
              "POST_CONDITION"      : False,
              "POST_CONDITION_MATCH": True}
     controller.addGroup(group, parameters)
