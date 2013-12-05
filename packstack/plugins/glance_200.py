@@ -8,6 +8,7 @@ import logging
 from packstack.installer import validators
 from packstack.installer import basedefs
 from packstack.installer import utils
+from packstack.installer.utils import split_hosts
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
 
@@ -98,8 +99,10 @@ def createmanifest(config):
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
         manifestdata += getManifestTemplate('glance_ceilometer.pp')
     hosts = set()
-    for host in config['CONFIG_NOVA_COMPUTE_HOSTS'].split(','):
-        hosts.add(host.strip())
+    if config['CONFIG_NOVA_INSTALL'] == 'y':
+        hosts = split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS'])
+    else:
+        hosts.add('ALL',)
     config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
     config['FIREWALL_SERVICE_NAME'] = "glance"
     config['FIREWALL_PORTS'] = "'9292'"

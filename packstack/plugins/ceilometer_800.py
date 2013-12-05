@@ -99,6 +99,10 @@ def create_manifest(config):
     config['FIREWALL_SERVICE_NAME'] = 'ceilometer-api'
     config['FIREWALL_PORTS'] = "'8777'"
     manifestdata += getManifestTemplate("firewall.pp")
+    # Add a template that creates a group for nova because the ceilometer
+    # class needs it
+    if config['CONFIG_NOVA_INSTALL'] == 'n':
+        manifestdata += getManifestTemplate("ceilometer_nova_disabled.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 

@@ -11,6 +11,7 @@ from packstack.installer import validators
 from packstack.installer.exceptions import ParamValidationError
 from packstack.installer import basedefs
 from packstack.installer import utils
+from packstack.installer.utils import split_hosts
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile, manifestfiles
 
@@ -278,13 +279,10 @@ def createstoragemanifest(config):
             controller.CONF["SWIFT_STORAGE_DEVICES"] = "'%s'"%devicename
             manifestdata = "\n" + getManifestTemplate("swift_loopback.pp")
         # Allowed host list for firewall
-        hosts = set()
-        for host in config['CONFIG_SWIFT_STORAGE_HOSTS'].split(','):
-            hosts.add(host.strip())
-        for host in config['CONFIG_SWIFT_PROXY_HOSTS'].split(','):
-            hosts.add(host.strip())
-        for host in config['CONFIG_NOVA_COMPUTE_HOSTS'].split(','):
-            hosts.add(host.strip())
+        hosts = split_hosts(config['CONFIG_SWIFT_STORAGE_HOSTS'])
+        hosts |= split_hosts(config['CONFIG_SWIFT_PROXY_HOSTS'])
+        if config['CONFIG_NOVA_INSTALL'] == 'y':
+            hosts |= split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS'])
         config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
         # Firewall rules for storage and rsync
         config['FIREWALL_SERVICE_NAME'] = "swift storage and rsync"

@@ -10,6 +10,7 @@ import logging
 from packstack.installer import exceptions
 from packstack.installer import processors
 from packstack.installer import validators
+from packstack.installer.utils import split_hosts
 
 from packstack.installer import basedefs
 from packstack.installer import utils
@@ -367,7 +368,12 @@ def create_manifest(config):
         config['CONFIG_SWIFT_PROXY'] = config['CONFIG_SWIFT_PROXY_HOSTS'].split(',')[0].strip()
         manifestdata += getManifestTemplate('cinder_backup.pp')
 
-    hosts = config['CONFIG_NOVA_COMPUTE_HOSTS'].split(",")
+    hosts = set()
+    if config['CONFIG_NOVA_INSTALL'] == 'y':
+        hosts = split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS'])
+    else:
+        hosts.add('ALL',)
+
     config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i.strip() for i in hosts if i.strip()])
     config['FIREWALL_SERVICE_NAME'] = "cinder"
     config['FIREWALL_PORTS'] = "'3260', '8776'"
