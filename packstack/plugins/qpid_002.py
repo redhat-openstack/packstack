@@ -239,8 +239,12 @@ def createmanifest(config):
 
     #All hosts should be able to talk to qpid
     hosts = ["'%s'" % i for i in filtered_hosts(config, exclude=False)]
-    config['FIREWALL_ALLOWED'] = ','.join(hosts)
-    config['FIREWALL_SERVICE_NAME'] = "qpid"
-    config['FIREWALL_PORTS'] = ','.join(ports)
-    manifestdata += getManifestTemplate("firewall.pp")
+    # if the rule already exists for one port puppet will fail
+    # we have to add them by separate
+    for port in ports:
+        config['FIREWALL_ALLOWED'] = ','.join(hosts)
+        config['FIREWALL_SERVICE_NAME'] = "qpid - %s" % (port)
+        config['FIREWALL_PORTS'] = port
+        manifestdata += getManifestTemplate("firewall.pp")
+
     appendManifestFile(manifestfile, manifestdata, 'pre')
