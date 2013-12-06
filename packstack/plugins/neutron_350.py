@@ -101,6 +101,18 @@ def initConfig(controllerObject):
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
+            {"CMD_OPTION"      : "neutron-lbaas-hosts",
+             "USAGE"           : "A comma separated list of IP addresses on which to install Neutron LBaaS agent",
+             "PROMPT"          : "Enter a comma separated list of IP addresses on which to install Neutron LBaaS agent",
+             "OPTION_LIST"     : [],
+             "VALIDATORS"      : [validators.validate_multi_ssh],
+             "DEFAULT_VALUE"   : "",
+             "MASK_INPUT"      : False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME"       : "CONFIG_NEUTRON_LBAAS_HOSTS",
+             "USE_DEFAULT"     : False,
+             "NEED_CONFIRM"    : False,
+             "CONDITION"       : False },
             {"CMD_OPTION"      : "neutron-l2-plugin",
              "USAGE"           : "The name of the L2 plugin to be used with Neutron",
              "PROMPT"          : "Enter the name of the L2 plugin to be used with Neutron",
@@ -316,10 +328,11 @@ def initSequences(controller):
         controller.CONF['CONFIG_NEUTRON_L2_DBNAME'] = 'neutron_linux_bridge'
         controller.CONF['CONFIG_NEUTRON_CORE_PLUGIN'] = 'neutron.plugins.linuxbridge.lb_neutron_plugin.LinuxBridgePluginV2'
 
-    global api_hosts, l3_hosts, dhcp_hosts, compute_hosts, meta_hosts, q_hosts
+    global api_hosts, l3_hosts, dhcp_hosts, lbaas_hosts, meta_hosts, compute_hosts, q_hosts
     api_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_SERVER_HOST'])
     l3_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_L3_HOSTS'])
     dhcp_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_DHCP_HOSTS'])
+    lbaas_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_LBAAS_HOSTS'])
     meta_hosts = split_hosts(controller.CONF['CONFIG_NEUTRON_METADATA_HOSTS'])
     compute_hosts = set()
     if controller.CONF['CONFIG_NOVA_INSTALL'] == 'y':
@@ -332,6 +345,7 @@ def initSequences(controller):
         {'title': 'Adding Neutron L3 manifest entries', 'functions':[createL3Manifests]},
         {'title': 'Adding Neutron L2 Agent manifest entries', 'functions':[createL2AgentManifests]},
         {'title': 'Adding Neutron DHCP Agent manifest entries', 'functions':[createDHCPManifests]},
+        {'title': 'Adding Neutron LBaaS Agent manifest entries', 'functions':[createLBaaSManifests]},
         {'title': 'Adding Neutron Metadata Agent manifest entries', 'functions':[createMetadataManifests]},
     ]
     controller.addSequence("Installing OpenStack Neutron", [], [], neutron_steps)
@@ -339,6 +353,12 @@ def initSequences(controller):
 
 def createManifest(config):
     global q_hosts
+
+    service_plugins = []
+    if controller.CONF['CONFIG_NEUTRON_LBAAS_HOSTS']:
+        service_plugins.append("neutron.services.loadbalancer.plugin.LoadBalancerPlugin")
+
+    config['SERVICE_PLUGINS'] = ",".join(service_plugins)
 
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
@@ -396,6 +416,15 @@ def createDHCPManifests(config):
         controller.CONF["CONFIG_NEUTRON_DHCP_HOST"] = host
         controller.CONF['CONFIG_NEUTRON_DHCP_INTERFACE_DRIVER'] = getInterfaceDriver()
         manifestdata = getManifestTemplate("neutron_dhcp.pp")
+        manifestfile = "%s_neutron.pp" % (host,)
+
+        appendManifestFile(manifestfile, manifestdata + "\n")
+
+def createLBaaSManifests(config):
+    global lbaas_hosts
+    for host in lbaas_hosts:
+        controller.CONF['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = getInterfaceDriver()
+        manifestdata = getManifestTemplate("neutron_lbaas.pp")
         manifestfile = "%s_neutron.pp" % (host,)
 
         appendManifestFile(manifestfile, manifestdata + "\n")
