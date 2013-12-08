@@ -7,6 +7,7 @@ import logging
 
 from packstack.installer import validators
 from packstack.installer import utils
+from packstack.installer.utils import split_hosts
 
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
 
