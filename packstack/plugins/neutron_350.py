@@ -106,7 +106,7 @@ def initConfig(controllerObject):
              "PROMPT"          : "Enter a comma separated list of IP addresses on which to install Neutron LBaaS agent",
              "OPTION_LIST"     : [],
              "VALIDATORS"      : [validators.validate_multi_ssh],
-             "DEFAULT_VALUE"   : "",
+             "DEFAULT_VALUE"   : utils.get_localhost_ip(),
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_NEUTRON_LBAAS_HOSTS",
