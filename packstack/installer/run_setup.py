@@ -36,7 +36,7 @@ def initLogging (debug):
 
     try:
         logFilename = "openstack-setup.log"
-        logFile = os.path.join(basedefs.LOG_DIR, logFilename)
+        logFile = os.path.join(basedefs.DIR_LOG, logFilename)
 
         # Create the log file with specific permissions, puppet has a habbit of putting
         # passwords in logs
