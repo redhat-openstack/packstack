@@ -355,10 +355,12 @@ def createManifest(config):
     global q_hosts
 
     service_plugins = []
-    if controller.CONF['CONFIG_NEUTRON_LBAAS_HOSTS']:
-        service_plugins.append("neutron.services.loadbalancer.plugin.LoadBalancerPlugin")
+    if config['CONFIG_NEUTRON_LBAAS_HOSTS']:
+        lbp = 'neutron.services.loadbalancer.plugin.LoadBalancerPlugin'
+        service_plugins.append(lbp)
 
-    config['SERVICE_PLUGINS'] = ",".join(service_plugins)
+    config['SERVICE_PLUGINS'] = (str(service_plugins) if service_plugins
+                                 else 'undef')
 
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
