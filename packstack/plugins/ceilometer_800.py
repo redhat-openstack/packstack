@@ -94,8 +94,7 @@ def initSequences(controller):
 def create_manifest(config):
     manifestfile = "%s_ceilometer.pp" % config['CONFIG_CEILOMETER_HOST']
     manifestdata = getManifestTemplate("ceilometer.pp")
-    hosts = config['CONFIG_CEILOMETER_HOST']
-    config['FIREWALL_ALLOWED'] = "'%s'" % hosts
+    config['FIREWALL_ALLOWED'] = "'ALL'"
     config['FIREWALL_SERVICE_NAME'] = 'ceilometer-api'
     config['FIREWALL_PORTS'] = "'8777'"
     manifestdata += getManifestTemplate("firewall.pp")
