@@ -12,5 +12,5 @@ exec { 'neutron-db-manage upgrade':
   user        => 'neutron',
   logoutput   => 'on_failure',
   before      => Service['neutron-server'],
-  require     => Neutron_config['database/connection'],
+  require     => [Neutron_config['database/connection'], Neutron_config['DEFAULT/core_plugin']],
 }
