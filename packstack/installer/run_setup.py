@@ -676,6 +676,9 @@ def single_step_install(options):
     hosts = [host.strip() for host in hosts.split(',')]
     for group in controller.getAllGroups():
         for param in group.parameters.itervalues():
+            # we don't need magic in case CONFIG_NEUTRON_LBAAS_HOSTS
+            if param.CONF_NAME == 'CONFIG_NEUTRON_LBAAS_HOSTS':
+                continue
             # and directives that contain _HOST are set to the controller node
             if param.CONF_NAME.find("_HOST") != -1:
                 overrides[param.CONF_NAME] = hosts[0]
