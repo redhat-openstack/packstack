@@ -8,7 +8,7 @@ class {"cinder::keystone::auth":
 
 keystone_service { "${cinder::keystone::auth::auth_name}_v2":
     ensure      => present,
-    type        => $cinder::keystone::auth::service_type,
+    type        => "${cinder::keystone::auth::service_type}v2",
     description => "Cinder Service v2",
 }
 
