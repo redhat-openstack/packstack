@@ -98,6 +98,18 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                   {"CMD_OPTION"      : "os-swift-hash",
+                    "USAGE"           : "Shared secret for Swift",
+                    "PROMPT"          : "Enter hash for Swift shared secret",
+                    "OPTION_LIST"     : [],
+                    "VALIDATORS"      : [validators.validate_not_empty],
+                    "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+                    "MASK_INPUT"      : True,
+                    "LOOSE_VALIDATION": False,
+                    "CONF_NAME"       : "CONFIG_SWIFT_HASH",
+                    "USE_DEFAULT"     : True,
+                    "NEED_CONFIRM"    : True,
+                    "CONDITION"       : False },
                  ]
 
     groupDict = { "GROUP_NAME"            : "OSSWIFT",
