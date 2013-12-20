@@ -60,7 +60,7 @@
 	url = https://github.com/derekhiggins/puppet-vlan.git
 [submodule "packstack/puppet/modules/vswitch"]
 	path = packstack/puppet/modules/vswitch
-	url = https://github.com/packstack/puppet-vswitch.git
+	url = https://github.com/stackforge/puppet-vswitch.git
 [submodule "packstack/puppet/modules/tempest"]
 	path = packstack/puppet/modules/tempest
 	url = git://github.com/stackforge/puppet-tempest.git
