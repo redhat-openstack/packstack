@@ -1,11 +1,9 @@
 
-package {"clientdeps":
-    name => ["python-iso8601"]
-}
+$clientdeps = ["python-iso8601"]
+package { $clientdeps: }
 
-package {"clientlibs":
-    name => ["python-novaclient", "python-keystoneclient", "python-glanceclient", "python-swiftclient", "python-cinderclient"]
-}
+$clientlibs = ["python-novaclient", "python-keystoneclient", "python-glanceclient", "python-swiftclient", "python-cinderclient"]
+package { $clientlibs: }
 
 $rcadmin_content = "export OS_USERNAME=admin
 export OS_TENANT_NAME=admin

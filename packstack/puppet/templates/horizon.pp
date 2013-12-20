@@ -1,7 +1,7 @@
 
-package {"horizon-packages":
-    name => ["python-memcached", "python-netaddr"],
-    notify => Class["horizon"],
+$horizon_packages = ["python-memcached", "python-netaddr"]
+package {$horizon_packages:
+    notify => Class["horizon"]
 }
 
 file {"/etc/httpd/conf.d/rootredirect.conf":
