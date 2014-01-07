@@ -575,10 +575,7 @@ def createneutronmanifest(config):
     if controller.CONF['CONFIG_NEUTRON_INSTALL'] != "y":
         return
 
-    if controller.CONF['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch':
-        controller.CONF['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = 'nova.virt.libvirt.vif.LibvirtHybridOVSBridgeDriver'
-    else:
-        controller.CONF['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = 'nova.virt.libvirt.vif.LibvirtGenericVIFDriver'
+    controller.CONF['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = 'nova.virt.libvirt.vif.LibvirtGenericVIFDriver'
 
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
