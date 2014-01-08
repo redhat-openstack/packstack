@@ -1,7 +1,7 @@
-
 $horizon_packages = ["python-memcached", "python-netaddr"]
 package {$horizon_packages:
-    notify => Class["horizon"]
+    notify => Class["horizon"],
+    ensure => present,
 }
 
 file {"/etc/httpd/conf.d/rootredirect.conf":
@@ -19,11 +19,12 @@ class {'horizon':
 }
 
 class {'memcached':}
-
-class {'apache::mod::php': }
-# The apache module purges files it doesn't know about
-# avoid this be referencing them here
-file { '/etc/httpd/conf.d/nagios.conf':}
+if '%(CONFIG_NAGIOS_INSTALL)s' == 'y' {
+  class {'apache::mod::php': }
+  # The apache module purges files it doesn't know about
+  # avoid this be referencing them here
+  file { '/etc/httpd/conf.d/nagios.conf':}
+}
 
 firewall { '001 horizon incoming':
     proto    => 'tcp',
