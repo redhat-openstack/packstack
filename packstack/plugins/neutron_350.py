@@ -373,7 +373,7 @@ def createManifest(config):
             # Firewall Rules
             config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in q_hosts])
             config['FIREWALL_SERVICE_NAME'] = "neutron"
-            config['FIREWALL_PORTS'] = "'9696'"
+            config['FIREWALL_PORTS'] = "'9696','67','68'"
             manifest_data += getManifestTemplate("firewall.pp")
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
