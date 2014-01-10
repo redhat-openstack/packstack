@@ -207,9 +207,7 @@ def createmanifest(config):
     manifestdata = ""
     ssl_manifestdata = ""
     server = utils.ScriptRunner(config['CONFIG_QPID_HOST'])
-    ports = set(["'5672'"])
     if config['CONFIG_QPID_ENABLE_SSL'] == 'y':
-        ports.add("'%s'" % (config['CONFIG_QPID_SSL_PORT']))
         config['CONFIG_QPID_ENABLE_SSL'] = 'true'
         config['CONFIG_QPID_PROTOCOL'] = 'ssl'
         config['CONFIG_QPID_CLIENTS_PORT'] = "5671"
@@ -240,11 +238,15 @@ def createmanifest(config):
     #All hosts should be able to talk to qpid
     hosts = ["'%s'" % i for i in filtered_hosts(config, exclude=False)]
     # if the rule already exists for one port puppet will fail
-    # we have to add them by separate
-    for port in ports:
-        config['FIREWALL_ALLOWED'] = ','.join(hosts)
-        config['FIREWALL_SERVICE_NAME'] = "qpid - %s" % (port)
-        config['FIREWALL_PORTS'] = port
-        manifestdata += getManifestTemplate("firewall.pp")
+    # so i had to add always both qpid ports (plain and SSL) in order
+    # to avoid rule changes, this is due some problematic behaviour of
+    # the puppet firewall module
+    # this is a temporary solution, as soon as the firewall module is
+    # updated we'll go back to previous state in which we open just
+    # the needed ports
+    config['FIREWALL_ALLOWED'] = ','.join(hosts)
+    config['FIREWALL_SERVICE_NAME'] = "qpid"
+    config['FIREWALL_PORTS'] =  "'5671', '5672'"
+    manifestdata += getManifestTemplate("firewall.pp")
 
     appendManifestFile(manifestfile, manifestdata, 'pre')

@@ -4,12 +4,19 @@ group { 'qpidd':
     ensure => 'present',
 }
 
+exec { 'stop_qpid' :
+        command => '/sbin/service qpidd stop',
+}
+
 user { 'qpidd':
     ensure     => 'present',
     managehome => true,
     home       => '/var/run/qpidd',
-    require => Group['qpidd']
+    require => Group['qpidd'],
+    before => Class['qpid::server']
 }
+
+Exec['stop_qpid']->User['qpidd']
 
 file { 'pid_dir':
     path => '/var/run/qpidd',
