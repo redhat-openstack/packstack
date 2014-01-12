@@ -5,3 +5,11 @@ qpid_user { '%(CONFIG_QPID_AUTH_USER)s':
     provider => 'saslpasswd2',
     require   => Class['qpid::server'],
 }
+
+file { 'sasldb_file':
+    path => '/var/lib/qpidd/qpidd.sasldb',
+    ensure => file,
+    owner => 'qpidd',
+    group => 'qpidd',
+}
+
