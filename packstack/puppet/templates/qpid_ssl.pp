@@ -6,14 +6,15 @@ group { 'qpidd':
 
 exec { 'stop_qpid' :
         command => '/sbin/service qpidd stop',
+        onlyif  => '/sbin/service qpidd status',
 }
 
 user { 'qpidd':
     ensure     => 'present',
     managehome => true,
     home       => '/var/run/qpidd',
-    require => Group['qpidd'],
-    before => Class['qpid::server']
+    gid        => 'qpidd',
+    before     => Class['qpid::server']
 }
 
 Exec['stop_qpid']->User['qpidd']
