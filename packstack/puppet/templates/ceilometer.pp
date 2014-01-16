@@ -1,6 +1,6 @@
-class { 'mongodb':
-    enable_10gen => false,
+class { 'mongodb::server':
     port         => '27017',
+    smallfiles   => true,
     before       => Class['ceilometer::db'],
     require      => Firewall['001 mongodb incoming localhost'],
 }
@@ -28,11 +28,11 @@ class { 'ceilometer':
 
 class { 'ceilometer::db':
     database_connection => 'mongodb://localhost:27017/ceilometer',
-    require             => Class['mongodb'],
+    require             => Class['mongodb::server'],
 }
 
 class { 'ceilometer::collector':
-    require => Class['mongodb'],
+    require => Class['mongodb::server'],
 }
 
 class { 'ceilometer::agent::auth':
@@ -52,5 +52,5 @@ class { 'ceilometer::alarm::evaluator':
 class { 'ceilometer::api':
     keystone_host     => '%(CONFIG_KEYSTONE_HOST)s',
     keystone_password => '%(CONFIG_CEILOMETER_KS_PW)s',
-    require           => Class['mongodb'],
+    require           => Class['mongodb::server'],
 }
