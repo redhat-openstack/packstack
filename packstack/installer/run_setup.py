@@ -641,10 +641,6 @@ def single_step_aio_install(options):
 
     # Also allow the command line to set values for any of these options
     # by testing if they have been set before we set them here
-    if not options.os_swift_install:
-        options.os_swift_install = "y"
-    if not options.nagios_install:
-        options.nagios_install = "y"
     if not options.novanetwork_pubif:
         options.novanetwork_pubif = utils.device_from_ip(options.install_hosts)
     if not options.novacompute_privif:
@@ -654,10 +650,8 @@ def single_step_aio_install(options):
 
     # If we are doing an all-in-one install, do demo provisioning
     # unless specifically told not to
-    if not options.provision_demo:
-        options.provision_demo = "y"
-        if options.os_neutron_install != "n" and \
-               not options.provision_all_in_one_ovs_bridge:
+    if (options.os_neutron_install != "n" and \
+        not options.provision_all_in_one_ovs_bridge):
             options.provision_all_in_one_ovs_bridge = "y"
 
     single_step_install(options)
