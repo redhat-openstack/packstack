@@ -1,4 +1,7 @@
 $horizon_packages = ["python-memcached", "python-netaddr"]
+
+include concat::setup
+
 package {$horizon_packages:
     notify => Class["horizon"],
     ensure => present,
@@ -19,14 +22,10 @@ class {'horizon':
 }
 
 class {'memcached':}
-if '%(CONFIG_NAGIOS_INSTALL)s' == 'y' {
-  class {'apache::mod::php': }
-  # The apache module purges files it doesn't know about
-  # avoid this be referencing them here
-  file { '/etc/httpd/conf.d/nagios.conf':}
-}
 
-firewall { '001 horizon incoming':
+$firewall_port = %(CONFIG_HORIZON_PORT)s
+
+firewall { '001 horizon ${firewall_port}  incoming':
     proto    => 'tcp',
     dport    => [%(CONFIG_HORIZON_PORT)s],
     action   => 'accept',
