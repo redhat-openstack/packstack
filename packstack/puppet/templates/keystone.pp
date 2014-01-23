@@ -16,3 +16,13 @@ class {"keystone::endpoint":
     admin_address  => "%(CONFIG_KEYSTONE_HOST)s",
     internal_address  => "%(CONFIG_KEYSTONE_HOST)s",
 }
+
+# Run token flush every minute (without output so we won't spam admins)
+cron { 'token-flush':
+    ensure => 'present',
+    command => '/usr/bin/keystone-manage token-flush 2>&1 >/dev/null',
+    minute => '*/1',
+} -> service { 'crond':
+    ensure => 'running',
+    enable => true,
+}
