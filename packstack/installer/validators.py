@@ -20,9 +20,10 @@ from .exceptions import ParamValidationError
 
 __all__ = ('ParamValidationError', 'validate_integer', 'validate_float',
            'validate_regexp', 'validate_port', 'validate_not_empty',
-           'validate_options', 'validate_ip', 'validate_multi_ip',
-           'validate_file', 'validate_ping', 'validate_ssh',
-           'validate_multi_ssh', 'validate_sshkey')
+           'validate_options', 'validate_multi_options', 'validate_ip',
+           'validate_multi_ip', 'validate_file', 'validate_ping',
+           'validate_multi_ping', 'validate_ssh', 'validate_multi_ssh',
+           'validate_sshkey')
 
 
 def validate_integer(param, options=None):
