@@ -1,6 +1,6 @@
 
 if "%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s" {
-  $localip = $ipaddress_%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s
+  $localip = getvar(regsubst("$ipaddress_%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s", '[.-]', '_', 'G'))
 } else {
   $localip = '%(CONFIG_NEUTRON_OVS_HOST)s'
 }
