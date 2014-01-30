@@ -20,7 +20,7 @@ class {"keystone::endpoint":
 # Run token flush every minute (without output so we won't spam admins)
 cron { 'token-flush':
     ensure => 'present',
-    command => '/usr/bin/keystone-manage token-flush 2>&1 >/dev/null',
+    command => '/usr/bin/keystone-manage token_flush >/dev/null 2>&1',
     minute => '*/1',
 } -> service { 'crond':
     ensure => 'running',
