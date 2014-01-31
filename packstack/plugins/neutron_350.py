@@ -706,7 +706,7 @@ def create_dhcp_manifests(config):
 def create_lbaas_manifests(config):
     global lbaas_hosts
     for host in lbaas_hosts:
-        controller.CONF['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = getInterfaceDriver()
+        controller.CONF['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = get_if_driver(config)
         manifestdata = getManifestTemplate("neutron_lbaas.pp")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + "\n")
