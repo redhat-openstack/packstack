@@ -152,7 +152,7 @@ def initConfig(controllerObject):
             ],
         "NEUTRON_LB_PLUGIN" : [
             {"CMD_OPTION"      : "neutron-lb-tenant-network-type",
-             "USAGE"           : "The type of network to allocate for tenant networks (eg. vlan, local, gre)",
+             "USAGE"           : "The type of network to allocate for tenant networks (eg. vlan, local)",
              "PROMPT"          : "Enter the type of network to allocate for tenant networks",
              "OPTION_LIST"     : ["local", "vlan"],
              "VALIDATORS"      : [validators.validate_options],
@@ -192,9 +192,9 @@ def initConfig(controllerObject):
             ],
         "NEUTRON_OVS_PLUGIN" : [
             {"CMD_OPTION"      : "neutron-ovs-tenant-network-type",
-             "USAGE"           : "Type of network to allocate for tenant networks (eg. vlan, local, gre)",
+             "USAGE"           : "Type of network to allocate for tenant networks (eg. vlan, local, gre, vxlan)",
              "PROMPT"          : "Enter the type of network to allocate for tenant networks",
-             "OPTION_LIST"     : ["local", "vlan", "gre"],
+             "OPTION_LIST"     : ["local", "vlan", "gre", "vxlan"],
              "VALIDATORS"      : [validators.validate_options],
              "DEFAULT_VALUE"   : "local",
              "MASK_INPUT"      : False,
@@ -242,7 +242,7 @@ def initConfig(controllerObject):
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
             ],
-        "NEUTRON_OVS_PLUGIN_GRE" : [
+        "NEUTRON_OVS_PLUGIN_TUNNEL" : [
             {"CMD_OPTION"      : "neutron-ovs-tunnel-ranges",
              "USAGE"           : "A comma separated list of tunnel ranges for the Neutron openvswitch plugin (eg. 1:1000)",
              "PROMPT"          : "Enter a comma separated list of tunnel ranges for the Neutron openvswitch plugin",
@@ -256,16 +256,31 @@ def initConfig(controllerObject):
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
             ],
-        "NEUTRON_OVS_PLUGIN_AND_AGENT_GRE" : [
+        "NEUTRON_OVS_PLUGIN_AND_AGENT_TUNNEL" : [
             {"CMD_OPTION"      : "neutron-ovs-tunnel-if",
-             "USAGE"           : "The interface for the OVS tunnel. Packstack will override the IP address used for GRE tunnels on this hypervisor to the IP found on the specified interface. (eg. eth1) ",
-             "PROMPT"          : "Enter interface with IP to override the default the GRE local_ip",
+             "USAGE"           : "The interface for the OVS tunnel. Packstack will override the IP address used for tunnels on this hypervisor to the IP found on the specified interface. (eg. eth1) ",
+             "PROMPT"          : "Enter interface with IP to override the default tunnel local_ip",
              "OPTION_LIST"     : [],
              "VALIDATORS"      : [],
              "DEFAULT_VALUE"   : "",
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_NEUTRON_OVS_TUNNEL_IF",
+             "USE_DEFAULT"     : False,
+             "NEED_CONFIRM"    : False,
+             "CONDITION"       : False },
+            ],
+        "NEUTRON_OVS_PLUGIN_AND_AGENT_VXLAN" : [
+            {"CMD_OPTION"      : "neutron-ovs-vxlan-udp-port",
+             "CONF_NAME"       : "CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT",
+             "USAGE"           : "VXLAN UDP port",
+             "PROMPT"          : "Enter VXLAN UDP port number",
+             "OPTION_LIST"     : [],
+             "VALIDATORS"      : [validators.validate_port],
+             "DEFAULT_VALUE"   : 4789,
+             "MASK_INPUT"      : False,
+             "LOOSE_VALIDATION": True,
+
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
@@ -451,19 +466,24 @@ def initConfig(controllerObject):
             config["CONFIG_NEUTRON_L2_AGENT"] = 'openvswitch'
         return result
 
-    def use_openvswitch_plugin_gre(config):
+    def use_openvswitch_plugin_tunnel(config):
+        tun_types = ('gre', 'vxlan')
         return (use_openvswitch_plugin(config) and
-                config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'gre')
+                config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] in tun_types)
+
+    def use_ml2_with_ovs(config):
+        return (use_ml2_plugin(config) and
+                config["CONFIG_NEUTRON_L2_AGENT"] == 'openvswitch')
 
     def use_openvswitch_agent(config):
-        ml2_used = (use_ml2_plugin(config) and
-                    config["CONFIG_NEUTRON_L2_AGENT"] == 'openvswitch')
-        return use_openvswitch_plugin(config) or ml2_used
+        return use_openvswitch_plugin(config) or use_ml2_with_ovs(config)
 
-    def use_openvswitch_agent_gre(config):
-        ml2_used = (use_ml2_plugin(config) and
-                    config["CONFIG_NEUTRON_L2_AGENT"] == 'openvswitch')
-        return use_openvswitch_plugin_gre(config) or ml2_used
+    def use_openvswitch_agent_tunnel(config):
+        return use_openvswitch_plugin_tunnel(config) or use_ml2_with_ovs(config)
+
+    def use_openvswitch_vxlan(config):
+        return (use_openvswitch_plugin_tunnel(config) and
+                config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vxlan')
 
 
     conf_groups = [
@@ -503,15 +523,21 @@ def initConfig(controllerObject):
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
-        { "GROUP_NAME"            : "NEUTRON_OVS_PLUGIN_GRE",
-          "DESCRIPTION"           : "Neutron OVS plugin config for GRE tunnels",
-          "PRE_CONDITION"         : use_openvswitch_plugin_gre,
+        { "GROUP_NAME"            : "NEUTRON_OVS_PLUGIN_TUNNEL",
+          "DESCRIPTION"           : "Neutron OVS plugin config for tunnels",
+          "PRE_CONDITION"         : use_openvswitch_plugin_tunnel,
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
-        { "GROUP_NAME"            : "NEUTRON_OVS_PLUGIN_AND_AGENT_GRE",
-          "DESCRIPTION"           : "Neutron OVS agent config for GRE tunnels",
-          "PRE_CONDITION"         : use_openvswitch_agent_gre,
+        { "GROUP_NAME"            : "NEUTRON_OVS_PLUGIN_AND_AGENT_TUNNEL",
+          "DESCRIPTION"           : "Neutron OVS agent config for tunnels",
+          "PRE_CONDITION"         : use_openvswitch_agent_tunnel,
+          "PRE_CONDITION_MATCH"   : True,
+          "POST_CONDITION"        : False,
+          "POST_CONDITION_MATCH"  : True },
+        { "GROUP_NAME"            : "NEUTRON_OVS_PLUGIN_AND_AGENT_VXLAN",
+          "DESCRIPTION"           : "Neutron OVS agent config for VXLAN",
+          "PRE_CONDITION"         : use_openvswitch_vxlan,
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
@@ -697,7 +723,7 @@ def get_agent_type(config):
                               "['local']").strip('[]')
     tenant_types = [i.strip('"\'') for i in tenant_types.split(',')]
 
-    for i in ['gre', 'vlan']: # will add vxlan later
+    for i in ['gre', 'vxlan', 'vlan']:
         if i in tenant_types:
             return i
     return tenant_types[0]
