@@ -6,7 +6,7 @@ class { 'ceilometer':
     qpid_password  => '%(CONFIG_QPID_AUTH_PASSWORD)s',
     rpc_backend     => 'ceilometer.openstack.common.rpc.impl_qpid',
     verbose         => true,
-    debug           => false
+    debug           => %(CONFIG_DEBUG_MODE)s
 }
 
 class { 'ceilometer::agent::auth':
@@ -16,4 +16,3 @@ class { 'ceilometer::agent::auth':
 
 class { 'ceilometer::agent::compute':
 }
-
