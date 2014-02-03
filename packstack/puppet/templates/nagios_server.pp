@@ -55,14 +55,12 @@ class{'nagios_configs':
     notify => [Service['nagios'], Service['httpd']],
 }
 
-class {'apache': }
+include concat::setup
+
+class {'apache':
+    purge_configs => false,
+}
 class {'apache::mod::php': }
-class {'apache::mod::wsgi':}
-# The apache module purges files it doesn't know about
-# avoid this be referencing them here
-file { '/etc/httpd/conf.d/openstack-dashboard.conf':}
-file { '/etc/httpd/conf.d/rootredirect.conf':}
-file { '/etc/httpd/conf.d/nagios.conf':}
 
 service{['nagios']:
     ensure => running,

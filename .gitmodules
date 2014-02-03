@@ -39,7 +39,7 @@
 	url = https://github.com/packstack/puppetlabs-xinetd.git
 [submodule "packstack/puppet/modules/apache"]
 	path = packstack/puppet/modules/apache
-	url = https://github.com/packstack/puppetlabs-apache.git
+	url = https://github.com/puppetlabs/puppetlabs-apache.git
 [submodule "packstack/puppet/modules/firewall"]
 	path = packstack/puppet/modules/firewall
 	url = https://github.com/puppetlabs/puppetlabs-firewall.git
