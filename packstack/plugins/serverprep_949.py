@@ -336,7 +336,7 @@ def run_rhn_reg(host, server_url, username=None, password=None,
 
     server.append(' '.join(cmd))
     server.append('yum clean metadata')
-    server.execute(maskList=mask)
+    server.execute(mask_list=mask)
 
 
 def run_rhsm_reg(host, username, password, beta):
@@ -364,7 +364,7 @@ def run_rhsm_reg(host, username, password, beta):
     if beta:
         server.append("yum-config-manager --enable rhel-6-server-beta-rpms")
     server.append("yum clean metadata")
-    server.execute(maskList=[password])
+    server.execute(mask_list=[password])
 
 
 def manage_epel(host, config):
