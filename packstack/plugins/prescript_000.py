@@ -197,6 +197,21 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-debug-mode",
+                   "USAGE"           : ("Set to 'y' if you want to run "
+                                        "OpenStack services in debug mode. "
+                                        "Otherwise set to 'n'."),
+                   "PROMPT"          : ("Do you want to run OpenStack services"
+                                        " in debug mode"),
+                   "OPTION_LIST"     : ["y", "n"],
+                   "DEFAULT_VALUE"   : "n",
+                   "VALIDATORS"      : [validators.validate_options],
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_DEBUG_MODE",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                  ]
     groupDict = { "GROUP_NAME"            : "GLOBAL",
                   "DESCRIPTION"           : "Global Options",
@@ -296,6 +311,9 @@ def discover(config):
 
 
 def create_manifest(config):
+    key = 'CONFIG_DEBUG_MODE'
+    config[key] = config[key] == 'y' and 'true' or 'false'
+
     for hostname in filtered_hosts(config):
         manifestfile = "%s_prescript.pp" % hostname
         manifestdata = getManifestTemplate("prescript.pp")
