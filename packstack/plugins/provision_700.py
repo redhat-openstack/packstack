@@ -85,7 +85,7 @@ def initConfig(controllerObject):
              "PROMPT"          : "What revision, branch, or tag of the Tempest git repository should be used?",
              "OPTION_LIST"     : [],
              "VALIDATORS"      : [validators.validate_not_empty],
-             "DEFAULT_VALUE"   : "master",
+             "DEFAULT_VALUE"   : "stable/havana",
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_PROVISION_TEMPEST_REPO_REVISION",
