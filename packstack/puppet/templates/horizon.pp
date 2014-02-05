@@ -26,7 +26,7 @@ class {'memcached':}
 
 $firewall_port = %(CONFIG_HORIZON_PORT)s
 
-firewall { '001 horizon ${firewall_port}  incoming':
+firewall { "001 horizon ${firewall_port}  incoming":
     proto    => 'tcp',
     dport    => [%(CONFIG_HORIZON_PORT)s],
     action   => 'accept',
