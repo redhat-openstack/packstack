@@ -11,6 +11,7 @@ if [ "$1" = "release" ] ; then
     SNAPTAG=""
 else
     SNAPTAG=$(git log --oneline | wc -l)
+    sed -i -e "s/SNAPTAG=None/SNAPTAG=${SNAPTAG}/g" packstack/version.py
 fi
 
 python setup.py setopt -o tag_build -s "$SNAPTAG" -c egg_info

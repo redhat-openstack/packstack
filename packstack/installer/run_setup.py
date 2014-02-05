@@ -20,6 +20,7 @@ import processors
 import output_messages
 from .exceptions import FlagValidationError, ParamValidationError
 
+from packstack import version
 from packstack.modules.ospluginutils import gethostlist
 from setup_controller import Controller
 
@@ -702,7 +703,7 @@ def initCmdLineParser():
 
     # Init parser and all general flags
     usage = "usage: %prog [options] [--help]"
-    parser = OptionParser(usage)
+    parser = OptionParser(usage=usage,version="%prog {0} {1}".format(version.release_string(), version.version_string()))
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other options")
     parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the \
                                             configuration file. using this option excludes all other options")
