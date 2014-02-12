@@ -151,7 +151,7 @@ def createmanifest(config):
     manifestdata += sslmanifestdata
     appendManifestFile(manifestfile, manifestdata)
 
-    msg = "To access the OpenStack Dashboard browse to %s://%s/dashboard.\n" \
+    msg = "To access the OpenStack Dashboard browse to %s://%s/dashboard .\n" \
           "Please, find your login credentials stored in the keystonerc_admin" \
           " in your home directory." % \
           (proto,  controller.CONF['CONFIG_HORIZON_HOST'])
