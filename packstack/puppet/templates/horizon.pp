@@ -38,3 +38,16 @@ if ($::selinux != "false"){
         persistent => true,
     }
 }
+
+#FIXME
+# Ugly hack to avoid duplicate Listen directives on
+# port 80
+file_line { 'undo_httpd_listen_on_bind_address_80':
+    path    => $::horizon::params::httpd_listen_config_file,
+    match   => '^.*Listen 0.0.0.0:?80$',
+    line    => "#Listen 0.0.0.0:80",
+    require => Package['horizon'],
+    notify  => Service[$::horizon::params::http_service],
+}
+
+File_line['httpd_listen_on_bind_address_80'] -> File_line['undo_httpd_listen_on_bind_address_80']
