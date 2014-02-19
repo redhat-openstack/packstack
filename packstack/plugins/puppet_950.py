@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Installs and configures puppet
 """
@@ -24,8 +26,8 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 logging.debug("plugin %s loaded", __name__)
 
-PUPPETDIR = os.path.abspath(os.path.join(basedefs.DIR_PROJECT_DIR, 'puppet'))
-MODULEDIR = os.path.join(PUPPETDIR, "modules")
+PUPPET_DIR = os.environ.get('PACKSTACK_PUPPETDIR', '/usr/share/openstack-puppet/')
+MODULE_DIR = os.path.join(PUPPET_DIR, 'modules')
 
 
 def initConfig(controllerObject):
@@ -93,13 +95,8 @@ def copyPuppetModules(config):
     server = utils.ScriptRunner()
     for hostname in filtered_hosts(config):
         host_dir = config['HOST_DETAILS'][hostname]['tmpdir']
-        server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
-        # copy Packstack facts
-        server.append("tar --dereference -cpzf - facts | "
-                      "ssh -o StrictHostKeyChecking=no "
-                          "-o UserKnownHostsFile=/dev/null "
-                          "root@%s tar -C %s -xpzf -" % (hostname, host_dir))
         # copy Packstack manifests
+        server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
         server.append("cd %s" % basedefs.PUPPET_MANIFEST_DIR)
         server.append("tar --dereference -cpzf - ../manifests | "
                       "ssh -o StrictHostKeyChecking=no "
@@ -113,7 +110,7 @@ def copyPuppetModules(config):
                 (path, hostname, host_dir, localname))
 
         # copy Puppet modules required by Packstack
-        server.append("cd %s/puppet/modules" % basedefs.DIR_PROJECT_DIR)
+        server.append("cd %s" % MODULE_DIR)
         server.append("tar --dereference -cpzf - %s | "
                       "ssh -o StrictHostKeyChecking=no "
                           "-o UserKnownHostsFile=/dev/null "
