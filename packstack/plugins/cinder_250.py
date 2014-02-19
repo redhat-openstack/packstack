@@ -15,6 +15,7 @@ from packstack.installer.utils import split_hosts
 from packstack.installer import basedefs
 from packstack.installer import utils
 
+from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
 from packstack.installer import exceptions
 from packstack.installer import output_messages
@@ -355,8 +356,9 @@ def create_keystone_manifest(config):
 
 
 def create_manifest(config):
+    manifestdata = getManifestTemplate(get_mq(config, "cinder"))
     manifestfile = "%s_cinder.pp" % controller.CONF['CONFIG_CINDER_HOST']
-    manifestdata = getManifestTemplate("cinder.pp")
+    manifestdata += getManifestTemplate("cinder.pp")
 
     if config['CONFIG_CINDER_BACKEND'] == "gluster":
         manifestdata += getManifestTemplate("cinder_gluster.pp")

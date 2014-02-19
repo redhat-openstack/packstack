@@ -11,6 +11,7 @@ from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer.utils import split_hosts
 
+from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
 
 # Controller object will be initialized from main flow
@@ -482,11 +483,8 @@ def initConfig(controllerObject):
         return use_openvswitch_plugin_tunnel(config) or use_ml2_with_ovs(config)
 
     def use_openvswitch_vxlan(config):
-        return ((use_openvswitch_plugin_tunnel(config) and
-                 config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vxlan')
-                or
-                (use_ml2_with_ovs(config) and
-                 'vxlan' in config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS']))
+        return (use_openvswitch_plugin_tunnel(config) and
+                config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vxlan')
 
 
     conf_groups = [
@@ -643,6 +641,7 @@ def create_manifests(config):
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
         manifest_data = getManifestTemplate("neutron.pp")
+        manifest_data += getManifestTemplate(get_mq(config, "neutron"))
         appendManifestFile(manifest_file, manifest_data, 'neutron')
 
         if host in api_hosts:

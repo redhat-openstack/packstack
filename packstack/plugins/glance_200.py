@@ -10,6 +10,7 @@ from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer.utils import split_hosts
 
+from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import getManifestTemplate, appendManifestFile
 
 # Controller object will be initialized from main flow
@@ -97,7 +98,8 @@ def createmanifest(config):
     manifestfile = "%s_glance.pp" % controller.CONF['CONFIG_GLANCE_HOST']
     manifestdata = getManifestTemplate("glance.pp")
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
-        manifestdata += getManifestTemplate('glance_ceilometer.pp')
+        manifestdata += getManifestTemplate(get_mq(config, "glance_ceilometer"))
+
     hosts = set()
     if config['CONFIG_NOVA_INSTALL'] == 'y':
         hosts = split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS'])

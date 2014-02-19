@@ -9,6 +9,7 @@ import os
 from packstack.installer import utils
 from packstack.installer import validators
 
+from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
                                              manifestfiles,
                                              appendManifestFile)
@@ -190,7 +191,8 @@ def create_manifest(config):
         config['CONFIG_HEAT_METADATA_HOST'] = config['CONFIG_HEAT_HOST']
 
     manifestfile = "%s_heat.pp" % controller.CONF['CONFIG_HEAT_HOST']
-    manifestdata = getManifestTemplate("heat.pp")
+    manifestdata = getManifestTemplate(get_mq(config, "heat"))
+    manifestdata += getManifestTemplate("heat.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
