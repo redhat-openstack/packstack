@@ -1,15 +1,15 @@
 
 # We need this before https://review.openstack.org/#/c/67004/ will be merged
-if 'openvswitch' in %(CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS)s {
-  package {'ml2-ovs-dependency':
+if 'openvswitch' in %(CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS)s and !defined(Package['neutron-plugin-ovs']) {
+  package {'neutron-plugin-ovs':
     name   => 'openstack-neutron-openvswitch',
     ensure => 'installed',
     before => Class['neutron::plugins::ml2']
   }
 }
 
-if 'linuxbridge' in %(CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS)s {
-  package {'ml2-lb-dependency':
+if 'linuxbridge' in %(CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS)s and !defined(Package['neutron-plugin-linuxbridge']) {
+  package {'neutron-plugin-linuxbridge':
     name   => 'openstack-neutron-linuxbridge',
     ensure => 'installed',
     before => Class['neutron::plugins::ml2']
