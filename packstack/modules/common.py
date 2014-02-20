@@ -14,10 +14,13 @@ def filtered_hosts(config, exclude=True, dbhost=True):
                    if i.strip()])
     result = set()
     dbinst = config.get('CONFIG_MYSQL_INSTALL') == 'y'
+    vcenter = config.get('CONFIG_VMWARE_BACKEND') == 'y'
     for hosttype, hostname in utils.host_iter(config):
         # if dbhost is being taken into account and we are not installing MySQL
         # then we should omit the MySQL host
         if dbhost and not dbinst and hosttype == 'CONFIG_MYSQL_HOST':
+            continue
+        if vcenter and hosttype == 'CONFIG_VCENTER_HOST':
             continue
         result.add(hostname)
     if exclude:
