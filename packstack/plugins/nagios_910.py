@@ -9,6 +9,7 @@ from packstack.installer import validators
 from packstack.installer import basedefs, output_messages
 from packstack.installer import utils
 
+from packstack.modules.common import filtered_hosts
 from packstack.modules.ospluginutils import gethostlist,\
                                             getManifestTemplate,\
                                             appendManifestFile
@@ -104,7 +105,7 @@ def createmanifest(config):
     # I should be adding service entries with nagios_service but it appears to  be broken
     # http://projects.puppetlabs.com/issues/3420
     service_entries = ''
-    for hostname in gethostlist(controller.CONF):
+    for hostname in gethostlist(config):
         manifest_entries += nagios_host(hostname, address=hostname, use='linux-server')
 
         service_entries += _serviceentry(name='load5-%s'%hostname, service_description='5 minute load average',
@@ -168,7 +169,7 @@ def createmanifest(config):
     appendManifestFile(manifestfile, manifestdata)
 
 def createnrpemanifests(config):
-    for hostname in gethostlist(controller.CONF):
+    for hostname in filtered_hosts(controller.CONF):
         controller.CONF['CONFIG_NRPE_HOST'] = hostname
         manifestfile = "%s_nagios_nrpe.pp" % hostname
         manifestdata = getManifestTemplate("nagios_nrpe.pp")

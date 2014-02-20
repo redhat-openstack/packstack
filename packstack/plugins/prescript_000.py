@@ -212,6 +212,21 @@ def initConfig(controllerObject):
                    "USE_DEFAULT"     : False,
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
+                  {"CMD_OPTION"      : "os-vmware",
+                   "USAGE"           : ("Set to 'y' if you want to use "
+                                        "VMware vCenter as hypervisor and storage"
+                                        "Otherwise set to 'n'."),
+                   "PROMPT"          : ("Do you want to use VMware vCenter as"
+                                        " hypervisor and datastore"),
+                   "OPTION_LIST"     : ["y","n"],
+                   "DEFAULT_VALUE"   : "n",
+                   "VALIDATORS"      : [validators.validate_options],
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": False,
+                   "CONF_NAME"       : "CONFIG_VMWARE_BACKEND",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
                  ]
     groupDict = { "GROUP_NAME"            : "GLOBAL",
                   "DESCRIPTION"           : "Global Options",
