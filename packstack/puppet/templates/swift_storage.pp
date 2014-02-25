@@ -2,6 +2,7 @@
 # install all swift storage servers together
 class { 'swift::storage::all':
   storage_local_net_ip => '%(CONFIG_SWIFT_STORAGE_CURRENT)s',
+  allow_versions => true,
   require => Class['swift'],
 }
 
