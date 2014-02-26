@@ -31,28 +31,19 @@ class Step(object):
         # TO-DO: complete logger name when logging will be setup correctly
         logger = logging.getLogger()
         logger.debug('Running step %s.' % self.name)
-        sys.stdout.write('%s...' % self.title)
-        sys.stdout.flush()
-
-        # count space needed for title print
-        title = self.title
-        for color in utils.COLORS.itervalues():
-            title = re.sub(re.escape(color), '', title)
-        space = 70 - len(title)
 
         # execute and report state
-        state_fmt = '[ %s ]\n'
         try:
             self.function(config)
         except Exception, ex:
             logger.debug(traceback.format_exc())
-            state = state_fmt % utils.color_text('ERROR', 'red')
-            sys.stdout.write(state.rjust(space))
+            state = utils.state_message(self.title, 'ERROR', 'red')
+            sys.stdout.write('%s\n' % state)
             sys.stdout.flush()
             raise SequenceError(str(ex))
         else:
-            state = state_fmt % utils.color_text('DONE', 'green')
-            sys.stdout.write(state.rjust(space))
+            state = utils.state_message(self.title, 'DONE', 'green')
+            sys.stdout.write('%s\n' % state)
             sys.stdout.flush()
 
 

@@ -11,7 +11,7 @@ import time
 
 from packstack.installer import utils
 from packstack.installer import basedefs, output_messages
-from packstack.installer.exceptions import ScriptRuntimeError
+from packstack.installer.exceptions import ScriptRuntimeError, PuppetError
 
 from packstack.modules.common import filtered_hosts
 from packstack.modules.ospluginutils import manifestfiles
@@ -126,12 +126,11 @@ def waitforpuppet(currently_running):
     while currently_running:
         for hostname, finished_logfile in currently_running:
             log_file = os.path.splitext(os.path.basename(finished_logfile))[0]
-            space_len = basedefs.SPACE_LEN - len(log_file)
             if len(log_file) > log_len:
                 log_len = len(log_file)
             if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
                 twirl = twirl[-1:] + twirl[:-1]
-                sys.stdout.write(("\rTesting if puppet apply is finished : %s" % log_file).ljust(40 + log_len))
+                sys.stdout.write(("\rTesting if puppet apply is finished: %s" % log_file).ljust(40 + log_len))
                 sys.stdout.write("[ %s ]" % twirl[0])
                 sys.stdout.flush()
             try:
@@ -149,7 +148,7 @@ def waitforpuppet(currently_running):
 
                 # clean off the last "testing apply" msg
                 if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
-                    sys.stdout.write(("\r").ljust(45 + log_len))
+                    sys.stdout.write(('\r').ljust(45 + log_len))
 
             except ScriptRuntimeError:
                 # the test raises an exception if the file doesn't exist yet
@@ -161,13 +160,20 @@ def waitforpuppet(currently_running):
             controller.MESSAGES.extend(scan_logfile(log))
 
             # check the log file for errors
-            validate_logfile(log)
-            sys.stdout.write(("\r%s : " % log_file).ljust(space_len))
-            print ("[ " + utils.color_text(output_messages.INFO_DONE, 'green') + " ]")
+            sys.stdout.write('\r')
+            try:
+                validate_logfile(log)
+                state = utils.state_message('%s:' % log_file, 'DONE', 'green')
+                sys.stdout.write('%s\n' % state)
+                sys.stdout.flush()
+            except PuppetError:
+                state = utils.state_message('%s:' % log_file, 'ERROR', 'red')
+                sys.stdout.write('%s\n' % state)
+                sys.stdout.flush()
+                raise
 
 
 def applyPuppetManifest(config):
-    print
     if config.get("DRY_RUN"):
         return
     currently_running = []
@@ -189,7 +195,7 @@ def applyPuppetManifest(config):
                 continue
 
             host_dir = config['HOST_DETAILS'][hostname]['tmpdir']
-            print "Applying " + manifest
+            print "Applying %s" % manifest
             server = utils.ScriptRunner(hostname)
 
             man_path = os.path.join(config['HOST_DETAILS'][hostname]['tmpdir'],

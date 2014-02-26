@@ -86,12 +86,10 @@ class SequenceTestCase(PackstackTestCaseMixin, TestCase):
         assert contents.startswith('Step 2')
 
         output = []
-        state_fmt = '[ %s ]\n'
         self.steps.insert(0, {'title': 'Step 2'})
         for i in self.steps:
-            space = 70 - len(i['title'])
-            title = '[ %s ]\n' % utils.color_text('DONE', 'green')
-            output.append('%s...%s' % (i['title'], title.rjust(space)))
+            output.append('%s\n' % utils.state_message(i['title'],
+                                                       'DONE', 'green'))
 
         self.seq.run(config={'test': 'test'})
         contents = sys.stdout.getvalue()
