@@ -6,7 +6,7 @@
 	url = https://github.com/stackforge/puppet-horizon.git
 [submodule "packstack/puppet/modules/keystone"]
 	path = packstack/puppet/modules/keystone
-	url = https://github.com/packstack/puppet-keystone.git
+	url = https://github.com/stackforge/puppet-keystone.git
 [submodule "packstack/puppet/modules/nova"]
 	path = packstack/puppet/modules/nova
 	url = https://github.com/stackforge/puppet-nova.git

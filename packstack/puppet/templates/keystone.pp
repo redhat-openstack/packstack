@@ -28,3 +28,10 @@ cron { 'token-flush':
     ensure => 'running',
     enable => true,
 }
+
+# In some cases we have to ensure log has proper owner
+file { '/var/log/keystone/keystone.log':
+    owner => 'keystone',
+    group => 'keystone',
+    require => [User['keystone'], Group['keystone']],
+}
