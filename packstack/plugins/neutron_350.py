@@ -653,6 +653,10 @@ def create_manifests(config):
     if config['CONFIG_NOVA_INSTALL'] == 'y':
         allowed_hosts.add(config['CONFIG_NOVA_API_HOST'])
 
+    config['FIREWALL_SERVICE_NAME'] = "neutron server"
+    config['FIREWALL_PORTS'] = "'9696'"
+    config['FIREWALL_CHAIN'] = "INPUT"
+
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
         manifest_data = getManifestTemplate("neutron.pp")
@@ -663,11 +667,11 @@ def create_manifests(config):
             manifest_file = "%s_neutron.pp" % (host,)
             manifest_data = getManifestTemplate("neutron_api.pp")
             # Firewall Rules
-            config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i
-                                                   for i in allowed_hosts])
-            config['FIREWALL_SERVICE_NAME'] = "neutron"
-            config['FIREWALL_PORTS'] = "'9696'"
-            manifest_data += getManifestTemplate("firewall.pp")
+            for f_host in q_hosts:
+                config['FIREWALL_ALLOWED'] = "'%s'" % f_host
+                config['FIREWALL_SERVICE_ID'] = "neutron_server_%s_%s" % (host, f_host)
+                manifest_data += getManifestTemplate("firewall.pp")
+
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
         # Set up any l2 plugin configs we need anywhere we install neutron
@@ -712,13 +716,29 @@ def create_dhcp_manifests(config):
     global dhcp_hosts
 
     plugin = config['CONFIG_NEUTRON_L2_PLUGIN']
+
     for host in dhcp_hosts:
         config["CONFIG_NEUTRON_DHCP_HOST"] = host
         config['CONFIG_NEUTRON_DHCP_INTERFACE_DRIVER'] = get_if_driver(config)
-        manifestdata = getManifestTemplate("neutron_dhcp.pp")
-        manifestfile = "%s_neutron.pp" % (host,)
+        manifest_data = getManifestTemplate("neutron_dhcp.pp")
+        manifest_file = "%s_neutron.pp" % (host,)
 
-        appendManifestFile(manifestfile, manifestdata + "\n")
+        # Firewall Rules
+        for f_host in q_hosts:
+            config['FIREWALL_ALLOWED'] = "'%s'" % f_host
+            config['FIREWALL_SERVICE_NAME'] = "neutron dhcp in"
+            config['FIREWALL_SERVICE_ID'] = "neutron_dhcp_in_%s_%s" % (host, f_host)
+            config['FIREWALL_PORTS'] = "'67'"
+            config['FIREWALL_CHAIN'] = "INPUT"
+            manifest_data += getManifestTemplate("firewall.pp")
+            config['FIREWALL_SERVICE_NAME'] = "neutron dhcp out"
+            config['FIREWALL_SERVICE_ID'] = "neutron_dhcp_out_%s_%s" % (host, f_host)
+            config['FIREWALL_PORTS'] = "'68'"
+            config['FIREWALL_CHAIN'] = "OUTPUT"
+            manifest_data += getManifestTemplate("firewall.pp")
+
+        appendManifestFile(manifest_file, manifest_data, 'neutron')
+
 
 
 def create_lbaas_manifests(config):

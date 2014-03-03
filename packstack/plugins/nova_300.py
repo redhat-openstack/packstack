@@ -473,7 +473,9 @@ def createcomputemanifest(config):
         # http://docs.openstack.org/developer/nova/nova.concepts.html#concept-system-architecture
         config['FIREWALL_ALLOWED'] = "'%s'" % (config['CONFIG_NOVA_SCHED_HOST'].strip())
         config['FIREWALL_SERVICE_NAME'] = "nova compute"
+        config['FIREWALL_SERVICE_ID'] = "nova_compute"
         config['FIREWALL_PORTS'] = "'5900-5999'"
+        config['FIREWALL_CHAIN'] = "INPUT"
         manifestdata += getManifestTemplate("firewall.pp")
 
         manifestdata += "\n" + nova_config_options.getManifestEntry()

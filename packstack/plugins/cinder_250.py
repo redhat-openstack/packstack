@@ -370,15 +370,18 @@ def create_manifest(config):
         config['CONFIG_SWIFT_PROXY'] = config['CONFIG_SWIFT_PROXY_HOSTS'].split(',')[0].strip()
         manifestdata += getManifestTemplate('cinder_backup.pp')
 
-    hosts = set()
-    if config['CONFIG_NOVA_INSTALL'] == 'y':
-        hosts = split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS'])
-    else:
-        hosts.add('ALL',)
-
-    config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i.strip() for i in hosts if i.strip()])
     config['FIREWALL_SERVICE_NAME'] = "cinder"
     config['FIREWALL_PORTS'] = "'3260', '8776'"
-    manifestdata += getManifestTemplate("firewall.pp")
+    config['FIREWALL_CHAIN'] = "INPUT"
+
+    if config['CONFIG_NOVA_INSTALL'] == 'y':
+        for host in split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS']):
+            config['FIREWALL_ALLOWED'] = "'%s'" % host
+            config['FIREWALL_SERVICE_ID'] = "cinder_%s" % host
+            manifestdata += getManifestTemplate("firewall.pp")
+    else:
+        config['FIREWALL_ALLOWED'] = "'ALL'"
+        config['FIREWALL_SERVICE_ID'] = "cinder_ALL"
+        manifestdata += getManifestTemplate("firewall.pp")
 
     appendManifestFile(manifestfile, manifestdata)

@@ -175,7 +175,9 @@ def createnrpemanifests(config):
         #Only the Nagios host is allowed to talk to nrpe
         config['FIREWALL_ALLOWED'] = "'%s'" % config['CONFIG_NAGIOS_HOST']
         config['FIREWALL_SERVICE_NAME'] = "nagios-nrpe"
+        config['FIREWALL_SERVICE_ID'] = "nagios_nrpe"
         config['FIREWALL_PORTS'] = '5666'
+        config['FIREWALL_CHAIN'] = "INPUT"
         manifestdata += getManifestTemplate("firewall.pp")
         appendManifestFile(manifestfile, manifestdata)
 
