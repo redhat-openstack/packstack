@@ -583,7 +583,7 @@ def initSequences(controller):
                     'CONFIG_NEUTRON_ML2_VNI_RANGES'):
             config[key] = str([i.strip() for i in config[key].split(',') if i])
         key = 'CONFIG_NEUTRON_ML2_VXLAN_GROUP'
-        config[key] = config[key] or 'undef'
+        config[key] = "'%s'" % config[key] if config[key] else 'undef'
 
     config['CONFIG_NEUTRON_L2_DBNAME']  = plugin_db
     config['CONFIG_NEUTRON_CORE_PLUGIN'] = plugin_path
@@ -624,8 +624,14 @@ def create_manifests(config):
 
     service_plugins = []
     if config['CONFIG_NEUTRON_LBAAS_HOSTS']:
-        lbp = 'neutron.services.loadbalancer.plugin.LoadBalancerPlugin'
-        service_plugins.append(lbp)
+        service_plugins.append(
+            'neutron.services.loadbalancer.plugin.LoadBalancerPlugin'
+        )
+    if config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2':
+        # ML2 uses the L3 Router service plugin to implement l3 agent
+        service_plugins.append(
+            'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
+        )
 
     config['SERVICE_PLUGINS'] = (str(service_plugins) if service_plugins
                                  else 'undef')
@@ -638,6 +644,15 @@ def create_manifests(config):
     elif config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2':
         plugin_manifest = 'neutron_ml2_plugin.pp'
 
+    # host to which allow neutron server
+    allowed_hosts = set(q_hosts)
+    if config['CONFIG_CLIENT_INSTALL'] == 'y':
+        allowed_hosts.add(config['CONFIG_OSCLIENT_HOST'])
+    if config['CONFIG_HORIZON_INSTALL'] == 'y':
+        allowed_hosts.add(config['CONFIG_HORIZON_HOST'])
+    if config['CONFIG_NOVA_INSTALL'] == 'y':
+        allowed_hosts.add(config['CONFIG_NOVA_API_HOST'])
+
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
         manifest_data = getManifestTemplate("neutron.pp")
@@ -648,9 +663,10 @@ def create_manifests(config):
             manifest_file = "%s_neutron.pp" % (host,)
             manifest_data = getManifestTemplate("neutron_api.pp")
             # Firewall Rules
-            config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in q_hosts])
+            config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i
+                                                   for i in allowed_hosts])
             config['FIREWALL_SERVICE_NAME'] = "neutron"
-            config['FIREWALL_PORTS'] = "'9696','67','68'"
+            config['FIREWALL_PORTS'] = "'9696'"
             manifest_data += getManifestTemplate("firewall.pp")
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
