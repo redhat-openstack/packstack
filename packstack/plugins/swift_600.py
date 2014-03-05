@@ -278,21 +278,34 @@ def createstoragemanifest(config):
             config['SWIFT_STORAGE_SEEK'] = get_storage_size(config['CONFIG_SWIFT_STORAGE_SIZE'])
             controller.CONF["SWIFT_STORAGE_DEVICES"] = "'%s'"%devicename
             manifestdata = "\n" + getManifestTemplate("swift_loopback.pp")
-        # Allowed host list for firewall
-        hosts = split_hosts(config['CONFIG_SWIFT_STORAGE_HOSTS'])
-        hosts |= split_hosts(config['CONFIG_SWIFT_PROXY_HOSTS'])
-        if config['CONFIG_NOVA_INSTALL'] == 'y':
-            hosts |= split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS'])
-        config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
-        # Firewall rules for storage and rsync
-        config['FIREWALL_SERVICE_NAME'] = "swift storage and rsync"
-        config['FIREWALL_PORTS'] = "'6000', '6001', '6002', '873'"
-        manifestdata += getManifestTemplate("firewall.pp")
-
         appendManifestFile(manifestfile, manifestdata)
+
+    # set allowed hosts for firewall
+    swift_hosts = get_swift_hosts(config)
+    hosts = swift_hosts.copy()
+    if config['CONFIG_NOVA_INSTALL'] == 'y':
+        hosts |= split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS'])
+    config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
+    # firewall rules for storage and rsync
+    config['FIREWALL_SERVICE_NAME'] = "swift storage and rsync"
+    config['FIREWALL_PORTS'] = "'6000', '6001', '6002', '873'"
+    manifestdata = getManifestTemplate("firewall.pp")
+    for host in swift_hosts:
+        manifestfile = "%s_swift.pp" % host
+        appendManifestFile(manifestfile, manifestdata)
+
 
 def createcommonmanifest(config):
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_swift.pp"):
             data = getManifestTemplate("swift_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
+
+
+def get_swift_hosts(config):
+    """Get a set of all the Swift hosts"""
+    hosts = split_hosts(config['CONFIG_SWIFT_STORAGE_HOSTS'])
+    # remove "/device" from the storage host names
+    hosts = set(host.split('/', 1)[0] for host in hosts)
+    hosts |= split_hosts(config['CONFIG_SWIFT_PROXY_HOSTS'])
+    return hosts
