@@ -10,6 +10,7 @@ import platform
 from packstack.installer import processors, utils, validators
 from packstack.installer.exceptions import ScriptRuntimeError
 
+from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import NovaConfig, getManifestTemplate, appendManifestFile, manifestfiles
 
 # Controller object will be initialized from main flow
@@ -465,7 +466,7 @@ def createcomputemanifest(config):
                 controller.MESSAGES.append(str(ex))
 
         if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
-            manifestdata += getManifestTemplate("nova_ceilometer.pp")
+            manifestdata += getManifestTemplate(get_mq(config, "nova_ceilometer"))
 
         # According to the docs the only element that connects directly to nova compute
         # is nova scheduler
@@ -567,7 +568,8 @@ def createcommonmanifest(config):
                 metadata = config['CONFIG_NOVA_API_HOST']
             config['CONFIG_NOVA_METADATA_HOST'] = metadata
 
-            data = getManifestTemplate("nova_common.pp")
+            data = getManifestTemplate(get_mq(config, "nova_common"))
+            data += getManifestTemplate("nova_common.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
 
 
