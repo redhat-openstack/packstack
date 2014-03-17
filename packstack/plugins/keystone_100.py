@@ -123,6 +123,8 @@ def create_manifest(config):
     manifestdata = getManifestTemplate("keystone.pp")
     config['FIREWALL_ALLOWED'] = "'ALL'"
     config['FIREWALL_SERVICE_NAME'] = "keystone"
+    config['FIREWALL_SERVICE_ID'] = "keystone"
     config['FIREWALL_PORTS'] = "'5000', '35357'"
+    config['FIREWALL_CHAIN'] = "INPUT"
     manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata)

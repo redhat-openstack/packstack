@@ -1,19 +1,11 @@
-# Create firewall rules to allow only the hosts that need to connect
-# to %(FIREWALL_SERVICE_NAME)s
+# Create firewall rules to allow only the FIREWALL_ALLOWED
+# hosts that need to connect via FIREWALL_PORTS
+# using FIREWALL_CHAIN
 
-$hosts = [ %(FIREWALL_ALLOWED)s ]
-
-define add_allow_host {
-    $source = $title ? {
-        'ALL' => '0.0.0.0/0',
-        default => $title,
-    }
-    firewall { "001 %(FIREWALL_SERVICE_NAME)s incoming ${title}":
-        proto  => 'tcp',
-        dport  => [%(FIREWALL_PORTS)s],
-        action => 'accept',
-        source => $source,
-    }
+packstack::firewall {'%(FIREWALL_SERVICE_ID)s':
+  host => %(FIREWALL_ALLOWED)s,
+  service_name => '%(FIREWALL_SERVICE_NAME)s',
+  chain => '%(FIREWALL_CHAIN)s',
+  ports => [%(FIREWALL_PORTS)s],
 }
 
-add_allow_host {$hosts:}
