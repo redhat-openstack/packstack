@@ -23,6 +23,16 @@ class { [
     'swift::proxy::catch_errors',
     'swift::proxy::healthcheck',
     'swift::proxy::cache',
+    'swift::proxy::slo',
+    'swift::proxy::bulk',
+    'swift::proxy::authtoken',
+    'swift::proxy::keystone',
+    'swift::proxy::tempurl',
+    'swift::proxy::formpost',
+    'swift::proxy::staticweb',
+    'swift::proxy::container_quotas',
+    'swift::proxy::account_quotas',
+    'swift::proxy::proxy-server',
 ]: }
 
 class { 'swift::proxy::ratelimit':
