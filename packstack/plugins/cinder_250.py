@@ -73,9 +73,9 @@ def initConfig(controllerObject):
                    "CONDITION"       : False },
                   {"CMD_OPTION"      : "cinder-backend",
                    "USAGE"           : ("The Cinder backend to use, valid options are: "
-                                        "lvm, gluster, nfs"),
+                                        "lvm, gluster, nfs, vmdk"),
                    "PROMPT"          : "Enter the Cinder backend to be configured",
-                   "OPTION_LIST"     : ["lvm", "gluster", "nfs"],
+                   "OPTION_LIST"     : ["lvm", "gluster", "nfs", "vmdk"],
                    "VALIDATORS"      : [validators.validate_options],
                    "DEFAULT_VALUE"   : "lvm",
                    "MASK_INPUT"      : False,
@@ -220,6 +220,57 @@ def initConfig(controllerObject):
 
     controller.addGroup(groupDict, paramsList)
 
+    def check_vcenter_options(config):
+        return (config.get('CONFIG_NOVA_INSTALL', 'y') == 'n' and
+                config.get('CONFIG_VMWARE_BACKEND', 'n') == 'y' and
+                config.get('CONFIG_CINDER_BACKEND', 'lvm') == 'vmdk')
+
+    paramsList = [
+                  {"CMD_OPTION"      : "cinder-vcenter-host",
+                   "USAGE"           : ("The IP address of the VMware vCenter datastore"),
+                   "PROMPT"          : ("Enter the IP address of the VMware vCenter datastore to use with Cinder"),
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_ip],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_VCENTER_HOST",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "cinder-vcenter-username",
+                   "USAGE"           : ("The username to authenticate to VMware vCenter datastore"),
+                   "PROMPT"          : ("Enter the username to authenticate on VMware vCenter datastore"),
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_VCENTER_USER",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False,},
+                   {"CMD_OPTION"      : "cinder-vcenter-password",
+                   "USAGE"           : ("The password to authenticate to VMware vCenter datastore"),
+                   "PROMPT"          : ("Enter the password to authenticate on VMware vCenter datastore"),
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_VCENTER_PASSWORD",
+                   "VALIDATORS"      : [validators.validate_not_empty],
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False,},
+                  ]
+
+    groupDict = { "GROUP_NAME"            : "CINDERVCENTEROPTIONS",
+                  "DESCRIPTION"           : "Cinder VMware vCenter Config parameters",
+                  "PRE_CONDITION"         : check_vcenter_options,
+                  "PRE_CONDITION_MATCH"   : True,
+                  "POST_CONDITION"        : False,
+                  "POST_CONDITION_MATCH"  : True}
+
+    controller.addGroup(groupDict, paramsList)
 
 def initSequences(controller):
     if controller.CONF['CONFIG_CINDER_INSTALL'] != 'y':
@@ -362,6 +413,8 @@ def create_manifest(config):
         manifestdata += getManifestTemplate("cinder_gluster.pp")
     if config['CONFIG_CINDER_BACKEND'] == "nfs":
         manifestdata += getManifestTemplate("cinder_nfs.pp")
+    if config['CONFIG_CINDER_BACKEND'] == "vmdk":
+        manifestdata += getManifestTemplate("cinder_vmdk.pp")
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
         manifestdata += getManifestTemplate('cinder_ceilometer.pp')
     if config['CONFIG_SWIFT_INSTALL'] == 'y':
