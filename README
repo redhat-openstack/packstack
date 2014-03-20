@@ -1,4 +1,4 @@
-Utility to install OpenStack on RHEL 6.4 (Openstack Grizzly)
+Utility to install OpenStack on Red Hat based operating system.
 See other branches for older openstack versions
 
 This utility can be used to install openstack on a single or
@@ -20,8 +20,9 @@ o set CONFIG_SSH_KEY to a public ssh key to be installed to remote machines
 o Edit the IP address to anywhere you want to install a piece of openstack on another server
 o Edit the 3 network interfaces to whatever makes sense in your setup
 
-you'll need to use a grizzly repository for example for RHEL
-CONFIG_REPO=http://repos.fedorapeople.org/repos/openstack/openstack-grizzly/epel-6/
+you'll need to use a icehouse repository for example for RHEL
+CONFIG_REPO=http://repos.fedorapeople.org/repos/openstack/openstack-icehouse/epel-6/
+
 
 $ ./bin/packstack --answer-file=ans.txt
 
@@ -45,8 +46,8 @@ CONFIG_SWIFT_STORAGE_HOSTS :
 
 Logging
 
-The location of the log files and generated puppet manifests are in the 
-/var/tmp/packstack directory under a directory named by the date in which 
+The location of the log files and generated puppet manifests are in the
+/var/tmp/packstack directory under a directory named by the date in which
 packstack was run and a random string (e.g. /var/tmp/packstack/20131022-204316-Bf3Ek2).
 Inside, we find a manifest directory and the openstack-setup.log file; puppet
 manifests and a log file for each one are found inside the manifest directory.
