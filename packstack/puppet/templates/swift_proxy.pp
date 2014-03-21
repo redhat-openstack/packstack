@@ -7,12 +7,16 @@ class { 'memcached':
 class { 'swift::proxy':
   proxy_local_net_ip => '%(CONFIG_SWIFT_PROXY)s',
   pipeline           => [
-#    'catch_errors',
+    #'catch_errors',
     'healthcheck',
     'cache',
-#    'ratelimit',
+    #'ratelimit',
     'authtoken',
     'keystone',
+    'staticweb',
+    'tempurl',
+    'account_quotas',
+    'container_quotas',
     'proxy-server'
   ],
   account_autocreate => true,
@@ -23,16 +27,10 @@ class { [
     'swift::proxy::catch_errors',
     'swift::proxy::healthcheck',
     'swift::proxy::cache',
-    'swift::proxy::slo',
-    'swift::proxy::bulk',
-    'swift::proxy::authtoken',
-    'swift::proxy::keystone',
-    'swift::proxy::tempurl',
-    'swift::proxy::formpost',
     'swift::proxy::staticweb',
-    'swift::proxy::container_quotas',
+    'swift::proxy::tempurl',
     'swift::proxy::account_quotas',
-    'swift::proxy::proxy-server',
+    'swift::proxy::container_quotas'
 ]: }
 
 class { 'swift::proxy::ratelimit':
