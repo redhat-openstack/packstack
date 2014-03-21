@@ -15,8 +15,8 @@ class { 'swift::proxy':
     'keystone',
     'staticweb',
     'tempurl',
-    'account_quotas',
-    'container_quotas',
+    #'account_quotas',
+    #'container_quotas',
     'proxy-server'
   ],
   account_autocreate => true,
