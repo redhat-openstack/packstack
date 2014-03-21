@@ -1,4 +1,3 @@
-
 class { 'heat':
     keystone_host     => '%(CONFIG_KEYSTONE_HOST)s',
     keystone_password => '%(CONFIG_HEAT_KS_PW)s',
