@@ -29,9 +29,7 @@ class ProcessorsTestCase(PackstackTestCaseMixin, TestCase):
         """Test packstack.installer.processors.process_host"""
         proc_local = process_host('localhost',
                                   process_args={'allow_localhost': True})
-        proc_google = process_host('google-public-dns-a.google.com')
         self.assertIn(proc_local, ['127.0.0.1', '::1'])
-        self.assertIn(proc_google, ['8.8.8.8', '2001:4860:4860::8888'])
 
     def test_process_ssh_key(self):
         """Test packstack.installer.processors.process_ssh_key"""
