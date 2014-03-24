@@ -71,8 +71,6 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
 
     def test_network(self):
         """Test packstack.installer.utils.network functions"""
-        self.assertIn(host2ip('google-public-dns-a.google.com'),
-                      ['8.8.8.8', '2001:4860:4860::8888'])
         self.assertIn(host2ip('localhost', allow_localhost=True),
                       ['127.0.0.1', '::1'])
 
