@@ -1,21 +1,5 @@
-class { 'mongodb::server':
-    port         => '27017',
-    smallfiles   => true,
-    before       => Class['ceilometer::db'],
-    require      => Firewall['001 mongodb incoming localhost'],
-}
-
-firewall { '001 mongodb incoming localhost':
-    proto       => 'tcp',
-    dport       => ['27017'],
-    iniface     => 'lo',
-    #source      => 'localhost',
-    #destination => 'localhost',
-    action      => 'accept',
-}
-
 class { 'ceilometer::db':
-    database_connection => 'mongodb://localhost:27017/ceilometer',
+    database_connection => 'mongodb://%(CONFIG_MONGODB_HOST)s:27017/ceilometer',
     require             => Class['mongodb::server'],
 }
 
