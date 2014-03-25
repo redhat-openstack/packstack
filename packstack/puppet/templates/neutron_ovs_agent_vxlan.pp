@@ -12,3 +12,11 @@ class { 'neutron::agents::ovs':
   local_ip => $localip,
   vxlan_udp_port => %(CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT)s,
 }
+
+file { 'ovs_neutron_plugin.ini':
+    path  => '/etc/neutron/plugins/openvswitch/ovs_neutron_plugin.ini',
+    owner => 'root',
+    group => 'neutron',
+    before => Service['ovs-cleanup-service'],
+    require => Package['neutron-plugin-ovs'],
+}
