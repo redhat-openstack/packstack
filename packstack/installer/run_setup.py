@@ -816,27 +816,12 @@ def validateSingleFlag(options, flag):
         msg = output_messages.ERR_ONLY_1_FLAG % ("--%s" % flag)
         raise FlagValidationError(msg)
 
-def setProvisioningDefaults():
-    conf_ids = [
-        'DEMO',
-        'TEMPEST',
-        'TEMPEST_REPO_URI',
-        'TEMPEST_REPO_REVISION',
-        'ALL_IN_ONE_OVS_BRIDGE',
-    ]
-    pnames = ['CONFIG_PROVISION_' + x for x in conf_ids]
-    params = [controller.getParamByName(x) for x in pnames]
-    for param in params:
-        controller.CONF[param.CONF_NAME] = (
-            controller.CONF.get(param.CONF_NAME, param.DEFAULT_VALUE)
-        )
 
 def initPluginsConfig():
     for plugin in controller.getAllPlugins():
         plugin.initConfig(controller)
 
 def initPluginsSequences():
-    setProvisioningDefaults()
     for plugin in controller.getAllPlugins():
         plugin.initSequences(controller)
 
