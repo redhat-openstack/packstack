@@ -1,3 +1,4 @@
+include firewall
 
 if $::operatingsystem != "Fedora" {
     package{ 'openstack-selinux':
