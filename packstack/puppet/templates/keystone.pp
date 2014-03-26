@@ -34,4 +34,5 @@ file { '/var/log/keystone/keystone.log':
     owner => 'keystone',
     group => 'keystone',
     require => [User['keystone'], Group['keystone']],
+    before => [Exec['keystone-manage pki_setup'], Exec['keystone-manage db_sync']],
 }
