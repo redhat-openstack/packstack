@@ -26,13 +26,19 @@ def initConfig(controllerObject):
 
     logging.debug("Provisioning OpenStack resources for demo usage and testing")
 
+    def process_provision(param, process_args=None):
+        return param if is_all_in_one(controller.CONF) else 'n'
+
     conf_params = {
-        "PROVISION_DEMO" : [
+        "PROVISION_INIT" : [
             {"CMD_OPTION"      : "provision-demo",
-             "USAGE"           : "Whether to provision for demo usage and testing",
+             "USAGE"           : ("Whether to provision for demo usage and testing. Note "
+                                  "that provisioning is only supported for all-in-one "
+                                  "installations."),
              "PROMPT"          : "Would you like to provision for demo usage and testing?",
              "OPTION_LIST"     : ["y", "n"],
              "VALIDATORS"      : [validators.validate_options],
+             "PROCESSORS"      : [process_provision],
              "DEFAULT_VALUE"   : "y",
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
@@ -40,6 +46,23 @@ def initConfig(controllerObject):
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
+            {"CMD_OPTION"      : "provision-tempest",
+             "USAGE"           : ("Whether to configure tempest for testing. Note "
+                                  "that provisioning is only supported for all-in-one "
+                                  "installations."),
+             "PROMPT"          : "Would you like to configure Tempest (OpenStack test suite)?",
+             "OPTION_LIST"     : ["y", "n"],
+             "VALIDATORS"      : [validators.validate_options],
+             "PROCESSORS"      : [process_provision],
+             "DEFAULT_VALUE"   : "n",
+             "MASK_INPUT"      : False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME"       : "CONFIG_PROVISION_TEMPEST",
+             "USE_DEFAULT"     : False,
+             "NEED_CONFIRM"    : False,
+             "CONDITION"       : False },
+            ],
+        "PROVISION_DEMO" : [
             {"CMD_OPTION"      : "provision-demo-floatrange",
              "USAGE"           : "The CIDR network address for the floating IP subnet",
              "PROMPT"          : "Enter the network address for the floating IP subnet:",
@@ -49,20 +72,6 @@ def initConfig(controllerObject):
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_PROVISION_DEMO_FLOATRANGE",
-             "USE_DEFAULT"     : False,
-             "NEED_CONFIRM"    : False,
-             "CONDITION"       : False },
-            ],
-        "PROVISION_TEMPEST" : [
-            {"CMD_OPTION"      : "provision-tempest",
-             "USAGE"           : "Whether to configure tempest for testing",
-             "PROMPT"          : "Would you like to configure Tempest (OpenStack test suite)?",
-             "OPTION_LIST"     : ["y", "n"],
-             "VALIDATORS"      : [validators.validate_options],
-             "DEFAULT_VALUE"   : "n",
-             "MASK_INPUT"      : False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME"       : "CONFIG_PROVISION_TEMPEST",
              "USE_DEFAULT"     : False,
              "NEED_CONFIRM"    : False,
              "CONDITION"       : False },
@@ -115,6 +124,11 @@ def initConfig(controllerObject):
         # resources are implemented).
         return is_all_in_one(config)
 
+    def check_provisioning_demo(config):
+        return (allow_provisioning(config) and
+                (config.get('CONFIG_PROVISION_DEMO', 'n') == 'y' or
+                 config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y'))
+
     def check_provisioning_tempest(config):
         return allow_provisioning(config) and \
                config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y'
@@ -125,15 +139,15 @@ def initConfig(controllerObject):
                config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch'
 
     conf_groups = [
-        { "GROUP_NAME"            : "PROVISION_DEMO",
+        { "GROUP_NAME"            : "PROVISION_INIT",
           "DESCRIPTION"           : "Provisioning demo config",
-          "PRE_CONDITION"         : allow_provisioning,
-          "PRE_CONDITION_MATCH"   : True,
+          "PRE_CONDITION"         : lambda x: 'yes',
+          "PRE_CONDITION_MATCH"   : "yes",
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
-        { "GROUP_NAME"            : "PROVISION_TEMPEST",
-          "DESCRIPTION"           : "Provisioning tempest config",
-          "PRE_CONDITION"         : allow_provisioning,
+        { "GROUP_NAME"            : "PROVISION_DEMO",
+          "DESCRIPTION"           : "Provisioning demo config",
+          "PRE_CONDITION"         : check_provisioning_demo,
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
@@ -150,10 +164,22 @@ def initConfig(controllerObject):
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True },
         ]
-
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, paramList)
+
+    # Due to group checking some parameters might not be initialized, but
+    # provision.pp needs them all. So we will initialize them with default
+    # values
+    params = [
+        controller.getParamByName(x)
+        for x in ['CONFIG_PROVISION_TEMPEST_REPO_URI',
+                  'CONFIG_PROVISION_TEMPEST_REPO_REVISION',
+                  'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE']
+    ]
+    for param in params:
+        value = controller.CONF.get(param.CONF_NAME, param.DEFAULT_VALUE)
+        controller.CONF[param.CONF_NAME] = value
 
 
 def marshall_conf_bool(conf, key):
@@ -203,6 +229,5 @@ def create_manifest(config):
     marshall_conf_bool(config, 'PROVISION_NEUTRON_AVAILABLE')
 
     manifest_file = '%s_provision.pp' % host
-
     manifest_data = getManifestTemplate("provision.pp")
     appendManifestFile(manifest_file, manifest_data)
