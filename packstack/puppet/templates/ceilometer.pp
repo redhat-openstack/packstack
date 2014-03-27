@@ -1,10 +1,8 @@
 class { 'ceilometer::db':
     database_connection => 'mongodb://%(CONFIG_MONGODB_HOST)s:27017/ceilometer',
-    require             => Class['mongodb::server'],
 }
 
 class { 'ceilometer::collector':
-    require => Class['mongodb::server'],
 }
 
 class { 'ceilometer::agent::auth':
@@ -24,5 +22,4 @@ class { 'ceilometer::alarm::evaluator':
 class { 'ceilometer::api':
     keystone_host     => '%(CONFIG_KEYSTONE_HOST)s',
     keystone_password => '%(CONFIG_CEILOMETER_KS_PW)s',
-    require           => Class['mongodb::server'],
 }
