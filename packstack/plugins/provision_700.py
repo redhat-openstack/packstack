@@ -33,7 +33,7 @@ def initConfig(controllerObject):
              "PROMPT"          : "Would you like to provision for demo usage and testing?",
              "OPTION_LIST"     : ["y", "n"],
              "VALIDATORS"      : [validators.validate_options],
-             "DEFAULT_VALUE"   : "n",
+             "DEFAULT_VALUE"   : "y",
              "MASK_INPUT"      : False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME"       : "CONFIG_PROVISION_DEMO",
