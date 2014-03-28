@@ -29,6 +29,21 @@ file_line{'nohttp_ip':
     require =>  Class['horizon']
 }
 
+$https_port = %(CONFIG_HORIZON_PORT)s
+
+file{'/etc/httpd/conf.d/openstack-dashboard-vhost-port-80.conf':
+    ensure  => present,
+    content => "\n<VirtualHost *:80>\n\tServerName %(CONFIG_HORIZON_HOST)s\n\tRedirect / https://%(CONFIG_HORIZON_HOST)s:${https_port}/\n</VirtualHost>\n",
+}
+
+file_line{'redirect':
+    path    => '/etc/httpd/conf.d/openstack-dashboard.conf',
+    match   => '^RedirectMatch .*',
+    line    => "RedirectMatch permanent ^/$ https://%(CONFIG_HORIZON_HOST)s:${https_port}/dashboard",
+    require =>  Class['horizon']
+}
+
+
 # if the mod_ssl apache puppet module does not install
 # this file, we ensure it haves the minimum
 # requirements for SSL to work

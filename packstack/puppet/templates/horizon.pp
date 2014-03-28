@@ -7,12 +7,6 @@ package {$horizon_packages:
     ensure => present,
 }
 
-file {"/etc/httpd/conf.d/rootredirect.conf":
-    ensure => present,
-    content => 'RedirectMatch ^/$ /dashboard/',
-    notify => File["/etc/httpd/conf.d/openstack-dashboard.conf"],
-}
-
 class {'horizon':
    secret_key => '%(CONFIG_HORIZON_SECRET_KEY)s',
    keystone_host => '%(CONFIG_KEYSTONE_HOST)s',
