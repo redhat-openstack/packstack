@@ -1,7 +1,7 @@
 
 remote_database { '%(CONFIG_NEUTRON_L2_DBNAME)s':
     ensure      => 'present',
-    charset     => 'latin1',
+    charset     => 'utf8',
     db_host     => '%(CONFIG_MYSQL_HOST)s',
     db_user     => '%(CONFIG_MYSQL_USER)s',
     db_password => '%(CONFIG_MYSQL_PW)s',
