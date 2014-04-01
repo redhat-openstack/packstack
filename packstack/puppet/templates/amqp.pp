@@ -34,12 +34,30 @@ define enable_rabbitmq {
 }
 
 define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
+  case $::operatingsystem {
+    'Fedora': {
+      if (is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 20) or $::operatingsystemrelease == "Rawhide" {
+        $config = '/etc/qpid/qpidd.conf'
+      } else {
+        $config = '/etc/qpidd.conf'
+      }
+    }
+
+    'RedHat', 'CentOS': {
+      if $::operatingsystemrelease >= 7 {
+        $config = '/etc/qpid/qpidd.conf'
+      } else {
+        $config = '/etc/qpidd.conf'
+      }
+    }
+
+    default: {
+      $config = '/etc/qpidd.conf'
+    }
+  }
 
   class {"qpid::server":
-	  config_file => $::operatingsystem? {
-	    'Fedora' => '/etc/qpid/qpidd.conf',
-	    default  => '/etc/qpidd.conf',
-	    },
+    config_file => $config,
     auth => $enable_auth ? {
 	    'y'  => 'yes',
 	    default => 'no',
