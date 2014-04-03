@@ -483,8 +483,15 @@ def initConfig(controllerObject):
         return use_openvswitch_plugin_tunnel(config) or use_ml2_with_ovs(config)
 
     def use_openvswitch_vxlan(config):
-        return (use_openvswitch_plugin_tunnel(config) and
-                config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vxlan')
+        ovs_vxlan = (
+            use_openvswitch_plugin_tunnel(config) and
+            config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vxlan'
+        )
+        ml2_vxlan = (
+            use_ml2_with_ovs(config) and
+            'vxlan' in config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES']
+        )
+        return ovs_vxlan or ml2_vxlan
 
 
     conf_groups = [
