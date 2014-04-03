@@ -283,13 +283,19 @@ def createstoragemanifest(config):
     # set allowed hosts for firewall
     swift_hosts = get_swift_hosts(config)
     hosts = swift_hosts.copy()
+    manifestdata = ""
     if config['CONFIG_NOVA_INSTALL'] == 'y':
         hosts |= split_hosts(config['CONFIG_NOVA_COMPUTE_HOSTS'])
-    config['FIREWALL_ALLOWED'] = ",".join(["'%s'" % i for i in hosts])
-    # firewall rules for storage and rsync
+
     config['FIREWALL_SERVICE_NAME'] = "swift storage and rsync"
     config['FIREWALL_PORTS'] = "'6000', '6001', '6002', '873'"
-    manifestdata = getManifestTemplate("firewall.pp")
+    config['FIREWALL_CHAIN'] = "INPUT"
+
+    for host in hosts:
+        config['FIREWALL_ALLOWED'] = "'%s'" % host
+        config['FIREWALL_SERVICE_ID'] = "swift_storage_and_rsync_%s" % host
+        manifestdata += getManifestTemplate("firewall.pp")
+
     for host in swift_hosts:
         manifestfile = "%s_swift.pp" % host
         appendManifestFile(manifestfile, manifestdata)
