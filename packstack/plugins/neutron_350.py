@@ -667,7 +667,7 @@ def create_manifests(config):
             manifest_file = "%s_neutron.pp" % (host,)
             manifest_data = getManifestTemplate("neutron_api.pp")
             # Firewall Rules
-            for f_host in q_hosts:
+            for f_host in allowed_hosts:
                 config['FIREWALL_ALLOWED'] = "'%s'" % f_host
                 config['FIREWALL_SERVICE_ID'] = "neutron_server_%s_%s" % (host, f_host)
                 manifest_data += getManifestTemplate("firewall.pp")
