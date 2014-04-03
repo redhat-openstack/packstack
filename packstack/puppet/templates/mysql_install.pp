@@ -1,5 +1,6 @@
 
 class {"mysql::server":
+    package_name => "mariadb-galera-server",
     config_hash => {bind_address => "0.0.0.0",
                     default_engine => "InnoDB",
                     root_password => "%(CONFIG_MYSQL_PW)s",}
