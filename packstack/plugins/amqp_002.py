@@ -34,7 +34,7 @@ def initConfig(controllerObject):
                    "PROMPT"          : "Set the server for the AMQP service (qpid, rabbitmq)? ",
                    "OPTION_LIST"     : ["qpid", "rabbitmq"],
                    "VALIDATORS"      : [validators.validate_options],
-                   "DEFAULT_VALUE"   : "qpid",
+                   "DEFAULT_VALUE"   : "rabbitmq",
                    "MASK_INPUT"      : False,
                    "LOOSE_VALIDATION": False,
                    "CONF_NAME"       : "CONFIG_AMQP_SERVER",
