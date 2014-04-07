@@ -55,6 +55,19 @@ def initConfig(controllerObject):
          "NEED_CONFIRM"    : True,
          "CONDITION"       : False },
 
+        {"CMD_OPTION"      : "heat-auth-encryption-key",
+         "USAGE"           : "The encryption key to use for authentication info in database",
+         "PROMPT"          : "Enter the authentication key for Heat to use for authenticate info in database",
+         "OPTION_LIST"     : [],
+         "VALIDATORS"      : [validators.validate_not_empty],
+         "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
+         "MASK_INPUT"      : True,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME"       : "CONFIG_HEAT_AUTH_ENC_KEY",
+         "USE_DEFAULT"     : True,
+         "NEED_CONFIRM"    : True,
+         "CONDITION"       : False },
+
         {"CMD_OPTION"      : "heat-ks-passwd",
          "USAGE"           : "The password to use for the Heat to authenticate with Keystone",
          "PROMPT"          : "Enter the password for the Heat Keystone access",
@@ -204,11 +217,13 @@ def create_keystone_manifest(config):
 
 def create_cloudwatch_manifest(config):
     manifestfile = "%s_heatcw.pp" % controller.CONF['CONFIG_HEAT_CLOUDWATCH_HOST']
-    manifestdata = getManifestTemplate("heat_cloudwatch.pp")
+    manifestdata = getManifestTemplate(get_mq(config, "heat"))
+    manifestdata += getManifestTemplate("heat_cloudwatch.pp")
     appendManifestFile(manifestfile, manifestdata, marker='heat')
 
 
 def create_cfn_manifest(config):
     manifestfile = "%s_heatcnf.pp" % controller.CONF['CONFIG_HEAT_CFN_HOST']
-    manifestdata = getManifestTemplate("heat_cfn.pp")
+    manifestdata = getManifestTemplate(get_mq(config, "heat"))
+    manifestdata += getManifestTemplate("heat_cfn.pp")
     appendManifestFile(manifestfile, manifestdata, marker='heat')
