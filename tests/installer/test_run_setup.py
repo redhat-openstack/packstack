@@ -23,9 +23,14 @@ from unittest import TestCase
 
 from packstack.modules import ospluginutils, puppet
 from packstack.installer import run_setup, basedefs
-from packstack.installer.utils import shell
 
 from ..test_base import PackstackTestCaseMixin, FakePopen
+
+
+def makefile(path, content):
+    '''Create the named file with the specified content.'''
+    with open(path, 'w') as fd:
+        fd.write(content)
 
 
 class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
@@ -44,11 +49,12 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
         Popen is replaced in PackstackTestCaseMixin so no actual commands get
         run on the host running the unit tests
         """
-        # we need following to pass manage_epel(enabled=1) and
-        # manage_rdo(havana-6.noarch\nenabled=0) functions
+
         subprocess.Popen = FakePopen
         FakePopen.register('cat /etc/resolv.conf | grep nameserver',
                            stdout='nameserver 127.0.0.1')
+
+        # required by packstack.plugins.serverprep_949.mangage_rdo
         FakePopen.register("rpm -q rdo-release "
                            "--qf='%{version}-%{release}.%{arch}\n'",
                            stdout='icehouse-2.noarch\n')
@@ -56,10 +62,21 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
                                      'openstack-icehouse',
                                      stdout='[openstack-icehouse]\nenabled=1')
 
+        # required by packstack.plugins.nova_300.gather_host_keys
+        FakePopen.register('ssh-keyscan 127.0.0.1',
+                           stdout='127.0.0.1 ssh-rsa hostkey-data')
+
         # create a dummy public key
         dummy_public_key = os.path.join(self.tempdir, 'id_rsa.pub')
-        with open(dummy_public_key, 'w') as dummy:
-            dummy.write('ssh-rsa AAAAblablabla')
+        makefile(dummy_public_key, 'ssh-rsa AAAAblablabla')
+
+        # create dummy keys for live migration mechanism
+        makefile(os.path.join(basedefs.VAR_DIR, 'nova_migration_key'),
+                 '-----BEGIN RSA PRIVATE KEY-----\n'
+                 'keydata\n'
+                 '-----END RSA PRIVATE KEY-----\n')
+        makefile(os.path.join(basedefs.VAR_DIR, 'nova_migration_key.pub'),
+                 'ssh-rsa keydata')
 
         # Save sys.argv and replace it with the args we want optparse to use
         orig_argv = sys.argv

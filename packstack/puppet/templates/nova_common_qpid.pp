@@ -9,4 +9,13 @@ class { "nova":
     qpid_protocol      => '%(CONFIG_AMQP_PROTOCOL)s',
     verbose            => true,
     debug              => %(CONFIG_DEBUG_MODE)s,
+    nova_public_key    => {
+      type             => '%(NOVA_MIGRATION_KEY_TYPE)s',
+      key              => '%(NOVA_MIGRATION_KEY_PUBLIC)s',
+    },
+    nova_private_key   => {
+      type             => '%(NOVA_MIGRATION_KEY_TYPE)s',
+      key              => '%(NOVA_MIGRATION_KEY_SECRET)s',
+    },
+    nova_shell => '/bin/bash',
 }

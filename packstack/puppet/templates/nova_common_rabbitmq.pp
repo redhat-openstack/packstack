@@ -7,4 +7,13 @@ class { "nova":
     rabbit_password    => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
     verbose            => true,
     debug              => %(CONFIG_DEBUG_MODE)s,
+    nova_public_key    => {
+      type             => '%(NOVA_MIGRATION_KEY_TYPE)s',
+      key              => '%(NOVA_MIGRATION_KEY_PUBLIC)s',
+    },
+    nova_private_key   => {
+      type             => '%(NOVA_MIGRATION_KEY_TYPE)s',
+      key              => '%(NOVA_MIGRATION_KEY_SECRET)s',
+    },
+    nova_shell => '/bin/bash',
 }
