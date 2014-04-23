@@ -23,6 +23,7 @@ from unittest import TestCase
 
 from packstack.modules import ospluginutils, puppet
 from packstack.installer import run_setup, basedefs
+from packstack.installer.utils import shell
 
 from ..test_base import PackstackTestCaseMixin, FakePopen
 
@@ -45,9 +46,15 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
         """
         # we need following to pass manage_epel(enabled=1) and
         # manage_rdo(havana-6.noarch\nenabled=0) functions
-        fake = FakePopen()
-        fake.stdout = 'havana-6.noarch\nenabled=0enabled=1'
-        subprocess.Popen = fake
+        subprocess.Popen = FakePopen
+        FakePopen.register('cat /etc/resolv.conf | grep nameserver',
+                           stdout='nameserver 127.0.0.1')
+        FakePopen.register("rpm -q rdo-release "
+                           "--qf='%{version}-%{release}.%{arch}\n'",
+                           stdout='icehouse-2.noarch\n')
+        FakePopen.register_as_script('yum-config-manager --enable '
+                                     'openstack-icehouse',
+                                     stdout='[openstack-icehouse]\nenabled=1')
 
         # create a dummy public key
         dummy_public_key = os.path.join(self.tempdir, 'id_rsa.pub')
@@ -56,7 +63,8 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
 
         # Save sys.argv and replace it with the args we want optparse to use
         orig_argv = sys.argv
-        sys.argv = ['packstack', '--ssh-public-key=%s' % dummy_public_key,
+        sys.argv = ['packstack', '--debug',
+                    '--ssh-public-key=%s' % dummy_public_key,
                     '--install-hosts=127.0.0.1', '--os-swift-install=y',
                     '--nagios-install=y', '--use-epel=y']
 

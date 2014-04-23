@@ -23,7 +23,7 @@ import shutil
 import tempfile
 from unittest import TestCase
 
-from ..test_base import PackstackTestCaseMixin
+from ..test_base import PackstackTestCaseMixin, FakePopen
 from packstack.installer.utils import *
 from packstack.installer.utils.strings import STR_MASK
 from packstack.installer.exceptions import ExecuteRuntimeError
@@ -36,6 +36,8 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
     def setUp(self):
         # Creating a temp directory that can be used by tests
         self.tempdir = tempfile.mkdtemp()
+        FakePopen.register('echo "this is test"',
+                           stdout='this is test')
 
     def tearDown(self):
         # remove the temp directory
