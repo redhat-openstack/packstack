@@ -375,8 +375,10 @@ def manage_epel(host, config):
     if config['HOST_DETAILS'][host]['os'] in ('Fedora', 'Unknown'):
         return
 
-    mirrors = ('https://mirrors.fedoraproject.org/metalink?repo=epel-6&'
-               'arch=$basearch')
+    # yum's $releasever can be non numeric on RHEL, so interpolate here
+    releasever = config['HOST_DETAILS'][host]['release'].split('.')[0]
+    mirrors = ('https://mirrors.fedoraproject.org/metalink?repo=epel-%s&'
+               'arch=$basearch' % releasever)
     server = utils.ScriptRunner(host)
     if config['CONFIG_USE_EPEL'] == 'y':
         server.append('REPOFILE=$(mktemp)')
