@@ -16,10 +16,21 @@ nova_config{
   "DEFAULT/libvirt_inject_partition": value => "-1";
 }
 
-exec { 'qemu-kvm':
-    path => '/usr/bin',
-    command => 'yum install -y qemu-kvm',
-    before => Class['nova::compute::libvirt']
+case $::operatingsystem {
+  'Fedora': {
+    $qemu_package = 'qemu-kvm'
+  }
+  'RedHat', 'CentOS': {
+    $qemu_package = 'qemu-kvm-rhev'
+  }
+  default: {
+    $qemu_package = 'qemu-kvm'
+  }
+}
+
+package { 'qemu-kvm':
+  name   => $qemu_package,
+  ensure => installed,
 }
 
 class { 'nova::compute::libvirt':
