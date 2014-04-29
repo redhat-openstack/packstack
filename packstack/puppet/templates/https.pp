@@ -31,9 +31,18 @@ file_line{'nohttp_ip':
 
 $https_port = %(CONFIG_HORIZON_PORT)s
 
+
+if ($::fqdn != "" and $::fqdn != "localhost") {
+    $vhostname = $::fqdn
+}
+else {
+    $vhostname = '%(CONFIG_HORIZON_HOST)s'
+}
+
+
 file{'/etc/httpd/conf.d/openstack-dashboard-vhost-port-80.conf':
     ensure  => present,
-    content => "\n<VirtualHost *:80>\n\tServerName %(CONFIG_HORIZON_HOST)s\n\tRedirect / https://%(CONFIG_HORIZON_HOST)s:${https_port}/\n</VirtualHost>\n",
+    content => "\n<VirtualHost *:80>\n\tServerName ${vhostname}\n\tRewriteEngine On\n\tRewriteCond %%{HTTPS} !=on\n\tRewriteRule ^/?(.*) https://%%{SERVER_NAME}/$1 [R,L]\n</VirtualHost>\n",
 }
 
 file_line{'redirect':
