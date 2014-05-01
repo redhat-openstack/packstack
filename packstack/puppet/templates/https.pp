@@ -32,7 +32,7 @@ file_line{'nohttp_ip':
 $https_port = %(CONFIG_HORIZON_PORT)s
 
 
-if ($::fqdn != "" and $::fqdn != "localhost") {
+if ($::fqdn != "" and $::fqdn !~ /localhost/) {
     $vhostname = $::fqdn
 }
 else {
