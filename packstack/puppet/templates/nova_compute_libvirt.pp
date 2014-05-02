@@ -24,7 +24,7 @@ exec { 'qemu-kvm':
 
 class { 'nova::compute::libvirt':
   libvirt_type                => "$libvirt_type",
-  vncserver_listen            => "%(CONFIG_NOVA_COMPUTE_HOST)s",
+  vncserver_listen            => "0.0.0.0",
 }
 
 exec {'load_kvm':
