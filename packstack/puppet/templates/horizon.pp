@@ -13,7 +13,7 @@ class {'horizon':
    keystone_default_role => '_member_',
    fqdn => ['%(CONFIG_HORIZON_HOST)s', "$::fqdn", 'localhost'],
    can_set_mount_point => 'False',
-   help_url =>'https://access.redhat.com/site/documentation//en-US/Red_Hat_Enterprise_Linux_OpenStack_Platform/4/index.html',
+   help_url =>'http://docs.openstack.org',
    django_debug => %(CONFIG_DEBUG_MODE)s ? {true => 'True', false => 'False'},
 }
 
