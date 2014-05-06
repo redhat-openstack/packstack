@@ -236,6 +236,63 @@ def initConfig(controllerObject):
                   "POST_CONDITION_MATCH"  : True}
     controller.addGroup(groupDict, paramsList)
 
+    def use_vcenter(config):
+         return (config['CONFIG_NOVA_INSTALL'] == 'y' and
+                config['CONFIG_VMWARE_BACKEND'] == 'y')
+
+    paramsList = [
+                  {"CMD_OPTION"      : "vcenter-host",
+                   "USAGE"           : ("The IP address of the VMware vCenter server"),
+                   "PROMPT"          : ("Enter the IP address of the VMware vCenter server to use with Nova"),
+                   "OPTION_LIST"     : [],
+                   "VALIDATORS"      : [validators.validate_ip],
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_VCENTER_HOST",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False },
+                  {"CMD_OPTION"      : "vcenter-username",
+                   "USAGE"           : ("The username to authenticate to VMware vCenter server"),
+                   "PROMPT"          : ("Enter the username to authenticate on VMware vCenter server"),
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_VCENTER_USER",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False,},
+                  {"CMD_OPTION"      : "vcenter-password",
+                   "USAGE"           : ("The password to authenticate to VMware vCenter server"),
+                   "PROMPT"          : ("Enter the password to authenticate on VMware vCenter server"),
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : True,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_VCENTER_PASSWORD",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False,},
+                  {"CMD_OPTION"      : "vcenter-cluster",
+                   "USAGE"           : ("The name of the vCenter cluster"),
+                   "PROMPT"          : ("Enter the name of the vCenter datastore"),
+                   "DEFAULT_VALUE"   : "",
+                   "MASK_INPUT"      : False,
+                   "LOOSE_VALIDATION": True,
+                   "CONF_NAME"       : "CONFIG_VCENTER_CLUSTER_NAME",
+                   "USE_DEFAULT"     : False,
+                   "NEED_CONFIRM"    : False,
+                   "CONDITION"       : False,},
+                  ]
+
+    groupDict = {"GROUP_NAME"            : "VMWARE",
+                  "DESCRIPTION"           : "vCenter Config Parameters",
+                  "PRE_CONDITION"         : use_vcenter,
+                  "PRE_CONDITION_MATCH"   : True,
+                  "POST_CONDITION"        : False,
+                  "POST_CONDITION_MATCH"  : True}
+
+    controller.addGroup(groupDict, paramsList)
 
 def initSequences(controller):
     prescript_steps = [

@@ -307,50 +307,6 @@ def initConfig(controllerObject):
                    "NEED_CONFIRM"    : False,
                    "CONDITION"       : False },
                   ],
-             "NOVA_VCENTER": [
-                  {"CMD_OPTION"      : "nova-vcenter-host",
-                   "USAGE"           : ("The IP address of the VMware vCenter server"),
-                   "PROMPT"          : ("Enter the IP address of the VMware vCenter server to use with Nova"),
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_ip],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_VCENTER_HOST",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "nova-vcenter-username",
-                   "USAGE"           : ("The username to authenticate to VMware vCenter server"),
-                   "PROMPT"          : ("Enter the username to authenticate on VMware vCenter server"),
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_VCENTER_USER",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False,},
-                  {"CMD_OPTION"      : "nova-vcenter-password",
-                   "USAGE"           : ("The password to authenticate to VMware vCenter server"),
-                   "PROMPT"          : ("Enter the password to authenticate on VMware vCenter server"),
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_VCENTER_PASSWORD",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False,},
-                  {"CMD_OPTION"      : "nova-vcenter-cluster",
-                   "USAGE"           : ("The name of the vCenter cluster"),
-                   "PROMPT"          : ("Enter the name of the vCenter datastore"),
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_VCENTER_CLUSTER_NAME",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False,},                   
-                  ],
               }
 
     def use_nova_network(config):
@@ -362,10 +318,6 @@ def initConfig(controllerObject):
         return config['CONFIG_NOVA_INSTALL'] == 'y' and \
                config['CONFIG_NEUTRON_INSTALL'] != 'y' and \
                config['CONFIG_NOVA_NETWORK_MANAGER'] == manager
-
-    def use_nova_vcenter(config):
-        return (config['CONFIG_NOVA_INSTALL'] == 'y' and
-                config['CONFIG_VMWARE_BACKEND'] == 'y')
 
     nova_groups = [
          {"GROUP_NAME"            : "NOVA",
@@ -383,12 +335,6 @@ def initConfig(controllerObject):
          {"GROUP_NAME"            : "NOVA_NETWORK_VLAN",
           "DESCRIPTION"           : "Nova Network VLAN Options",
           "PRE_CONDITION"         : use_nova_network_vlan,
-          "PRE_CONDITION_MATCH"   : True,
-          "POST_CONDITION"        : False,
-          "POST_CONDITION_MATCH"  : True},
-         {"GROUP_NAME"            : "NOVA_VCENTER",
-          "DESCRIPTION"           : "Nova VMware vCenter Config parameters",
-          "PRE_CONDITION"         : use_nova_vcenter,
           "PRE_CONDITION_MATCH"   : True,
           "POST_CONDITION"        : False,
           "POST_CONDITION_MATCH"  : True},
@@ -505,7 +451,7 @@ def createcomputemanifest(config):
         else:
             manifestdata += getManifestTemplate("nova_compute_libvirt.pp")
         if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
-            config['CONFIG_CINDER_INSTALL'] == 'y' and 
+            config['CONFIG_CINDER_INSTALL'] == 'y' and
             config['CONFIG_CINDER_BACKEND'] == 'gluster'):
             manifestdata += getManifestTemplate("nova_gluster.pp")
         if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
