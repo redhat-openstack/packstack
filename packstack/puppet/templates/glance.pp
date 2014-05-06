@@ -1,6 +1,6 @@
 
 class {"glance::api":
-    auth_host => "%(CONFIG_KEYSTONE_HOST)s",
+    auth_host => "%(CONFIG_CONTROLLER_HOST)s",
     keystone_tenant => "services",
     keystone_user => "glance",
     keystone_password => "%(CONFIG_GLANCE_KS_PW)s",
@@ -13,7 +13,7 @@ class {"glance::api":
 class { 'glance::backend::file': }
 
 class {"glance::registry":
-    auth_host => "%(CONFIG_KEYSTONE_HOST)s",
+    auth_host => "%(CONFIG_CONTROLLER_HOST)s",
     keystone_tenant => "services",
     keystone_user => "glance",
     keystone_password => "%(CONFIG_GLANCE_KS_PW)s",

@@ -671,15 +671,12 @@ def single_step_install(options):
     hosts = [host.strip() for host in hosts.split(',')]
     for group in controller.getAllGroups():
         for param in group.parameters.itervalues():
-            # we don't need magic in case CONFIG_NEUTRON_LBAAS_HOSTS
-            if param.CONF_NAME == 'CONFIG_NEUTRON_LBAAS_HOSTS':
-                continue
             # and directives that contain _HOST are set to the controller node
             if param.CONF_NAME.find("_HOST") != -1:
                 overrides[param.CONF_NAME] = hosts[0]
     # If there are more than one host, all but the first are a compute nodes
     if len(hosts) > 1:
-        overrides["CONFIG_NOVA_COMPUTE_HOSTS"] = ','.join(hosts[1:])
+        overrides["CONFIG_COMPUTE_HOSTS"] = ','.join(hosts[1:])
 
     # We can also override defaults with command line options
     _set_command_line_values(options)

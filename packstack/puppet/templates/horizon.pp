@@ -9,9 +9,9 @@ package {$horizon_packages:
 
 class {'horizon':
    secret_key => '%(CONFIG_HORIZON_SECRET_KEY)s',
-   keystone_host => '%(CONFIG_KEYSTONE_HOST)s',
+   keystone_host => '%(CONFIG_CONTROLLER_HOST)s',
    keystone_default_role => '_member_',
-   fqdn => ['%(CONFIG_HORIZON_HOST)s', "$::fqdn", 'localhost'],
+   fqdn => ['%(CONFIG_CONTROLLER_HOST)s', "$::fqdn", 'localhost'],
    can_set_mount_point => 'False',
    help_url =>'http://docs.openstack.org',
    django_debug => %(CONFIG_DEBUG_MODE)s ? {true => 'True', false => 'False'},

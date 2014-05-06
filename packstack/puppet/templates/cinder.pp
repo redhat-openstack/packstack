@@ -1,5 +1,5 @@
 cinder_config {
-    "DEFAULT/glance_host": value => "%(CONFIG_GLANCE_HOST)s";
+    "DEFAULT/glance_host": value => "%(CONFIG_CONTROLLER_HOST)s";
 }
 
 package {'python-keystone':
@@ -10,7 +10,7 @@ class {'cinder::api':
     keystone_password => '%(CONFIG_CINDER_KS_PW)s',
     keystone_tenant => "services",
     keystone_user => "cinder",
-    keystone_auth_host => "%(CONFIG_KEYSTONE_HOST)s",
+    keystone_auth_host => "%(CONFIG_CONTROLLER_HOST)s",
 }
 
 class {'cinder::scheduler':
@@ -20,5 +20,5 @@ class {'cinder::volume':
 }
 
 class {'cinder::volume::iscsi':
-    iscsi_ip_address => '%(CONFIG_CINDER_HOST)s'
+    iscsi_ip_address => '%(CONFIG_CONTROLLER_HOST)s'
 }

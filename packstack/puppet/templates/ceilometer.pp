@@ -6,7 +6,7 @@ class { 'ceilometer::collector':
 }
 
 class { 'ceilometer::agent::auth':
-    auth_url      => 'http://%(CONFIG_KEYSTONE_HOST)s:35357/v2.0',
+    auth_url      => 'http://%(CONFIG_CONTROLLER_HOST)s:35357/v2.0',
     auth_password => '%(CONFIG_CEILOMETER_KS_PW)s',
 }
 
@@ -20,6 +20,6 @@ class { 'ceilometer::alarm::evaluator':
 }
 
 class { 'ceilometer::api':
-    keystone_host     => '%(CONFIG_KEYSTONE_HOST)s',
+    keystone_host     => '%(CONFIG_CONTROLLER_HOST)s',
     keystone_password => '%(CONFIG_CEILOMETER_KS_PW)s',
 }

@@ -5,7 +5,5 @@ Firewall <| |> -> Class['nova']
 
 nova_config{
     "DEFAULT/sql_connection": value => "%(CONFIG_NOVA_SQL_CONN)s";
-    "DEFAULT/metadata_host": value => "%(CONFIG_NOVA_METADATA_HOST)s";
+    "DEFAULT/metadata_host": value => "%(CONFIG_CONTROLLER_HOST)s";
 }
-
-
