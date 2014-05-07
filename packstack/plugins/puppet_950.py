@@ -73,9 +73,24 @@ def runCleanup(config):
 
 
 def installdeps(config):
+    deps = ["puppet", "openssh-clients", "tar", "nc"]
+    modules_pkg = 'openstack-puppet-modules'
+
+    local = utils.ScriptRunner()
+    local.append('rpm -q --requires %s | egrep -v "^(rpmlib|\/|perl)"'
+                 % modules_pkg)
+    rc, modules_deps = local.execute()
+
+    # Modules package might not be installed if we are running from source.
+    # In this case we assume user knows what (s)he's doing and we don't
+    # install modules dependencies
+    if ('%s is not installed' % modules_pkg) not in modules_deps:
+        modules_deps = [i.strip() for i in modules_deps.split() if i.strip()]
+        deps.extend(modules_deps)
+
     for hostname in filtered_hosts(config):
         server = utils.ScriptRunner(hostname)
-        for package in ("puppet", "openssh-clients", "tar", "nc"):
+        for package in deps:
             server.append("rpm -q --whatprovides %s || yum install -y %s" % (package, package))
         server.execute()
 
