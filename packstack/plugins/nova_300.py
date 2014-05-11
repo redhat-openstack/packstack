@@ -526,6 +526,7 @@ def createcomputemanifest(config):
 
         if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
             manifestdata += getManifestTemplate(get_mq(config, "nova_ceilometer"))
+            manifestdata += getManifestTemplate("nova_ceilometer.pp")
 
         # According to the docs the only element that connects directly to nova compute
         # is nova scheduler
