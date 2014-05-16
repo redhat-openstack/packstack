@@ -4,16 +4,14 @@ Firewall <| |> -> Class['nova::compute::libvirt']
 # preventing a clash with rules being set by libvirt
 
 if $::is_virtual_packstack == "true" {
-    $libvirt_type = "qemu"
-    nova_config{
-        "DEFAULT/libvirt_cpu_mode": value => "none";
-    }
+    $libvirt_virt_type = "qemu"
+    $libvirt_cpu_mode = "none"
 }else{
-    $libvirt_type = "kvm"
+    $libvirt_virt_type = "kvm"
 }
 
 nova_config{
-  "DEFAULT/libvirt_inject_partition": value => "-1";
+  "libvirt/inject_partition": value => "-1";
 }
 
 exec { 'qemu-kvm':
@@ -23,8 +21,9 @@ exec { 'qemu-kvm':
 }
 
 class { 'nova::compute::libvirt':
-  libvirt_type                => "$libvirt_type",
-  vncserver_listen            => "0.0.0.0",
+  libvirt_virt_type  => "$libvirt_virt_type",
+  libvirt_cpu_mode   => "$libvirt_cpu_mode",
+  vncserver_listen   => "0.0.0.0",
 }
 
 exec {'load_kvm':
