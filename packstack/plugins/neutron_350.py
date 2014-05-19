@@ -747,7 +747,9 @@ def create_manifests(config, messages):
         if host in api_hosts:
             manifest_file = "%s_neutron.pp" % (host,)
             manifest_data = getManifestTemplate("neutron_api.pp")
-            manifest_data += getManifestTemplate("neutron_notifications.pp")
+            if config['CONFIG_NOVA_INSTALL'] == 'y':
+                template_name = "neutron_notifications.pp"
+                manifest_data += getManifestTemplate(template_name)
 
             # Firewall Rules
             for f_host in q_hosts:
