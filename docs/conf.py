@@ -11,10 +11,33 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys, os
+import sys
+import os
 
-sys.path.append('..')
+sys.path.append("..")
+sys.path.insert(0, os.path.join(os.path.split(sys.argv[0])[0], ".."))
+import packstack
+
+os.environ["INSTALLER_PROJECT_DIR"] = os.path.abspath(os.path.split(packstack.__file__)[0])
+
 from packstack import version as packstackversion
+from packstack.installer import run_setup
+run_setup.loadPlugins()
+run_setup.initPluginsConfig()
+
+with open("general_options.rst", 'w') as f:
+    for group in run_setup.controller.getAllGroups():
+        f.write("%s\n" % group.DESCRIPTION)
+        f.write("-" * len(group.DESCRIPTION))
+        f.write("\n\n")
+
+        for param in group.parameters.itervalues():
+            cmdOption = param.CONF_NAME
+            paramUsage = param.USAGE
+            optionsList = param.OPTION_LIST or ""
+            f.write("%s\n" % (("**%s**"%str(cmdOption)).ljust(30)))
+            f.write("    %s %s" % (paramUsage, optionsList))
+            f.write("\n\n")
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
