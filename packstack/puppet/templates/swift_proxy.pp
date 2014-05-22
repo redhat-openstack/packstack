@@ -5,7 +5,7 @@ class { 'memcached':
 }
 
 class { 'swift::proxy':
-  proxy_local_net_ip => '%(CONFIG_SWIFT_PROXY)s',
+  proxy_local_net_ip => '%(CONFIG_CONTROLLER_HOST)s',
   pipeline           => [
     'bulk',
     'catch_errors',
@@ -62,7 +62,7 @@ class { 'swift::proxy::authtoken':
     admin_tenant_name => 'services',
     admin_password    => '%(CONFIG_SWIFT_KS_PW)s',
     # assume that the controller host is the swift api server
-    auth_host         => '%(CONFIG_KEYSTONE_HOST)s',
+    auth_host         => '%(CONFIG_CONTROLLER_HOST)s',
 }
 
 firewall { '001 swift proxy incoming':

@@ -39,7 +39,7 @@ class StepTestCase(PackstackTestCaseMixin, TestCase):
         """
         Test packstack.instaler.core.sequences.Step run.
         """
-        def func(config):
+        def func(config, messages):
             if 'test' not in config:
                 raise AssertionError('Missing config value.')
 
@@ -59,11 +59,11 @@ class SequenceTestCase(PackstackTestCaseMixin, TestCase):
         self._stdout = sys.stdout
         sys.stdout = StringIO.StringIO()
 
-        self.steps = [{'name': '1', 'function': lambda x: True,
+        self.steps = [{'name': '1', 'function': lambda x, y: True,
                        'title': 'Step 1'},
-                      {'name': '2', 'function': lambda x: True,
+                      {'name': '2', 'function': lambda x, y: True,
                        'title': 'Step 2'},
-                      {'name': '3', 'function': lambda x: True,
+                      {'name': '3', 'function': lambda x, y: True,
                        'title': 'Step 3'}]
 
         self.seq = Sequence('test', self.steps, condition='test',

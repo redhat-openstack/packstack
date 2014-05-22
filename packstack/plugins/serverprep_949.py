@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 prepare server
 """
@@ -15,218 +17,215 @@ from packstack.installer import validators
 
 from packstack.modules.common import filtered_hosts, is_all_in_one
 
-# Controller object will be initialized from main flow
-controller = None
 
-# Plugin name
+#------------------ oVirt installer initialization ------------------
+
 PLUGIN_NAME = "OS-SERVERPREPARE"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
-logging.debug("plugin %s loaded", __name__)
 
-def initConfig(controllerObject):
-    global controller
-    controller = controllerObject
-    logging.debug("Adding SERVERPREPARE KEY configuration")
+def initConfig(controller):
     conf_params = {
-            "SERVERPREPARE": [
-                  {"CMD_OPTION"      : "use-epel",
-                   "USAGE"           : "To subscribe each server to EPEL enter \"y\"",
-                   "PROMPT"          : "To subscribe each server to EPEL enter \"y\"",
-                   "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validators.validate_options],
-                   "DEFAULT_VALUE"   : "n",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_USE_EPEL",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+        "SERVERPREPARE": [
+            {"CMD_OPTION": "use-epel",
+             "USAGE": "To subscribe each server to EPEL enter \"y\"",
+             "PROMPT": "To subscribe each server to EPEL enter \"y\"",
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_USE_EPEL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-                  {"CMD_OPTION"      : "additional-repo",
-                   "USAGE"           : "A comma separated list of URLs to any additional yum repositories to install",
-                   "PROMPT"          : "Enter a comma separated list of URLs to any additional yum repositories to install",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_REPO",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False }],
+            {"CMD_OPTION": "additional-repo",
+             "USAGE": ("A comma separated list of URLs to any additional yum "
+                       "repositories to install"),
+             "PROMPT": ("Enter a comma separated list of URLs to any "
+                        "additional yum repositories to install"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_REPO",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
 
-            "RHEL": [
-                  {"CMD_OPTION"      : "rh-username",
-                   "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_PW",
-                   "PROMPT"          : "To subscribe each server to Red Hat enter a username here",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_RH_USER",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+        "RHEL": [
+            {"CMD_OPTION": "rh-username",
+             "USAGE": ("To subscribe each server with Red Hat subscription "
+                       "manager, include this with CONFIG_RH_PW"),
+             "PROMPT": "To subscribe each server to Red Hat enter a username ",
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_RH_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-                  {"CMD_OPTION"      : "rh-password",
-                   "USAGE"           : "To subscribe each server with Red Hat subscription manager, include this with CONFIG_RH_USER",
-                   "PROMPT"          : "To subscribe each server to Red Hat enter your password here",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_RH_PW",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+            {"CMD_OPTION": "rh-password",
+             "USAGE": ("To subscribe each server with Red Hat subscription "
+                       "manager, include this with CONFIG_RH_USER"),
+             "PROMPT": ("To subscribe each server to Red Hat enter your "
+                        "password"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_RH_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-                  {"CMD_OPTION"      : "rh-beta-repo",
-                   "USAGE"           : "To subscribe each server to Red Hat Enterprise Linux 6 Server Beta channel (only needed for Preview versions of RHOS) enter \"y\"",
-                   "PROMPT"          : "To subscribe each server to Red Hat Enterprise Linux 6 Server Beta channel (only needed for Preview versions of RHOS) enter \"y\"",
-                   "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validators.validate_options],
-                   "DEFAULT_VALUE"   : "n",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_RH_BETA_REPO",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+            {"CMD_OPTION": "rhn-satellite-server",
+             "USAGE": ("To subscribe each server with RHN Satellite,fill "
+                       "Satellite's URL here. Note that either satellite's "
+                       "username/password or activation key has "
+                       "to be provided"),
+             "PROMPT": ("To subscribe each server with RHN Satellite enter "
+                        "RHN Satellite server URL"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_URL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
 
-                  {"CMD_OPTION"      : "rhn-satellite-server",
-                   "USAGE"           : ("To subscribe each server with RHN Satellite,"
-                                        "fill Satellite's URL here. Note that either "
-                                        "satellite's username/password or activation "
-                                        "key has to be provided"),
-                   "PROMPT"          : ("To subscribe each server with RHN Satellite "
-                                        "enter RHN Satellite server URL"),
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_URL",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False }],
+        "SATELLITE": [
+            {"CMD_OPTION": "rhn-satellite-username",
+             "USAGE": "Username to access RHN Satellite",
+             "PROMPT": ("Enter RHN Satellite username or leave plain if you "
+                        "will use activation key instead"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_SATELLITE_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-            "SATELLITE": [
-                  {"CMD_OPTION"      : "rhn-satellite-username",
-                   "USAGE"           : "Username to access RHN Satellite",
-                   "PROMPT"          : ("Enter RHN Satellite username or leave plain "
-                                        "if you will use activation key instead"),
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_USER",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+            {"CMD_OPTION": "rhn-satellite-password",
+             "USAGE": "Password to access RHN Satellite",
+             "PROMPT": ("Enter RHN Satellite password or leave plain if you "
+                        "will use activation key instead"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-                  {"CMD_OPTION"      : "rhn-satellite-password",
-                   "USAGE"           : "Password to access RHN Satellite",
-                   "PROMPT"          : ("Enter RHN Satellite password or leave plain "
-                                        "if you will use activation key instead"),
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PW",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+            {"CMD_OPTION": "rhn-satellite-activation-key",
+             "USAGE": "Activation key for subscription to RHN Satellite",
+             "PROMPT": ("Enter RHN Satellite activation key or leave plain if "
+                        "you used username/password instead"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_AKEY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-                  {"CMD_OPTION"      : "rhn-satellite-activation-key",
-                   "USAGE"           : "Activation key for subscription to RHN Satellite",
-                   "PROMPT"          : ("Enter RHN Satellite activation key or leave plain "
-                                        "if you used username/password instead"),
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_AKEY",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+            {"CMD_OPTION": "rhn-satellite-cacert",
+             "USAGE": "Specify a path or URL to a SSL CA certificate to use",
+             "PROMPT": "Specify a path or URL to a SSL CA certificate to use",
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_CACERT",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-                  {"CMD_OPTION"      : "rhn-satellite-cacert",
-                   "USAGE"           : "Specify a path or URL to a SSL CA certificate to use",
-                   "PROMPT"          : "Specify a path or URL to a SSL CA certificate to use",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_CACERT",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+            {"CMD_OPTION": "rhn-satellite-profile",
+             "USAGE": ("If required specify the profile name that should be "
+                       "used as an identifier for the system "
+                       "in RHN Satellite"),
+             "PROMPT": ("If required specify the profile name that should be "
+                        "used as an identifier for the system "
+                        "in RHN Satellite"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PROFILE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-                  {"CMD_OPTION"      : "rhn-satellite-profile",
-                   "USAGE"           : ("If required specify the profile name that should "
-                                        "be used as an identifier for the system in RHN "
-                                        "Satellite"),
-                   "PROMPT"          : ("If required specify the profile name that should "
-                                        "be used as an identifier for the system in RHN "
-                                        "Satellite"),
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROFILE",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+            {"CMD_OPTION": "rhn-satellite-flags",
+             "USAGE": ("Comma separated list of flags passed to rhnreg_ks. "
+                       "Valid flags are: novirtinfo, norhnsd, nopackages"),
+             "PROMPT": ("Enter comma separated list of flags passed "
+                        "to rhnreg_ks"),
+             "OPTION_LIST": ['novirtinfo', 'norhnsd', 'nopackages'],
+             "VALIDATORS": [validators.validate_multi_options],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_FLAGS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-                  {"CMD_OPTION"      : "rhn-satellite-flags",
-                   "USAGE"           : ("Comma separated list of flags passed to rhnreg_ks. Valid "
-                                        "flags are: novirtinfo, norhnsd, nopackages"),
-                   "PROMPT"          : "Enter comma separated list of flags passed to rhnreg_ks",
-                   "OPTION_LIST"     : ['novirtinfo', 'norhnsd', 'nopackages'],
-                   "VALIDATORS"      : [validators.validate_multi_options],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_FLAGS",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+            {"CMD_OPTION": "rhn-satellite-proxy-host",
+             "USAGE": "Specify a HTTP proxy to use with RHN Satellite",
+             "PROMPT": "Specify a HTTP proxy to use with RHN Satellite",
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PROXY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
 
-                  {"CMD_OPTION"      : "rhn-satellite-proxy-host",
-                   "USAGE"           : "Specify a HTTP proxy to use with RHN Satellite",
-                   "PROMPT"          : "Specify a HTTP proxy to use with RHN Satellite",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False }],
+        "SATELLITE_PROXY": [
+            {"CMD_OPTION": "rhn-satellite-proxy-username",
+             "USAGE": ("Specify a username to use with an authenticated "
+                       "HTTP proxy"),
+             "PROMPT": ("Specify a username to use with an authenticated "
+                        "HTTP proxy"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PROXY_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
 
-            "SATELLITE_PROXY": [
-                  {"CMD_OPTION"      : "rhn-satellite-proxy-username",
-                   "USAGE"           : "Specify a username to use with an authenticated HTTP proxy",
-                   "PROMPT"          : "Specify a username to use with an authenticated HTTP proxy",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_USER",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-
-                  {"CMD_OPTION"      : "rhn-satellite-proxy-password",
-                   "USAGE"           : "Specify a password to use with an authenticated HTTP proxy.",
-                   "PROMPT"          : "Specify a password to use with an authenticated HTTP proxy.",
-                   "OPTION_LIST"     : [],
-                   "DEFAULT_VALUE"   : "",
-                   "MASK_INPUT"      : True,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_SATELLITE_PROXY_PW",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False }]}
+            {"CMD_OPTION": "rhn-satellite-proxy-password",
+             "USAGE": ("Specify a password to use with an authenticated "
+                       "HTTP proxy."),
+             "PROMPT": ("Specify a password to use with an authenticated "
+                        "HTTP proxy."),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PROXY_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ]
+    }
 
     def filled_satellite(config):
         return bool(config.get('CONFIG_SATELLITE_URL'))
@@ -235,41 +234,50 @@ def initConfig(controllerObject):
         return bool(config.get('CONFIG_SATELLITE_PROXY'))
 
     conf_groups = [
-             {"GROUP_NAME"            : "SERVERPREPARE",
-              "DESCRIPTION"           : "Server Prepare Configs ",
-              "PRE_CONDITION"         : lambda x: 'yes',
-              "PRE_CONDITION_MATCH"   : "yes",
-              "POST_CONDITION"        : False,
-              "POST_CONDITION_MATCH"  : True},
-        ]
+        {"GROUP_NAME": "SERVERPREPARE",
+         "DESCRIPTION": "Server Prepare Configs ",
+         "PRE_CONDITION": lambda x: 'yes',
+         "PRE_CONDITION_MATCH": "yes",
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+    ]
 
-    if ((is_all_in_one(controller.CONF) and is_rhel()) or
-        not is_all_in_one(controller.CONF)):
-        conf_groups.append({"GROUP_NAME"            : "RHEL",
-                            "DESCRIPTION"           : "RHEL config",
-                            "PRE_CONDITION"         : lambda x: 'yes',
-                            "PRE_CONDITION_MATCH"   : "yes",
-                            "POST_CONDITION"        : False,
-                            "POST_CONDITION_MATCH"  : True})
+    config = controller.CONF
+    if (is_all_in_one(config) and is_rhel()) or not is_all_in_one(config):
+        conf_groups.append({"GROUP_NAME": "RHEL",
+                            "DESCRIPTION": "RHEL config",
+                            "PRE_CONDITION": lambda x: 'yes',
+                            "PRE_CONDITION_MATCH": "yes",
+                            "POST_CONDITION": False,
+                            "POST_CONDITION_MATCH": True})
 
-        conf_groups.append({"GROUP_NAME"            : "SATELLITE",
-                            "DESCRIPTION"           : "RHN Satellite config",
-                            "PRE_CONDITION"         : filled_satellite,
-                            "PRE_CONDITION_MATCH"   : True,
-                            "POST_CONDITION"        : False,
-                            "POST_CONDITION_MATCH"  : True})
+        conf_groups.append({"GROUP_NAME": "SATELLITE",
+                            "DESCRIPTION": "RHN Satellite config",
+                            "PRE_CONDITION": filled_satellite,
+                            "PRE_CONDITION_MATCH": True,
+                            "POST_CONDITION": False,
+                            "POST_CONDITION_MATCH": True})
 
-        conf_groups.append({"GROUP_NAME"            : "SATELLITE_PROXY",
-                            "DESCRIPTION"           : "RHN Satellite proxy config",
-                            "PRE_CONDITION"         : filled_satellite_proxy,
-                            "PRE_CONDITION_MATCH"   : True,
-                            "POST_CONDITION"        : False,
-                            "POST_CONDITION_MATCH"  : True})
+        conf_groups.append({"GROUP_NAME": "SATELLITE_PROXY",
+                            "DESCRIPTION": "RHN Satellite proxy config",
+                            "PRE_CONDITION": filled_satellite_proxy,
+                            "PRE_CONDITION_MATCH": True,
+                            "POST_CONDITION": False,
+                            "POST_CONDITION_MATCH": True})
 
     for group in conf_groups:
-        paramList = conf_params[group["GROUP_NAME"]]
-        controller.addGroup(group, paramList)
+        params = conf_params[group["GROUP_NAME"]]
+        controller.addGroup(group, params)
 
+
+def initSequences(controller):
+    preparesteps = [
+        {'title': 'Preparing servers', 'functions': [server_prep]}
+    ]
+    controller.addSequence("Preparing servers", [], [], preparesteps)
+
+
+#------------------------- helper functions -------------------------
 
 def is_rhel():
     return 'Red Hat Enterprise Linux' in platform.linux_distribution()[0]
@@ -290,9 +298,8 @@ def run_rhn_reg(host, server_url, username=None, password=None,
     server = utils.ScriptRunner(host)
 
     # check satellite server url
-    server_url = server_url.rstrip('/').endswith('/XMLRPC') \
-                    and server_url \
-                    or '%s/XMLRPC' % server_url
+    server_url = (server_url.rstrip('/').endswith('/XMLRPC')
+                  and server_url or '%s/XMLRPC' % server_url)
     cmd.extend(['--serverUrl', server_url])
 
     if activation_key:
@@ -339,7 +346,7 @@ def run_rhn_reg(host, server_url, username=None, password=None,
     server.execute(mask_list=mask)
 
 
-def run_rhsm_reg(host, username, password, beta):
+def run_rhsm_reg(host, username, password):
     """
     Registers given host to Red Hat Repositories via subscription manager.
     """
@@ -347,8 +354,8 @@ def run_rhsm_reg(host, username, password, beta):
 
     # register host
     cmd = ('subscription-manager register --username=\"%s\" '
-                            '--password=\"%s\" --autosubscribe || true')
-    server.append(cmd % (username, password.replace('"','\\"')))
+           '--password=\"%s\" --autosubscribe || true')
+    server.append(cmd % (username, password.replace('"', '\\"')))
 
     # subscribe to required channel
     cmd = ('subscription-manager list --consumed | grep -i openstack || '
@@ -357,12 +364,12 @@ def run_rhsm_reg(host, username, password, beta):
             "grep -e 'Red Hat OpenStack' -m 1 -A 2 | grep 'Pool Id' | "
             "awk '{print $3}')")
     server.append(cmd % pool)
-    server.append("subscription-manager repos --enable rhel-6-server-optional-rpms")
+    server.append("subscription-manager repos "
+                  "--enable rhel-6-server-optional-rpms")
 
     server.append("yum clean all")
-    server.append("rpm -q --whatprovides yum-utils || yum install -y yum-utils")
-    if beta:
-        server.append("yum-config-manager --enable rhel-6-server-beta-rpms")
+    server.append("rpm -q --whatprovides yum-utils || "
+                  "yum install -y yum-utils")
     server.append("yum clean metadata")
     server.execute(mask_list=[password])
 
@@ -409,7 +416,8 @@ def manage_epel(host, config):
     server.append('yum-config-manager --%(cmd)s epel' % locals())
     rc, out = server.execute()
 
-    # yum-config-manager returns 0 always, but returns current setup if succeeds
+    # yum-config-manager returns 0 always, but returns current setup
+    # if succeeds
     match = re.search('enabled\s*\=\s*%(enabled)s' % locals(), out)
     if match:
         return
@@ -426,7 +434,6 @@ def manage_epel(host, config):
         # TO-DO: fill logger name when logging will be refactored.
         logger = logging.getLogger()
         logger.warn(msg % host)
-
 
 
 def manage_rdo(host, config):
@@ -457,7 +464,8 @@ def manage_rdo(host, config):
     reponame = 'openstack-%s' % version
     server.clear()
     server.append('yum-config-manager --enable %(reponame)s' % locals())
-    # yum-config-manager returns 0 always, but returns current setup if succeeds
+    # yum-config-manager returns 0 always, but returns current setup
+    # if succeeds
     rc, out = server.execute()
     match = re.search('enabled\s*=\s*(1|True)', out)
     if not match:
@@ -467,14 +475,9 @@ def manage_rdo(host, config):
         raise exceptions.ScriptRuntimeError(msg)
 
 
-def initSequences(controller):
-    preparesteps = [
-             {'title': 'Preparing servers', 'functions':[serverprep]}
-    ]
-    controller.addSequence("Preparing servers", [], [], preparesteps)
+#-------------------------- step functions --------------------------
 
-
-def serverprep(config):
+def server_prep(config, messages):
     rh_username = None
     sat_url = None
     if is_rhel():
@@ -489,21 +492,22 @@ def serverprep(config):
             sat_flags = [i.strip() for i in flag_list if i.strip()]
             sat_proxy_user = config.get("CONFIG_SATELLITE_PROXY_USER", '')
             sat_proxy_pass = config.get("CONFIG_SATELLITE_PROXY_PW", '')
-            sat_args = {'username': config["CONFIG_SATELLITE_USER"].strip(),
-                        'password': config["CONFIG_SATELLITE_PW"].strip(),
-                        'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
-                        'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
-                        'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
-                        'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
-                        'proxy_user': sat_proxy_user.strip(),
-                        'proxy_pass': sat_proxy_pass.strip(),
-                        'flags': sat_flags}
+            sat_args = {
+                'username': config["CONFIG_SATELLITE_USER"].strip(),
+                'password': config["CONFIG_SATELLITE_PW"].strip(),
+                'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
+                'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
+                'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
+                'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
+                'proxy_user': sat_proxy_user.strip(),
+                'proxy_pass': sat_proxy_pass.strip(),
+                'flags': sat_flags
+            }
 
     for hostname in filtered_hosts(config):
         # Subscribe to Red Hat Repositories if configured
         if rh_username:
-            run_rhsm_reg(hostname, rh_username, rh_password,
-                         config["CONFIG_RH_BETA_REPO"] == 'y')
+            run_rhsm_reg(hostname, rh_username, rh_password)
 
         # Subscribe to RHN Satellite if configured
         if sat_url and hostname not in sat_registered:
@@ -524,8 +528,8 @@ def serverprep(config):
         server.clear()
         server.append('yum install -y yum-plugin-priorities || true')
         server.append('rpm -q epel-release && yum-config-manager '
-                        '--setopt="%(reponame)s.priority=1" '
-                        '--save %(reponame)s' % locals())
+                      '--setopt="%(reponame)s.priority=1" '
+                      '--save %(reponame)s' % locals())
 
         # Add yum repositories if configured
         CONFIG_REPO = config["CONFIG_REPO"].strip()
@@ -533,8 +537,8 @@ def serverprep(config):
             for i, repourl in enumerate(CONFIG_REPO.split(',')):
                 reponame = 'packstack_%d' % i
                 server.append('echo "[%(reponame)s]\nname=%(reponame)s\n'
-                                    'baseurl=%(repourl)s\nenabled=1\n'
-                                    'priority=1\ngpgcheck=0"'
+                              'baseurl=%(repourl)s\nenabled=1\n'
+                              'priority=1\ngpgcheck=0"'
                               ' > /etc/yum.repos.d/%(reponame)s.repo'
                               % locals())
 

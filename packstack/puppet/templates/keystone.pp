@@ -14,9 +14,9 @@ class {"keystone::roles::admin":
 }
 
 class {"keystone::endpoint":
-    public_address  => "%(CONFIG_KEYSTONE_HOST)s",
-    admin_address  => "%(CONFIG_KEYSTONE_HOST)s",
-    internal_address  => "%(CONFIG_KEYSTONE_HOST)s",
+    public_address  => "%(CONFIG_CONTROLLER_HOST)s",
+    admin_address  => "%(CONFIG_CONTROLLER_HOST)s",
+    internal_address  => "%(CONFIG_CONTROLLER_HOST)s",
 }
 
 # Run token flush every minute (without output so we won't spam admins)

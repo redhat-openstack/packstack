@@ -1,7 +1,7 @@
 
 # install all swift storage servers together
 class { 'swift::storage::all':
-  storage_local_net_ip => '%(CONFIG_SWIFT_STORAGE_CURRENT)s',
+  storage_local_net_ip => '%(CONFIG_CONTROLLER_HOST)s',
   allow_versions => true,
   require => Class['swift'],
 }
@@ -15,10 +15,8 @@ if(!defined(File['/srv/node'])) {
   }
 }
 
-swift::ringsync{["account","container","object"]:
-    ring_server => '%(CONFIG_SWIFT_BUILDER_HOST)s',
+swift::ringsync{ ["account", "container", "object"]:
+    ring_server => '%(CONFIG_CONTROLLER_HOST)s',
     before => Class['swift::storage::all'],
     require => Class['swift'],
 }
-
-

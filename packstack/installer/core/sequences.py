@@ -26,15 +26,16 @@ class Step(object):
                                 "Object %s is not callable." % function)
         self.function = function
 
-    def run(self, config=None):
-        config = config or {}
+    def run(self, config=None, messages=None):
+        config = config if config is not None else {}
+        messages = messages if messages is not None else []
         # TO-DO: complete logger name when logging will be setup correctly
         logger = logging.getLogger()
         logger.debug('Running step %s.' % self.name)
 
         # execute and report state
         try:
-            self.function(config)
+            self.function(config, messages)
         except Exception, ex:
             logger.debug(traceback.format_exc())
             state = utils.state_message(self.title, 'ERROR', 'red')
@@ -75,16 +76,17 @@ class Sequence(object):
         result = config.get(self.condition)
         return result == self.cond_match
 
-    def run(self, config=None, step=None):
+    def run(self, config=None, messages=None, step=None):
         """
         Runs sequence of steps. Runs only specific step if step's name
         is given via 'step' parameter.
         """
-        config = config or {}
+        config = config if config is not None else {}
+        messages = messages if messages is not None else []
         if not self.validate_condition(config):
             return
         if step:
-            self.steps[step].run(config=config)
+            self.steps[step].run(config=config, messages=messages)
             return
 
         logger = logging.getLogger()
@@ -93,4 +95,4 @@ class Sequence(object):
             sys.stdout.write('%s\n' % self.title)
             sys.stdout.flush()
         for step in self.steps.itervalues():
-            step.run(config=config)
+            step.run(config=config, messages=messages)

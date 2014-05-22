@@ -3,6 +3,7 @@
 """
 Installs and configures puppet
 """
+
 import sys
 import logging
 import os
@@ -17,62 +18,117 @@ from packstack.modules.common import filtered_hosts
 from packstack.modules.ospluginutils import manifestfiles
 from packstack.modules.puppet import scan_logfile, validate_logfile
 
-# Controller object will be initialized from main flow
-controller = None
 
-# Plugin name
-PLUGIN_NAME = "OSPUPPET"
+#------------------ oVirt installer initialization ------------------
+
+PLUGIN_NAME = "Puppet"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
-logging.debug("plugin %s loaded", __name__)
 
-PUPPET_DIR = os.environ.get('PACKSTACK_PUPPETDIR', '/usr/share/openstack-puppet/')
+PUPPET_DIR = os.environ.get('PACKSTACK_PUPPETDIR',
+                            '/usr/share/openstack-puppet/')
 MODULE_DIR = os.path.join(PUPPET_DIR, 'modules')
 
 
-def initConfig(controllerObject):
-    global controller
-    controller = controllerObject
-    logging.debug("Adding OpenStack Puppet configuration")
-    paramsList = [
-                 ]
-
-    groupDict = {"GROUP_NAME"            : "PUPPET",
-                 "DESCRIPTION"           : "Puppet Config parameters",
-                 "PRE_CONDITION"         : lambda x: 'yes',
-                 "PRE_CONDITION_MATCH"   : "yes",
-                 "POST_CONDITION"        : False,
-                 "POST_CONDITION_MATCH"  : True}
-
-    controller.addGroup(groupDict, paramsList)
+def initConfig(controller):
+    group = {"GROUP_NAME": "PUPPET",
+             "DESCRIPTION": "Puppet Config parameters",
+             "PRE_CONDITION": lambda x: 'yes',
+             "PRE_CONDITION_MATCH": "yes",
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True}
+    controller.addGroup(group, [])
 
 
 def initSequences(controller):
     puppetpresteps = [
-             {'title': 'Clean Up', 'functions':[runCleanup]},
+        {'title': 'Clean Up', 'functions': [run_cleanup]},
     ]
     controller.insertSequence("Clean Up", [], [], puppetpresteps, index=0)
 
     puppetsteps = [
         {'title': 'Installing Dependencies',
-            'functions': [installdeps]},
+            'functions': [install_deps]},
         {'title': 'Copying Puppet modules and manifests',
-            'functions': [copyPuppetModules]},
+            'functions': [copy_puppet_modules]},
         {'title': 'Applying Puppet manifests',
-            'functions': [applyPuppetManifest]},
+            'functions': [apply_puppet_manifest]},
         {'title': 'Finalizing',
             'functions': [finalize]}
     ]
     controller.addSequence("Puppet", [], [], puppetsteps)
 
 
-def runCleanup(config):
+#------------------------- helper functions -------------------------
+
+def wait_for_puppet(currently_running, messages):
+    log_len = 0
+    twirl = ["-", "\\", "|", "/"]
+    while currently_running:
+        for hostname, finished_logfile in currently_running:
+            log_file = os.path.splitext(os.path.basename(finished_logfile))[0]
+            space_len = basedefs.SPACE_LEN - len(log_file)
+            if len(log_file) > log_len:
+                log_len = len(log_file)
+            if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
+                twirl = twirl[-1:] + twirl[:-1]
+                sys.stdout.write(("\rTesting if puppet apply is finished: %s"
+                                 % log_file).ljust(40 + log_len))
+                sys.stdout.write("[ %s ]" % twirl[0])
+                sys.stdout.flush()
+            try:
+                # Once a remote puppet run has finished, we retrieve the log
+                # file and check it for errors
+                local_server = utils.ScriptRunner()
+                log = os.path.join(basedefs.PUPPET_MANIFEST_DIR,
+                                   os.path.basename(finished_logfile))
+                log = log.replace(".finished", ".log")
+                local_server.append('scp -o StrictHostKeyChecking=no '
+                                    '-o UserKnownHostsFile=/dev/null '
+                                    'root@%s:%s %s'
+                                    % (hostname, finished_logfile, log))
+                # To not pollute logs we turn of logging of command execution
+                local_server.execute(log=False)
+
+                # If we got to this point the puppet apply has finished
+                currently_running.remove((hostname, finished_logfile))
+
+                # clean off the last "testing apply" msg
+                if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
+                    sys.stdout.write(("\r").ljust(45 + log_len))
+
+            except ScriptRuntimeError:
+                # the test raises an exception if the file doesn't exist yet
+                # TO-DO: We need to start testing 'e' for unexpected exceptions
+                time.sleep(3)
+                continue
+
+            # check log file for relevant notices
+            messages.extend(scan_logfile(log))
+
+            # check the log file for errors
+            sys.stdout.write('\r')
+            try:
+                validate_logfile(log)
+                state = utils.state_message('%s:' % log_file, 'DONE', 'green')
+                sys.stdout.write('%s\n' % state)
+                sys.stdout.flush()
+            except PuppetError:
+                state = utils.state_message('%s:' % log_file, 'ERROR', 'red')
+                sys.stdout.write('%s\n' % state)
+                sys.stdout.flush()
+                raise
+
+
+#-------------------------- step functions --------------------------
+
+def run_cleanup(config, messages):
     localserver = utils.ScriptRunner()
     localserver.append("rm -rf %s/*pp" % basedefs.PUPPET_MANIFEST_DIR)
     localserver.execute()
 
 
-def installdeps(config):
+def install_deps(config, messages):
     deps = ["puppet", "openssh-clients", "tar", "nc"]
     modules_pkg = 'openstack-puppet-modules'
 
@@ -91,18 +147,19 @@ def installdeps(config):
     for hostname in filtered_hosts(config):
         server = utils.ScriptRunner(hostname)
         for package in deps:
-            server.append("rpm -q --whatprovides %s || yum install -y %s" % (package, package))
+            server.append("rpm -q --whatprovides %s || yum install -y %s"
+                          % (package, package))
         server.execute()
 
 
-def copyPuppetModules(config):
+def copy_puppet_modules(config, messages):
     os_modules = ' '.join(('apache', 'ceilometer', 'certmonger', 'cinder',
                            'concat', 'firewall', 'glance', 'heat', 'horizon',
                            'inifile', 'keystone', 'memcached', 'mongodb',
                            'mysql', 'neutron', 'nova', 'nssdb', 'openstack',
-                           'packstack', 'qpid', 'rabbitmq', 'rsync', 'ssh', 'stdlib',
-                           'swift', 'sysctl', 'tempest', 'vcsrepo', 'vlan',
-                           'vswitch', 'xinetd'))
+                           'packstack', 'qpid', 'rabbitmq', 'rsync', 'ssh',
+                           'stdlib', 'swift', 'sysctl', 'tempest', 'vcsrepo',
+                           'vlan', 'vswitch', 'xinetd'))
 
         # write puppet manifest to disk
     manifestfiles.writeManifests()
@@ -115,80 +172,29 @@ def copyPuppetModules(config):
         server.append("cd %s" % basedefs.PUPPET_MANIFEST_DIR)
         server.append("tar --dereference -cpzf - ../manifests | "
                       "ssh -o StrictHostKeyChecking=no "
-                          "-o UserKnownHostsFile=/dev/null "
-                          "root@%s tar -C %s -xpzf -" % (hostname, host_dir))
+                      "-o UserKnownHostsFile=/dev/null "
+                      "root@%s tar -C %s -xpzf -" % (hostname, host_dir))
 
         # copy resources
-        for path, localname in controller.resources.get(hostname, []):
+        resources = config.get('RESOURCES', {})
+        for path, localname in resources.get(hostname, []):
             server.append("scp -o StrictHostKeyChecking=no "
-                "-o UserKnownHostsFile=/dev/null %s root@%s:%s/resources/%s" %
-                (path, hostname, host_dir, localname))
+                          "-o UserKnownHostsFile=/dev/null "
+                          "%s root@%s:%s/resources/%s" %
+                          (path, hostname, host_dir, localname))
 
         # copy Puppet modules required by Packstack
         server.append("cd %s" % MODULE_DIR)
         server.append("tar --dereference -cpzf - %s | "
                       "ssh -o StrictHostKeyChecking=no "
-                          "-o UserKnownHostsFile=/dev/null "
-                          "root@%s tar -C %s -xpzf -" %
-                      (os_modules, hostname, os.path.join(host_dir, 'modules')))
+                      "-o UserKnownHostsFile=/dev/null "
+                      "root@%s tar -C %s -xpzf -" %
+                      (os_modules, hostname,
+                       os.path.join(host_dir, 'modules')))
     server.execute()
 
 
-def waitforpuppet(currently_running):
-    global controller
-    log_len = 0
-    twirl = ["-","\\","|","/"]
-    while currently_running:
-        for hostname, finished_logfile in currently_running:
-            log_file = os.path.splitext(os.path.basename(finished_logfile))[0]
-            if len(log_file) > log_len:
-                log_len = len(log_file)
-            if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
-                twirl = twirl[-1:] + twirl[:-1]
-                sys.stdout.write(("\rTesting if puppet apply is finished: %s" % log_file).ljust(40 + log_len))
-                sys.stdout.write("[ %s ]" % twirl[0])
-                sys.stdout.flush()
-            try:
-                # Once a remote puppet run has finished, we retrieve the log
-                # file and check it for errors
-                local_server = utils.ScriptRunner()
-                log = os.path.join(basedefs.PUPPET_MANIFEST_DIR,
-                                   os.path.basename(finished_logfile).replace(".finished", ".log"))
-                local_server.append('scp -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null root@%s:%s %s' % (hostname, finished_logfile, log))
-                # To not pollute logs we turn of logging of command execution
-                local_server.execute(log=False)
-
-                # If we got to this point the puppet apply has finished
-                currently_running.remove((hostname, finished_logfile))
-
-                # clean off the last "testing apply" msg
-                if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
-                    sys.stdout.write(('\r').ljust(45 + log_len))
-
-            except ScriptRuntimeError:
-                # the test raises an exception if the file doesn't exist yet
-                # TO-DO: We need to start testing 'e' for unexpected exceptions
-                time.sleep(3)
-                continue
-
-            # check log file for relevant notices
-            controller.MESSAGES.extend(scan_logfile(log))
-
-            # check the log file for errors
-            sys.stdout.write('\r')
-            try:
-                validate_logfile(log)
-                state = utils.state_message('%s:' % log_file, 'DONE', 'green')
-                sys.stdout.write('%s\n' % state)
-                sys.stdout.flush()
-            except PuppetError:
-                state = utils.state_message('%s:' % log_file, 'ERROR', 'red')
-                sys.stdout.write('%s\n' % state)
-                sys.stdout.flush()
-                raise
-
-
-def applyPuppetManifest(config):
+def apply_puppet_manifest(config, messages):
     if config.get("DRY_RUN"):
         return
     currently_running = []
@@ -201,8 +207,8 @@ def applyPuppetManifest(config):
     for manifest, marker in manifestfiles.getFiles():
         # if the marker has changed then we don't want to proceed until
         # all of the previous puppet runs have finished
-        if lastmarker != None and lastmarker != marker:
-            waitforpuppet(currently_running)
+        if lastmarker is not None and lastmarker != marker:
+            wait_for_puppet(currently_running, messages)
         lastmarker = marker
 
         for hostname in filtered_hosts(config):
@@ -220,22 +226,24 @@ def applyPuppetManifest(config):
             running_logfile = "%s.running" % man_path
             finished_logfile = "%s.finished" % man_path
             currently_running.append((hostname, finished_logfile))
-            # The apache puppet module doesn't work if we set FACTERLIB
-            # https://github.com/puppetlabs/puppetlabs-apache/pull/138
-            if not (manifest.endswith('_horizon.pp') or manifest.endswith('_nagios.pp')):
-                server.append("export FACTERLIB=$FACTERLIB:%s/facts" % host_dir)
+
             server.append("touch %s" % running_logfile)
             server.append("chmod 600 %s" % running_logfile)
             server.append("export PACKSTACK_VAR_DIR=%s" % host_dir)
-            command = "( flock %s/ps.lock puppet apply %s --modulepath %s/modules %s > %s 2>&1 < /dev/null ; mv %s %s ) > /dev/null 2>&1 < /dev/null &" % (host_dir, loglevel, host_dir, man_path, running_logfile, running_logfile, finished_logfile)
-            server.append(command)
+            cmd = ("( flock %s/ps.lock "
+                   "puppet apply %s --modulepath %s/modules %s > %s "
+                   "2>&1 < /dev/null ; "
+                   "mv %s %s ) > /dev/null 2>&1 < /dev/null &"
+                   % (host_dir, loglevel, host_dir, man_path, running_logfile,
+                      running_logfile, finished_logfile))
+            server.append(cmd)
             server.execute(log=logcmd)
 
     # wait for outstanding puppet runs befor exiting
-    waitforpuppet(currently_running)
+    wait_for_puppet(currently_running, messages)
 
 
-def finalize(config):
+def finalize(config, messages):
     for hostname in filtered_hosts(config):
         server = utils.ScriptRunner(hostname)
         server.append("installed=$(rpm -q kernel --last | head -n1 | "
@@ -245,5 +253,5 @@ def finalize(config):
         try:
             rc, out = server.execute()
         except ScriptRuntimeError:
-            controller.MESSAGES.append('Because of the kernel update the host '
-                                       '%s requires reboot.' % hostname)
+            messages.append('Because of the kernel update the host %s '
+                            'requires reboot.' % hostname)

@@ -15,7 +15,7 @@ class nagios_configs(){
     file_line{'allowed_hosts':
         path => '/etc/nagios/nrpe.cfg',
         match => 'allowed_hosts=',
-        line => 'allowed_hosts=%(CONFIG_NAGIOS_HOST)s',
+        line => 'allowed_hosts=%(CONFIG_CONTROLLER_HOST)s',
     }
 
     # 5 minute load average
@@ -41,5 +41,3 @@ service{'nrpe':
     enable => true,
     hasstatus => true,
 }
-
-

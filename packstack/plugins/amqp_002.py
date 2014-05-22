@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 """
 Installs and configures amqp
 """
@@ -11,214 +13,221 @@ from packstack.installer import basedefs
 from packstack.installer import utils
 
 from packstack.modules.common import filtered_hosts
-from packstack.modules.ospluginutils import gethostlist,\
-                                            getManifestTemplate,\
-                                            appendManifestFile
+from packstack.modules.ospluginutils import (getManifestTemplate,
+                                             appendManifestFile)
 
-# Controller object will be initialized from main flow
-controller = None
 
-# Plugin name
-PLUGIN_NAME = "OS-AMQP"
+#------------------ oVirt installer initialization ------------------
+
+PLUGIN_NAME = "AMQP"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
-logging.debug("plugin %s loaded", __name__)
 
-def initConfig(controllerObject):
-    global controller
-    controller = controllerObject
-    logging.debug("Adding OpenStack AMQP configuration")
-    paramsList = [
-                  {"CMD_OPTION"      : "amqp-server",
-                   "USAGE"           : "Set the server for the AMQP service",
-                   "PROMPT"          : "Set the server for the AMQP service (qpid, rabbitmq)? ",
-                   "OPTION_LIST"     : ["qpid", "rabbitmq"],
-                   "VALIDATORS"      : [validators.validate_options],
-                   "DEFAULT_VALUE"   : "rabbitmq",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_AMQP_SERVER",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "amqp-host",
-                   "USAGE"           : "The IP address of the server on which to install the AMQP service",
-                   "PROMPT"          : "Enter the IP address of the AMQP service",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_ssh],
-                   "DEFAULT_VALUE"   : utils.get_localhost_ip(),
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_AMQP_HOST",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "amqp-enable-ssl",
-                   "USAGE"           : "Enable SSL for the AMQP service",
-                   "PROMPT"          : "Enable SSL for the AMQP service?",
-                   "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validators.validate_options],
-                   "DEFAULT_VALUE"   : "n",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_AMQP_ENABLE_SSL",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "amqp-enable-auth",
-                   "USAGE"           : "Enable Authentication for the AMQP service",
-                   "PROMPT"          : "Enable Authentication for the AMQP service?",
-                   "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validators.validate_options],
-                   "DEFAULT_VALUE"   : "n",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": False,
-                   "CONF_NAME"       : "CONFIG_AMQP_ENABLE_AUTH",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  ]
+def initConfig(controller):
+    params = [
+        {"CMD_OPTION": "amqp-backend",
+         "USAGE": ("Set the AMQP service backend. Allowed values are: "
+                   "qpid, rabbitmq"),
+         "PROMPT": "Set the AMQP service backend",
+         "OPTION_LIST": ["qpid", "rabbitmq"],
+         "VALIDATORS": [validators.validate_options],
+         "DEFAULT_VALUE": "rabbitmq",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME": "CONFIG_AMQP_BACKEND",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
 
+        {"CMD_OPTION": "amqp-host",
+         "USAGE": ("The IP address of the server on which to install the "
+                   "AMQP service"),
+         "PROMPT": "Enter the IP address of the AMQP service",
+         "OPTION_LIST": [],
+         "VALIDATORS": [validators.validate_ssh],
+         "DEFAULT_VALUE": utils.get_localhost_ip(),
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_HOST",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
 
-    groupDict = { "GROUP_NAME"            : "AMQPLANCE",
-                  "DESCRIPTION"           : "AMQP Config parameters",
-                  "PRE_CONDITION"         : False,
-                  "PRE_CONDITION_MATCH"   : True,
-                  "POST_CONDITION"        : False,
-                  "POST_CONDITION_MATCH"  : True}
+        {"CMD_OPTION": "amqp-enable-ssl",
+         "USAGE": "Enable SSL for the AMQP service",
+         "PROMPT": "Enable SSL for the AMQP service?",
+         "OPTION_LIST": ["y", "n"],
+         "VALIDATORS": [validators.validate_options],
+         "DEFAULT_VALUE": "n",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME": "CONFIG_AMQP_ENABLE_SSL",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
 
-    controller.addGroup(groupDict, paramsList)
+        {"CMD_OPTION": "amqp-enable-auth",
+         "USAGE": "Enable Authentication for the AMQP service",
+         "PROMPT": "Enable Authentication for the AMQP service?",
+         "OPTION_LIST": ["y", "n"],
+         "VALIDATORS": [validators.validate_options],
+         "DEFAULT_VALUE": "n",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME": "CONFIG_AMQP_ENABLE_AUTH",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
+    ]
+    group = {"GROUP_NAME": "AMQP",
+             "DESCRIPTION": "AMQP Config parameters",
+             "PRE_CONDITION": False,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True}
+    controller.addGroup(group, params)
 
-    paramsList = [
-                  {"CMD_OPTION"      : "amqp-nss-certdb-pw",
-                   "USAGE"           : "The password for the NSS certificate database of the AMQP service",
-                   "PROMPT"          : "Enter the password for NSS certificate database",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:32],
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_AMQP_NSS_CERTDB_PW",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "amqp-ssl-port",
-                   "USAGE"           : "The port in which the AMQP service listens to SSL connections",
-                   "PROMPT"          : "Enter the SSL port for the AMQP service",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "5671",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_AMQP_SSL_PORT",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "amqp-ssl-cert-file",
-                   "USAGE"           : "The filename of the certificate that the AMQP service is going to use",
-                   "PROMPT"          : "Enter the filename of the SSL certificate for the AMQP service",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "/etc/pki/tls/certs/amqp_selfcert.pem",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_AMQP_SSL_CERT_FILE",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "amqp-ssl-key-file",
-                   "USAGE"           : "The filename of the private key that the AMQP service is going to use",
-                   "PROMPT"          : "Enter the private key filename",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "/etc/pki/tls/private/amqp_selfkey.pem",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_AMQP_SSL_KEY_FILE",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "amqp-ssl-self-signed",
-                   "USAGE"           : "Auto Generates self signed SSL certificate and key",
-                   "PROMPT"          : "Generate Self Signed SSL Certificate",
-                   "OPTION_LIST"     : ["y","n"],
-                   "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "y",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_AMQP_SSL_SELF_SIGNED",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                 ]
+    params = [
+        {"CMD_OPTION": "amqp-nss-certdb-pw",
+         "USAGE": ("The password for the NSS certificate database of the AMQP "
+                   "service"),
+         "PROMPT": "Enter the password for NSS certificate database",
+         "OPTION_LIST": [],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": uuid.uuid4().hex[:32],
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_NSS_CERTDB_PW",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
 
-    groupDict = { "GROUP_NAME"            : "AMQPSSL",
-                  "DESCRIPTION"           : "AMQP Config SSL parameters",
-                  "PRE_CONDITION"         : "CONFIG_AMQP_ENABLE_SSL",
-                  "PRE_CONDITION_MATCH"   : "y",
-                  "POST_CONDITION"        : False,
-                  "POST_CONDITION_MATCH"  : True}
+        {"CMD_OPTION": "amqp-ssl-port",
+         "USAGE": ("The port in which the AMQP service listens to SSL "
+                   "connections"),
+         "PROMPT": "Enter the SSL port for the AMQP service",
+         "OPTION_LIST": [],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": "5671",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_SSL_PORT",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
 
-    controller.addGroup(groupDict, paramsList)
+        {"CMD_OPTION": "amqp-ssl-cert-file",
+         "USAGE": ("The filename of the certificate that the AMQP service "
+                   "is going to use"),
+         "PROMPT": ("Enter the filename of the SSL certificate for the AMQP "
+                    "service"),
+         "OPTION_LIST": [],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": "/etc/pki/tls/certs/amqp_selfcert.pem",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_SSL_CERT_FILE",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
 
-    paramsList = [
-                  {"CMD_OPTION"      : "amqp-auth-user",
-                   "USAGE"           : "User for amqp authentication",
-                   "PROMPT"          : "Enter the user for amqp authentication",
-                   "OPTION_LIST"     : [],
-                   "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : "amqp_user",
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_AMQP_AUTH_USER",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
-                  {"CMD_OPTION"      : "amqp-auth-password",
-                   "USAGE"           : "Password for user authentication",
-                   "PROMPT"          : "Enter the password for user authentication",
-                   "OPTION_LIST"     : ["y", "n"],
-                   "VALIDATORS"      : [validators.validate_not_empty],
-                   "DEFAULT_VALUE"   : uuid.uuid4().hex[:16],
-                   "MASK_INPUT"      : False,
-                   "LOOSE_VALIDATION": True,
-                   "CONF_NAME"       : "CONFIG_AMQP_AUTH_PASSWORD",
-                   "USE_DEFAULT"     : False,
-                   "NEED_CONFIRM"    : False,
-                   "CONDITION"       : False },
+        {"CMD_OPTION": "amqp-ssl-key-file",
+         "USAGE": ("The filename of the private key that the AMQP service "
+                   "is going to use"),
+         "PROMPT": "Enter the private key filename",
+         "OPTION_LIST": [],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": "/etc/pki/tls/private/amqp_selfkey.pem",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_SSL_KEY_FILE",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
 
-                  ]
+        {"CMD_OPTION": "amqp-ssl-self-signed",
+         "USAGE": "Auto Generates self signed SSL certificate and key",
+         "PROMPT": "Generate Self Signed SSL Certificate",
+         "OPTION_LIST": ["y", "n"],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": "y",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_SSL_SELF_SIGNED",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
+    ]
+    group = {"GROUP_NAME": "AMQPSSL",
+             "DESCRIPTION": "AMQP Config SSL parameters",
+             "PRE_CONDITION": "CONFIG_AMQP_ENABLE_SSL",
+             "PRE_CONDITION_MATCH": "y",
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True}
+    controller.addGroup(group, params)
 
-    groupDict = { "GROUP_NAME"            : "AMQPAUTH",
-                  "DESCRIPTION"           : "AMQP Config Athentication parameters",
-                  "PRE_CONDITION"         : "CONFIG_AMQP_ENABLE_AUTH",
-                  "PRE_CONDITION_MATCH"   : "y",
-                  "POST_CONDITION"        : False,
-                  "POST_CONDITION_MATCH"  : True}
+    params = [
+        {"CMD_OPTION": "amqp-auth-user",
+         "USAGE": "User for amqp authentication",
+         "PROMPT": "Enter the user for amqp authentication",
+         "OPTION_LIST": [],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": "amqp_user",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_AUTH_USER",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
 
+        {"CMD_OPTION": "amqp-auth-password",
+         "USAGE": "Password for user authentication",
+         "PROMPT": "Enter the password for user authentication",
+         "OPTION_LIST": ["y", "n"],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_AUTH_PASSWORD",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
+    ]
+    group = {"GROUP_NAME": "AMQPAUTH",
+             "DESCRIPTION": "AMQP Config Athentication parameters",
+             "PRE_CONDITION": "CONFIG_AMQP_ENABLE_AUTH",
+             "PRE_CONDITION_MATCH": "y",
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True}
+    controller.addGroup(group, params)
 
-    controller.addGroup(groupDict, paramsList)
 
 def initSequences(controller):
     amqpsteps = [
-             {'title': 'Adding AMQP manifest entries', 'functions':[createmanifest]}
+        {'title': 'Adding AMQP manifest entries',
+         'functions': [create_manifest]}
     ]
     controller.addSequence("Installing AMQP", [], [], amqpsteps)
 
-def createmanifest(config):
-    manifestfile = "%s_amqp.pp"%config['CONFIG_AMQP_HOST']
-    manifestdata = ""
+
+#-------------------------- step functions --------------------------
+
+def create_manifest(config, messages):
     server = utils.ScriptRunner(config['CONFIG_AMQP_HOST'])
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         config['CONFIG_AMQP_ENABLE_SSL'] = 'true'
         config['CONFIG_AMQP_PROTOCOL'] = 'ssl'
         config['CONFIG_AMQP_CLIENTS_PORT'] = "5671"
         if config['CONFIG_AMQP_SSL_SELF_SIGNED'] == 'y':
-            server.append( "openssl req -batch -new -x509 -nodes -keyout %s -out %s -days 1095"
-                % (config['CONFIG_AMQP_SSL_KEY_FILE'], config['CONFIG_AMQP_SSL_CERT_FILE']) )
+            server.append(
+                "openssl req -batch -new -x509 -nodes -keyout %s "
+                "-out %s -days 1095"
+                % (config['CONFIG_AMQP_SSL_KEY_FILE'],
+                   config['CONFIG_AMQP_SSL_CERT_FILE'])
+            )
             server.execute()
     else:
-    #Set default values
+        # Set default values
         config['CONFIG_AMQP_CLIENTS_PORT'] = "5672"
         config['CONFIG_AMQP_SSL_PORT'] = "5671"
         config['CONFIG_AMQP_SSL_CERT_FILE'] = ""
@@ -231,11 +240,12 @@ def createmanifest(config):
         config['CONFIG_AMQP_AUTH_PASSWORD'] = 'guest'
         config['CONFIG_AMQP_AUTH_USER'] = 'guest'
 
+    manifestfile = "%s_amqp.pp" % config['CONFIG_AMQP_HOST']
     manifestdata = getManifestTemplate('amqp.pp')
 
-    #All hosts should be able to talk to amqp
+    # All hosts should be able to talk to amqp
     config['FIREWALL_SERVICE_NAME'] = "amqp"
-    config['FIREWALL_PORTS'] =  "'5671', '5672'"
+    config['FIREWALL_PORTS'] = "'5671', '5672'"
     config['FIREWALL_CHAIN'] = "INPUT"
     for host in filtered_hosts(config, exclude=False):
         config['FIREWALL_ALLOWED'] = "'%s'" % host

@@ -35,22 +35,6 @@ class Controller(object):
             self.__single = object.__new__(self, *args, **kwargs)
         return self.__single
 
-    def __init__(self):
-        # Resources that should be copied to each host along with the puppet
-        # files, on the remote host the file will be placed in
-        # $PACKSTACK_VAR_DIR/resources. This controller should copy the files,
-        # for now the puppet plugin is doing it format
-        # {'host':[('/path/to/fileordirectory', 'filenameonremotehost'), ..]}
-        self.resources = {}
-
-
-    def addResource(self, host, localpath, remotename):
-        """ Populates self.resources """
-        current_value_for_host = self.resources.get(host, [])
-        current_value_for_host.append((localpath,remotename))
-        self.resources[host] = current_value_for_host
-
-
     # PLugins
     def addPlugin(self, plugObj):
         self.__PLUGINS.append(plugObj)
@@ -81,7 +65,7 @@ class Controller(object):
 
     def runAllSequences(self):
         for sequence in self.__SEQUENCES:
-            sequence.run(self.CONF)
+            sequence.run(config=self.CONF, messages=self.MESSAGES)
 
     def getSequenceByDesc(self, desc):
         for sequence in self.getAllSequences():

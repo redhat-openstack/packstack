@@ -1,4 +1,4 @@
-$amqp = '%(CONFIG_AMQP_SERVER)s'
+$amqp = '%(CONFIG_AMQP_BACKEND)s'
 case $amqp  {
   'qpid': {
     enable_qpid {"qpid":

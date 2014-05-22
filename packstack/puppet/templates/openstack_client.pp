@@ -8,7 +8,7 @@ package { $clientlibs: }
 $rcadmin_content = "export OS_USERNAME=admin
 export OS_TENANT_NAME=admin
 export OS_PASSWORD=%(CONFIG_KEYSTONE_ADMIN_PW)s
-export OS_AUTH_URL=http://%(CONFIG_KEYSTONE_HOST)s:5000/v2.0/
+export OS_AUTH_URL=http://%(CONFIG_CONTROLLER_HOST)s:5000/v2.0/
 export PS1='[\\u@\\h \\W(keystone_admin)]\\$ '
 "
 
@@ -25,7 +25,7 @@ if '%(CONFIG_PROVISION_DEMO)s' == 'y' {
       content => "export OS_USERNAME=demo
 export OS_TENANT_NAME=demo
 export OS_PASSWORD=%(CONFIG_KEYSTONE_DEMO_PW)s
-export OS_AUTH_URL=http://%(CONFIG_KEYSTONE_HOST)s:5000/v2.0/
+export OS_AUTH_URL=http://%(CONFIG_CONTROLLER_HOST)s:5000/v2.0/
 export PS1='[\\u@\\h \\W(keystone_demo)]\\$ '
 ",
    }

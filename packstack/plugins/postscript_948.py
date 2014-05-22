@@ -1,50 +1,52 @@
+# -*- coding: utf-8 -*-
+
 """
 Installs and configures an OpenStack Client
 """
 
 import logging
 
+from packstack.installer import utils
+
 from packstack.modules.common import filtered_hosts
 from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
 
-# Controller object will be initialized from main flow
-controller = None
 
-# Plugin name
-PLUGIN_NAME = "OS-POSTSCRIPT"
+#------------------ oVirt installer initialization ------------------
 
-logging.debug("plugin %s loaded", __name__)
-
-def initConfig(controllerObject):
-    global controller
-    controller = controllerObject
-    logging.debug("Executing post run scripts")
+PLUGIN_NAME = "Postscript"
+PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 
-    groupDict = {"GROUP_NAME"            : "POSTSCRIPT",
-                 "DESCRIPTION"           : "POSTSCRIPT Config parameters",
-                 "PRE_CONDITION"         : lambda x: 'yes',
-                 "PRE_CONDITION_MATCH"   : "yes",
-                 "POST_CONDITION"        : False,
-                 "POST_CONDITION_MATCH"  : True}
-
-    controller.addGroup(groupDict, [])
+def initConfig(controller):
+    group = {"GROUP_NAME": "POSTSCRIPT",
+             "DESCRIPTION": "POSTSCRIPT Config parameters",
+             "PRE_CONDITION": lambda x: 'yes',
+             "PRE_CONDITION_MATCH": "yes",
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True}
+    controller.addGroup(group, [])
 
 
 def initSequences(controller):
-    osclientsteps = [
-             {'title': 'Adding post install manifest entries', 'functions':[createmanifest]}
+    postscript_steps = [
+        {'title': 'Adding post install manifest entries',
+         'functions': [create_manifest]}
     ]
-    controller.addSequence("Running post install scripts", [], [], osclientsteps)
+    controller.addSequence("Running post install scripts", [], [],
+                           postscript_steps)
 
 
-def createmanifest(config):
+#-------------------------- step functions --------------------------
+
+def create_manifest(config, messages):
     for hostname in filtered_hosts(config):
         manifestfile = "%s_postscript.pp" % hostname
         manifestdata = getManifestTemplate("postscript.pp")
         appendManifestFile(manifestfile, manifestdata, 'postscript')
         if config.get("CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE") != 'n':
-            config['EXT_BRIDGE_VAR'] = config['CONFIG_NEUTRON_L3_EXT_BRIDGE'].replace('-','_')
+            fmted = config['CONFIG_NEUTRON_L3_EXT_BRIDGE'].replace('-', '_')
+            config['EXT_BRIDGE_VAR'] = fmted
             manifestdata = getManifestTemplate("persist_ovs_bridge.pp")
             appendManifestFile(manifestfile, manifestdata, 'postscript')

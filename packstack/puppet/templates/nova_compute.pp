@@ -26,7 +26,7 @@ nova_config{
 
 class {"nova::compute":
     enabled => true,
-    vncproxy_host => "%(CONFIG_NOVA_VNCPROXY_HOST)s",
+    vncproxy_host => "%(CONFIG_CONTROLLER_HOST)s",
     vncserver_proxyclient_address => "%(CONFIG_NOVA_COMPUTE_HOST)s",
 }
 
