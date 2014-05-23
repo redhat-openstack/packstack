@@ -11,6 +11,7 @@ Installation
 $ yum install -y git
 $ git clone --recursive git://github.com/stackforge/packstack.git
 $ cd packstack
+$ python setup.py install_puppet_modules
 
 Option 1 (using answer file)
 $ ./bin/packstack --gen-answer-file=ans.txt
