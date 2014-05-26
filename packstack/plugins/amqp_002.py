@@ -37,7 +37,8 @@ def initConfig(controller):
          "CONF_NAME": "CONFIG_AMQP_BACKEND",
          "USE_DEFAULT": False,
          "NEED_CONFIRM": False,
-         "CONDITION": False},
+         "CONDITION": False,
+         "DEPRECATES": ['CONFIG_AMQP_SERVER']},
 
         {"CMD_OPTION": "amqp-host",
          "USAGE": ("The IP address of the server on which to install the "

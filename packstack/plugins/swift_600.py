@@ -58,7 +58,8 @@ def initConfig(controller):
          "CONF_NAME": "CONFIG_SWIFT_STORAGES",
          "USE_DEFAULT": False,
          "NEED_CONFIRM": False,
-         "CONDITION": False},
+         "CONDITION": False,
+         "DEPRECATES": ['CONFIG_SWIFT_STORAGE_HOSTS']},
 
         {"CMD_OPTION": "os-swift-storage-zones",
          "USAGE": ("Number of swift storage zones, this number MUST be "

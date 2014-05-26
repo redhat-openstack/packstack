@@ -310,22 +310,53 @@ def _handleGroupCondition(config, conditionName, conditionValue):
     return conditionValue
 
 
-def _loadParamFromFile(config, section, paramName):
+def _loadParamFromFile(config, section, param_name):
     """
     read param from file
     validate it
     and load to to global conf dict
     """
 
-    # Get paramName from answer file
+    param = controller.getParamByName(param_name)
+
+    # Get value from answer file
     try:
-        value = config.get(section, paramName)
+        value = config.get(section, param_name)
     except ConfigParser.NoOptionError:
-        raise KeyError('Parser cannot find option %s in '
-                       'answer file.' % paramName)
+        value = None
+        # Check for deprecated parameters
+        deprecated = param.DEPRECATES if param.DEPRECATES is not None else []
+        for old_name in deprecated:
+            try:
+                val = config.get(section, old_name)
+            except ConfigParser.NoOptionError:
+                continue
+            if not val:
+                # value is empty string
+                continue
+            if value is None:
+                value = val
+            if value != val:
+                raise ValueError('Parameter %(param_name)s deprecates '
+                                 'following parameters:\n%(deprecated)s.\n'
+                                 'Please either use parameter %(param_name)s '
+                                 'or use same value for all deprecated '
+                                 'parameters.' % locals())
+        if deprecated and value is not None:
+            controller.MESSAGES.append('Deprecated parameter has been used '
+                                       'in answer file. Please use parameter '
+                                       '%(param_name)s next time. This '
+                                       'parameter deprecates following '
+                                       'parameters: %(deprecated)s.'
+                                       % locals())
+        if value is None:
+            # Let's use default value if we have one
+            value = getattr(param, 'DEFAULT_VALUE', None)
+        if value is None:
+            raise KeyError('Parser cannot find option %s in answer file.'
+                           % param_name)
 
     # Validate param value using its validation func
-    param = controller.getParamByName(paramName)
     value = process_param_value(param, value)
     validate_param_value(param, value)
 

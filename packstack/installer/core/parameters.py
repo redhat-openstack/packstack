@@ -11,7 +11,7 @@ class Parameter(object):
     allowed_keys = ('CONF_NAME', 'CMD_OPTION', 'USAGE', 'PROMPT',
                     'PROCESSORS', 'VALIDATORS', 'LOOSE_VALIDATION',
                     'DEFAULT_VALUE', 'USE_DEFAULT', 'OPTION_LIST',
-                    'MASK_INPUT', 'NEED_CONFIRM','CONDITION')
+                    'MASK_INPUT', 'NEED_CONFIRM', 'CONDITION', 'DEPRECATES')
 
     def __init__(self, attributes=None):
         attributes = attributes or {}
