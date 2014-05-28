@@ -77,7 +77,7 @@ def initConfig(controller):
                         "with Neutron"),
              "OPTION_LIST": ["linuxbridge", "openvswitch", "ml2"],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "openvswitch",
+             "DEFAULT_VALUE": "ml2",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_NEUTRON_L2_PLUGIN",
@@ -172,7 +172,7 @@ def initConfig(controller):
                         "networks"),
              "OPTION_LIST": ["local", "vlan", "gre", "vxlan"],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "local",
+             "DEFAULT_VALUE": "vxlan",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE",
@@ -293,7 +293,7 @@ def initConfig(controller):
                         "entrypoints"),
              "OPTION_LIST": ["local", "flat", "vlan", "gre", "vxlan"],
              "VALIDATORS": [validators.validate_multi_options],
-             "DEFAULT_VALUE": "local",
+             "DEFAULT_VALUE": "vxlan",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,
@@ -310,7 +310,7 @@ def initConfig(controller):
                         "network_types to allocate as tenant networks"),
              "OPTION_LIST": ["local", "vlan", "gre", "vxlan"],
              "VALIDATORS": [validators.validate_multi_options],
-             "DEFAULT_VALUE": "local",
+             "DEFAULT_VALUE": "vxlan",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,
@@ -417,7 +417,7 @@ def initConfig(controller):
                         "available for tenant network allocation"),
              "OPTION_LIST": [],
              "VALIDATORS": [],
-             "DEFAULT_VALUE": "",
+             "DEFAULT_VALUE": "10:100",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,
@@ -729,7 +729,7 @@ def create_l3_manifests(config, messages):
         ext_bridge = config['CONFIG_NEUTRON_L3_EXT_BRIDGE']
         mapping = find_mapping(config['CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'],
                                ext_bridge) if ext_bridge else None
-        if config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch' and not mapping:
+        if config['CONFIG_NEUTRON_L2_AGENT'] == 'openvswitch' and not mapping:
             config['CONFIG_NEUTRON_OVS_BRIDGE'] = ext_bridge
             manifestdata = getManifestTemplate('neutron_ovs_bridge.pp')
             appendManifestFile(manifestfile, manifestdata + '\n')
