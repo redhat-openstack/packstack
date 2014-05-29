@@ -28,7 +28,7 @@ class packstack::innodb (
 
   if $clean {
     exec { 'clean_innodb_logs':
-      path    => ['/usr/bin', '/bin', '/usr/sbin'],
+      path    => ['/usr/bin', '/bin', '/usr/sbin', '/sbin'],
       command => "service mysqld stop && rm -f /var/lib/mysql/ib_logfile?",
       onlyif  => "ls  /var/lib/mysql/ib_logfile?",
       notify  => Service['mysqld'],
