@@ -18,3 +18,11 @@ if $::operatingsystem in $el_releases and $::operatingsystemrelease < 7 {
     warning => "${info}${warning}"
   }
 }
+
+# Stop firewalld since everything uses iptables
+# for now
+
+service { "firewalld":
+  ensure => "stopped",
+  enable => false,
+}
