@@ -17,8 +17,8 @@ nova_config{
 # We need to preferably install qemu-kvm-rhev
 exec { 'qemu-kvm':
     path => '/usr/bin',
-    command => 'yum install -y qemu-kvm',
-    onlyif => 'yum install -y qemu-kvm-rhev && exit 1 || exit 0',
+    command => 'yum install -y -d 0 -e 0 qemu-kvm',
+    onlyif => 'yum install -y -d 0 -e 0 qemu-kvm-rhev &> /dev/null && exit 1 || exit 0',
     before => Class['nova::compute::libvirt']
 }
 
