@@ -40,7 +40,6 @@ help:
 
 clean:
 	-rm -rf $(BUILDDIR)/*
-	-rm -rf general_options.rst
 
 html:
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html

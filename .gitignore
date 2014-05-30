@@ -3,5 +3,3 @@
 *.log
 .tox
 packstack.egg-info
-docs/_build/*
-docs/general_options.rst
