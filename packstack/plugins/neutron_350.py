@@ -111,6 +111,20 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-metering-agent-install",
+             "USAGE": ("Set to 'y' if you would like Packstack to install "
+                       "Neutron L3 Metering agent"),
+             "PROMPT": ("Should Packstack install Neutron L3 Metering agent"),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_NEUTRON_METERING_AGENT_INSTALL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "NEUTRON_LB_PLUGIN": [
@@ -562,6 +576,8 @@ def initSequences(controller):
          'functions': [create_dhcp_manifests]},
         {'title': 'Adding Neutron LBaaS Agent manifest entries',
          'functions': [create_lbaas_manifests]},
+        {'title': 'Adding Neutron Metering Agent manifest entries',
+         'functions': [create_metering_agent_manifests]},
         {'title': 'Adding Neutron Metadata Agent manifest entries',
          'functions': [create_metadata_manifests]},
     ]
@@ -686,6 +702,10 @@ def create_manifests(config, messages):
         # ML2 uses the L3 Router service plugin to implement l3 agent
         service_plugins.append(
             'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
+        )
+    if config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
+        service_plugins.append(
+            'neutron.services.metering.metering_plugin.MeteringPlugin'
         )
     config['SERVICE_PLUGINS'] = (str(service_plugins) if service_plugins
                                  else 'undef')
@@ -813,6 +833,19 @@ def create_lbaas_manifests(config, messages):
     for host in api_hosts:
         config['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = get_if_driver(config)
         manifestdata = getManifestTemplate("neutron_lbaas.pp")
+        manifestfile = "%s_neutron.pp" % (host,)
+        appendManifestFile(manifestfile, manifestdata + "\n")
+
+
+def create_metering_agent_manifests(config, messages):
+    global api_hosts
+
+    if not config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
+        return
+
+    for host in api_hosts:
+        config['CONFIG_NEUTRON_METERING_IFCE_DRIVER'] = get_if_driver(config)
+        manifestdata = getManifestTemplate("neutron_metering_agent.pp")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + "\n")
 
