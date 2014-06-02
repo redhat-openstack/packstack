@@ -1,5 +1,13 @@
-package{['nagios', 'nagios-plugins-nrpe', 'nagios-plugins-ping']:
+package{['nagios', 'nagios-plugins-nrpe']:
     ensure => present,
+    before => Class['nagios_configs']
+}
+
+# We need to preferably install nagios-plugins-ping
+exec { 'nagios-plugins-ping':
+    path => '/usr/bin',
+    command => 'yum install -y -d 0 -e 0 monitoring-plugins-ping',
+    onlyif => 'yum install -y -d 0 -e 0 nagios-plugins-ping &> /dev/null && exit 1 || exit 0',
     before => Class['nagios_configs']
 }
 
