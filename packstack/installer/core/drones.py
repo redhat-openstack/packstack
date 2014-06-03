@@ -360,7 +360,7 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
             local.execute(log=False)
             # if we got to this point the puppet apply has finished
             return True
-        except utils.ScriptRuntimeError, e:
+        except utils.ScriptRuntimeError as e:
             # the test raises an exception if the file doesn't exist yet
             return False
 

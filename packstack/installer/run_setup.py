@@ -282,7 +282,7 @@ def process_param_value(param, value):
             else:
                 logging.debug("Processor returned the original "
                               "value: %s" % _value)
-        except processors.ParamProcessingError, ex:
+        except processors.ParamProcessingError as ex:
             print ("Value processing of parameter %s "
                    "failed.\n%s" % (param.CONF_NAME, ex))
             raise
@@ -628,7 +628,7 @@ def remove_remote_var_dirs():
         server.append('rm -rf %s' % host_dir)
         try:
             server.execute()
-        except Exception, e:
+        except Exception as e:
             msg = output_messages.ERR_REMOVE_REMOTE_VAR % (host_dir, host)
             logging.error(msg)
             logging.exception(e)
@@ -914,7 +914,7 @@ def main():
                 _set_command_line_values(options)
             _main(confFile)
 
-    except FlagValidationError, ex:
+    except FlagValidationError as ex:
         optParser.error(str(ex))
     except Exception as e:
         logging.error(traceback.format_exc())

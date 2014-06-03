@@ -61,7 +61,7 @@ def host2ip(hostname, allow_localhost=False):
         return get_localhost_ip()
     except socket.error:
         raise NetworkError('Unknown hostname %s.' % hostname)
-    except Exception, ex:
+    except Exception as ex:
         raise NetworkError('Unknown error appeared: %s' % repr(ex))
 
 
