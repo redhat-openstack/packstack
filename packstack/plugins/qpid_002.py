@@ -217,7 +217,7 @@ def createmanifest(config):
             server.execute()
         ssl_manifestdata = getManifestTemplate('qpid_ssl.pp')
     else:
-        #Set default values 
+        #Set default values
         config['CONFIG_QPID_CLIENTS_PORT'] = "5672"
         config['CONFIG_QPID_SSL_PORT'] = "5671"
         config['CONFIG_QPID_SSL_CERT_FILE'] = ""
@@ -237,8 +237,9 @@ def createmanifest(config):
 
     #All hosts should be able to talk to qpid
     config['FIREWALL_SERVICE_NAME'] = "qpid"
-    config['FIREWALL_PORTS'] =  "'5671', '5672'"
+    config['FIREWALL_PORTS'] =  "['5671', '5672']"
     config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
     for host in filtered_hosts(config, exclude=False):
         config['FIREWALL_ALLOWED'] = "'%s'" % host
         config['FIREWALL_SERVICE_ID'] = "qpid_%s" % host

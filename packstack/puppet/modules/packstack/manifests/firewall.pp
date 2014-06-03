@@ -2,7 +2,7 @@
 # hosts that need to connect via FIREWALL_PORTS
 # using FIREWALL_CHAIN
 
-define packstack::firewall($host, $service_name, $chain = "INPUT", $ports) {
+define packstack::firewall($host, $service_name, $chain = "INPUT", $ports = undef, $proto = 'tcp') {
   $source = $host ? {
     'ALL' => '0.0.0.0/0',
     default => $host,
@@ -14,10 +14,9 @@ define packstack::firewall($host, $service_name, $chain = "INPUT", $ports) {
 
   firewall { "001 ${service_name} ${heading} ${title}":
     chain => $chain,
-    proto  => ['tcp', 'udp'],
+    proto  => $proto,
     dport  => $ports,
     action => 'accept',
     source => $source,
   }
 }
-

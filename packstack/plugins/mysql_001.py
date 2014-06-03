@@ -130,6 +130,7 @@ def createmanifest(config):
     config['FIREWALL_SERVICE_NAME'] = "mysql"
     config['FIREWALL_PORTS'] = "'3306'"
     config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
     for host in hosts:
         config['FIREWALL_ALLOWED'] = "'%s'" % host
         config['FIREWALL_SERVICE_ID'] = "mysql_%s" % host

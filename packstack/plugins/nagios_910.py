@@ -179,6 +179,7 @@ def createnrpemanifests(config):
         config['FIREWALL_SERVICE_ID'] = "nagios_nrpe"
         config['FIREWALL_PORTS'] = '5666'
         config['FIREWALL_CHAIN'] = "INPUT"
+        config['FIREWALL_PROTOCOL'] = 'tcp'
         manifestdata += getManifestTemplate("firewall.pp")
         appendManifestFile(manifestfile, manifestdata)
 
