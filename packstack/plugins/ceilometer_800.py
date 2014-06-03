@@ -115,6 +115,7 @@ def create_manifest(config, messages):
     config['FIREWALL_SERVICE_ID'] = 'ceilometer_api'
     config['FIREWALL_PORTS'] = "'8777'"
     config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
     manifestdata += getManifestTemplate("firewall.pp")
     # Add a template that creates a group for nova because the ceilometer
     # class needs it
@@ -129,6 +130,7 @@ def create_mongodb_manifest(config, messages):
     config['FIREWALL_ALLOWED'] = "'%s'" % config['CONFIG_CONTROLLER_HOST']
     config['FIREWALL_SERVICE_NAME'] = 'mongodb-server'
     config['FIREWALL_PORTS'] = "'27017'"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
     manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata, 'pre')
 

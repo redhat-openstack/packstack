@@ -295,9 +295,9 @@ def create_storage_manifest(config, messages):
         hosts |= split_hosts(config['CONFIG_COMPUTE_HOSTS'])
 
     config['FIREWALL_SERVICE_NAME'] = "swift storage and rsync"
-    config['FIREWALL_PORTS'] = "'6000', '6001', '6002', '873'"
+    config['FIREWALL_PORTS'] = "['6000', '6001', '6002', '873']"
     config['FIREWALL_CHAIN'] = "INPUT"
-
+    config['FIREWALL_PROTOCOL'] = 'tcp'
     for host in hosts:
         config['FIREWALL_ALLOWED'] = "'%s'" % host
         config['FIREWALL_SERVICE_ID'] = "swift_storage_and_rsync_%s" % host

@@ -246,8 +246,9 @@ def create_manifest(config, messages):
 
     # All hosts should be able to talk to amqp
     config['FIREWALL_SERVICE_NAME'] = "amqp"
-    config['FIREWALL_PORTS'] = "'5671', '5672'"
+    config['FIREWALL_PORTS'] = "['5671', '5672']"
     config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
     for host in filtered_hosts(config, exclude=False):
         config['FIREWALL_ALLOWED'] = "'%s'" % host
         config['FIREWALL_SERVICE_ID'] = "amqp_%s" % host
