@@ -95,6 +95,7 @@ def create_manifest(config, messages):
     config['FIREWALL_SERVICE_NAME'] = "glance"
     config['FIREWALL_PORTS'] = "'9292'"
     config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
     if config['CONFIG_NOVA_INSTALL'] == 'y':
         for host in split_hosts(config['CONFIG_COMPUTE_HOSTS']):
             config['FIREWALL_ALLOWED'] = "'%s'" % host

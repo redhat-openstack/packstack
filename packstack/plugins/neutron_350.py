@@ -701,7 +701,7 @@ def create_manifests(config, messages):
     config['FIREWALL_SERVICE_NAME'] = "neutron server"
     config['FIREWALL_PORTS'] = "'9696'"
     config['FIREWALL_CHAIN'] = "INPUT"
-
+    config['FIREWALL_PROTOCOL'] = 'tcp'
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
         manifest_data = getManifestTemplate("neutron.pp")
@@ -727,14 +727,14 @@ def create_manifests(config, messages):
         manifest_data = getManifestTemplate(plugin_manifest)
 
         # We also need to open VXLAN/GRE port for agent
-        firewall_template = "firewall.pp"
         if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
             if use_openvswitch_vxlan(config):
-                tunnel_port = "'4789'"
+                config['FIREWALL_PROTOCOL'] = 'udp'
+                tunnel_port = ("'%s'"
+                               % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'])
             else:
-                config['FIREWALL_PROTOCOL'] = "'gre'"
-                firewall_template = "firewall_proto.pp"
-                tunnel_port = ""
+                config['FIREWALL_PROTOCOL'] = 'gre'
+                tunnel_port = 'undef'
             for f_host in q_hosts:
                 config['FIREWALL_ALLOWED'] = "'%s'" % f_host
                 config['FIREWALL_SERVICE_NAME'] = "neutron tunnel port"
@@ -742,7 +742,7 @@ def create_manifests(config, messages):
                                                  % (host, f_host))
                 config['FIREWALL_PORTS'] = tunnel_port
                 config['FIREWALL_CHAIN'] = "INPUT"
-                manifest_data += getManifestTemplate(firewall_template)
+                manifest_data += getManifestTemplate('firewall.pp')
 
         appendManifestFile(manifest_file, manifest_data, 'neutron')
 
@@ -786,6 +786,7 @@ def create_dhcp_manifests(config, messages):
         manifest_file = "%s_neutron.pp" % (host,)
 
         # Firewall Rules
+        config['FIREWALL_PROTOCOL'] = 'tcp'
         for f_host in q_hosts:
             config['FIREWALL_ALLOWED'] = "'%s'" % f_host
             config['FIREWALL_SERVICE_NAME'] = "neutron dhcp in"
