@@ -2,7 +2,7 @@
 
 . /etc/nagios/keystonerc_admin
 
-data=$(glance index 2>&1)
+data=$(glance image-list --all-tenants 2>&1)
 rv=$?
 
 if [ "$rv" != "0" ] ; then
