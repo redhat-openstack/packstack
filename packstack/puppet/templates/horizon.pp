@@ -15,6 +15,35 @@ class {'horizon':
    can_set_mount_point => 'False',
    help_url =>'http://docs.openstack.org',
    django_debug => %(CONFIG_DEBUG_MODE)s ? {true => 'True', false => 'False'},
+   listen_ssl => %(CONFIG_HORIZON_SSL)s,
+   horizon_cert => '/etc/pki/tls/certs/ssl_ps_server.crt',
+   horizon_key => '/etc/pki/tls/private/ssl_ps_server.key',
+   horizon_ca => '/etc/pki/tls/certs/ssl_ps_chain.crt',
+}
+
+if %(CONFIG_HORIZON_SSL)s {
+  file {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
+    content => template('packstack/ssl/generate_ssl_certs.sh.erb'),
+    ensure => present,
+    mode => '755',
+  }
+
+  exec {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
+    require => File['/etc/pki/tls/certs/ps_generate_ssl_certs.ssh'],
+    notify  => Service['httpd'],
+    before  => Class['horizon'],
+  }
+
+  apache::listen { '443': }
+
+  # little bit of hatred as we'll have to patch upstream puppet-horizon
+  file_line {'horizon_ssl_wsgi_fix':
+    path    => '/etc/httpd/conf.d/15-horizon_ssl_vhost.conf',
+    match   => 'WSGIProcessGroup.*',
+    line    => '  WSGIProcessGroup horizon-ssl',
+    require => File['15-horizon_ssl_vhost.conf'],
+    notify  => Service['httpd'],
+  }
 }
 
 class {'memcached':}

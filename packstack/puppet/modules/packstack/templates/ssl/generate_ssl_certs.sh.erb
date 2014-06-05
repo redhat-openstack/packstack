@@ -7,13 +7,21 @@ fi
 
 SSLKEY=/etc/pki/tls/private/ssl_ps_server.key
 SSLCERT=/etc/pki/tls/certs/ssl_ps_server.crt
+SSLCHAIN=/etc/pki/tls/certs/ssl_ps_chain.crt
 
 # If packstack dropped a cert in the resources directory then we
 # use that instead of generating one
 if [ -f $PACKSTACK_VAR_DIR/resources/ssl_ps_server.crt ] ; then
     cp  $PACKSTACK_VAR_DIR/resources/ssl_ps_server.crt $SSLCERT
     cp  $PACKSTACK_VAR_DIR/resources/ssl_ps_server.key $SSLKEY
+    cp  $PACKSTACK_VAR_DIR/resources/ssl_ps_chain.crt $SSLCHAIN
     exit 0
+fi
+
+# If we already generated a cert then we
+# use that instead of generating one
+if [ -f $SSLCERT ] ; then
+     exit 0
 fi
 
 umask 277
@@ -30,8 +38,16 @@ answers() {
         echo
 }
 
+echo 10 > /etc/pki/CA/serial
+touch /etc/pki/CA/index.txt
 
 # gen key and self signed host cert
-openssl genrsa 2048 > $SSLKEY 2> /dev/null
-answers $FQDN | openssl req -new -x509 -days 1096 -key $SSLKEY -text -out $SSLCERT
+openssl genrsa 2048 > /etc/pki/CA/private/cakey.pem 2> /dev/null
 
+answers $FQDN | openssl req -new -x509 -days 3650 -key /etc/pki/CA/private/cakey.pem -out /etc/pki/CA/cacert.pem
+
+cp /etc/pki/CA/cacert.pem $SSLCHAIN
+
+openssl genrsa 2048 > $SSLKEY 2> /dev/null
+answers $FQDN | openssl req -new -nodes -key $SSLKEY -out ${SSLCERT}.req
+yes | openssl ca -in ${SSLCERT}.req -out ${SSLCERT}

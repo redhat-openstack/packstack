@@ -81,3 +81,8 @@ firewall { '001 nagios incoming':
     dport    => ['80'],
     action   => 'accept',
 }
+
+# ensure that we won't stop listening on 443 if horizon has ssl enabled
+if %(CONFIG_HORIZON_SSL)s {
+    apache::listen { '443': }
+}

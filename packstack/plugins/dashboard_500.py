@@ -79,6 +79,21 @@ def initConfig(controller):
          "USE_DEFAULT": False,
          "NEED_CONFIRM": False,
          "CONDITION": False},
+
+        {"CMD_OPTION": "os-ssl-cachain",
+         "USAGE": ("PEM encoded CA certificates from which the certificate "
+                   "chain of the server certificate can be assembled."),
+         "PROMPT": ("Enter the CA cahin file corresponding to the certificate "
+                    "if one was entered"),
+         "OPTION_LIST": [],
+         "VALIDATORS": [],
+         "DEFAULT_VALUE": "",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_SSL_CACHAIN",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
     ]
     group = {"GROUP_NAME": "OSSSL",
              "DESCRIPTION": "SSL Config parameters",
@@ -111,37 +126,43 @@ def create_manifest(config, messages):
     config["CONFIG_HORIZON_PORT"] = "'80'"
     sslmanifestdata = ''
     if config["CONFIG_HORIZON_SSL"] == 'y':
+        config["CONFIG_HORIZON_SSL"] = 'true'
         config["CONFIG_HORIZON_PORT"] = "'443'"
         proto = "https"
-        sslmanifestdata += getManifestTemplate("https.pp")
 
         # Are we using the users cert/key files
         if config["CONFIG_SSL_CERT"]:
             ssl_cert = config["CONFIG_SSL_CERT"]
             ssl_key = config["CONFIG_SSL_KEY"]
+            ssl_chain = config["CONFIG_SSL_CACHAIN"]
 
             if not os.path.exists(ssl_cert):
                 raise exceptions.ParamValidationError(
                     "The file %s doesn't exist" % ssl_cert)
 
-            if ssl_key and not os.path.exists(ssl_key):
+            if not os.path.exists(ssl_key):
                 raise exceptions.ParamValidationError(
                     "The file %s doesn't exist" % ssl_key)
+
+            if not os.path.exists(ssl_chain):
+                raise exceptions.ParamValidationError(
+                    "The file %s doesn't exist" % ssl_chain)
 
             resources = config.setdefault('RESOURCES', {})
             host_resources = resources.setdefault(horizon_host, [])
             host_resources.append((ssl_cert, 'ssl_ps_server.crt'))
-            if ssl_key:
-                host_resources.append(ssl_key, 'ssl_ps_server.key')
+            host_resources.append(ssl_key, 'ssl_ps_server.key')
+            host_resources.append((ssl_chain, 'ssl_ps_chain.crt'))
         else:
             messages.append(
                 "%sNOTE%s : A certificate was generated to be used for ssl, "
                 "You should change the ssl certificate configured in "
                 "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
                 % (utils.COLORS['red'], utils.COLORS['nocolor'], horizon_host))
+    else:
+        config["CONFIG_HORIZON_SSL"] = 'false'
 
     manifestdata = getManifestTemplate("horizon.pp")
-    manifestdata += sslmanifestdata
     appendManifestFile(manifestfile, manifestdata)
 
     msg = ("To access the OpenStack Dashboard browse to %s://%s/dashboard .\n"

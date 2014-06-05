@@ -265,6 +265,9 @@ OpenStack Horizon Config parameters
 **CONFIG_SSL_KEY**
     Keyfile corresponding to the certificate if one was entered.
 
+**CONFIG_SSL_CACHAIN**
+    PEM encoded CA certificates from which the certificate chain of the server certificate can be assembled.
+
 OpenStack Swift Config parameters
 ---------------------------------
 
