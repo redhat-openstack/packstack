@@ -17,7 +17,7 @@ class {"mysql::server":
     manage_service => $manage_service,
     config_hash => {bind_address => "0.0.0.0",
                     default_engine => "InnoDB",
-                    root_password => "%(CONFIG_MYSQL_PW)s",}
+                    root_password => "%(CONFIG_MARIADB_PW)s",}
 }
 
 include packstack::innodb

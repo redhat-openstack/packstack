@@ -1,7 +1,7 @@
 
 class {"keystone":
     admin_token => "%(CONFIG_KEYSTONE_ADMIN_TOKEN)s",
-    sql_connection => "mysql://keystone_admin:%(CONFIG_KEYSTONE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/keystone",
+    sql_connection => "mysql://keystone_admin:%(CONFIG_KEYSTONE_DB_PW)s@%(CONFIG_MARIADB_HOST)s/keystone",
     token_format => "%(CONFIG_KEYSTONE_TOKEN_FORMAT)s",
     verbose => true,
     debug => %(CONFIG_DEBUG_MODE)s,

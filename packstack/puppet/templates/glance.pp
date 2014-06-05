@@ -5,7 +5,7 @@ class {"glance::api":
     keystone_user => "glance",
     keystone_password => "%(CONFIG_GLANCE_KS_PW)s",
     pipeline => 'keystone',
-    sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/glance",
+    sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MARIADB_HOST)s/glance",
     verbose => true,
     debug => %(CONFIG_DEBUG_MODE)s,
 }
@@ -17,7 +17,7 @@ class {"glance::registry":
     keystone_tenant => "services",
     keystone_user => "glance",
     keystone_password => "%(CONFIG_GLANCE_KS_PW)s",
-    sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/glance",
+    sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MARIADB_HOST)s/glance",
     verbose => true,
     debug => %(CONFIG_DEBUG_MODE)s,
 }

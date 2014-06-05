@@ -629,7 +629,7 @@ def create_common_manifest(config, messages):
                 perms = "nova"
             else:
                 perms = "nova:%(CONFIG_NOVA_DB_PW)s"
-            sqlconn = "mysql://%s@%%(CONFIG_MYSQL_HOST)s/nova" % perms
+            sqlconn = "mysql://%s@%%(CONFIG_MARIADB_HOST)s/nova" % perms
             config['CONFIG_NOVA_SQL_CONN'] = sqlconn % config
 
             # for nova-network in multihost mode each compute host is metadata
