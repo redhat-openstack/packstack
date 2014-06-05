@@ -7,8 +7,8 @@ class { 'memcached':
 class { 'swift::proxy':
   proxy_local_net_ip => '%(CONFIG_CONTROLLER_HOST)s',
   pipeline           => [
-    'bulk',
     'catch_errors',
+    'bulk',
     'healthcheck',
     'cache',
     'ratelimit',
