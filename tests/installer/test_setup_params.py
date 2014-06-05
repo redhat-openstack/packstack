@@ -38,7 +38,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
             "DEFAULT_VALUE": "127.0.0.1",
             "MASK_INPUT": False,
             "LOOSE_VALIDATION": True,
-            "CONF_NAME": "CONFIG_MYSQL_HOST",
+            "CONF_NAME": "CONFIG_MARIADB_HOST",
             "USE_DEFAULT": False,
             "NEED_CONFIRM": False,
             "CONDITION": False}
@@ -71,9 +71,9 @@ class GroupTestCase(PackstackTestCaseMixin, TestCase):
             "POST_CONDITION": False,
             "POST_CONDITION_MATCH": False}
         self.params = [
-            {"CONF_NAME": "CONFIG_MYSQL_HOST", "PROMPT": "find_me"},
-            {"CONF_NAME": "CONFIG_MYSQL_USER"},
-            {"CONF_NAME": "CONFIG_MYSQL_PW"}]
+            {"CONF_NAME": "CONFIG_MARIADB_HOST", "PROMPT": "find_me"},
+            {"CONF_NAME": "CONFIG_MARIADB_USER"},
+            {"CONF_NAME": "CONFIG_MARIADB_PW"}]
 
     def test_group_init(self):
         """
@@ -93,4 +93,4 @@ class GroupTestCase(PackstackTestCaseMixin, TestCase):
         param_list = group.search('PROMPT', 'find_me')
         self.assertEqual(len(param_list), 1)
         self.assertIsInstance(param_list[0], Parameter)
-        self.assertEqual(param_list[0].CONF_NAME, 'CONFIG_MYSQL_HOST')
+        self.assertEqual(param_list[0].CONF_NAME, 'CONFIG_MARIADB_HOST')

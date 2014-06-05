@@ -57,8 +57,8 @@ Global Options
 **CONFIG_NEUTRON_INSTALL**
     Set to 'y' if you would like Packstack to install OpenStack Networking (Neutron).
 
-**CONFIG_MYSQL_INSTALL**
-    Set to 'y' if you would like Packstack to install MySQL.
+**CONFIG_MARIADB_INSTALL**
+    Set to 'y' if you would like Packstack to install MariaDB.
 
 **CONFIG_CONTROLLER_HOST**
     The IP address of the server on which to install OpenStack services specific to controller role such as API servers, Horizon, etc. This parameter replaced following deprecated parameters: CONFIG_CEILOMETER_HOST, CONFIG_CINDER_HOST, CONFIG_GLANCE_HOST, CONFIG_HORIZON_HOST, CONFIG_HEAT_HOST, CONFIG_KEYSTONE_HOST, CONFIG_NAGIOS_HOST, CONFIG_NEUTRON_SERVER_HOST, CONFIG_NEUTRON_LBAAS_HOSTS, CONFIG_NOVA_API_HOST, CONFIG_NOVA_CERT_HOST, CONFIG_NOVA_VNCPROXY_HOST, CONFIG_NOVA_SCHED_HOST, CONFIG_OSCLIENT_HOST, CONFIG_SWIFT_PROXY_HOSTS.
@@ -76,17 +76,17 @@ SSH Configs
 **CONFIG_SSH_KEY**
     Path to a Public key to install on servers. If a usable key has not been installed on the remote servers the user will be prompted for a password and this key will be installed so the password will not be required again.
 
-MySQL Config parameters
+MariaDB Config parameters
 -----------------------
 
-**CONFIG_MYSQL_HOST**
-    The IP address of the server on which to install MySQL.
+**CONFIG_MARIADB_HOST**
+    The IP address of the server on which to install MariaDB.
 
-**CONFIG_MYSQL_USER**
-    Username for the MySQL admin user.
+**CONFIG_MARIADB_USER**
+    Username for the MariaDB admin user.
 
-**CONFIG_MYSQL_PW**
-    Password for the MySQL admin user.
+**CONFIG_MARIADB_PW**
+    Password for the MariaDB admin user.
 
 AMQP Config parameters
 ----------------------
@@ -419,7 +419,7 @@ Heat Config Parameters
 ----------------------
 
 **CONFIG_HEAT_DB_PW**
-    The password used by Heat user to authenticate against MySQL.
+    The password used by Heat user to authenticate against MariaDB.
 
 **CONFIG_HEAT_AUTH_ENC_KEY**
     The encryption key to use for authentication info in database.
