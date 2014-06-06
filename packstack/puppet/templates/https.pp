@@ -36,7 +36,7 @@ if ($::fqdn != "" and $::fqdn !~ /localhost/) {
     $vhostname = $::fqdn
 }
 else {
-    $vhostname = '%(CONFIG_HORIZON_HOST)s'
+    $vhostname = '%(CONFIG_CONTROLLER_HOST)s'
 }
 
 
@@ -48,7 +48,7 @@ file{'/etc/httpd/conf.d/openstack-dashboard-vhost-port-80.conf':
 file_line{'redirect':
     path    => '/etc/httpd/conf.d/openstack-dashboard.conf',
     match   => '^RedirectMatch .*',
-    line    => "RedirectMatch permanent ^/$ https://%(CONFIG_HORIZON_HOST)s:${https_port}/dashboard",
+    line    => "RedirectMatch permanent ^/$ https://%(CONFIG_CONTROLLER_HOST)s:${https_port}/dashboard",
     require =>  Class['horizon']
 }
 
