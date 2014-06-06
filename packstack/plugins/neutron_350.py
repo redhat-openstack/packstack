@@ -718,10 +718,6 @@ def create_manifests(config, messages):
     elif config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2':
         plugin_manifest = 'neutron_ml2_plugin.pp'
 
-    config['FIREWALL_SERVICE_NAME'] = "neutron server"
-    config['FIREWALL_PORTS'] = "'9696'"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
         manifest_data = getManifestTemplate("neutron.pp")
@@ -735,6 +731,10 @@ def create_manifests(config, messages):
 
             # Firewall Rules
             for f_host in q_hosts:
+                config['FIREWALL_SERVICE_NAME'] = "neutron server"
+                config['FIREWALL_PORTS'] = "'9696'"
+                config['FIREWALL_CHAIN'] = "INPUT"
+                config['FIREWALL_PROTOCOL'] = 'tcp'
                 config['FIREWALL_ALLOWED'] = "'%s'" % f_host
                 config['FIREWALL_SERVICE_ID'] = ("neutron_server_%s_%s"
                                                  % (host, f_host))
