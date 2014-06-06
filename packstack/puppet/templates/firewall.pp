@@ -6,6 +6,6 @@ packstack::firewall {'%(FIREWALL_SERVICE_ID)s':
   host => %(FIREWALL_ALLOWED)s,
   service_name => '%(FIREWALL_SERVICE_NAME)s',
   chain => '%(FIREWALL_CHAIN)s',
-  ports => [%(FIREWALL_PORTS)s],
+  ports => %(FIREWALL_PORTS)s,
+  proto => '%(FIREWALL_PROTOCOL)s',
 }
-

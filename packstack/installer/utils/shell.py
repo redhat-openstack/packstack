@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import re
+import os
 import types
 import logging
 import subprocess
@@ -32,10 +33,12 @@ def execute(cmd, workdir=None, can_fail=True, mask_list=None,
     masked = mask_string(masked, mask_list, repl_list)
     if log:
         logging.info("Executing command:\n%s" % masked)
-
+    environ = os.environ
+    environ['LANG'] = 'en_US.UTF8'
     proc = subprocess.Popen(cmd, stdout=subprocess.PIPE,
                             stderr=subprocess.PIPE, cwd=workdir,
-                            shell=use_shell, close_fds=True)
+                            shell=use_shell, close_fds=True,
+                            env=environ)
     out, err = proc.communicate()
     masked_out = mask_string(out, mask_list, repl_list)
     masked_err = mask_string(err, mask_list, repl_list)
@@ -84,8 +87,11 @@ class ScriptRunner(object):
                           "root@%s" % self.ip, "bash -x"]
         else:
             cmd = ["bash", "-x"]
+        environ = os.environ
+        environ['LANG'] = 'en_US.UTF8'
         obj = subprocess.Popen(cmd, stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
-                               close_fds=True, shell=False)
+                               close_fds=True, shell=False,
+                                env=environ)
 
         script = "function t(){ exit $? ; } \n trap t ERR \n" + script
         out, err = obj.communicate(script)

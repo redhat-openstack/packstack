@@ -143,14 +143,14 @@ def create_keystone_manifest(config, messages):
 
 
 def create_cloudwatch_manifest(config, messages):
-    manifestfile = "%s_heatcw.pp" % controller.CONF['CONFIG_CONTROLLER_HOST']
+    manifestfile = "%s_heatcw.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
     manifestdata += getManifestTemplate("heat_cloudwatch.pp")
     appendManifestFile(manifestfile, manifestdata, marker='heat')
 
 
 def create_cfn_manifest(config, messages):
-    manifestfile = "%s_heatcnf.pp" % controller.CONF['CONFIG_CONTROLLER_HOST']
+    manifestfile = "%s_heatcnf.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
     manifestdata += getManifestTemplate("heat_cfn.pp")
     appendManifestFile(manifestfile, manifestdata, marker='heat')
