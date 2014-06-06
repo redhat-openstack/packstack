@@ -421,6 +421,9 @@ Neutron Config Parameters
 **CONFIG_NEUTRON_METADATA_PW**
     A comma separated list of IP addresses on which to install Neutron metadata agent.
 
+**CONFIG_NEUTRON_FWAAS**
+    Whether to configure neutron Firewall as a Service.
+
 **CONFIG_NEUTRON_LB_TENANT_NETWORK_TYPE**
     The type of network to allocate for tenant networks (eg. vlan, local, gre).
 

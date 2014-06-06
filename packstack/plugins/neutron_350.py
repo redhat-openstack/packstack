@@ -125,6 +125,19 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "neutron-fwaas",
+             "USAGE": ("Whether to configure neutron Firewall as a Service"),
+             "PROMPT": "Would you like to configure neutron FWaaS?",
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_FWAAS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "NEUTRON_LB_PLUGIN": [
@@ -703,10 +716,17 @@ def create_manifests(config, messages):
         service_plugins.append(
             'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
         )
+
     if config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
         service_plugins.append(
             'neutron.services.metering.metering_plugin.MeteringPlugin'
         )
+
+    if config['CONFIG_NEUTRON_FWAAS']:
+        service_plugins.append(
+            'neutron.services.firewall.fwaas_plugin.FirewallPlugin'
+        )
+
     config['SERVICE_PLUGINS'] = (str(service_plugins) if service_plugins
                                  else 'undef')
 
@@ -790,6 +810,11 @@ def create_l3_manifests(config, messages):
         if config['CONFIG_NEUTRON_L2_AGENT'] == 'openvswitch' and not mapping:
             config['CONFIG_NEUTRON_OVS_BRIDGE'] = ext_bridge
             manifestdata = getManifestTemplate('neutron_ovs_bridge.pp')
+            appendManifestFile(manifestfile, manifestdata + '\n')
+
+        if config['CONFIG_NEUTRON_FWAAS']:
+            manifestfile = "%s_neutron_fwaas.pp" % (host,)
+            manifestdata = getManifestTemplate("neutron_fwaas.pp")
             appendManifestFile(manifestfile, manifestdata + '\n')
 
 
