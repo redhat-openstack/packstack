@@ -26,6 +26,12 @@ class packstack::innodb (
 )
 {
 
+  if $mysql::server::package_name == 'mysql-server' {
+    $includedir = '/etc/mysql/conf.d'
+  } else {
+    $includedir = '/etc/my.cnf.d'
+  }
+
   if $clean {
     exec { 'clean_innodb_logs':
       path    => ['/usr/bin', '/bin', '/usr/sbin', '/sbin'],
@@ -33,12 +39,12 @@ class packstack::innodb (
       onlyif  => "ls  /var/lib/mysql/ib_logfile?",
       notify  => Service['mysqld'],
       logoutput => 'on_failure',
-      subscribe => File['/etc/my.cnf.d/innodb.cnf'],
+      subscribe => File["${includedir}/innodb.cnf"],
       refreshonly => true,
     }
   }
 
-  file { '/etc/my.cnf.d/innodb.cnf':
+  file { "${includedir}/innodb.cnf":
     require => Package["$mysql::server::package_name"],
     content => template('packstack/innodb.cnf.erb'),
     mode    => '0644',
