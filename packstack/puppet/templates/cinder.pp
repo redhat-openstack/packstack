@@ -18,7 +18,3 @@ class {'cinder::scheduler':
 
 class {'cinder::volume':
 }
-
-class {'cinder::volume::iscsi':
-    iscsi_ip_address => '%(CONFIG_CONTROLLER_HOST)s'
-}

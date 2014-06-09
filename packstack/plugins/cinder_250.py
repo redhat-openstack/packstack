@@ -206,8 +206,6 @@ def initSequences(controller):
         return
 
     cinder_steps = [
-        {'title': 'Installing dependencies for Cinder',
-         'functions': [install_cinder_deps]},
         {'title': 'Adding Cinder Keystone manifest entries',
          'functions': [create_keystone_manifest]},
         {'title': 'Adding Cinder manifest entries',
@@ -222,17 +220,6 @@ def initSequences(controller):
 
 
 #-------------------------- step functions --------------------------
-
-def install_cinder_deps(config, messages):
-    server = utils.ScriptRunner(config['CONFIG_CONTROLLER_HOST'])
-    pkgs = []
-    if config['CONFIG_CINDER_BACKEND'] == 'lvm':
-        pkgs.append('lvm2')
-    for p in pkgs:
-        server.append("rpm -q --whatprovides %(package)s || "
-                      "yum install -y %(package)s" % dict(package=p))
-    server.execute()
-
 
 def check_cinder_vg(config, messages):
     cinders_volume = 'cinder-volumes'
@@ -271,6 +258,8 @@ def check_cinder_vg(config, messages):
                 output_messages.INFO_CINDER_VOLUMES_EXISTS)
             return
 
+        # TO-DO: This is implemented in cinder::setup_test_volume class.
+        #        We should use it instead of this Python code
         server = utils.ScriptRunner(config['CONFIG_CONTROLLER_HOST'])
         server.append('systemctl')
         try:
@@ -281,6 +270,7 @@ def check_cinder_vg(config, messages):
 
         server.clear()
         logging.info("A new cinder volumes group will be created")
+        server.append('yum install -y lvm2')
 
         cinders_volume_path = '/var/lib/cinder'
         server.append('mkdir -p  %s' % cinders_volume_path)
@@ -348,11 +338,13 @@ def create_manifest(config, messages):
     manifestfile = "%s_cinder.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata += getManifestTemplate("cinder.pp")
 
-    if config['CONFIG_CINDER_BACKEND'] == "gluster":
+    if config['CONFIG_CINDER_BACKEND'] == "lvm":
+        manifestdata += getManifestTemplate("cinder_lvm.pp")
+    elif config['CONFIG_CINDER_BACKEND'] == "gluster":
         manifestdata += getManifestTemplate("cinder_gluster.pp")
-    if config['CONFIG_CINDER_BACKEND'] == "nfs":
+    elif config['CONFIG_CINDER_BACKEND'] == "nfs":
         manifestdata += getManifestTemplate("cinder_nfs.pp")
-    if config['CONFIG_CINDER_BACKEND'] == "vmdk":
+    elif config['CONFIG_CINDER_BACKEND'] == "vmdk":
         manifestdata += getManifestTemplate("cinder_vmdk.pp")
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
         manifestdata += getManifestTemplate('cinder_ceilometer.pp')
