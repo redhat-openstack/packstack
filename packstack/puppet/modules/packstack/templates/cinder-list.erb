@@ -2,7 +2,7 @@
 
 . /etc/nagios/keystonerc_admin
 
-data=$(cinder list 2>&1)
+data=$(cinder list --all-tenants 2>&1)
 rv=$?
 
 if [ "$rv" != "0" ] ; then
