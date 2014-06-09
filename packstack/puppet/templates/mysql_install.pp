@@ -5,7 +5,7 @@ if $::operatingsystem in ['RedHat','Centos','Scientific'] and $::operatingsystem
     service { 'mysqld':
       enable  => true,
       ensure  => 'running',
-      require => [ Package["mariadb-galera-server"], File['/etc/my.cnf'] ],
+      require => [ Package["$mysql::server::package_name"], File['/etc/my.cnf'] ],
       before  => Exec['set_mysql_rootpw'],
     }
 } else {
