@@ -807,7 +807,8 @@ def create_l3_manifests(config, messages):
         ext_bridge = config['CONFIG_NEUTRON_L3_EXT_BRIDGE']
         mapping = find_mapping(config['CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'],
                                ext_bridge) if ext_bridge else None
-        if config['CONFIG_NEUTRON_L2_AGENT'] == 'openvswitch' and not mapping:
+        if (config['CONFIG_NEUTRON_L2_AGENT'] == 'openvswitch' and ext_bridge
+                and not mapping):
             config['CONFIG_NEUTRON_OVS_BRIDGE'] = ext_bridge
             manifestdata = getManifestTemplate('neutron_ovs_bridge.pp')
             appendManifestFile(manifestfile, manifestdata + '\n')
