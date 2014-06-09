@@ -60,6 +60,15 @@ Global Options
 **CONFIG_MYSQL_INSTALL**
     Set to 'y' if you would like Packstack to install MySQL.
 
+**CONFIG_CONTROLLER_HOST**
+    The IP address of the server on which to install OpenStack services specific to controller role such as API servers, Horizon, etc. This parameter replaced following deprecated parameters: CONFIG_CEILOMETER_HOST, CONFIG_CINDER_HOST, CONFIG_GLANCE_HOST, CONFIG_HORIZON_HOST, CONFIG_HEAT_HOST, CONFIG_KEYSTONE_HOST, CONFIG_NAGIOS_HOST, CONFIG_NEUTRON_SERVER_HOST, CONFIG_NEUTRON_LBAAS_HOSTS, CONFIG_NOVA_API_HOST, CONFIG_NOVA_CERT_HOST, CONFIG_NOVA_VNCPROXY_HOST, CONFIG_NOVA_SCHED_HOST, CONFIG_OSCLIENT_HOST, CONFIG_SWIFT_PROXY_HOSTS.
+
+**CONFIG_COMPUTE_HOSTS**
+    The list of IP addresses of the server on which to install the Nova compute service. This parameter replaced following deprecated parameters: CONFIG_NOVA_COMPUTE_HOSTS.
+
+**CONFIG_NETWORK_HOSTS**
+    The list of IP addresses of the server on which to install the network service such as Nova network or Neutron. This parameter replaced following deprecated parameters: CONFIG_NEUTRON_L3_HOSTS, CONFIG_NEUTRON_DHCP_HOSTS, CONFIG_NEUTRON_METADATA_HOSTS, CONFIG_NOVA_NETWORK_HOSTS.
+
 
 SSH Configs
 ------------
@@ -79,35 +88,46 @@ MySQL Config parameters
 **CONFIG_MYSQL_PW**
     Password for the MySQL admin user.
 
-QPID Config parameters
+AMQP Config parameters
 ----------------------
 
-**CONFIG_QPID_HOST**
+
+**CONFIG_AMQP_BACKEND**
+    Set the AMQP service backend. Allowed values are: qpid, rabbitmq
+
+**CONFIG_AMQP_HOST**
     The IP address of the server on which to install the QPID service.
 
-**CONFIG_QPID_ENABLE_SSL**
+**CONFIG_AMQP_ENABLE_SSL**
     Enable SSL for the QPID service.
 
-**CONFIG_QPID_NSS_CERTDB_PW**
+**CONFIG_AMQP_NSS_CERTDB_PW**
     The password for the NSS certificate database of the QPID service.
 
-**CONFIG_QPID_SSL_PORT**
+**CONFIG_AMQP_SSL_PORT**
     The port in which the QPID service listens to SSL connections.
 
-**CONFIG_QPID_SSL_CERT_FILE**
+**CONFIG_AMQP_SSL_CERT_FILE**
     The filename of the certificate that the QPID service is going to use.
 
-**CONFIG_QPID_SSL_KEY_FILE**
+**CONFIG_AMQP_SSL_KEY_FILE**
     The filename of the private key that the QPID service is going to use.
 
-**CONFIG_QPID_SSL_SELF_SIGNED**
+**CONFIG_AMQP_SSL_SELF_SIGNED**
     Auto Generates self signed SSL certificate and key.
+
+**CONFIG_AMQP_ENABLE_AUTH**
+    Enable Authentication for the AMQP service
+
+**CONFIG_AMQP_AUTH_USER**
+    User for amqp authentication
+
+**CONFIG_AMQP_AUTH_PASSWORD**
+    Password for user authentication
+
 
 Keystone Config parameters
 --------------------------
-
-**CONFIG_KEYSTONE_HOST**
-    The IP address of the server on which to install Keystone.
 
 **CONFIG_KEYSTONE_DB_PW**
     The password to use for the Keystone to access DB.
@@ -127,9 +147,6 @@ Keystone Config parameters
 Glance Config parameters
 ------------------------
 
-**CONFIG_GLANCE_HOST**
-    The IP address of the server on which to install Glance.
-
 **CONFIG_GLANCE_DB_PW**
     The password to use for the Glance to access DB.
 
@@ -138,9 +155,6 @@ Glance Config parameters
 
 Cinder Config parameters
 ------------------------
-
-**CONFIG_CINDER_HOST**
-    The IP address of the server on which to install Cinder.
 
 **CONFIG_CINDER_DB_PW**
     The password to use for the Cinder to access DB.
@@ -177,18 +191,6 @@ Cinder NFS Config parameters
 
 Nova Options
 ------------
-
-**CONFIG_NOVA_API_HOST**
-    The IP address of the server on which to install the Nova API service.
-
-**CONFIG_NOVA_CERT_HOST**
-    The IP address of the server on which to install the Nova Cert service.
-
-**CONFIG_NOVA_VNCPROXY_HOST**
-    The IP address of the server on which to install the Nova VNC proxy.
-
-**CONFIG_NOVA_COMPUTE_HOSTS**
-    A comma separated list of IP addresses on which to install the Nova Compute services.
 
 **CONFIG_NOVA_COMPUTE_PRIVIF**
     Private interface for Flat DHCP on the Nova compute servers.
@@ -244,17 +246,8 @@ Nova Options
 **CONFIG_NOVA_NETWORK_VLAN_START**
     First VLAN for private networks.
 
-NOVACLIENT Config parameters
-----------------------------
-
-**CONFIG_OSCLIENT_HOST**
-    The IP address of the server on which to install the OpenStack client packages. An admin "rc" file will also be installed.
-
 OpenStack Horizon Config parameters
 -----------------------------------
-
-**CONFIG_HORIZON_HOST**
-    The IP address of the server on which to install Horizon.
 
 **CONFIG_HORIZON_SSL**
     To set up Horizon communication over https set this to "y" ['y', 'n'].
@@ -271,14 +264,11 @@ OpenStack Horizon Config parameters
 OpenStack Swift Config parameters
 ---------------------------------
 
-**CONFIG_SWIFT_PROXY_HOSTS**
-    The IP address on which to install the Swift proxy service.
-
 **CONFIG_SWIFT_KS_PW**
     The password to use for the Swift to authenticate with Keystone.
 
-**CONFIG_SWIFT_STORAGE_HOSTS**
-    A comma separated list of IP addresses on which to install the Swift Storage services, each entry should take the format <ipaddress>[/dev], for example 127.0.0.1/vdb will install /dev/vdb on 127.0.0.1 as a swift storage device(packstack does not create the filesystem, you must do this first), if /dev is omitted Packstack will create a loopback device for a test setup.
+**CONFIG_SWIFT_STORAGES**
+    A comma separated list of devices which to use as Swift Storage device. Each entry should take the format /path/to/dev, for example /dev/vdb will install /dev/vdb as Swift storage device (packstack does not create the filesystem, you must do this first). If value is omitted Packstack will create a loopback device for test setup
 
 **CONFIG_SWIFT_STORAGE_ZONES**
     Number of swift storage zones, this number MUST be no bigger than the number of storage devices configured.
@@ -349,17 +339,11 @@ RHN Satellite proxy config
 Nagios Config parameters
 ------------------------
 
-**CONFIG_NAGIOS_HOST**
-    The IP address of the server on which to install the Nagios server.
-
 **CONFIG_NAGIOS_PW**
     The password of the nagiosadmin user on the Nagios server.
 
 Ceilometer Config Parameters
 ----------------------------
-
-**CONFIG_CEILOMETER_HOST**
-    The IP address of the server on which to install Ceilometer.
 
 **CONFIG_CEILOMETER_SECRET**
     Secret key for signing metering messages.
@@ -369,9 +353,6 @@ Ceilometer Config Parameters
 
 Heat Config Parameters
 ----------------------
-
-**CONFIG_HEAT_HOST**
-    The IP address of the server on which to install Heat service.
 
 **CONFIG_HEAT_DB_PW**
     The password used by Heat user to authenticate against MySQL.
@@ -385,17 +366,8 @@ Heat Config Parameters
 **CONFIG_HEAT_CFN_INSTALL**
     Set to 'y' if you would like Packstack to install Heat CloudFormation API.
 
-**CONFIG_HEAT_CLOUDWATCH_HOST**
-    The IP address of the server on which to install Heat CloudWatch API service.
-
-**CONFIG_HEAT_CFN_HOST**
-    The IP address of the server on which to install Heat CloudFormation API.
-
 Neutron Config Parameters
 -------------------------
-
-**CONFIG_NEUTRON_SERVER_HOST**
-    The IP addresses of the server on which to install the Neutron server.
 
 **CONFIG_NEUTRON_KS_PW**
     The password to use for Neutron to authenticate with Keystone.
@@ -403,20 +375,11 @@ Neutron Config Parameters
 **CONFIG_NEUTRON_DB_PW**
     The password to use for Neutron to access DB.
 
-**CONFIG_NEUTRON_L3_HOSTS**
-    A comma separated list of IP addresses on which to install Neutron L3 agent.
-
 **CONFIG_NEUTRON_L3_EXT_BRIDGE**
     The name of the bridge that the Neutron L3 agent will use for external traffic, or 'provider' if using provider networks.
 
-**CONFIG_NEUTRON_DHCP_HOSTS**
-    A comma separated list of IP addresses on which to install Neutron DHCP agent.
-
 **CONFIG_NEUTRON_L2_PLUGIN**
     The name of the L2 plugin to be used with Neutron.
-
-**CONFIG_NEUTRON_METADATA_HOSTS**
-    A comma separated list of IP addresses on which to install Neutron metadata agent.
 
 **CONFIG_NEUTRON_METADATA_PW**
     A comma separated list of IP addresses on which to install Neutron metadata agent.
@@ -521,4 +484,3 @@ SOURCE
 ======
 * `packstack      https://github.com/stackforge/packstack`
 * `puppet modules https://github.com/puppetlabs and https://github.com/packstack`
-
