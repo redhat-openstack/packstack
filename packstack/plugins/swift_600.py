@@ -8,6 +8,7 @@ import os
 import re
 import uuid
 import logging
+import netaddr
 
 from packstack.installer import validators
 from packstack.installer.exceptions import ParamValidationError
@@ -176,7 +177,18 @@ def parse_devices(config):
     device_number = 0
     num_zones = int(config["CONFIG_SWIFT_STORAGE_ZONES"])
     for device in config["CONFIG_SWIFT_STORAGES"].split(","):
-        device = device.strip()
+        # we have to get rid of host part in case deprecated parameter
+        # CONFIG_SWIFT_STORAGE_HOSTS has been used
+        if ':' in device:
+            device = device.split(':')[1]
+        # device should be empty string in case only IP address has been used
+        try:
+            netaddr.IPAddress(device)
+        except Exception:
+            device = device.strip()
+        else:
+            device = ''
+
         if not device:
             continue
         device_number += 1
