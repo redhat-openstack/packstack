@@ -162,6 +162,16 @@ def create_manifest(config, messages):
     else:
         config["CONFIG_HORIZON_SSL"] = 'false'
 
+    if config["CONFIG_LBAAS_INSTALL"] == 'y':
+        config["CONFIG_HORIZON_NEUTRON_LB"] = 'true'
+    else:
+        config["CONFIG_HORIZON_NEUTRON_LB"] = 'false'
+
+    if config["CONFIG_NEUTRON_FWAAS"] == 'y':
+        config["CONFIG_HORIZON_NEUTRON_FW"] = 'true'
+    else:
+        config["CONFIG_HORIZON_NEUTRON_FW"] = 'false'
+
     manifestdata = getManifestTemplate("horizon.pp")
     appendManifestFile(manifestfile, manifestdata)
 

@@ -19,6 +19,8 @@ class {'horizon':
    horizon_cert => '/etc/pki/tls/certs/ssl_ps_server.crt',
    horizon_key => '/etc/pki/tls/private/ssl_ps_server.key',
    horizon_ca => '/etc/pki/tls/certs/ssl_ps_chain.crt',
+   neutron_options => { 'enable_lb' => %(CONFIG_HORIZON_NEUTRON_LB)s,
+    'enable_firewall' => %(CONFIG_HORIZON_NEUTRON_FW)s },
 }
 
 if %(CONFIG_HORIZON_SSL)s {
