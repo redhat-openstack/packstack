@@ -8,8 +8,10 @@ if $::operatingsystem in ['RedHat','Centos','Scientific'] and $::operatingsystem
       require => [ Package['mysql-server'], File['/etc/my.cnf'] ],
       before  => Exec['set_mysql_rootpw'],
     }
+    $includedir = '/etc/mysql/conf.d'
 } else {
     $manage_service = true
+    $includedir = '/etc/my.cnf.d'
 }
 
 class {"mysql::server":
@@ -19,7 +21,9 @@ class {"mysql::server":
                     root_password => "%(CONFIG_MYSQL_PW)s",}
 }
 
-include packstack::innodb
+class { "packstack::innodb":
+    includedir => "$includedir",
+}
 
 # deleting database users for security
 # this is done in mysql::server::account_security but has problems
