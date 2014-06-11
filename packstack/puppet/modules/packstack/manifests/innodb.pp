@@ -22,15 +22,10 @@
 class packstack::innodb (
   $buffer_pool_size = $::innodb_bufferpoolsize,
   $log_file_size = $::innodb_logfilesize,
+  $includedir = '/etc/my.cnf.d',
   $clean = true,
 )
 {
-
-  if $mysql::server::package_name == 'mysql-server' {
-    $includedir = '/etc/mysql/conf.d'
-  } else {
-    $includedir = '/etc/my.cnf.d'
-  }
 
   if $clean {
     exec { 'clean_innodb_logs':
@@ -45,7 +40,7 @@ class packstack::innodb (
   }
 
   file { "${includedir}/innodb.cnf":
-    require => Package["$mysql::server::package_name"],
+    require => Package['mysql-server'],
     content => template('packstack/innodb.cnf.erb'),
     mode    => '0644',
     notify  => Service['mysqld'],
