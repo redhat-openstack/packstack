@@ -101,5 +101,6 @@ define add_qpid_user {
     ensure => file,
     owner => 'qpidd',
     group => 'qpidd',
+    require => Package['qpid-cpp-server'],
   }
 }
