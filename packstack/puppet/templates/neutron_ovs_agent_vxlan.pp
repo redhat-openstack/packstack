@@ -1,6 +1,7 @@
 
 if "%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s" {
-  $localip = $ipaddress_%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s
+  $iface = regsubst('%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s', '[\.\-\:]', '_', 'G')
+  $localip = inline_template("<%%= scope.lookupvar('::ipaddress_${iface}') %%>")
 } else {
   $localip = '%(CONFIG_NEUTRON_OVS_HOST)s'
 }
