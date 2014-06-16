@@ -458,6 +458,17 @@ def create_compute_manifest(config, messages):
     for host in compute_hosts:
         config["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
+
+        for c_host in compute_hosts:
+            config['FIREWALL_SERVICE_NAME'] = "nova qemu migration"
+            config['FIREWALL_PORTS'] = "'49152-49215'"
+            config['FIREWALL_CHAIN'] = "INPUT"
+            config['FIREWALL_PROTOCOL'] = 'tcp'
+            config['FIREWALL_ALLOWED'] = "'%s'" % c_host
+            config['FIREWALL_SERVICE_ID'] = ("nova_qemu_migration_%s_%s"
+                                                 % (host, c_host))
+            manifestdata += getManifestTemplate("firewall.pp")
+
         if config['CONFIG_VMWARE_BACKEND'] == 'y':
             manifestdata += getManifestTemplate("nova_compute_vmware.pp")
         else:
