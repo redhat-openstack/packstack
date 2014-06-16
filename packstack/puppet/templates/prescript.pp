@@ -26,3 +26,12 @@ service { "firewalld":
   ensure => "stopped",
   enable => false,
 }
+
+package { 'audit':
+  ensure => present,
+} ->
+service { 'auditd':
+  ensure => running,
+  enable => true,
+}
+
