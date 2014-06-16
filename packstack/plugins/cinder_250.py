@@ -65,7 +65,7 @@ def initConfig(controller):
          "USAGE": ("The Cinder backend to use, valid options are: lvm, "
                    "gluster, nfs"),
          "PROMPT": "Enter the Cinder backend to be configured",
-         "OPTION_LIST": ["lvm", "gluster", "nfs"],
+         "OPTION_LIST": ["lvm", "gluster", "nfs", "vmdk"],
          "VALIDATORS": [validators.validate_options],
          "DEFAULT_VALUE": "lvm",
          "MASK_INPUT": False,

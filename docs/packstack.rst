@@ -163,7 +163,7 @@ Cinder Config parameters
     The password to use for the Cinder to authenticate with Keystone.
 
 **CONFIG_CINDER_BACKEND**
-    The Cinder backend to use ['lvm', 'gluster', 'nfs'].
+    The Cinder backend to use ['lvm', 'gluster', 'nfs', 'vmdk'].
 
 Cinder volume create Config parameters
 --------------------------------------
