@@ -36,7 +36,7 @@ class Step(object):
         # execute and report state
         try:
             self.function(config, messages)
-        except Exception, ex:
+        except Exception as ex:
             logger.debug(traceback.format_exc())
             state = utils.state_message(self.title, 'ERROR', 'red')
             sys.stdout.write('%s\n' % state)

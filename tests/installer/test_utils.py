@@ -86,7 +86,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
             execute('echo "mask the password" && exit 1',
                     use_shell=True, mask_list=['password'])
             raise AssertionError('Masked execution failed.')
-        except ExecuteRuntimeError, ex:
+        except ExecuteRuntimeError as ex:
             should_be = ('Failed to execute command, stdout: mask the %s\n\n'
                          'stderr: ' % STR_MASK)
             self.assertEqual(str(ex), should_be)

@@ -20,7 +20,7 @@ def process_cidr(param, process_args=None):
         return param
     try:
         return str(netaddr.IPNetwork(param).cidr)
-    except Exception, ex:
+    except Exception as ex:
         raise ParamProcessingError(str(ex))
 
 
@@ -33,7 +33,7 @@ def process_host(param, process_args=None):
                 process_args.get('allow_localhost', False)
     try:
         return force_ip(param, allow_localhost=localhost)
-    except NetworkError, ex:
+    except NetworkError as ex:
         raise ParamProcessingError(str(ex))
 
 

@@ -33,7 +33,7 @@ finally:
     if uid != 0 and os.getuid() == 0:
         try:
             os.chown(PACKSTACK_VAR_DIR, uid, gid)
-        except Exception, ex:
+        except Exception as ex:
             print ('Unable to change owner of %s. Please fix ownership '
                    'manually and try again.' % PACKSTACK_VAR_DIR)
             sys.exit(1)
