@@ -187,10 +187,15 @@ def create_manifest(config, messages):
     manifestfile = "%s_heat.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
     manifestdata += getManifestTemplate("heat.pp")
-
     if config.get('CONFIG_HEAT_USING_TRUSTS', 'n') == 'y':
         manifestdata += getManifestTemplate("heat_trusts.pp")
-
+    config['FIREWALL_SERVICE_NAME'] = "heat"
+    config['FIREWALL_PORTS'] = "'8004'"
+    config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
+    config['FIREWALL_ALLOWED'] = "'ALL'"
+    config['FIREWALL_SERVICE_ID'] = "heat"
+    manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -208,6 +213,13 @@ def create_cloudwatch_manifest(config, messages):
     manifestfile = "%s_heatcw.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
     manifestdata += getManifestTemplate("heat_cloudwatch.pp")
+    config['FIREWALL_SERVICE_NAME'] = "heat api cloudwatch"
+    config['FIREWALL_PORTS'] = "'8003'"
+    config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
+    config['FIREWALL_ALLOWED'] = "'ALL'"
+    config['FIREWALL_SERVICE_ID'] = "heat_api_cloudwatch"
+    manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata, marker='heat')
 
 
@@ -215,4 +227,11 @@ def create_cfn_manifest(config, messages):
     manifestfile = "%s_heatcnf.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
     manifestdata += getManifestTemplate("heat_cfn.pp")
+    config['FIREWALL_SERVICE_NAME'] = "heat_cfn"
+    config['FIREWALL_PORTS'] = "'8000'"
+    config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
+    config['FIREWALL_ALLOWED'] = "'ALL'"
+    config['FIREWALL_SERVICE_ID'] = "heat_cfn"
+    manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata, marker='heat')

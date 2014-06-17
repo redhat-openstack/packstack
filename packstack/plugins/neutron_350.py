@@ -760,16 +760,15 @@ def create_manifests(config, messages):
             # XXX I am not completely sure about this, but it seems necessary:
             manifest_data += getManifestTemplate(plugin_manifest)
 
-            # Firewall Rules
-            for f_host in q_hosts:
-                config['FIREWALL_SERVICE_NAME'] = "neutron server"
-                config['FIREWALL_PORTS'] = "'9696'"
-                config['FIREWALL_CHAIN'] = "INPUT"
-                config['FIREWALL_PROTOCOL'] = 'tcp'
-                config['FIREWALL_ALLOWED'] = "'%s'" % f_host
-                config['FIREWALL_SERVICE_ID'] = ("neutron_server_%s_%s"
-                                                 % (host, f_host))
-                manifest_data += getManifestTemplate("firewall.pp")
+            #Firewall
+            config['FIREWALL_SERVICE_NAME'] = "neutron server"
+            config['FIREWALL_PORTS'] = "'9696'"
+            config['FIREWALL_CHAIN'] = "INPUT"
+            config['FIREWALL_PROTOCOL'] = 'tcp'
+            config['FIREWALL_ALLOWED'] = "'ALL'"
+            config['FIREWALL_SERVICE_ID'] = ("neutron_server_%s"
+                                                 % (host))
+            manifest_data += getManifestTemplate("firewall.pp")
 
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
