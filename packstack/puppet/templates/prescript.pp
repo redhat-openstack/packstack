@@ -2,8 +2,8 @@ include firewall
 
 $el_releases = ["RedHat", "CentOS"]
 
-# We don't have openstack-selinux package for Fedora and yet for RHEL-7
-if $::operatingsystem != "Fedora" and ($::operatingsystem in $el_releases and $::operatingsystemrelease < 7) {
+# We don't have openstack-selinux package for Fedora
+if $::operatingsystem != "Fedora" {
   package{ 'openstack-selinux':
     ensure => present,
   }
