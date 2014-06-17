@@ -276,6 +276,13 @@ def create_builder_manifest(config, messages):
 def create_proxy_manifest(config, messages):
     manifestfile = "%s_swift.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("swift_proxy.pp")
+    config['FIREWALL_SERVICE_NAME'] = "swift proxy"
+    config['FIREWALL_PORTS'] = "'8080'"
+    config['FIREWALL_CHAIN'] = "INPUT"
+    config['FIREWALL_PROTOCOL'] = 'tcp'
+    config['FIREWALL_ALLOWED'] = "'ALL'"
+    config['FIREWALL_SERVICE_ID'] = "swift_proxy"
+    manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 

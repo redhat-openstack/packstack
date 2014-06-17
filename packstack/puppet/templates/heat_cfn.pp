@@ -8,3 +8,4 @@ class { 'heat::keystone::auth_cfn':
   internal_address   => '%(CONFIG_CONTROLLER_HOST)s',
   password           => '%(CONFIG_HEAT_KS_PW)s'
 }
+

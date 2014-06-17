@@ -18,3 +18,4 @@ class { 'heat::keystone::domain':
   domain_admin      => '%(CONFIG_HEAT_DOMAIN_ADMIN)s',
   domain_password   => '%(CONFIG_HEAT_DOMAIN_PASSWORD)s',
 }
+

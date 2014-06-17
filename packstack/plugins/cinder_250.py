@@ -352,7 +352,7 @@ def create_manifest(config, messages):
         manifestdata += getManifestTemplate('cinder_backup.pp')
 
     config['FIREWALL_SERVICE_NAME'] = "cinder"
-    config['FIREWALL_PORTS'] = "['3260', '8776']"
+    config['FIREWALL_PORTS'] = "['3260']"
     config['FIREWALL_CHAIN'] = "INPUT"
     config['FIREWALL_PROTOCOL'] = 'tcp'
     if (config['CONFIG_NOVA_INSTALL'] == 'y' and
@@ -365,5 +365,10 @@ def create_manifest(config, messages):
         config['FIREWALL_ALLOWED'] = "'ALL'"
         config['FIREWALL_SERVICE_ID'] = "cinder_ALL"
         manifestdata += getManifestTemplate("firewall.pp")
-
+    # cinder API should be open for everyone
+    config['FIREWALL_SERVICE_NAME'] = "cinder-api"
+    config['FIREWALL_ALLOWED'] = "'ALL'"
+    config['FIREWALL_SERVICE_ID'] = "cinder_API"
+    config['FIREWALL_PORTS'] = "['8776']"
+    manifestdata += getManifestTemplate("firewall.pp")
     appendManifestFile(manifestfile, manifestdata)
