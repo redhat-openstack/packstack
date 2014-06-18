@@ -121,17 +121,14 @@ def initConfig(controller):
     }
 
     def check_provisioning_demo(config):
-        return (allow_provisioning(config) and
-                (config.get('CONFIG_PROVISION_DEMO', 'n') == 'y' or
-                 config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y'))
+        return (config.get('CONFIG_PROVISION_DEMO', 'n') == 'y' or
+                 config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y')
 
     def check_provisioning_tempest(config):
-        return (allow_provisioning(config) and
-                config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y')
+        return (config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y')
 
     def allow_all_in_one_ovs_bridge(config):
-        return (allow_provisioning(config) and
-                config['CONFIG_NEUTRON_INSTALL'] == 'y' and
+        return (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
                 config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch')
 
     conf_groups = [
@@ -144,7 +141,6 @@ def initConfig(controller):
 
         {"GROUP_NAME": "PROVISION_DEMO",
          "DESCRIPTION": "Provisioning demo config",
-         "PRE_CONDITION": allow_provisioning,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
@@ -189,7 +185,7 @@ def initSequences(controller):
         config['CONFIG_PROVISION_TEMPEST'] == 'y'
     )
 
-    if not provisioning_required or not allow_provisioning(config):
+    if not provisioning_required:
         return
 
     marshall_conf_bool(config, 'CONFIG_PROVISION_TEMPEST')
@@ -210,13 +206,6 @@ def marshall_conf_bool(conf, key):
         conf[key] = 'true'
     else:
         conf[key] = 'false'
-
-
-def allow_provisioning(config):
-    # Provisioning is currently supported only for all-in-one (due
-    # to a limitation with how the custom types for OpenStack
-    # resources are implemented).
-    return is_all_in_one(config)
 
 
 #-------------------------- step functions --------------------------
