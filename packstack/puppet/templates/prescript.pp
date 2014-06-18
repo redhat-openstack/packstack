@@ -26,3 +26,12 @@ service { "firewalld":
   enable => false,
   before => Class['firewall'],
 }
+
+package { 'audit':
+  ensure => present,
+} ->
+service { 'auditd':
+  ensure => running,
+  enable => true,
+}
+
