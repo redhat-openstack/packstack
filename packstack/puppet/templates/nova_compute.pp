@@ -21,7 +21,7 @@ file { '/etc/nova/ssh/nova_migration_key':
 
 nova_config{
     "DEFAULT/volume_api_class": value   => "nova.volume.cinder.API";
-    "libvirt/live_migration_uri": value => "qemu+ssh://nova@%%s/system?keyfile=/etc/nova/ssh/nova_migration_key";
+    "libvirt/live_migration_uri": value => "qemu+ssh://nova@%%s/system?no_verify=1&keyfile=/etc/nova/ssh/nova_migration_key";
 }
 
 class {"nova::compute":
