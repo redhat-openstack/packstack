@@ -1,6 +1,6 @@
-$horizon_packages = ["python-memcached", "python-netaddr"]
-
 include concat::setup
+
+$horizon_packages = ["python-memcached", "python-netaddr"]
 
 package {$horizon_packages:
     notify => Class["horizon"],
@@ -64,3 +64,4 @@ if ($::selinux != "false"){
         persistent => true,
     }
 }
+
