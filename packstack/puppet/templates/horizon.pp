@@ -13,7 +13,6 @@ class {'horizon':
    keystone_default_role => '_member_',
    fqdn => ['%(CONFIG_CONTROLLER_HOST)s', "$::fqdn", 'localhost'],
    can_set_mount_point => 'False',
-   help_url =>'http://docs.openstack.org',
    django_debug => %(CONFIG_DEBUG_MODE)s ? {true => 'True', false => 'False'},
    listen_ssl => %(CONFIG_HORIZON_SSL)s,
    horizon_cert => '/etc/pki/tls/certs/ssl_ps_server.crt',
