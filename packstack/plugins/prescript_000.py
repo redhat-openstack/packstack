@@ -13,7 +13,7 @@ import uuid
 from packstack.installer import (basedefs, exceptions, processors, utils,
                                  validators)
 
-from packstack.modules.common import filtered_hosts
+from packstack.modules.common import filtered_hosts, is_all_in_one
 from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
 
@@ -430,22 +430,33 @@ def initSequences(controller):
 
 #-------------------------- step functions --------------------------
 
+def install_keys_on_host(hostname, sshkeydata):
+    server = utils.ScriptRunner(hostname)
+    # TODO replace all that with ssh-copy-id
+    server.append("mkdir -p ~/.ssh")
+    server.append("chmod 500 ~/.ssh")
+    server.append("grep '%s' ~/.ssh/authorized_keys > /dev/null 2>&1 || "
+                  "echo %s >> ~/.ssh/authorized_keys"
+                  % (sshkeydata, sshkeydata))
+    server.append("chmod 400 ~/.ssh/authorized_keys")
+    server.append("restorecon -r ~/.ssh")
+    server.execute()
+
+
 def install_keys(config, messages):
     with open(config["CONFIG_SSH_KEY"]) as fp:
         sshkeydata = fp.read().strip()
-    for hostname in filtered_hosts(config):
-        if '/' in hostname:
-            hostname = hostname.split('/')[0]
-        server = utils.ScriptRunner(hostname)
-        # TODO replace all that with ssh-copy-id
-        server.append("mkdir -p ~/.ssh")
-        server.append("chmod 500 ~/.ssh")
-        server.append("grep '%s' ~/.ssh/authorized_keys > /dev/null 2>&1 || "
-                      "echo %s >> ~/.ssh/authorized_keys"
-                      % (sshkeydata, sshkeydata))
-        server.append("chmod 400 ~/.ssh/authorized_keys")
-        server.append("restorecon -r ~/.ssh")
-        server.execute()
+
+    # If this is a --allinone install *and* we are running as root,
+    # we can configure the authorized_keys file locally, avoid problems
+    # if PasswordAuthentication is disabled.
+    if is_all_in_one(config) and os.getuid() == 0:
+        install_keys_on_host(None, sshkeydata)
+    else:
+        for hostname in filtered_hosts(config):
+            if '/' in hostname:
+                hostname = hostname.split('/')[0]
+            install_keys_on_host(hostname, sshkeydata)
 
 
 def discover(config, messages):
