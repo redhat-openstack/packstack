@@ -135,7 +135,10 @@ def install_deps(config, messages):
     local = utils.ScriptRunner()
     local.append('rpm -q --requires %s | egrep -v "^(rpmlib|\/|perl)"'
                  % modules_pkg)
-    rc, modules_deps = local.execute()
+
+    # This can fail if there are no dependencies other than those
+    # filtered out by the egrep expression.
+    rc, modules_deps = local.execute(can_fail=False)
 
     # Modules package might not be installed if we are running from source.
     # In this case we assume user knows what (s)he's doing and we don't
