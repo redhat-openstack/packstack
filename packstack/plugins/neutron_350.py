@@ -878,7 +878,7 @@ def create_metering_agent_manifests(config, messages):
 
 
 def create_l2_agent_manifests(config, messages):
-    global q_hosts
+    global network_hosts, compute_hosts
 
     plugin = config['CONFIG_NEUTRON_L2_PLUGIN']
     agent = config["CONFIG_NEUTRON_L2_AGENT"]
@@ -910,9 +910,7 @@ def create_l2_agent_manifests(config, messages):
     else:
         raise KeyError("Unknown layer2 agent")
 
-    # Install l2 agents on every compute host in addition to any hosts listed
-    # specifically for the l2 agent
-    for host in q_hosts:
+    for host in network_hosts | compute_hosts:
         config[host_var] = host
         manifestfile = "%s_neutron.pp" % (host,)
         manifestdata = getManifestTemplate(template_name)
