@@ -4,6 +4,6 @@
 
 Facter.add("is_virtual_packstack") do
   setcode do
-    Facter::Util::Resolution.exec('grep hypervisor /proc/cpuinfo > /dev/null && echo true || echo false')
+    Facter::Util::Resolution.exec('grep -P \'(vmx|svm|hypervisor)\' /proc/cpuinfo > /dev/null && echo true || echo false')
   end
 end
