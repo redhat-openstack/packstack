@@ -915,10 +915,10 @@ def create_l2_agent_manifests(config, messages):
         manifestfile = "%s_neutron.pp" % (host,)
         manifestdata = getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
-        if agent == "openvswitch" and ovs_type == 'vlan':
+        if agent == "openvswitch" and ovs_type in ['vlan', 'vxlan', 'gre']:
+            bridge_key = 'CONFIG_NEUTRON_OVS_BRIDGE'
+            iface_key = 'CONFIG_NEUTRON_OVS_IFACE'
             for if_map in iface_arr:
-                bridge_key = 'CONFIG_NEUTRON_OVS_BRIDGE'
-                iface_key = 'CONFIG_NEUTRON_OVS_IFACE'
                 config[bridge_key], config[iface_key] = if_map.split(':')
                 manifestdata = getManifestTemplate("neutron_ovs_port.pp")
                 appendManifestFile(manifestfile, manifestdata + "\n")
