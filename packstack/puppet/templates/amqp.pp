@@ -71,56 +71,28 @@ define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
   }
 
   if $enable_ssl {
-    enable_qpid_ssl {"qpid":}
+    # If there is qpid-cpp-server-ssl install it
+    exec { 'install_qpid_ssl':
+      path    => '/usr/bin',
+      command => 'yum install -y -d 0 -e 0  qpid-cpp-server-ssl',
+      onlyif  => 'yum info qpid-cpp-server-ssl',
+      before  => Service['qpidd'],
+      require => Package['qpid-cpp-server'],
+    }
   }
+
   if $enable_auth == 'y' {
     add_qpid_user {"qpid_user":}
   }
 
 }
 
-define enable_qpid_ssl {
-  # User and group for the nss database
-  group { 'qpidd':
-    ensure => 'present',
-  }
-
-  exec { 'stop_qpid' :
-    command => '/sbin/service qpidd stop',
-    onlyif  => '/sbin/service qpidd status',
-  }
-
-  user { 'qpidd':
-    ensure     => 'present',
-    managehome => true,
-    home       => '/var/run/qpidd',
-    gid        => 'qpidd',
-    before     => Class['qpid::server']
-  }
-
-  Exec['stop_qpid']->User['qpidd']
-
-  file { 'pid_dir':
-    path => '/var/run/qpidd',
-    ensure => directory,
-    owner => 'qpidd',
-    group => 'qpidd',
-    require => User['qpidd'],
-  }
-
-  file_line { 'pid_dir_conf':
-    path => $qpid::server::config_file,
-    line => 'pid-dir=/var/run/qpidd',
-    require => File['pid_dir'],
-  }
-}
-
 define add_qpid_user {
   qpid_user { '%(CONFIG_AMQP_AUTH_USER)s':
     password  => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
-    file  => '/var/lib/qpidd/qpidd.sasldb',
-    realm  => 'AMQP',
-    provider => 'saslpasswd2',
+    file      => '/var/lib/qpidd/qpidd.sasldb',
+    realm     => 'QPID',
+    provider  => 'saslpasswd2',
     require   => Class['qpid::server'],
   }
 
