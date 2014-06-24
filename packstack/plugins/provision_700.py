@@ -5,6 +5,7 @@ Installs and configures neutron
 """
 
 import logging
+import uuid
 
 from packstack.installer import utils
 from packstack.installer import validators
@@ -57,6 +58,36 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "provision-tempest-user",
+             "USAGE": "The name of the Tempest Provisioning user. If you "
+                      "don't provide a user name, Tempest will be configured "
+                      "in a standalone mode",
+             "PROMPT": ("Enter the name of the Tempest Provisioning user "
+                        "(if blank, "),
+             "OPTION_LIST": False,
+             "VALIDATORS": False,
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "provision-tempest-user-passwd",
+            "USAGE": "The password to use for the Tempest Provisioning user",
+            "PROMPT": "Enter the password for the Tempest Provisioning user",
+            "OPTION_LIST": [],
+            "VALIDATORS": [validators.validate_not_empty],
+            "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+            "MASK_INPUT": True,
+            "LOOSE_VALIDATION": False,
+            "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER_PW",
+            "USE_DEFAULT": False,
+            "NEED_CONFIRM": True,
+            "CONDITION": False},
+
             ],
 
         "PROVISION_DEMO": [
@@ -121,8 +152,7 @@ def initConfig(controller):
     }
 
     def check_provisioning_demo(config):
-        return (config.get('CONFIG_PROVISION_DEMO', 'n') == 'y' or
-                 config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y')
+        return (config.get('CONFIG_PROVISION_DEMO', 'n') == 'y')
 
     def check_provisioning_tempest(config):
         return (config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y')
@@ -179,22 +209,28 @@ def initConfig(controller):
 
 def initSequences(controller):
     config = controller.CONF
-    provisioning_required = (
-        config['CONFIG_PROVISION_DEMO'] == 'y'
-        or
-        config['CONFIG_PROVISION_TEMPEST'] == 'y'
-    )
 
-    if not provisioning_required:
+    if (config['CONFIG_PROVISION_DEMO'] != "y" and
+        config['CONFIG_PROVISION_TEMPEST'] != "y"):
         return
 
     marshall_conf_bool(config, 'CONFIG_PROVISION_TEMPEST')
     marshall_conf_bool(config, 'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
 
-    provision_steps = [
-        {'title': 'Adding Provisioning manifest entries',
-         'functions': [create_manifest]}
-    ]
+    provision_steps = []
+
+    if config['CONFIG_PROVISION_DEMO'] == "y":
+        provision_steps.append(
+            {'title': 'Adding Provisioning Demo manifest entries',
+             'functions': [create_demo_manifest]}
+        )
+
+    if config['CONFIG_PROVISION_TEMPEST']:
+        provision_steps.append(
+            {'title': 'Adding Provisioning Tempest manifest entries',
+             'functions': [create_tempest_manifest]}
+        )
+
     controller.addSequence("Provisioning for Demo and Testing Usage",
                            [], [], provision_steps)
 
@@ -208,9 +244,7 @@ def marshall_conf_bool(conf, key):
         conf[key] = 'false'
 
 
-#-------------------------- step functions --------------------------
-
-def create_manifest(config, messages):
+def using_neutron(config):
     # Using the neutron or nova api servers as the provisioning target
     # will suffice for the all-in-one case.
     if config['CONFIG_NEUTRON_INSTALL'] != "y":
@@ -225,6 +259,19 @@ def create_manifest(config, messages):
     config['PROVISION_NEUTRON_AVAILABLE'] = config['CONFIG_NEUTRON_INSTALL']
     marshall_conf_bool(config, 'PROVISION_NEUTRON_AVAILABLE')
 
-    manifest_file = '%s_provision.pp' % config['CONFIG_CONTROLLER_HOST']
-    manifest_data = getManifestTemplate("provision.pp")
+
+#-------------------------- step functions --------------------------
+
+def create_demo_manifest(config, messages):
+    using_neutron(config)
+    manifest_file = '%s_provision_demo.pp' % config['CONFIG_CONTROLLER_HOST']
+    manifest_data = getManifestTemplate("provision_demo.pp")
+    appendManifestFile(manifest_file, manifest_data)
+
+
+def create_tempest_manifest(config, messages):
+    using_neutron(config)
+    manifest_file = '%s_provision_tempest.pp' % \
+                    config['CONFIG_CONTROLLER_HOST']
+    manifest_data = getManifestTemplate("provision_tempest.pp")
     appendManifestFile(manifest_file, manifest_data)
