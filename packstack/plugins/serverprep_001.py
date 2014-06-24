@@ -83,6 +83,19 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "rhn-enable-optional",
+             "USAGE": "To enable RHEL optional repos use value \"y\"",
+             "PROMPT": "To enable RHEL optional repos use value \"y\"",
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "y",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_RH_OPTIONAL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "rhn-satellite-server",
              "USAGE": ("To subscribe each server with RHN Satellite,fill "
                        "Satellite's URL here. Note that either satellite's "
@@ -346,10 +359,11 @@ def run_rhn_reg(host, server_url, username=None, password=None,
     server.execute(mask_list=mask)
 
 
-def run_rhsm_reg(host, username, password):
+def run_rhsm_reg(config, host, username, password):
     """
     Registers given host to Red Hat Repositories via subscription manager.
     """
+    releasever = config['HOST_DETAILS'][host]['release'].split('.')[0]
     server = utils.ScriptRunner(host)
 
     # register host
@@ -360,12 +374,16 @@ def run_rhsm_reg(host, username, password):
     # subscribe to required channel
     cmd = ('subscription-manager list --consumed | grep -i openstack || '
            'subscription-manager subscribe --pool %s')
-    pool = ("$(subscription-manager list --available | "
-            "grep -e 'Red Hat OpenStack' -m 1 -A 2 | grep 'Pool Id' | "
-            "awk '{print $3}')")
+    pool = ("$(subscription-manager list --available"
+            " | grep -e -m1 -A15 'Red Hat Enterprise Linux OpenStack Platform'"
+            " | grep -i 'Pool ID:' | awk '{print $3}')")
     server.append(cmd % pool)
+
+    if config['CONFIG_RH_OPTIONAL'] == 'y':
+        server.append("subscription-manager repos "
+                      "--enable rhel-%s-server-optional-rpms" % releasever)
     server.append("subscription-manager repos "
-                  "--enable rhel-6-server-optional-rpms")
+                  "--enable rhel-%s-server-openstack-5.0-rpms" % releasever)
 
     server.append("yum clean all")
     server.append("rpm -q --whatprovides yum-utils || "
@@ -507,7 +525,7 @@ def server_prep(config, messages):
     for hostname in filtered_hosts(config):
         # Subscribe to Red Hat Repositories if configured
         if rh_username:
-            run_rhsm_reg(hostname, rh_username, rh_password)
+            run_rhsm_reg(config, hostname, rh_username, rh_password)
 
         # Subscribe to RHN Satellite if configured
         if sat_url and hostname not in sat_registered:
