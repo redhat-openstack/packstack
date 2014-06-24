@@ -865,12 +865,12 @@ def create_lbaas_manifests(config, messages):
 
 
 def create_metering_agent_manifests(config, messages):
-    global api_hosts
+    global network_hosts
 
     if not config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
         return
 
-    for host in api_hosts:
+    for host in network_hosts:
         config['CONFIG_NEUTRON_METERING_IFCE_DRIVER'] = get_if_driver(config)
         manifestdata = getManifestTemplate("neutron_metering_agent.pp")
         manifestfile = "%s_neutron.pp" % (host,)
