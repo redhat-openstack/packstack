@@ -454,6 +454,12 @@ Provision Config Parameters
 **CONFIG_PROVISION_TEMPEST**
     Whether to configure tempest for testing.
 
+**CONFIG_PROVISION_TEMPEST_USER**
+    The name of the Tempest Provisioning user. If you don't provide a user name, Tempest will be configured in a standalone mode. If you choose the **demo** user, packstack will use the password from **CONFIG_KEYSTONE_DEMO_PW** if **CONFIG_PROVISION_DEMO** is enabled. If not, the **CONFIG_PROVISION_TEMPEST_USER_PW** will be used.
+
+**CONFIG_PROVISION_TEMPEST_USER_PW**
+    The password to use for the Tempest Provisioning user.
+
 **CONFIG_PROVISION_TEMPEST_REPO_REVISION**
     The revision of the tempest git repository to use.
 
