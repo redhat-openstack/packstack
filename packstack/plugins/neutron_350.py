@@ -836,16 +836,22 @@ def create_l2_agent_manifests(config):
         manifestfile = "%s_neutron.pp" % (host,)
         manifestdata = getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
-        if agent == "openvswitch" and ovs_type == 'vlan':
-            for if_map in iface_arr:
-                config['CONFIG_NEUTRON_OVS_BRIDGE'], config['CONFIG_NEUTRON_OVS_IFACE'] = if_map.split(':')
-                manifestdata = getManifestTemplate("neutron_ovs_port.pp")
-                appendManifestFile(manifestfile, manifestdata + "\n")
+        # neutron ovs port only on network hosts
+        if (
+               agent == "openvswitch" and (
+                   (host in l3_hosts and ovs_type in ['vxlan', 'gre'])
+                   or ovs_type == 'vlan')
+           ):
+                bridge_key = 'CONFIG_NEUTRON_OVS_BRIDGE'
+                iface_key = 'CONFIG_NEUTRON_OVS_IFACE'
+                for if_map in iface_arr:
+                    config[bridge_key], config[iface_key] = if_map.split(':')
+                    manifestdata = getManifestTemplate("neutron_ovs_port.pp")
+                    appendManifestFile(manifestfile, manifestdata + "\n")
         # Additional configurations required for compute hosts and
         # network hosts.
         manifestdata = getManifestTemplate('neutron_bridge_module.pp')
         appendManifestFile(manifestfile, manifestdata + '\n')
-
 
 def create_metadata_manifests(config):
     global meta_hosts
