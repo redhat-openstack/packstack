@@ -214,9 +214,6 @@ def initSequences(controller):
         config['CONFIG_PROVISION_TEMPEST'] != "y"):
         return
 
-    marshall_conf_bool(config, 'CONFIG_PROVISION_TEMPEST')
-    marshall_conf_bool(config, 'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
-
     provision_steps = []
 
     if config['CONFIG_PROVISION_DEMO'] == "y":
@@ -225,11 +222,14 @@ def initSequences(controller):
              'functions': [create_demo_manifest]}
         )
 
-    if config['CONFIG_PROVISION_TEMPEST']:
+    if config['CONFIG_PROVISION_TEMPEST'] == "y":
         provision_steps.append(
             {'title': 'Adding Provisioning Tempest manifest entries',
              'functions': [create_tempest_manifest]}
         )
+
+    marshall_conf_bool(config, 'CONFIG_PROVISION_TEMPEST')
+    marshall_conf_bool(config, 'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
 
     controller.addSequence("Provisioning for Demo and Testing Usage",
                            [], [], provision_steps)
