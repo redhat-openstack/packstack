@@ -830,23 +830,22 @@ def create_dhcp_manifests(config, messages):
         config['CONFIG_NEUTRON_DHCP_INTERFACE_DRIVER'] = get_if_driver(config)
         manifest_data = getManifestTemplate("neutron_dhcp.pp")
         manifest_file = "%s_neutron.pp" % (host,)
-
-        # Firewall Rules
-        config['FIREWALL_PROTOCOL'] = 'tcp'
-        for f_host in q_hosts:
-            config['FIREWALL_ALLOWED'] = "'%s'" % f_host
-            config['FIREWALL_SERVICE_NAME'] = "neutron dhcp in"
-            config['FIREWALL_SERVICE_ID'] = ("neutron_dhcp_in_%s_%s"
-                                             % (host, f_host))
-            config['FIREWALL_PORTS'] = "'67'"
-            config['FIREWALL_CHAIN'] = "INPUT"
-            manifest_data += getManifestTemplate("firewall.pp")
-            config['FIREWALL_SERVICE_NAME'] = "neutron dhcp out"
-            config['FIREWALL_SERVICE_ID'] = ("neutron_dhcp_out_%s_%s"
-                                             % (host, f_host))
-            config['FIREWALL_PORTS'] = "'68'"
-            config['FIREWALL_CHAIN'] = "OUTPUT"
-            manifest_data += getManifestTemplate("firewall.pp")
+        # Firewall Rules for dhcp in
+        config['FIREWALL_PROTOCOL'] = 'udp'
+        config['FIREWALL_ALLOWED'] = "'ALL'"
+        config['FIREWALL_SERVICE_NAME'] = "neutron dhcp in: "
+        config['FIREWALL_SERVICE_ID'] = "neutron_dhcp_in_%s" % host
+        config['FIREWALL_PORTS'] = "'67'"
+        config['FIREWALL_CHAIN'] = "INPUT"
+        manifest_data += getManifestTemplate("firewall.pp")
+        # Firewall Rules for dhcp out
+        config['FIREWALL_PROTOCOL'] = 'udp'
+        config['FIREWALL_ALLOWED'] = "'ALL'"
+        config['FIREWALL_SERVICE_NAME'] = "neutron dhcp out: "
+        config['FIREWALL_SERVICE_ID'] = "neutron_dhcp_out_%s" % host
+        config['FIREWALL_PORTS'] = "'68'"
+        config['FIREWALL_CHAIN'] = "OUTPUT"
+        manifest_data += getManifestTemplate("firewall.pp")
 
         appendManifestFile(manifest_file, manifest_data, 'neutron')
 
