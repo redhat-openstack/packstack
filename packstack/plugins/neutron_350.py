@@ -751,6 +751,10 @@ def create_manifests(config, messages):
                 template_name = "neutron_notifications.pp"
                 manifest_data += getManifestTemplate(template_name)
 
+            # Set up any l2 plugin configs we need only on neutron api nodes
+            # XXX I am not completely sure about this, but it seems necessary:
+            manifest_data += getManifestTemplate(plugin_manifest)
+
             # Firewall Rules
             for f_host in q_hosts:
                 config['FIREWALL_SERVICE_NAME'] = "neutron server"
@@ -763,10 +767,6 @@ def create_manifests(config, messages):
                 manifest_data += getManifestTemplate("firewall.pp")
 
             appendManifestFile(manifest_file, manifest_data, 'neutron')
-
-        # Set up any l2 plugin configs we need anywhere we install neutron
-        # XXX I am not completely sure about this, but it seems necessary:
-        manifest_data = getManifestTemplate(plugin_manifest)
 
         # We also need to open VXLAN/GRE port for agent
         if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
@@ -782,9 +782,8 @@ def create_manifests(config, messages):
             config['FIREWALL_SERVICE_ID'] = ("neutron_tunnel")
             config['FIREWALL_PORTS'] = tunnel_port
             config['FIREWALL_CHAIN'] = "INPUT"
-            manifest_data += getManifestTemplate('firewall.pp')
-
-        appendManifestFile(manifest_file, manifest_data, 'neutron')
+            manifest_data = getManifestTemplate('firewall.pp')
+            appendManifestFile(manifest_file, manifest_data, 'neutron')
 
 
 def create_keystone_manifest(config, messages):
