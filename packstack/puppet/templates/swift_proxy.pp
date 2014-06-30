@@ -18,8 +18,8 @@ class { 'swift::proxy':
     'tempurl',
     'slo',
     'formpost',
-    'account-quotas',
-    'container-quotas',
+    'account_quotas',
+    'container_quotas',
     'proxy-server'
   ],
   account_autocreate => true,
