@@ -375,7 +375,7 @@ def run_rhsm_reg(config, host, username, password):
     cmd = ('subscription-manager list --consumed | grep -i openstack || '
            'subscription-manager subscribe --pool %s')
     pool = ("$(subscription-manager list --available"
-            " | grep -e -m1 -A15 'Red Hat Enterprise Linux OpenStack Platform'"
+            " | grep -m1 -A15 'Red Hat Enterprise Linux OpenStack Platform'"
             " | grep -i 'Pool ID:' | awk '{print $3}')")
     server.append(cmd % pool)
 
@@ -384,6 +384,14 @@ def run_rhsm_reg(config, host, username, password):
                       "--enable rhel-%s-server-optional-rpms" % releasever)
     server.append("subscription-manager repos "
                   "--enable rhel-%s-server-openstack-5.0-rpms" % releasever)
+
+    # mrg channel naming is a big mess
+    if releasever == '7':
+        mrg_prefix = 'rhel-x86_64-server-7'
+    elif releasever == '6':
+        mrg_prefix = 'rhel-6-server'
+    server.append("subscription-manager repos "
+                  "--enable %s-mrg-messaging-2-rpms" % mrg_prefix)
 
     server.append("yum clean all")
     server.append("rpm -q --whatprovides yum-utils || "
