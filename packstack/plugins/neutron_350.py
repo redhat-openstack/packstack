@@ -850,12 +850,12 @@ def create_dhcp_manifests(config, messages):
 
 
 def create_lbaas_manifests(config, messages):
-    global api_hosts
+    global network_hosts
 
     if not config['CONFIG_LBAAS_INSTALL'] == 'y':
         return
 
-    for host in api_hosts:
+    for host in network_hosts:
         config['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = get_if_driver(config)
         manifestdata = getManifestTemplate("neutron_lbaas.pp")
         manifestfile = "%s_neutron.pp" % (host,)
