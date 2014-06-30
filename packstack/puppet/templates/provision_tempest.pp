@@ -71,19 +71,6 @@ if '%(CONFIG_PROVISION_TEMPEST_USER)s' != '' {
     password    => $password,
   }
 
-  keystone_tenant { $alt_tenant_name:
-    ensure      => present,
-    enabled     => true,
-    description => 'alt tenant',
-  }
-
-  keystone_user { $alt_username:
-    ensure      => present,
-    enabled     => true,
-    tenant      => $alt_tenant_name,
-    password    => $alt_password,
-  }
-
   ## Images
 
   glance_image { $image_name:
@@ -183,7 +170,6 @@ if '%(CONFIG_PROVISION_TEMPEST_USER)s' != '' {
   if $configure_tempest {
     $tempest_requires = concat([
                                 Keystone_user[$username],
-                                Keystone_user[$alt_username],
                                 Glance_image[$image_name],
                                 ], $neutron_deps)
 
@@ -201,9 +187,6 @@ if '%(CONFIG_PROVISION_TEMPEST_USER)s' != '' {
       username                  => $username,
       password                  => $password,
       tenant_name               => $tenant_name,
-      alt_username              => $alt_username,
-      alt_password              => $alt_password,
-      alt_tenant_name           => $alt_tenant_name,
       admin_username            => $admin_username,
       admin_password            => $admin_password,
       admin_tenant_name         => $admin_tenant_name,

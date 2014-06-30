@@ -38,18 +38,6 @@
     password    => $password,
   }
 
-  keystone_tenant { $alt_tenant_name:
-    ensure      => present,
-    enabled     => true,
-    description => 'alt tenant',
-  }
-  keystone_user { $alt_username:
-    ensure      => present,
-    enabled     => true,
-    tenant      => $alt_tenant_name,
-    password    => $alt_password,
-  }
-
   ## Images
 
   glance_image { $image_name:
