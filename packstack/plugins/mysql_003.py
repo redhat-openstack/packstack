@@ -10,6 +10,7 @@ import logging
 from packstack.installer import validators
 from packstack.installer import utils
 from packstack.installer.utils import split_hosts
+from packstack.modules.common import filtered_hosts
 
 from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
@@ -106,8 +107,7 @@ def create_manifest(config, messages):
         if config['CONFIG_%s_INSTALL' % mod.upper()] == 'y':
             append_for(mod, suffix)
 
-    hosts = set([config['CONFIG_CONTROLLER_HOST']])
-    hosts |= split_hosts(config['CONFIG_COMPUTE_HOSTS'])
+    hosts = filtered_hosts(config, exclude=False, dbhost=True)
 
     config['FIREWALL_SERVICE_NAME'] = "mysql"
     config['FIREWALL_PORTS'] = "'3306'"
