@@ -24,7 +24,7 @@ if $::operatingsystem in $el_releases and $::operatingsystemrelease < 7 {
 service { "firewalld":
   ensure => "stopped",
   enable => false,
-  before => Class['firewall'],
+  before => Service['iptables'],
 }
 
 package { 'audit':
