@@ -45,7 +45,7 @@ def create_manifest(config, messages):
         manifestfile = "%s_postscript.pp" % hostname
         manifestdata = getManifestTemplate("postscript.pp")
         appendManifestFile(manifestfile, manifestdata, 'postscript')
-        if config.get("CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE") != 'n':
+        if config.get("CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE") != 'false':
             fmted = config['CONFIG_NEUTRON_L3_EXT_BRIDGE'].replace('-', '_')
             config['EXT_BRIDGE_VAR'] = fmted
             manifestdata = getManifestTemplate("persist_ovs_bridge.pp")
