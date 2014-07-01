@@ -289,6 +289,14 @@ def initSequences(controller):
     if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
         return
 
+    if controller.CONF['CONFIG_NEUTRON_INSTALL'] == 'y':
+        network_title = ('Adding Openstack Network-related '
+                         'Nova manifest entries')
+        network_function = create_neutron_manifest
+    else:
+        network_title = 'Adding Nova Network manifest entries'
+        network_function = create_network_manifest
+
     novaapisteps = [
         {'title': 'Adding Nova API manifest entries',
          'functions': [create_api_manifest]},
@@ -302,6 +310,8 @@ def initSequences(controller):
          'functions': [create_ssh_keys]},
         {'title': 'Gathering ssh host keys for Nova migration',
          'functions': [gather_host_keys]},
+        {'title': network_title,
+         'functions': [network_function]},
         {'title': 'Adding Nova Compute manifest entries',
          'functions': [create_compute_manifest]},
         {'title': 'Adding Nova Scheduler manifest entries',
@@ -312,16 +322,6 @@ def initSequences(controller):
          'functions': [create_common_manifest]},
     ]
 
-    if controller.CONF['CONFIG_NEUTRON_INSTALL'] == 'y':
-        novaapisteps.append(
-            {'title': 'Adding Openstack Network-related Nova manifest entries',
-             'functions': [create_neutron_manifest]}
-        )
-    else:
-        novaapisteps.append(
-            {'title': 'Adding Nova Network manifest entries',
-             'functions': [create_network_manifest]}
-        )
     controller.addSequence("Installing OpenStack Nova API", [], [],
                            novaapisteps)
 
@@ -548,6 +548,9 @@ def create_network_manifest(config, messages):
 
         manifestfile = "%s_nova.pp" % host
         manifestdata = getManifestTemplate("nova_network.pp")
+        # Restart libvirt if we deploy nova network on compute
+        if host in compute_hosts:
+            manifestdata += getManifestTemplate("nova_network_libvirt.pp")
 
         # in multihost mode each compute host runs nova-api-metadata
         if multihost and host != api_host and host in compute_hosts:
