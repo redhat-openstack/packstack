@@ -45,7 +45,13 @@ def create_manifest(config, messages):
         manifestfile = "%s_postscript.pp" % hostname
         manifestdata = getManifestTemplate("postscript.pp")
         appendManifestFile(manifestfile, manifestdata, 'postscript')
-        if config.get("CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE") != 'false':
+        # TO-DO: remove this temporary fix for nova-network/neutron
+        #        undeterministic behavior
+        provision = (
+            config.get("CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE") not in
+            set(['false', 'n', None])
+        )
+        if config.get('CONFIG_NEUTRON_INSTALL', 'n') == 'y' and provision:
             fmted = config['CONFIG_NEUTRON_L3_EXT_BRIDGE'].replace('-', '_')
             config['EXT_BRIDGE_VAR'] = fmted
             manifestdata = getManifestTemplate("persist_ovs_bridge.pp")
