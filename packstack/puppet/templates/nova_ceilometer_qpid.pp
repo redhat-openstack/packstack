@@ -8,6 +8,8 @@ class { 'ceilometer':
     qpid_protocol   => '%(CONFIG_AMQP_PROTOCOL)s',
     rpc_backend     => 'ceilometer.openstack.common.rpc.impl_qpid',
     verbose         => true,
-    debug           => %(CONFIG_DEBUG_MODE)s
+    debug           => %(CONFIG_DEBUG_MODE)s,
+    # for some strange reason ceilometer needs to be in nova group
+    require          => Package['nova-common'],
 }
 

@@ -5,6 +5,8 @@ class { 'ceilometer':
     rabbit_userid    => '%(CONFIG_AMQP_AUTH_USER)s',
     rabbit_password  => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
     verbose          => true,
-    debug            => %(CONFIG_DEBUG_MODE)s
+    debug            => %(CONFIG_DEBUG_MODE)s,
+    # for some strange reason ceilometer needs to be in nova group
+    require          => Package['nova-common'],
 }
 
