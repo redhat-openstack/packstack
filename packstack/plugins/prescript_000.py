@@ -23,8 +23,6 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
 PLUGIN_NAME = "Prescript"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
-NTP_SERVER_LIST = ','.join("%s.fedora.pool.ntp.org" % x for x in range(0, 4))
-
 
 def initConfig(controller):
     default_ssh_key = os.path.join(os.environ["HOME"], ".ssh/*.pub")
@@ -198,7 +196,7 @@ def initConfig(controller):
                     "plain if Packstack should not install ntpd "
                     "on instances."),
          "OPTION_LIST": [],
-         "DEFAULT_VALUE": NTP_SERVER_LIST,
+         "DEFAULT_VALUE": '',
          "MASK_INPUT": False,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_NTP_SERVERS",
