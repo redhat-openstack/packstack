@@ -64,7 +64,8 @@ def initConfig(controller):
                       "don't provide a user name, Tempest will be configured "
                       "in a standalone mode",
              "PROMPT": ("Enter the name of the Tempest Provisioning user "
-                        "(if blank, "),
+                        "(if blank, Tempest will be configured in a "
+                        "standalone mode) "),
              "OPTION_LIST": False,
              "VALIDATORS": False,
              "DEFAULT_VALUE": "",
