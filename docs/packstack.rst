@@ -379,7 +379,7 @@ Neutron Config Parameters
     The name of the bridge that the Neutron L3 agent will use for external traffic, or 'provider' if using provider networks.
 
 **CONFIG_NEUTRON_L2_PLUGIN**
-    The name of the L2 plugin to be used with Neutron.
+    The name of the L2 plugin to be used with Neutron. (eg. linuxbridge, openvswitch, ml2).
 
 **CONFIG_NEUTRON_METADATA_PW**
     A comma separated list of IP addresses on which to install Neutron metadata agent.
