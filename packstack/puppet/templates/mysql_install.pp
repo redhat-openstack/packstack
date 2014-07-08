@@ -1,6 +1,6 @@
 
 # on EL6 we need to wait for innodb changes before starting mysqld
-if $::operatingsystem in ['RedHat','CentOS','Scientific'] and $::operatingsystemrelease < 7 {
+if $::operatingsystem in ['RedHat','CentOS','Scientific'] and $::operatingsystemmajrelease < 7 {
     $manage_service = false
     service { 'mysqld':
       enable  => true,
