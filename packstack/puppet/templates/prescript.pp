@@ -1,6 +1,6 @@
 include firewall
 
-$el_releases = ["RedHat", "CentOS"]
+$el_releases = ['RedHat', 'CentOS', 'Scientific']
 
 # We don't have openstack-selinux package for Fedora
 if $::operatingsystem != "Fedora" {
