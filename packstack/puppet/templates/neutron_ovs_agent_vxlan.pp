@@ -6,9 +6,7 @@ if "%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s" {
   $localip = '%(CONFIG_NEUTRON_OVS_HOST)s'
 }
 
-$neutron_l2_plugin = '%(CONFIG_NEUTRON_L2_PLUGIN)s'
-
-if $neutron_l2_plugin == 'ml2' {
+if '%(CONFIG_NEUTRON_L2_PLUGIN)s' == 'ml2' {
   if ('l2population' in %(CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS)s) {
     $l2population = true
   } else {
