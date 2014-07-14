@@ -8,6 +8,9 @@
   $admin_password            = '%(CONFIG_KEYSTONE_ADMIN_PW)s'
   $admin_tenant_name         = 'admin'
 
+  # Heat Using Trusts
+  $heat_using_trusts         = '%(CONFIG_HEAT_USING_TRUSTS)s'
+
   ## Glance
   $image_name                = 'cirros'
   $image_source              = 'http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img'
@@ -36,6 +39,13 @@
     enabled     => true,
     tenant      => $tenant_name,
     password    => $password,
+  }
+
+  if $heat_using_trusts == 'y' {
+    keystone_user_role { "${username}@${tenant_name}":
+      ensure  => present,
+      roles   => ['_member_', 'heat_stack_owner'],
+    }
   }
 
   ## Images
