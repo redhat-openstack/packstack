@@ -6,17 +6,12 @@ if "%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s" {
 }
 
 if '%(CONFIG_NEUTRON_L2_PLUGIN)s' == 'ml2' {
-  if ('l2population' in %(CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS)s) {
-    $l2population = true
-  } else {
-    $l2population = false
-  }
   class { 'neutron::agents::ml2::ovs':
     bridge_mappings  => %(CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS)s,
     enable_tunneling => true,
     tunnel_types     => ['gre'],
     local_ip         => $localip,
-    l2_population    => $l2population,
+    l2_population    => %(CONFIG_NEUTRON_USE_L2POPULATION)s,
   }
 } else {
   class { 'neutron::agents::ovs':

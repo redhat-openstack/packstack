@@ -881,6 +881,15 @@ def create_l2_agent_manifests(config, messages):
     plugin = config['CONFIG_NEUTRON_L2_PLUGIN']
     agent = config["CONFIG_NEUTRON_L2_AGENT"]
 
+    # CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS will be available only for ML2
+    # plugin deployment, but we need CONFIG_NEUTRON_USE_L2POPULATION also
+    # for other plugin template generation
+    if ('l2population' in
+            config.get('CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS', [])):
+        config['CONFIG_NEUTRON_USE_L2POPULATION'] = 'true'
+    else:
+        config['CONFIG_NEUTRON_USE_L2POPULATION'] = 'false'
+
     if agent == "openvswitch":
         host_var = 'CONFIG_NEUTRON_OVS_HOST'
         if plugin == agent:
