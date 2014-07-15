@@ -357,6 +357,9 @@ Heat Config Parameters
 **CONFIG_HEAT_DB_PW**
     The password used by Heat user to authenticate against MySQL.
 
+**CONFIG_HEAT_AUTH_ENC_KEY**
+    The encryption key to use for authentication info in database.
+
 **CONFIG_HEAT_KS_PW**
     The password to use for the Heat to authenticate with Keystone.
 
@@ -368,6 +371,15 @@ Heat Config Parameters
 
 **CONFIG_HEAT_CFN_INSTALL**
     Set to 'y' if you would like Packstack to install Heat CloudFormation API.
+
+**CONFIG_HEAT_DOMAIN**
+    Name of Keystone domain for Heat. By default, the value is **heat**.
+
+**CONFIG_HEAT_DOMAIN_ADMIN**
+    Name of Keystone domain admin user for Heat. By default, the value is **heat_admin**.
+
+**CONFIG_HEAT_DOMAIN_PASSWORD**
+    Password for Keystone domain admin user for Heat.
 
 Neutron Config Parameters
 -------------------------
