@@ -363,6 +363,9 @@ Heat Config Parameters
 **CONFIG_HEAT_KS_PW**
     The password to use for the Heat to authenticate with Keystone.
 
+**CONFIG_HEAT_USING_TRUSTS**
+    Set to 'y' if you would like Packstack to install heat with trusts as deferred auth method.  If not, the stored password method will be used.
+
 **CONFIG_HEAT_CLOUDWATCH_INSTALL**
     Set to 'y' if you would like Packstack to install Heat CloudWatch API.
 

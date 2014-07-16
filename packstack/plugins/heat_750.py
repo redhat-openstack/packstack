@@ -82,6 +82,21 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
 
+        {"CMD_OPTION": "os-heat-using-trusts",
+         "USAGE": ("Set to 'y' if you would like Packstack to install Heat "
+                   "with trusts as deferred auth method. "
+                   "If not, the stored password method will be used."),
+         "PROMPT": "Should Packstack configure Heat to use trusts",
+         "OPTION_LIST": ["y", "n"],
+         "VALIDATORS": [validators.validate_options],
+         "DEFAULT_VALUE": "y",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME": "CONFIG_HEAT_USING_TRUSTS",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
+
         {"CMD_OPTION": "os-heat-cfn-install",
          "USAGE": ("Set to 'y' if you would like Packstack to install Heat "
                    "CloudFormation API"),
@@ -172,12 +187,20 @@ def create_manifest(config, messages):
     manifestfile = "%s_heat.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
     manifestdata += getManifestTemplate("heat.pp")
+
+    if config.get('CONFIG_HEAT_USING_TRUSTS', 'n') == 'y':
+        manifestdata += getManifestTemplate("heat_trusts.pp")
+
     appendManifestFile(manifestfile, manifestdata)
 
 
 def create_keystone_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("keystone_heat.pp")
+
+    if config.get('CONFIG_HEAT_USING_TRUSTS', 'n') == 'y':
+        manifestdata += getManifestTemplate("keystone_heat_trusts.pp")
+
     appendManifestFile(manifestfile, manifestdata)
 
 
