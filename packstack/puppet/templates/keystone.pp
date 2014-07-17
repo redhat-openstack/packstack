@@ -1,3 +1,4 @@
+$keystone_use_ssl = false
 
 class {"keystone":
     admin_token => "%(CONFIG_KEYSTONE_ADMIN_TOKEN)s",
@@ -6,6 +7,15 @@ class {"keystone":
     verbose => true,
     debug => %(CONFIG_DEBUG_MODE)s,
     mysql_module => '2.2',
+    service_name => '%(CONFIG_KEYSTONE_SERVICE_NAME)s',
+    enable_ssl => $keystone_use_ssl,
+}
+
+if '%(CONFIG_KEYSTONE_SERVICE_NAME)s' == 'httpd' {
+  include packstack::apache_common
+  class {"keystone::wsgi::apache":
+    ssl => $keystone_use_ssl,
+  }
 }
 
 class {"keystone::roles::admin":
