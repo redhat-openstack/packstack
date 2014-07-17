@@ -26,6 +26,7 @@ class { 'nova::compute::libvirt':
   libvirt_virt_type  => "$libvirt_virt_type",
   libvirt_cpu_mode   => "$libvirt_cpu_mode",
   vncserver_listen   => "0.0.0.0",
+  migration_support  => true,
 }
 
 exec {'load_kvm':
