@@ -25,10 +25,19 @@ nova_config{
     "libvirt/live_migration_uri": value => "%(CONFIG_NOVA_COMPUTE_MIGRATE_URL)s";
 }
 
-class {"nova::compute":
-    enabled => true,
-    vncproxy_host => "%(CONFIG_CONTROLLER_HOST)s",
-    vncserver_proxyclient_address => "%(CONFIG_NOVA_COMPUTE_HOST)s",
+$config_horizon_ssl = '%(CONFIG_HORIZON_SSL)s'
+
+$vncproxy_proto = $config_horizon_ssl ? {
+  'y'     => 'https',
+  'n'     => 'http',
+  default => 'http',
+}
+
+class { 'nova::compute':
+  enabled                       => true,
+  vncproxy_host                 => '%(CONFIG_CONTROLLER_HOST)s',
+  vncproxy_protocol             => $vncproxy_proto,
+  vncserver_proxyclient_address => '%(CONFIG_NOVA_COMPUTE_HOST)s',
 }
 
 
