@@ -21,5 +21,9 @@ class packstack::neutron::bridge {
         path  => '/etc/sysctl.conf',
         line  => 'net.bridge.bridge-nf-call-arptables=1',
         match => 'net.bridge.bridge-nf-call-arptables\s*=',
+    } -> exec { 'sysctl_refresh':
+        path => ['/usr/sbin', '/sbin', '/usr/bin', '/bin'],
+        command => 'sysctl -p /etc/sysctl.conf',
+        logoutput => 'on_failure',
     }
 }
