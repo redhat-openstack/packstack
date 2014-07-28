@@ -90,6 +90,24 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "novacompute-migrate-protocol",
+             "USAGE": ("Protocol used for instance migration. Allowed values "
+                       "are tcp and ssh. Note that by defaul nova user is "
+                       "created with /sbin/nologin shell so that ssh protocol "
+                       "won't be working. To make ssh protocol work you have "
+                       "to fix nova user on compute hosts manually."),
+             "PROMPT": ("Enter protocol which will be used for instance "
+                        "migration"),
+             "OPTION_LIST": ['tcp', 'ssh'],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": 'tcp',
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "NOVA_NETWORK": [
@@ -309,7 +327,7 @@ def initSequences(controller):
         {'title': 'Creating ssh keys for Nova migration',
          'functions': [create_ssh_keys]},
         {'title': 'Gathering ssh host keys for Nova migration',
-         'functions': [gather_host_keys]},
+        'functions': [gather_host_keys]},
         {'title': 'Adding Nova Compute manifest entries',
          'functions': [create_compute_manifest]},
         {'title': 'Adding Nova Scheduler manifest entries',
@@ -434,12 +452,23 @@ def create_conductor_manifest(config, messages):
 def create_compute_manifest(config, messages):
     global compute_hosts, network_hosts
 
+    migrate_protocol = config['CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL']
+    if migrate_protocol == 'ssh':
+        config['CONFIG_NOVA_COMPUTE_MIGRATE_URL'] = (
+            'qemu+ssh://nova@%s/system?no_verify=1&'
+            'keyfile=/etc/nova/ssh/nova_migration_key'
+        )
+    else:
+        config['CONFIG_NOVA_COMPUTE_MIGRATE_URL'] = (
+            'qemu+tcp://nova@%s/system'
+        )
+
     ssh_hostkeys = ''
     for host in compute_hosts:
         try:
-            host_name, host_aliases, host_addrs = socket.gethostbyaddr(host)
+            hostname, aliases, addrs = socket.gethostbyaddr(host)
         except socket.herror:
-            host_name, host_aliases, host_addrs = (host, [], [])
+            hostname, aliases, addrs = (host, [], [])
 
         for hostkey in config['HOST_KEYS_%s' % host].split('\n'):
             hostkey = hostkey.strip()
@@ -447,9 +476,9 @@ def create_compute_manifest(config, messages):
                 continue
 
             _, host_key_type, host_key_data = hostkey.split()
-            config['SSH_HOST_NAME'] = host_name
+            config['SSH_HOST_NAME'] = hostname
             config['SSH_HOST_ALIASES'] = ','.join(
-                '"%s"' % addr for addr in host_aliases + host_addrs
+                '"%s"' % addr for addr in aliases + addrs
             )
             config['SSH_HOST_KEY'] = host_key_data
             config['SSH_HOST_KEY_TYPE'] = host_key_type
@@ -459,15 +488,16 @@ def create_compute_manifest(config, messages):
         config["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
 
-        for c_host in compute_hosts:
-            config['FIREWALL_SERVICE_NAME'] = "nova qemu migration"
-            config['FIREWALL_PORTS'] = "'49152-49215'"
-            config['FIREWALL_CHAIN'] = "INPUT"
-            config['FIREWALL_PROTOCOL'] = 'tcp'
-            config['FIREWALL_ALLOWED'] = "'%s'" % c_host
-            config['FIREWALL_SERVICE_ID'] = ("nova_qemu_migration_%s_%s"
-                                                 % (host, c_host))
-            manifestdata += getManifestTemplate("firewall.pp")
+        if migrate_protocol == 'ssh':
+            for c_host in compute_hosts:
+                config['FIREWALL_SERVICE_NAME'] = "nova qemu migration"
+                config['FIREWALL_PORTS'] = "'49152-49215'"
+                config['FIREWALL_CHAIN'] = "INPUT"
+                config['FIREWALL_PROTOCOL'] = 'tcp'
+                config['FIREWALL_ALLOWED'] = "'%s'" % c_host
+                config['FIREWALL_SERVICE_ID'] = ("nova_qemu_migration_%s_%s"
+                                                     % (host, c_host))
+                manifestdata += getManifestTemplate("firewall.pp")
 
         if config['CONFIG_VMWARE_BACKEND'] == 'y':
             manifestdata += getManifestTemplate("nova_compute_vmware.pp")
@@ -502,10 +532,12 @@ def create_compute_manifest(config, messages):
             manifestdata += getManifestTemplate(mq_template)
             manifestdata += getManifestTemplate("nova_ceilometer.pp")
 
+        config['FIREWALL_PORTS'] = ['5900-5999']
+        if migrate_protocol == 'tcp':
+            config['FIREWALL_PORTS'].append('16509')
         config['FIREWALL_ALLOWED'] = "'%s'" % config['CONFIG_CONTROLLER_HOST']
         config['FIREWALL_SERVICE_NAME'] = "nova compute"
         config['FIREWALL_SERVICE_ID'] = "nova_compute"
-        config['FIREWALL_PORTS'] = "'5900-5999'"
         config['FIREWALL_CHAIN'] = "INPUT"
         config['FIREWALL_PROTOCOL'] = 'tcp'
         manifestdata += getManifestTemplate("firewall.pp")
