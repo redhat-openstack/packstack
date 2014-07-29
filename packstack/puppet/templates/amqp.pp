@@ -43,7 +43,7 @@ define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
       }
     }
 
-    'RedHat', 'CentOS': {
+    'RedHat', 'CentOS', 'Scientific': {
       if $::operatingsystemmajrelease >= 7 {
         $config = '/etc/qpid/qpidd.conf'
       } else {
