@@ -1,8 +1,3 @@
 
-package { 'mysql':
-    ensure => 'present',
+class { 'remote::db':
 }
-
-Package ['mysql'] -> Remote_database<||>
-Package ['mysql'] -> Remote_database_user<||>
-Package ['mysql'] -> Remote_database_grant<||>

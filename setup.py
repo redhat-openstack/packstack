@@ -56,13 +56,18 @@ class InstallModulesCommand(Command):
             out, err = proc.communicate()
             if proc.returncode:
                 raise RuntimeError('Failed:\n%s' % err)
-        # install Packstack module
-        packstack_path = os.path.join(self.destination, 'packstack')
-        print 'Copying Packstack module to %(packstack_path)s' % locals()
-        source = os.path.join(os.path.dirname(__file__),
-                              'packstack/puppet/modules/packstack')
-        shutil.rmtree(packstack_path, ignore_errors=True)
-        shutil.copytree(source, packstack_path)
+        # install Packstack modules
+        module_source = os.path.join(os.path.dirname(__file__),
+                                     'packstack/puppet/modules')
+        for module in os.listdir(module_source):
+            source = os.path.join(module_source, module)
+            if not os.path.isdir(source):
+                continue
+
+            dest = os.path.join(self.destination, module)
+            print 'Copying module %(module)s to %(dest)s' % locals()
+            shutil.rmtree(dest, ignore_errors=True)
+            shutil.copytree(source, dest)
 
 
 # Utility function to read the README file.
