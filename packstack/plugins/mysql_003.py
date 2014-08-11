@@ -86,13 +86,13 @@ def initSequences(controller):
 
 def create_manifest(config, messages):
     if config['CONFIG_MYSQL_INSTALL'] == 'y':
-        install = True
         suffix = 'install'
+        host = config['CONFIG_MYSQL_HOST']
     else:
-        install = False
         suffix = 'noinstall'
+        host = config['CONFIG_CONTROLLER_HOST']
 
-    manifestfile = "%s_mysql.pp" % config['CONFIG_MYSQL_HOST']
+    manifestfile = "%s_mysql.pp" % host
     manifestdata = [getManifestTemplate('mysql_%s.pp' % suffix)]
 
     def append_for(module, suffix):

@@ -160,9 +160,9 @@ def copy_puppet_modules(config, messages):
                            'concat', 'firewall', 'glance', 'heat', 'horizon',
                            'inifile', 'keystone', 'memcached', 'mongodb',
                            'mysql', 'neutron', 'nova', 'nssdb', 'openstack',
-                           'packstack', 'qpid', 'rabbitmq', 'rsync', 'ssh',
-                           'stdlib', 'swift', 'sysctl', 'tempest', 'vcsrepo',
-                           'vlan', 'vswitch', 'xinetd'))
+                           'packstack', 'qpid', 'rabbitmq', 'remote', 'rsync',
+                           'ssh', 'stdlib', 'swift', 'sysctl', 'tempest',
+                           'vcsrepo', 'vlan', 'vswitch', 'xinetd'))
 
         # write puppet manifest to disk
     manifestfiles.writeManifests()

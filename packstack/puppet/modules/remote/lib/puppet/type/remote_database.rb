@@ -26,4 +26,10 @@ Puppet::Type.newtype(:remote_database) do
     newvalue(/^\S+$/)
   end
 
+  newproperty(:collate) do
+    desc 'The collate setting for the database'
+    defaultto :utf8_general_ci
+    newvalue(/^\S+$/)
+  end
+
 end
