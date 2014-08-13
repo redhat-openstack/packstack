@@ -302,9 +302,6 @@ Nova Options
 **CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP**
     Automatically assign a floating IP to new instances.
 
-**CONFIG_NOVA_NETWORK_DEFAULTFLOATINGPOOL**
-    Name of the default floating pool to which the specified floating ranges are added to.
-
 **CONFIG_NOVA_NETWORK_MANAGER**
     Nova network manager.
 
