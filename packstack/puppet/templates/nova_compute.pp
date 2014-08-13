@@ -1,3 +1,4 @@
+
 package{'python-cinderclient':
     before => Class["nova"]
 }
@@ -21,7 +22,7 @@ file { '/etc/nova/ssh/nova_migration_key':
 
 nova_config{
     "DEFAULT/volume_api_class": value   => "nova.volume.cinder.API";
-    "libvirt/live_migration_uri": value => "qemu+ssh://nova@%%s/system?no_verify=1&keyfile=/etc/nova/ssh/nova_migration_key";
+    "libvirt/live_migration_uri": value => "%(CONFIG_NOVA_COMPUTE_MIGRATE_URL)s";
 }
 
 $config_horizon_ssl = '%(CONFIG_HORIZON_SSL)s'
@@ -83,4 +84,3 @@ exec {'tuned-virtual-host':
     command => '/usr/sbin/tuned-adm profile virtual-host',
     require => Service['tuned'],
 }
-

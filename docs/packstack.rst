@@ -195,6 +195,9 @@ Nova Options
 **CONFIG_NOVA_COMPUTE_PRIVIF**
     Private interface for Flat DHCP on the Nova compute servers.
 
+**CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL**
+    Protocol used for instance migration. Allowed values are tcp and ssh. Note that by defaul nova user is created with /sbin/nologin shell so that ssh protocol won't be working. To make ssh protocol work you have to fix nova user on compute hosts manually.
+
 **CONFIG_NOVA_NETWORK_HOSTS**
     List of IP address of the servers on which to install the Nova Network service.
 
