@@ -488,10 +488,11 @@ def create_compute_manifest(config, messages):
         config["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
 
-        if migrate_protocol == 'ssh':
+        if migrate_protocol == 'ssh' or migrate_protocol == 'tcp':
             for c_host in compute_hosts:
                 config['FIREWALL_SERVICE_NAME'] = "nova qemu migration"
-                config['FIREWALL_PORTS'] = "'49152-49215'"
+                config['FIREWALL_PORTS'] = ['16509']
+                config['FIREWALL_PORTS'].append('49152-49215')
                 config['FIREWALL_CHAIN'] = "INPUT"
                 config['FIREWALL_PROTOCOL'] = 'tcp'
                 config['FIREWALL_ALLOWED'] = "'%s'" % c_host
