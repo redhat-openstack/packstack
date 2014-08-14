@@ -327,7 +327,7 @@ def initSequences(controller):
         {'title': 'Creating ssh keys for Nova migration',
          'functions': [create_ssh_keys]},
         {'title': 'Gathering ssh host keys for Nova migration',
-        'functions': [gather_host_keys]},
+         'functions': [gather_host_keys]},
         {'title': 'Adding Nova Compute manifest entries',
          'functions': [create_compute_manifest]},
         {'title': 'Adding Nova Scheduler manifest entries',
@@ -488,17 +488,15 @@ def create_compute_manifest(config, messages):
         config["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
 
-        if migrate_protocol == 'ssh' or migrate_protocol == 'tcp':
-            for c_host in compute_hosts:
-                config['FIREWALL_SERVICE_NAME'] = "nova qemu migration"
-                config['FIREWALL_PORTS'] = ['16509']
-                config['FIREWALL_PORTS'].append('49152-49215')
-                config['FIREWALL_CHAIN'] = "INPUT"
-                config['FIREWALL_PROTOCOL'] = 'tcp'
-                config['FIREWALL_ALLOWED'] = "'%s'" % c_host
-                config['FIREWALL_SERVICE_ID'] = ("nova_qemu_migration_%s_%s"
-                                                     % (host, c_host))
-                manifestdata += getManifestTemplate("firewall.pp")
+        for c_host in compute_hosts:
+            config['FIREWALL_SERVICE_NAME'] = "nova qemu migration"
+            config['FIREWALL_PORTS'] = ['16509', '49152-49215']
+            config['FIREWALL_CHAIN'] = "INPUT"
+            config['FIREWALL_PROTOCOL'] = 'tcp'
+            config['FIREWALL_ALLOWED'] = "'%s'" % c_host
+            config['FIREWALL_SERVICE_ID'] = ("nova_qemu_migration_%s_%s"
+                                                 % (host, c_host))
+            manifestdata += getManifestTemplate("firewall.pp")
 
         if config['CONFIG_VMWARE_BACKEND'] == 'y':
             manifestdata += getManifestTemplate("nova_compute_vmware.pp")
@@ -534,8 +532,6 @@ def create_compute_manifest(config, messages):
             manifestdata += getManifestTemplate("nova_ceilometer.pp")
 
         config['FIREWALL_PORTS'] = ['5900-5999']
-        if migrate_protocol == 'tcp':
-            config['FIREWALL_PORTS'].append('16509')
         config['FIREWALL_ALLOWED'] = "'%s'" % config['CONFIG_CONTROLLER_HOST']
         config['FIREWALL_SERVICE_NAME'] = "nova compute"
         config['FIREWALL_SERVICE_ID'] = "nova_compute"
