@@ -483,6 +483,7 @@ def createcomputemanifest(config):
         config['FIREWALL_SERVICE_ID'] = "nova_compute"
         config['FIREWALL_PORTS'] = "'5900-5999'"
         config['FIREWALL_CHAIN'] = "INPUT"
+        config['FIREWALL_PROTOCOL'] = 'tcp'
         manifestdata += getManifestTemplate("firewall.pp")
 
         manifestdata += "\n" + nova_config_options.getManifestEntry()

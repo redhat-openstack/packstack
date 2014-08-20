@@ -443,52 +443,6 @@ def initConfig(controllerObject):
             ],
         }
 
-    def use_ml2_plugin(config):
-        return (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
-                config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2')
-
-    def use_linuxbridge_plugin(config):
-        result = (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
-                  config['CONFIG_NEUTRON_L2_PLUGIN'] == 'linuxbridge')
-        if result:
-            config["CONFIG_NEUTRON_L2_AGENT"] = 'linuxbridge'
-        return result
-
-    def use_linuxbridge_agent(config):
-        ml2_used = (use_ml2_plugin(config) and
-                    config["CONFIG_NEUTRON_L2_AGENT"] == 'linuxbridge')
-        return use_linuxbridge_plugin(config) or ml2_used
-
-    def use_openvswitch_plugin(config):
-        result = (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
-                  config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch')
-        if result:
-            config["CONFIG_NEUTRON_L2_AGENT"] = 'openvswitch'
-        return result
-
-    def use_openvswitch_plugin_tunnel(config):
-        tun_types = ('gre', 'vxlan')
-        return (use_openvswitch_plugin(config) and
-                config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] in tun_types)
-
-    def use_ml2_with_ovs(config):
-        return (use_ml2_plugin(config) and
-                config["CONFIG_NEUTRON_L2_AGENT"] == 'openvswitch')
-
-    def use_openvswitch_agent(config):
-        return use_openvswitch_plugin(config) or use_ml2_with_ovs(config)
-
-    def use_openvswitch_agent_tunnel(config):
-        return use_openvswitch_plugin_tunnel(config) or use_ml2_with_ovs(config)
-
-    def use_openvswitch_vxlan(config):
-        return ((use_openvswitch_plugin_tunnel(config) and
-                 config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vxlan')
-                or
-                (use_ml2_with_ovs(config) and
-                 'vxlan' in config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS']))
-
-
     conf_groups = [
         { "GROUP_NAME"            : "NEUTRON",
           "DESCRIPTION"           : "Neutron config",
@@ -549,6 +503,63 @@ def initConfig(controllerObject):
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, paramList)
+
+
+def use_ml2_plugin(config):
+    return (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
+            config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2')
+
+def use_linuxbridge_plugin(config):
+    result = (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
+              config['CONFIG_NEUTRON_L2_PLUGIN'] == 'linuxbridge')
+    if result:
+        config["CONFIG_NEUTRON_L2_AGENT"] = 'linuxbridge'
+    return result
+
+def use_linuxbridge_agent(config):
+    ml2_used = (use_ml2_plugin(config) and
+                config["CONFIG_NEUTRON_L2_AGENT"] == 'linuxbridge')
+    return use_linuxbridge_plugin(config) or ml2_used
+
+def use_openvswitch_plugin(config):
+    result = (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
+              config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch')
+    if result:
+        config["CONFIG_NEUTRON_L2_AGENT"] = 'openvswitch'
+    return result
+
+def use_openvswitch_plugin_tunnel(config):
+    tun_types = ('gre', 'vxlan')
+    return (use_openvswitch_plugin(config) and
+            config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] in tun_types)
+
+def use_ml2_with_ovs(config):
+    return (use_ml2_plugin(config) and
+            config["CONFIG_NEUTRON_L2_AGENT"] == 'openvswitch')
+
+def use_openvswitch_agent(config):
+    return use_openvswitch_plugin(config) or use_ml2_with_ovs(config)
+
+def use_openvswitch_agent_tunnel(config):
+    return use_openvswitch_plugin_tunnel(config) or use_ml2_with_ovs(config)
+
+def use_openvswitch_vxlan(config):
+    return ((use_openvswitch_plugin_tunnel(config) and
+             config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vxlan')
+            or
+            (use_ml2_with_ovs(config) and
+             'vxlan' in config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS']))
+
+def use_openvswitch_gre(config):
+    ovs_vxlan = (
+        use_openvswitch_plugin_tunnel(config) and
+        config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'gre'
+    )
+    ml2_vxlan = (
+        use_ml2_with_ovs(config) and
+        'gre' in config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES']
+    )
+    return ovs_vxlan or ml2_vxlan
 
 
 def get_if_driver(config):
@@ -655,10 +666,6 @@ def create_manifests(config):
     if config['CONFIG_NOVA_INSTALL'] == 'y':
         allowed_hosts.add(config['CONFIG_NOVA_API_HOST'])
 
-    config['FIREWALL_SERVICE_NAME'] = "neutron server"
-    config['FIREWALL_PORTS'] = "'9696'"
-    config['FIREWALL_CHAIN'] = "INPUT"
-
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
         manifest_data = getManifestTemplate("neutron.pp")
@@ -669,6 +676,10 @@ def create_manifests(config):
             manifest_data = getManifestTemplate("neutron_api.pp")
             # Firewall Rules
             for f_host in allowed_hosts:
+                config['FIREWALL_SERVICE_NAME'] = "neutron server"
+                config['FIREWALL_PORTS'] = "'9696'"
+                config['FIREWALL_CHAIN'] = "INPUT"
+                config['FIREWALL_PROTOCOL'] = 'tcp'
                 config['FIREWALL_ALLOWED'] = "'%s'" % f_host
                 config['FIREWALL_SERVICE_ID'] = "neutron_server_%s_%s" % (host, f_host)
                 manifest_data += getManifestTemplate("firewall.pp")
@@ -678,6 +689,25 @@ def create_manifests(config):
         # Set up any l2 plugin configs we need anywhere we install neutron
         # XXX I am not completely sure about this, but it seems necessary:
         manifest_data = getManifestTemplate(plugin_manifest)
+
+        # We also need to open VXLAN/GRE port for agent
+        if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
+            if use_openvswitch_vxlan(config):
+                config['FIREWALL_PROTOCOL'] = 'udp'
+                tunnel_port = ("'%s'"
+                               % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'])
+            else:
+                config['FIREWALL_PROTOCOL'] = 'gre'
+                tunnel_port = 'undef'
+            for f_host in q_hosts:
+                config['FIREWALL_ALLOWED'] = "'%s'" % f_host
+                config['FIREWALL_SERVICE_NAME'] = "neutron tunnel port"
+                config['FIREWALL_SERVICE_ID'] = ("neutron_tunnel_%s_%s"
+                                                 % (host, f_host))
+                config['FIREWALL_PORTS'] = tunnel_port
+                config['FIREWALL_CHAIN'] = "INPUT"
+                manifest_data += getManifestTemplate('firewall.pp')
+
         appendManifestFile(manifest_file, manifest_data, 'neutron')
 
 
@@ -725,6 +755,7 @@ def create_dhcp_manifests(config):
         manifest_file = "%s_neutron.pp" % (host,)
 
         # Firewall Rules
+        config['FIREWALL_PROTOCOL'] = 'tcp'
         for f_host in q_hosts:
             config['FIREWALL_ALLOWED'] = "'%s'" % f_host
             config['FIREWALL_SERVICE_NAME'] = "neutron dhcp in"
