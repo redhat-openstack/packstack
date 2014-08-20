@@ -699,14 +699,12 @@ def create_manifests(config):
             else:
                 config['FIREWALL_PROTOCOL'] = 'gre'
                 tunnel_port = 'undef'
-            for f_host in q_hosts:
-                config['FIREWALL_ALLOWED'] = "'%s'" % f_host
-                config['FIREWALL_SERVICE_NAME'] = "neutron tunnel port"
-                config['FIREWALL_SERVICE_ID'] = ("neutron_tunnel_%s_%s"
-                                                 % (host, f_host))
-                config['FIREWALL_PORTS'] = tunnel_port
-                config['FIREWALL_CHAIN'] = "INPUT"
-                manifest_data += getManifestTemplate('firewall.pp')
+            config['FIREWALL_ALLOWED'] = "'ALL'"
+            config['FIREWALL_SERVICE_NAME'] = "neutron tunnel port"
+            config['FIREWALL_SERVICE_ID'] = ("neutron_tunnel")
+            config['FIREWALL_PORTS'] = tunnel_port
+            config['FIREWALL_CHAIN'] = "INPUT"
+            manifest_data += getManifestTemplate('firewall.pp')
 
         appendManifestFile(manifest_file, manifest_data, 'neutron')
 
