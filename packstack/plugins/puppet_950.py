@@ -149,9 +149,11 @@ def install_deps(config, messages):
 
     for hostname in filtered_hosts(config):
         server = utils.ScriptRunner(hostname)
-        for package in deps:
-            server.append("rpm -q --whatprovides %s || yum install -y %s"
-                          % (package, package))
+        packages = ' '.join(deps)
+        server.append("yum install -y %s"
+                          % packages)
+        server.append("yum update -y %s"
+                          % packages)
         server.execute()
 
 
