@@ -69,6 +69,24 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "rhn-satellite-server",
+             "USAGE": ("To subscribe each server with RHN Satellite,fill "
+                       "Satellite's URL here. Note that either satellite's "
+                       "username/password or activation key has "
+                       "to be provided"),
+             "PROMPT": ("To subscribe each server with RHN Satellite enter "
+                        "RHN Satellite server URL"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_URL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
+
+        "RHSM": [
             {"CMD_OPTION": "rh-password",
              "USAGE": ("To subscribe each server with Red Hat subscription "
                        "manager, include this with CONFIG_RH_USER"),
@@ -83,7 +101,7 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "rhn-enable-optional",
+            {"CMD_OPTION": "rh-enable-optional",
              "USAGE": "To enable RHEL optional repos use value \"y\"",
              "PROMPT": "To enable RHEL optional repos use value \"y\"",
              "OPTION_LIST": ["y", "n"],
@@ -96,18 +114,60 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "rhn-satellite-server",
-             "USAGE": ("To subscribe each server with RHN Satellite,fill "
-                       "Satellite's URL here. Note that either satellite's "
-                       "username/password or activation key has "
-                       "to be provided"),
-             "PROMPT": ("To subscribe each server with RHN Satellite enter "
-                        "RHN Satellite server URL"),
+            {"CMD_OPTION": "rh-proxy-host",
+             "USAGE": ("Specify a HTTP proxy to use with Red Hat subscription "
+                       "manager"),
+             "PROMPT": ("Specify a HTTP proxy to use with Red Hat subscription"
+                        " manager"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_PROXY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
+
+        "RHSM_PROXY": [
+            {"CMD_OPTION": "rh-proxy-port",
+             "USAGE": ("Specify port of Red Hat subscription manager HTTP "
+                       "proxy"),
+             "PROMPT": ("Specify port of Red Hat subscription manager HTTP "
+                        "proxy"),
              "OPTION_LIST": [],
              "DEFAULT_VALUE": "",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_SATELLITE_URL",
+             "CONF_NAME": "CONFIG_RH_PROXY_PORT",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-proxy-user",
+             "USAGE": ("Specify a username to use with Red Hat subscription "
+                       "manager HTTP proxy"),
+             "PROMPT": ("Specify a username to use with Red Hat subscription "
+                        "manager HTTP proxy"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_PROXY_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-proxy-password",
+             "USAGE": ("Specify a password to use with Red Hat subscription "
+                       "manager HTTP proxy"),
+             "PROMPT": ("Specify a password to use with Red Hat subscription "
+                        "manager HTTP proxy"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_PROXY_PW",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False}
@@ -240,6 +300,12 @@ def initConfig(controller):
         ]
     }
 
+    def filled_rhsm(config):
+        return bool(config.get('CONFIG_RH_USER'))
+
+    def filled_rhsm_proxy(config):
+        return bool(config.get('CONFIG_RH_PROXY'))
+
     def filled_satellite(config):
         return bool(config.get('CONFIG_SATELLITE_URL'))
 
@@ -257,26 +323,42 @@ def initConfig(controller):
 
     config = controller.CONF
     if (is_all_in_one(config) and is_rhel()) or not is_all_in_one(config):
-        conf_groups.append({"GROUP_NAME": "RHEL",
-                            "DESCRIPTION": "RHEL config",
-                            "PRE_CONDITION": lambda x: 'yes',
-                            "PRE_CONDITION_MATCH": "yes",
-                            "POST_CONDITION": False,
-                            "POST_CONDITION_MATCH": True})
+        conf_groups.extend([
+            {"GROUP_NAME": "RHEL",
+             "DESCRIPTION": "RHEL config",
+             "PRE_CONDITION": lambda x: 'yes',
+             "PRE_CONDITION_MATCH": "yes",
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True},
 
-        conf_groups.append({"GROUP_NAME": "SATELLITE",
-                            "DESCRIPTION": "RHN Satellite config",
-                            "PRE_CONDITION": filled_satellite,
-                            "PRE_CONDITION_MATCH": True,
-                            "POST_CONDITION": False,
-                            "POST_CONDITION_MATCH": True})
+            {"GROUP_NAME": "RHSM",
+             "DESCRIPTION": "RH subscription manager config",
+             "PRE_CONDITION": filled_rhsm,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True},
 
-        conf_groups.append({"GROUP_NAME": "SATELLITE_PROXY",
-                            "DESCRIPTION": "RHN Satellite proxy config",
-                            "PRE_CONDITION": filled_satellite_proxy,
-                            "PRE_CONDITION_MATCH": True,
-                            "POST_CONDITION": False,
-                            "POST_CONDITION_MATCH": True})
+            {"GROUP_NAME": "RHSM_PROXY",
+             "DESCRIPTION": "RH subscription manager proxy config",
+             "PRE_CONDITION": filled_rhsm_proxy,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True},
+
+            {"GROUP_NAME": "SATELLITE",
+             "DESCRIPTION": "RHN Satellite config",
+             "PRE_CONDITION": filled_satellite,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True},
+
+            {"GROUP_NAME": "SATELLITE_PROXY",
+             "DESCRIPTION": "RHN Satellite proxy config",
+             "PRE_CONDITION": filled_satellite_proxy,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True}
+        ])
 
     for group in conf_groups:
         params = conf_params[group["GROUP_NAME"]]
@@ -359,12 +441,23 @@ def run_rhn_reg(host, server_url, username=None, password=None,
     server.execute(mask_list=mask)
 
 
-def run_rhsm_reg(config, host, username, password):
+def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
+                 proxy_port=None, proxy_user=None, proxy_password=None):
     """
     Registers given host to Red Hat Repositories via subscription manager.
     """
     releasever = config['HOST_DETAILS'][host]['release'].split('.')[0]
     server = utils.ScriptRunner(host)
+
+    # configure proxy if it is necessary
+    if proxy_server:
+        cmd = ('subscription-manager config '
+                    '--server.proxy_hostname=%(proxy_server)s '
+                    '--server.proxy_port=%(proxy_port)s')
+        if proxy_user:
+            cmd += (' --server.proxy_user=%(proxy_user)s '
+                    '--server.proxy_password=%(proxy_password)s')
+        server.append(cmd % locals())
 
     # register host
     cmd = ('subscription-manager register --username=\"%s\" '
@@ -379,7 +472,7 @@ def run_rhsm_reg(config, host, username, password):
             " | grep -i 'Pool ID:' | awk '{print $3}')")
     server.append(cmd % pool)
 
-    if config['CONFIG_RH_OPTIONAL'] == 'y':
+    if optional:
         server.append("subscription-manager repos "
                       "--enable rhel-%s-server-optional-rpms" % releasever)
     server.append("subscription-manager repos "
@@ -499,8 +592,8 @@ def server_prep(config, messages):
     rh_username = None
     sat_url = None
     if is_rhel():
-        rh_username = config["CONFIG_RH_USER"].strip()
-        rh_password = config["CONFIG_RH_PW"].strip()
+        rh_username = config.get("CONFIG_RH_USER")
+        rh_password = config.get("CONFIG_RH_PW")
 
         sat_registered = set()
 
@@ -525,7 +618,12 @@ def server_prep(config, messages):
     for hostname in filtered_hosts(config):
         # Subscribe to Red Hat Repositories if configured
         if rh_username:
-            run_rhsm_reg(config, hostname, rh_username, rh_password)
+            run_rhsm_reg(hostname, rh_username, rh_password,
+                optional=(config.get('CONFIG_RH_OPTIONAL') == 'y'),
+                proxy_server=config.get('CONFIG_RH_PROXY'),
+                proxy_port=config.get('CONFIG_RH_PROXY_PORT'),
+                proxy_user=config.get('CONFIG_RH_PROXY_USER'),
+                proxy_password=config.get('CONFIG_RH_PROXY_PASSWORD'))
 
         # Subscribe to RHN Satellite if configured
         if sat_url and hostname not in sat_registered:
