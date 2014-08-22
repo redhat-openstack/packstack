@@ -25,7 +25,7 @@
   $fixed_range               = '10.0.0.0/24'
   $router_name               = 'router1'
   $setup_ovs_bridge          = %(CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE)s
-  $public_bridge_name        = '%(CONFIG_PROVISION_DEMO_FLOATRANGE)s'
+  $public_bridge_name        = '%(CONFIG_NEUTRON_L3_EXT_BRIDGE)s'
 
   ## Users
 
