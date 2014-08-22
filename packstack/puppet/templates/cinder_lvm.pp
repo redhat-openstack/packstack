@@ -4,6 +4,6 @@ package { 'lvm2':
 }
 
 class {'cinder::volume::iscsi':
-  iscsi_ip_address => '%(CONFIG_CONTROLLER_HOST)s',
+  iscsi_ip_address => '%(CONFIG_STORAGE_HOST)s',
   require => Package['lvm2'],
 }
