@@ -9,7 +9,7 @@ $public_key = {
 }
 
 class { "nova":
-    glance_api_servers => "%(CONFIG_CONTROLLER_HOST)s:9292",
+    glance_api_servers => "%(CONFIG_STORAGE_HOST)s:9292",
     qpid_hostname      => "%(CONFIG_AMQP_HOST)s",
     qpid_username      => '%(CONFIG_AMQP_AUTH_USER)s',
     qpid_password      => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
