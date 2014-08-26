@@ -5,6 +5,7 @@ class {"keystone":
     token_format => "%(CONFIG_KEYSTONE_TOKEN_FORMAT)s",
     verbose => true,
     debug => %(CONFIG_DEBUG_MODE)s,
+    mysql_module => '2.2',
 }
 
 class {"keystone::roles::admin":

@@ -4,6 +4,7 @@ class { 'neutron::server':
   auth_password => $neutron_user_password,
   auth_host => '%(CONFIG_CONTROLLER_HOST)s',
   enabled => true,
+  mysql_module   => '2.2',
 }
 
 exec { 'neutron-db-manage upgrade':

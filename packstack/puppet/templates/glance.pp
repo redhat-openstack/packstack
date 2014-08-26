@@ -8,6 +8,7 @@ class {"glance::api":
     sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/glance",
     verbose => true,
     debug => %(CONFIG_DEBUG_MODE)s,
+    mysql_module => '2.2',
 }
 
 class { 'glance::backend::file': }
@@ -20,4 +21,5 @@ class {"glance::registry":
     sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MYSQL_HOST)s/glance",
     verbose => true,
     debug => %(CONFIG_DEBUG_MODE)s,
+    mysql_module => '2.2',
 }
