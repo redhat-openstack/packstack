@@ -4,4 +4,5 @@ class {"neutron::db::mysql":
   allowed_hosts => "%%",
   dbname        => '%(CONFIG_NEUTRON_L2_DBNAME)s',
   charset       => "utf8",
+  mysql_module  => '2.2',
 }

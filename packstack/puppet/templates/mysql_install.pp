@@ -13,11 +13,17 @@ if $::operatingsystem in ['RedHat','CentOS','Scientific'] and $::operatingsystem
 }
 
 class {"mysql::server":
-    package_name => "mariadb-galera-server",
-    manage_service => $manage_service,
-    config_hash => {bind_address => "0.0.0.0",
-                    default_engine => "InnoDB",
-                    root_password => "%(CONFIG_MYSQL_PW)s",}
+    package_name     => "mariadb-galera-server",
+    service_manage   => $manage_service,
+    restart          => true,
+    root_password    => "%(CONFIG_MYSQL_PW)s",
+    override_options => {
+      'mysqld' => { bind_address => "0.0.0.0",
+                    default_storage_engine => "InnoDB",
+                    max_connections => "1024",
+                    open_files_limit => '-1',
+      }
+    }
 }
 
 include packstack::innodb
@@ -26,15 +32,15 @@ include packstack::innodb
 # this is done in mysql::server::account_security but has problems
 # when there is no fqdn, so we're defining a slightly different one here
 database_user { [ 'root@127.0.0.1', 'root@::1', '@localhost', '@%%' ]:
-    ensure  => 'absent', require => Class['mysql::config'],
+    ensure  => 'absent', require => Class['mysql::server'],
 }
 if ($::fqdn != "" and $::fqdn != "localhost") {
     database_user { [ "root@${::fqdn}", "@${::fqdn}"]:
-        ensure  => 'absent', require => Class['mysql::config'],
+        ensure  => 'absent', require => Class['mysql::server'],
     }
 }
 if ($::fqdn != $::hostname and $::hostname != "localhost") {
     database_user { ["root@${::hostname}", "@${::hostname}"]:
-        ensure  => 'absent', require => Class['mysql::config'],
+        ensure  => 'absent', require => Class['mysql::server'],
     }
 }
