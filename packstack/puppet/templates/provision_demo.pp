@@ -11,11 +11,6 @@
   # Heat Using Trusts
   $heat_using_trusts         = '%(CONFIG_HEAT_USING_TRUSTS)s'
 
-  ## Glance
-  $image_name                = 'cirros'
-  $image_source              = 'http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img'
-  $image_ssh_user            = 'cirros'
-
   ## Neutron
   $public_network_name       = 'public'
   $public_subnet_name        = 'public_subnet'
@@ -48,16 +43,7 @@
     }
   }
 
-  ## Images
-
-  glance_image { $image_name:
-    ensure           => present,
-    is_public        => 'yes',
-    container_format => 'bare',
-    disk_format      => 'qcow2',
-    source           => $image_source,
-  }
-
+  
   ## Neutron
 
   if %(PROVISION_NEUTRON_AVAILABLE)s {

@@ -1,5 +1,5 @@
 cinder_config {
-    "DEFAULT/glance_host": value => "%(CONFIG_CONTROLLER_HOST)s";
+    "DEFAULT/glance_host": value => "%(CONFIG_STORAGE_HOST)s";
 }
 
 package {'python-keystone':
@@ -18,3 +18,4 @@ class {'cinder::scheduler':
 
 class {'cinder::volume':
 }
+
