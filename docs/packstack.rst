@@ -163,7 +163,7 @@ Cinder Config parameters
     The password to use for the Cinder to authenticate with Keystone.
 
 **CONFIG_CINDER_BACKEND**
-    The Cinder backend to use ['lvm', 'gluster', 'nfs', 'vmdk'].
+    The Cinder backend to use ['lvm', 'gluster', 'nfs', 'vmdk', 'netapp'].
 
 Cinder volume create Config parameters
 --------------------------------------
@@ -188,6 +188,67 @@ Cinder NFS Config parameters
 
 **CONFIG_CINDER_NFS_MOUNTS**
     A single or comma separated list of NFS exports to mount.
+
+Cinder NetApp Config parameters
+----------------------------
+
+**CONFIG_CINDER_NETAPP_LOGIN**
+    (required) Password for the administrative user account specified in the netapp_login parameter.
+
+**CONFIG_CINDER_NETAPP_PASSWORD**
+    (required) The hostname (or IP address) for the storage system or proxy server.
+
+**CONFIG_CINDER_NETAPP_HOSTNAME**
+    (required) The hostname (or IP address) for the storage system or proxy server.
+
+**CONFIG_CINDER_NETAPP_SERVER_PORT**
+    (optional) The TCP port to use for communication with ONTAPI on the storage system. Traditionally, port 80 is used for HTTP and port 443 is used for HTTPS; however, this value should be changed if an alternate port has been configured on the storage system or proxy server.  Defaults to 80
+
+**CONFIG_CINDER_NETAPP_STORAGE_FAMILY**
+    (optional) The storage family type used on the storage system; valid values are ontap_7mode for using Data ONTAP operating in 7-Mode or ontap_cluster for using clustered Data ONTAP, or eseries for NetApp E-Series.  Defaults to ontap_cluster.
+
+**CONFIG_CINDER_NETAPP_TRANSPORT_TYPE**
+    (optional) The transport protocol used when communicating with ONTAPI on the storage system or proxy server. Valid values are http or https. Defaults to http.
+
+**CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL**
+    (optional) The storage protocol to be used on the data path with the storage system; valid values are iscsi or nfs. Defaults to nfs.
+
+**CONFIG_CINDER_NETAPP_SIZE_MULTIPLIER**
+    (optional) The quantity to be multiplied by the requested volume size to ensure enough space is available on the virtual storage server (Vserver) to fulfill the volume creation request. Defaults to 1.0.
+
+**CONFIG_CINDER_NETAPP_EXPIRY_THRES_MINUTES**
+    (optional) This parameter specifies the threshold for last access time for images in the NFS image cache. When a cache cleaning cycle begins, images in the cache that have not been accessed in the last M minutes, where M is the value of this parameter, will be deleted from the cache to create free space on the NFS share. Defaults to 720.
+
+**CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_START**
+    (optional) If the percentage of available space for an NFS share has dropped below the value specified by this parameter, the NFS image cache will be cleaned. Defaults to 20.
+
+**CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_STOP**
+    (optional) When the percentage of available space on an NFS share has reached the percentage specified by this parameter, the driver will stop clearing files from the NFS image cache that have not been accessed in the last M minutes, where M is the value of the expiry_thres_minutes parameter.  Defaults to 60.
+
+**CONFIG_CINDER_NETAPP_NFS_SHARES_CONFIG**
+    (optional) File with the list of available NFS shares.  Defaults to ''.
+
+**CONFIG_CINDER_NETAPP_VOLUME_LIST**
+    (optional) This parameter is only utilized when the storage protocol is configured to use iSCSI. This parameter is used to restrict provisioning to the specified controller volumes. Specify the value of this parameter to be a comma separated list of NetApp controller volume names to be used for provisioning.  Defaults to ''.
+
+**CONFIG_CINDER_NETAPP_VFILER**
+    (optional) The vFiler unit on which provisioning of block storage volumes will be done. This parameter is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode and the storage protocol selected is iSCSI. Only use this parameter when utilizing the MultiStore feature on the NetApp storage system.  Defaults to ''.
+
+**CONFIG_CINDER_NETAPP_VSERVER**
+    (optional) This parameter specifies the virtual storage server (Vserver) name on the storage cluster on which provisioning of block storage volumes should occur. If using the NFS storage protocol, this parameter is mandatory for storage service catalog support (utilized by Cinder volume type extra_specs support). If this parameter is specified, the exports belonging to the Vserver will only be used for provisioning in the future. Block storage volumes on exports not belonging to the Vserver specified by this parameter will continue to function normally. Defaults to ''.
+
+**CONFIG_CINDER_NETAPP_CONTROLLER_IPS**
+    (optional) This option is only utilized when the storage family is configured to eseries. This option is used to restrict provisioning to the specified controllers. Specify the value of this option to be a comma separated list of controller hostnames or IP addresses to be used for provisioning. Defaults to ''.
+
+**CONFIG_CINDER_NETAPP_SA_PASSWORD**
+    (optional) Password for the NetApp E-Series storage array. Defaults to ''.
+
+**CONFIG_CINDER_NETAPP_WEBSERVICE_PATH**
+    (optional) This option is used to specify the path to the E-Series proxy application on a proxy server. The value is combined with the value of the netapp_transport_type, netapp_server_hostname, and netapp_server_port options to create the URL used by the driver to connect to the proxy application.  Defaults to '/devmgr/v2'.
+
+**CONFIG_CINDER_NETAPP_STORAGE_POOLS**
+    (optional) This option is used to restrict provisioning to the specified storage pools. Only dynamic disk pools are currently supported. Specify the value of this option to be a comma separated list of disk pool names to be used for provisioning. Defaults to ''.
+
 
 Nova Options
 ------------
