@@ -154,6 +154,9 @@ def install_deps(config, messages):
                           % packages)
         server.append("yum update -y %s"
                           % packages)
+        # yum does not fail if one of the packages is missing
+        for package in deps:
+            server.append("rpm -q --whatprovides %s" % (package))
         server.execute()
 
 
