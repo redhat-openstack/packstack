@@ -164,7 +164,8 @@ def copy_puppet_modules(config, messages):
                            'mysql', 'neutron', 'nova', 'nssdb', 'openstack',
                            'packstack', 'qpid', 'rabbitmq', 'remote', 'rsync',
                            'ssh', 'stdlib', 'swift', 'sysctl', 'tempest',
-                           'vcsrepo', 'vlan', 'vswitch', 'xinetd'))
+                           'vcsrepo', 'vlan', 'vswitch', 'xinetd',
+                           'openstacklib'))
 
         # write puppet manifest to disk
     manifestfiles.writeManifests()
