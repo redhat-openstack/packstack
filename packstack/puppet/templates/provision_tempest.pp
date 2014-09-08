@@ -81,16 +81,6 @@ if '%(CONFIG_PROVISION_TEMPEST_USER)s' != '' {
     }
   }
 
-  ## Images
-
-  glance_image { $image_name:
-    ensure           => present,
-    is_public        => 'yes',
-    container_format => 'bare',
-    disk_format      => 'qcow2',
-    source           => $image_source,
-  }
-
   # Support creation of a second glance image
   # distinct from the first, for tempest. It
   # doesn't need to be a different image, just
@@ -111,13 +101,6 @@ if '%(CONFIG_PROVISION_TEMPEST_USER)s' != '' {
       $image_alt_ssh_user_real = $image_ssh_user_alt
     }
 
-    glance_image { $image_name_alt:
-      ensure           => present,
-      is_public        => 'yes',
-      container_format => 'bare',
-      disk_format      => 'qcow2',
-      source           => $image_source_alt_real,
-    }
   } else {
     $image_name_alt_real = $image_name
   }

@@ -223,10 +223,12 @@ def initSequences(controller):
 
 def check_cinder_vg(config, messages):
     cinders_volume = 'cinder-volumes'
+    if config['CONFIG_UNSUPPORTED'] != 'y':
+        config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
 
     # Do we have a cinder-volumes vg?
     have_cinders_volume = False
-    server = utils.ScriptRunner(config['CONFIG_CONTROLLER_HOST'])
+    server = utils.ScriptRunner(config['CONFIG_STORAGE_HOST'])
     server.append('vgdisplay %s' % cinders_volume)
     try:
         server.execute()
@@ -235,7 +237,7 @@ def check_cinder_vg(config, messages):
         pass
 
     # Configure system LVM settings (snapshot_autoextend)
-    server = utils.ScriptRunner(config['CONFIG_CONTROLLER_HOST'])
+    server = utils.ScriptRunner(config['CONFIG_STORAGE_HOST'])
     server.append('sed -i -r "s/^ *snapshot_autoextend_threshold +=.*/'
                   '    snapshot_autoextend_threshold = 80/" '
                   '/etc/lvm/lvm.conf')
@@ -260,7 +262,7 @@ def check_cinder_vg(config, messages):
 
         # TO-DO: This is implemented in cinder::setup_test_volume class.
         #        We should use it instead of this Python code
-        server = utils.ScriptRunner(config['CONFIG_CONTROLLER_HOST'])
+        server = utils.ScriptRunner(config['CONFIG_STORAGE_HOST'])
         server.append('systemctl')
         try:
             server.execute()
@@ -315,7 +317,7 @@ def check_cinder_vg(config, messages):
             # fails.
             try:
                 logging.debug("Release loop device, volume creation failed")
-                server = utils.ScriptRunner(config['CONFIG_CONTROLLER_HOST'])
+                server = utils.ScriptRunner(config['CONFIG_STORAGE_HOST'])
                 server.append('losetup -d $(losetup -j %s | cut -d : -f 1)'
                               % cinders_volume_path)
                 server.execute()
@@ -328,14 +330,20 @@ def check_cinder_vg(config, messages):
 
 
 def create_keystone_manifest(config, messages):
+    if config['CONFIG_UNSUPPORTED'] != 'y':
+        config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
+
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("keystone_cinder.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
 def create_manifest(config, messages):
+    if config['CONFIG_UNSUPPORTED'] != 'y':
+        config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
+
     manifestdata = getManifestTemplate(get_mq(config, "cinder"))
-    manifestfile = "%s_cinder.pp" % config['CONFIG_CONTROLLER_HOST']
+    manifestfile = "%s_cinder.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata += getManifestTemplate("cinder.pp")
 
     if config['CONFIG_CINDER_BACKEND'] == "lvm":

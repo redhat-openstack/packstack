@@ -228,6 +228,10 @@ def initSequences(controller):
             {'title': 'Adding Provisioning Tempest manifest entries',
              'functions': [create_tempest_manifest]}
         )
+    provision_steps.append(
+            {'title': 'Adding Provisioning Glance manifest entries',
+             'functions': [create_storage_manifest]}
+        )
 
     marshall_conf_bool(config, 'CONFIG_PROVISION_TEMPEST')
     marshall_conf_bool(config, 'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
@@ -273,6 +277,19 @@ def create_demo_manifest(config, messages):
     using_heat(config)
     manifest_file = '%s_provision_demo.pp' % config['CONFIG_CONTROLLER_HOST']
     manifest_data = getManifestTemplate("provision_demo.pp")
+    appendManifestFile(manifest_file, manifest_data)
+
+
+def create_storage_manifest(config, messages):
+    if config['CONFIG_UNSUPPORTED'] != 'y':
+        config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
+
+    if config['CONFIG_PROVISION_TEMPEST'] == "y":
+        template = "provision_tempest_glance.pp"
+    else:
+        template = "provision_demo_glance.pp"
+    manifest_file = '%s_provision_glance.pp' % config['CONFIG_STORAGE_HOST']
+    manifest_data = getManifestTemplate(template)
     appendManifestFile(manifest_file, manifest_data)
 
 
