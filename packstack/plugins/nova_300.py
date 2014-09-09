@@ -511,11 +511,11 @@ def create_compute_manifest(config, messages):
             manifestdata += getManifestTemplate("nova_compute_libvirt.pp")
         if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
                 config['CONFIG_CINDER_INSTALL'] == 'y' and
-                config['CONFIG_CINDER_BACKEND'] == 'gluster'):
+                'gluster' in config['CONFIG_CINDER_BACKEND']):
             manifestdata += getManifestTemplate("nova_gluster.pp")
         if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
                 config['CONFIG_CINDER_INSTALL'] == 'y' and
-                config['CONFIG_CINDER_BACKEND'] == 'nfs'):
+                'nfs' in config['CONFIG_CINDER_BACKEND']):
             manifestdata += getManifestTemplate("nova_nfs.pp")
         manifestfile = "%s_nova.pp" % host
 

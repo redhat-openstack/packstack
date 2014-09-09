@@ -2,11 +2,7 @@
 
 package { 'iscsi-initiator-utils': ensure => present }
 
-cinder_config {
-  "DEFAULT/enabled_backends": value => "myBackend";
-}
-
-cinder::backend::netapp{ 'myBackend':
+cinder::backend::netapp { 'netapp':
   netapp_login            => "%(CONFIG_CINDER_NETAPP_LOGIN)s",
   netapp_password         => "%(CONFIG_CINDER_NETAPP_PASSWORD)s",
   netapp_server_hostname  => "%(CONFIG_CINDER_NETAPP_HOSTNAME)s",
@@ -17,6 +13,11 @@ cinder::backend::netapp{ 'myBackend':
   netapp_transport_type   => "%(CONFIG_CINDER_NETAPP_TRANSPORT_TYPE)s",
   netapp_vfiler           => "%(CONFIG_CINDER_NETAPP_VFILER)s",
   netapp_volume_list      => ["%(CONFIG_CINDER_NETAPP_VOLUME_LIST)s"],
+  require                 => Package['iscsi-initiator-utils'],
+}
 
-  require => Package['iscsi-initiator-utils'],
+cinder::type { 'cinder_netapp_7mode_iscsi':
+  set_key   => 'volume_backend_name',
+  set_value => 'netapp',
+  require   => Class['cinder::api'],
 }
