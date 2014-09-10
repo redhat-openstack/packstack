@@ -938,10 +938,10 @@ def create_l2_agent_manifests(config, messages):
                     config[bridge_key], config[iface_key] = if_map.split(':')
                     manifestdata = getManifestTemplate("neutron_ovs_port.pp")
                     appendManifestFile(manifestfile, manifestdata + "\n")
-        # Additional configurations required for compute hosts
-        if host in compute_hosts:
-            manifestdata = getManifestTemplate('neutron_bridge_module.pp')
-            appendManifestFile(manifestfile, manifestdata + '\n')
+        # Additional configurations required for compute hosts and
+        # network hosts.
+        manifestdata = getManifestTemplate('neutron_bridge_module.pp')
+        appendManifestFile(manifestfile, manifestdata + '\n')
 
 
 def create_metadata_manifests(config, messages):
