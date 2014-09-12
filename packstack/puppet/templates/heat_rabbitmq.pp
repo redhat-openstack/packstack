@@ -9,5 +9,5 @@ class { 'heat':
     rabbit_password   => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
     verbose           => true,
     debug             => %(CONFIG_DEBUG_MODE)s,
-    sql_connection    => "mysql://heat:%(CONFIG_HEAT_DB_PW)s@%(CONFIG_MYSQL_HOST)s/heat",
+    sql_connection    => "mysql://heat:%(CONFIG_HEAT_DB_PW)s@%(CONFIG_MARIADB_HOST)s/heat",
 }

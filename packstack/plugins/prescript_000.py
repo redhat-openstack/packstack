@@ -53,20 +53,21 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "mysql-install",
+            {"CMD_OPTION": "mariadb-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install MySQL"
+                "Set to 'y' if you would like Packstack to install MariaDB"
              ),
-             "PROMPT": "Should Packstack install MySQL DB",
+             "PROMPT": "Should Packstack install MariaDB",
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "y",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_MYSQL_INSTALL",
+             "CONF_NAME": "CONFIG_MARIADB_INSTALL",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_MYSQL_INSTALL']},
 
             {"CMD_OPTION": "os-glance-install",
              "USAGE": (

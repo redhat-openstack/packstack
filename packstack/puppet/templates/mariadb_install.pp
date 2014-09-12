@@ -16,7 +16,7 @@ class {"mysql::server":
     package_name     => "mariadb-galera-server",
     service_manage   => $manage_service,
     restart          => true,
-    root_password    => "%(CONFIG_MYSQL_PW)s",
+    root_password    => "%(CONFIG_MARIADB_PW)s",
     override_options => {
       'mysqld' => { bind_address => "0.0.0.0",
                     default_storage_engine => "InnoDB",
