@@ -13,8 +13,8 @@ define packstack::firewall (
 
   $provider = $ip_version ? {
     'ipv6'  => 'ip6tables',
-    'ipv4'  => 'iptables',
-    default => fail("IP version cannot be ${ip_version}")
+    default => 'iptables',
+    # TO-DO(mmagr): Add IPv6 support when hostnames are used
   }
 
   $source = $host ? {

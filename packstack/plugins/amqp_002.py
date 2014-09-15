@@ -50,7 +50,7 @@ def initConfig(controller):
          "DEPRECATES": ['CONFIG_AMQP_SERVER']},
 
         {"CMD_OPTION": "amqp-host",
-         "PROMPT": "Enter the IP address of the AMQP service",
+         "PROMPT": "Enter the host for the AMQP service",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_ssh],
          "DEFAULT_VALUE": utils.get_localhost_ip(),
