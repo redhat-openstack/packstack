@@ -50,8 +50,9 @@ class { '::ceilometer::alarm::evaluator':
 }
 
 $bind_host = hiera('CONFIG_IP_VERSION') ? {
-  'ipv6' => '::0',
-  'ipv4' => '0.0.0.0',
+  'ipv6'  => '::0',
+  default => '0.0.0.0',
+  # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 class { '::ceilometer::api':
   host                  => $bind_host,

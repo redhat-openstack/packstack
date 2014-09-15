@@ -331,10 +331,9 @@ def initConfig(controller):
 
             {"CONF_NAME": "CONFIG_CONTROLLER_HOST",
              "CMD_OPTION": "os-controller-host",
-             "PROMPT": "Enter the IP address of the controller host",
+             "PROMPT": "Enter the controller host",
              "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_ip,
-                            validators.validate_ssh],
+             "VALIDATORS": [validators.validate_ssh],
              "DEFAULT_VALUE": utils.get_localhost_ip(),
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
@@ -360,13 +359,9 @@ def initConfig(controller):
 
             {"CONF_NAME": "CONFIG_COMPUTE_HOSTS",
              "CMD_OPTION": "os-compute-hosts",
-             "PROMPT": (
-                 "Enter list of IP addresses on which to install compute "
-                 "service"
-             ),
+             "PROMPT": "Enter list of compute hosts",
              "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_multi_ip,
-                            validators.validate_multi_ssh],
+             "VALIDATORS": [validators.validate_multi_ssh],
              "DEFAULT_VALUE": utils.get_localhost_ip(),
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
@@ -377,11 +372,9 @@ def initConfig(controller):
 
             {"CONF_NAME": "CONFIG_NETWORK_HOSTS",
              "CMD_OPTION": "os-network-hosts",
-             "PROMPT": ("Enter list of IP addresses on which to install "
-                        "network service"),
+             "PROMPT": "Enter list of network hosts",
              "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_multi_ip,
-                            validators.validate_multi_ssh],
+             "VALIDATORS": [validators.validate_multi_ssh],
              "DEFAULT_VALUE": utils.get_localhost_ip(),
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
@@ -492,10 +485,9 @@ def initConfig(controller):
         "UNSUPPORTED": [
             {"CONF_NAME": "CONFIG_STORAGE_HOST",
              "CMD_OPTION": "os-storage-host",
-             "PROMPT": "Enter the IP address of the storage host",
+             "PROMPT": "Enter the host for the storage services",
              "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_ip,
-                            validators.validate_ssh],
+             "VALIDATORS": [validators.validate_ssh],
              "DEFAULT_VALUE": utils.get_localhost_ip(),
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
@@ -505,10 +497,9 @@ def initConfig(controller):
 
             {"CONF_NAME": "CONFIG_SAHARA_HOST",
              "CMD_OPTION": "os-sahara-host",
-             "PROMPT": "Enter the IP address of the Sahara host",
+             "PROMPT": "Enter the host for the Sahara",
              "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_ip,
-                            validators.validate_ssh],
+             "VALIDATORS": [validators.validate_ssh],
              "DEFAULT_VALUE": utils.get_localhost_ip(),
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
@@ -1141,20 +1132,30 @@ def manage_rdo(host, config):
 
 
 def choose_ip_version(config, messages):
-    use_ipv6 = False
-    use_ipv4 = False
+    use_ipv6 = None
+    use_ipv4 = None
     for hostname in filtered_hosts(config):
         if '/' in hostname:
             hostname = hostname.split('/')[0]
-        use_ipv6 |= utils.network.is_ipv6(hostname)
-        use_ipv4 |= utils.network.is_ipv4(hostname)
+        if use_ipv6 is None and use_ipv4 is None:
+            use_ipv6 = utils.network.is_ipv6(hostname)
+            use_ipv4 = utils.network.is_ipv4(hostname)
+        # check consistency
+        if (use_ipv6 and not utils.network.is_ipv6(hostname) or
+                use_ipv4 and not utils.network.is_ipv4(hostname)):
+            raise ValueError(
+                "Inconsistent host format. Please use either IPv4 addresses, "
+                "IPv6 adresses or hostnames for all host variables. "
+            )
     if use_ipv6 and use_ipv4:
         msg = "IPv6 together with IPv4 installation is not supported"
         raise exceptions.ParamValidationError(msg)
     elif use_ipv6:
         config['CONFIG_IP_VERSION'] = 'ipv6'
-    else:
+    elif use_ipv4:
         config['CONFIG_IP_VERSION'] = 'ipv4'
+    else:
+        config['CONFIG_IP_VERSION'] = 'none'
 
 
 def install_keys_on_host(hostname, sshkeydata):

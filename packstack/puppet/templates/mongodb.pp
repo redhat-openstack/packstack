@@ -14,9 +14,9 @@ class { '::mongodb::server':
   ipv6       => hiera('CONFIG_IP_VERSION') ? {
     'ipv6'  => true,
     default => false,
+    # TO-DO(mmagr): Add IPv6 support when hostnames are used
   },
   smallfiles => true,
-  bind_ip    => $mongodb_host,
+  bind_ip    => force_ip($mongodb_host),
   config     => $config_file,
 }
-

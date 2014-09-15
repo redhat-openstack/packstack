@@ -12,6 +12,7 @@ Firewall <| |> -> Class['nova']
 
 nova_config{
   'DEFAULT/sql_connection':        value => hiera('CONFIG_NOVA_SQL_CONN_PW');
-  'DEFAULT/metadata_host':         value => hiera('CONFIG_CONTROLLER_HOST');
+  # metadata_host has to be IP
+  'DEFAULT/metadata_host':         value => force_ip(hiera('CONFIG_CONTROLLER_HOST'));
   'DEFAULT/default_floating_pool': value => $default_floating_pool;
 }

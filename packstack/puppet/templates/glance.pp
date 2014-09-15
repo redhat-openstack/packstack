@@ -4,13 +4,15 @@ $glance_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 # glance option bind_host requires address without brackets
 $bind_host = hiera('CONFIG_IP_VERSION') ? {
-  'ipv6' => '::0',
-  'ipv4' => '0.0.0.0',
+  'ipv6'  => '::0',
+  default => '0.0.0.0',
+  # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 # magical hack for magical config - glance option registry_host requires brackets
 $registry_host = hiera('CONFIG_IP_VERSION') ? {
-  'ipv6' => '[::0]',
-  'ipv4' => '0.0.0.0',
+  'ipv6'  => '[::0]',
+  default => '0.0.0.0',
+  # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 
 class { '::glance::api':

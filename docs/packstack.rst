@@ -87,13 +87,13 @@ Global Options
     Specify 'y' if you want to run OpenStack services in debug mode; otherwise, specify 'n'. ['y', 'n']
 
 **CONFIG_CONTROLLER_HOST**
-    IP address of the server on which to install OpenStack services specific to the controller role (for example, API servers or dashboard).
+    Server on which to install OpenStack services specific to the controller role (for example, API servers or dashboard).
 
 **CONFIG_COMPUTE_HOSTS**
-    List of IP addresses of the servers on which to install the Compute service.
+    List the servers on which to install the Compute service.
 
 **CONFIG_NETWORK_HOSTS**
-    List of IP addresses of the server on which to install the network service such as Compute networking (nova network) or OpenStack Networking (neutron).
+    List of servers on which to install the network service such as Compute networking (nova network) or OpenStack Networking (neutron).
 
 **CONFIG_VMWARE_BACKEND**
     Specify 'y' if you want to use VMware vCenter as hypervisor and storage; otherwise, specify 'n'. ['y', 'n']
@@ -161,10 +161,10 @@ Global unsupported options
 --------------------------
 
 **CONFIG_STORAGE_HOST**
-    (Unsupported!) IP address of the server on which to install OpenStack services specific to storage servers such as Image or Block Storage services.
+    (Unsupported!) Server on which to install OpenStack services specific to storage servers such as Image or Block Storage services.
 
 **CONFIG_SAHARA_HOST**
-    (Unsupported!) IP address of the server on which to install OpenStack services specific to OpenStack Data Processing (sahara).
+    (Unsupported!) Server on which to install OpenStack services specific to OpenStack Data Processing (sahara).
 
 Server Prepare Configs
 -----------------------

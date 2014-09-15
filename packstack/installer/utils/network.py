@@ -20,6 +20,7 @@ except ImportError:
 
 import re
 import socket
+import logging
 from ..exceptions import NetworkError
 from .shell import execute
 from .shell import ScriptRunner
@@ -57,23 +58,34 @@ def get_localhost_ip():
                        'nameserver correctly.')
 
 
+_host_cache = {}
+
+
 def host2ip(hostname, allow_localhost=False):
     """
     Converts given hostname to IP address. Raises NetworkError
     if conversion failed.
     """
+    key = '{}:{}'.format(hostname, allow_localhost)
+    if key in _host_cache:
+        return _host_cache[key]
     try:
-        ip_list = socket.gethostbyaddr(hostname)[2]
+        ip_list = list(sockets[4][0] for sockets in
+                       socket.getaddrinfo(hostname, 22, 0, 0, socket.IPPROTO_TCP))
+
         if allow_localhost:
-            return ip_list[0]
+            ip = ip_list[0]
         else:
-            local_ips = ('127.0.0.1', '::1')
-            for ip in ip_list:
-                if ip not in local_ips:
-                    break
-            else:
-                raise NameError()
-            return ip
+            routable = [ip for ip in ip_list if ip not in ('127.0.0.1', '::1')]
+            if not routable:
+                raise NameError("Host %s is not routable, please fix"
+                                "your /etc/hosts", host)
+            if len(routable) > 1:
+                logging.warn("Multiple IPs for host detected!")
+            ip = routable[0]
+
+        _host_cache[key] = ip
+        return ip
     except NameError:
         # given hostname is localhost, return appropriate IP address
         return get_localhost_ip()
@@ -92,7 +104,7 @@ def is_ipv6(host):
     try:
         return netaddr.IPAddress(host).version == 6
     except netaddr.core.AddrFormatError:
-        # Most probably a hostname, no need for bracket everywhere.
+        # Most probably a hostname
         return False
 
 
@@ -105,7 +117,8 @@ def is_ipv4(host):
     try:
         return netaddr.IPAddress(host).version == 4
     except netaddr.core.AddrFormatError:
-        return True
+        # Most probably a hostname
+        return False
 
 
 def force_ip(host, allow_localhost=False):

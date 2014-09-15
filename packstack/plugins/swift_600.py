@@ -260,6 +260,8 @@ def create_builder_manifest(config, messages):
     # come up. Specifically the replicator crashes if the ring isn't present
 
     def device_def(dev_type, host, dev_port, devicename, zone):
+        # device host has to be IP address
+        host = utils.force_ip(host)
         fmt = ('\n@@%s { "%s:%s/%s":\n'
                '  zone   => %s,\n'
                '  weight => 10, }\n')
