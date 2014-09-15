@@ -41,7 +41,7 @@ class Step(object):
             state = utils.state_message(self.title, 'ERROR', 'red')
             sys.stdout.write('%s\n' % state)
             sys.stdout.flush()
-            raise SequenceError(str(ex))
+            raise
         else:
             state = utils.state_message(self.title, 'DONE', 'green')
             sys.stdout.write('%s\n' % state)
