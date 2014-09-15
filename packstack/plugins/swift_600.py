@@ -206,7 +206,7 @@ def parse_devices(config):
                         'device_name': 'device%s' % device_number})
     if not devices:
         devices.append({'device': None, 'zone': 1,
-                        'device_name': 'swiftloopback'})
+                        'device_name': 'swift_loopback'})
     return devices
 
 
