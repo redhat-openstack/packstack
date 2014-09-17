@@ -12,6 +12,7 @@ import uuid
 from packstack.installer import utils
 from packstack.installer import exceptions
 from packstack.installer import validators
+from packstack.installer import processors
 from packstack.installer import output_messages
 from packstack.installer.utils import split_hosts
 
@@ -36,11 +37,12 @@ def initConfig(controller):
              "PROMPT": "Enter the password for Neutron Keystone access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+             "DEFAULT_VALUE": "PW_PLACEHOLDER",
+             "PROCESSORS": [processors.process_password],
              "MASK_INPUT": True,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_NEUTRON_KS_PW",
-             "USE_DEFAULT": True,
+             "USE_DEFAULT": False,
              "NEED_CONFIRM": True,
              "CONDITION": False},
 
@@ -49,11 +51,12 @@ def initConfig(controller):
              "PROMPT": "Enter the password for Neutron DB access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+             "DEFAULT_VALUE": "PW_PLACEHOLDER",
+             "PROCESSORS": [processors.process_password],
              "MASK_INPUT": True,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_NEUTRON_DB_PW",
-             "USE_DEFAULT": True,
+             "USE_DEFAULT": False,
              "NEED_CONFIRM": True,
              "CONDITION": False},
 
@@ -93,11 +96,12 @@ def initConfig(controller):
              "PROMPT": "Enter Neutron metadata agent password",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+             "DEFAULT_VALUE": "PW_PLACEHOLDER",
+             "PROCESSORS": [processors.process_password],
              "MASK_INPUT": True,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_NEUTRON_METADATA_PW",
-             "USE_DEFAULT": True,
+             "USE_DEFAULT": False,
              "NEED_CONFIRM": True,
              "CONDITION": False},
 

@@ -43,7 +43,10 @@ Global Options
     Set to 'y' if you would like Packstack to install the OpenStack Client packages. An admin "rc" file will also be installed ['y', 'n'].
 
 **CONFIG_NTP_SERVERS**
-    Comma separated list of NTP servers. Leave plain if Packstack should not install ntpd on instances..
+    Comma separated list of NTP servers. Leave plain if Packstack should not install ntpd on instances.
+
+**CONFIG_DEFAULT_PASSWORD**
+    A default password to be used on all services, databases, keys, etc. It will be overriden by any explicitly set password. Leave plain to not set a default password.
 
 **CONFIG_NAGIOS_INSTALL**
     Set to 'y' if you would like Packstack to install Nagios to monitor openstack hosts ['y', 'n'].

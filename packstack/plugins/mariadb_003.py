@@ -8,6 +8,7 @@ import uuid
 import logging
 
 from packstack.installer import validators
+from packstack.installer import processors
 from packstack.installer import utils
 from packstack.installer.utils import split_hosts
 from packstack.modules.common import filtered_hosts
@@ -59,7 +60,8 @@ def initConfig(controller):
          "PROMPT": "Enter the password for the MariaDB admin user",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "PROCESSORS": [processors.process_password],
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": True,
          "CONF_NAME": "CONFIG_MARIADB_PW",

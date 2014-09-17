@@ -9,6 +9,7 @@ import uuid
 import os
 
 from packstack.installer import validators
+from packstack.installer import processors
 from packstack.installer import basedefs
 from packstack.installer import utils
 
@@ -95,12 +96,13 @@ def initConfig(controller):
          "PROMPT": "Enter the password for NSS certificate database",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:32],
-         "MASK_INPUT": False,
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
+         "PROCESSORS": [processors.process_password],
+         "MASK_INPUT": True,
          "LOOSE_VALIDATION": True,
          "CONF_NAME": "CONFIG_AMQP_NSS_CERTDB_PW",
          "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
+         "NEED_CONFIRM": True,
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-ssl-port",
@@ -186,12 +188,13 @@ def initConfig(controller):
          "PROMPT": "Enter the password for user authentication",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
-         "MASK_INPUT": False,
+         "PROCESSORS": [processors.process_password],
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
+         "MASK_INPUT": True,
          "LOOSE_VALIDATION": True,
          "CONF_NAME": "CONFIG_AMQP_AUTH_PASSWORD",
          "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
+         "NEED_CONFIRM": True,
          "CONDITION": False},
     ]
     group = {"GROUP_NAME": "AMQPAUTH",
