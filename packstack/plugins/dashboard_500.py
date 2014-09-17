@@ -151,7 +151,7 @@ def create_manifest(config, messages):
             resources = config.setdefault('RESOURCES', {})
             host_resources = resources.setdefault(horizon_host, [])
             host_resources.append((ssl_cert, 'ssl_ps_server.crt'))
-            host_resources.append(ssl_key, 'ssl_ps_server.key')
+            host_resources.append((ssl_key, 'ssl_ps_server.key'))
             host_resources.append((ssl_chain, 'ssl_ps_chain.crt'))
         else:
             messages.append(
