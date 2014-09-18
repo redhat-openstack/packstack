@@ -27,8 +27,7 @@ from ..test_base import PackstackTestCaseMixin
 class ProcessorsTestCase(PackstackTestCaseMixin, TestCase):
     def test_process_host(self):
         """Test packstack.installer.processors.process_host"""
-        proc_local = process_host('localhost', 'HOSTNAME',
-                                  process_args={'allow_localhost': True})
+        proc_local = process_host('localhost', 'HOSTNAME')
         self.assertIn(proc_local, ['127.0.0.1', '::1'])
 
     def test_process_ssh_key(self):
