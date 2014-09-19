@@ -6,7 +6,6 @@ if $::operatingsystem in ['RedHat','CentOS','Scientific'] and $::operatingsystem
       enable  => true,
       ensure  => 'running',
       require => [ Package['mysql-server'], File['/etc/my.cnf'] ],
-      before  => Exec['set_mysql_rootpw'],
     }
 } else {
     $manage_service = true
