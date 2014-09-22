@@ -985,7 +985,7 @@ def check_nm_status(config, messages):
 
         server.clear()
 
-    if len(hosts_with_nm) > 1:
+    if hosts_with_nm:
         hosts_list = ', '.join("%s" % x for x in hosts_with_nm)
         msg = output_messages.WARN_NM_ENABLED
         messages.append(utils.color_text(msg % hosts_list, 'yellow'))
