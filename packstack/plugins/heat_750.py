@@ -10,6 +10,7 @@ import os
 
 from packstack.installer import utils
 from packstack.installer import validators
+from packstack.installer import processors
 
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
@@ -31,11 +32,12 @@ def initConfig(controller):
          "PROMPT": "Enter the password for the Heat MySQL user",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
+         "PROCESSORS": [processors.process_password],
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_HEAT_DB_PW",
-         "USE_DEFAULT": True,
+         "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
 
@@ -60,11 +62,12 @@ def initConfig(controller):
          "PROMPT": "Enter the password for the Heat Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
+         "PROCESSORS": [processors.process_password],
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_HEAT_KS_PW",
-         "USE_DEFAULT": True,
+         "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
 
@@ -142,12 +145,13 @@ def initConfig(controller):
          "PROMPT": "Enter password for Keystone domain admin user for Heat",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
-         "MASK_INPUT": False,
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
+         "PROCESSORS": [processors.process_password],
+         "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_HEAT_DOMAIN_PASSWORD",
          "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
+         "NEED_CONFIRM": True,
          "CONDITION": False},
     ]
     group = {"GROUP_NAME": "Heat",

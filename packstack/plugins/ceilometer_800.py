@@ -10,6 +10,7 @@ import uuid
 
 from packstack.installer import utils
 from packstack.installer import validators
+from packstack.installer import processors
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
@@ -44,10 +45,11 @@ def initConfig(controller):
              "PROMPT": "Enter the password for the Ceilometer Keystone access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+             "DEFAULT_VALUE": "PW_PLACEHOLDER",
+             "PROCESSORS": [processors.process_password],
              "MASK_INPUT": True,
              "LOOSE_VALIDATION": False,
-             "USE_DEFAULT": True,
+             "USE_DEFAULT": False,
              "NEED_CONFIRM": True,
              "CONDITION": False},
         ],

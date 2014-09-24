@@ -30,7 +30,7 @@ commandLineValues = {}
 # List to hold all values to be masked in logging (i.e. passwords and sensitive data)
 #TODO: read default values from conf_param?
 masked_value_set = set()
-
+tmpfiles = []
 
 def initLogging (debug):
     global logFile
@@ -147,8 +147,7 @@ def input_param(param):
         confirmedParamName = param.CONF_NAME + "_CONFIRMED"
         confirmedParam.CONF_NAME = confirmedParamName
         confirmedParam.PROMPT = output_messages.INFO_CONF_PARAMS_PASSWD_CONFIRM_PROMPT
-        confirmedParam.VALIDATORS = [validators.validate_not_empty]
-        # Now get both values from user (with existing validations
+        # Now get both values from user (with existing validations)
         while True:
             _getInputFromUser(param)
             _getInputFromUser(confirmedParam)
@@ -274,10 +273,11 @@ def process_param_value(param, value):
         logging.debug("Processing value of parameter "
                       "%s." % param.CONF_NAME)
         try:
-            new_value = proc_func(_value, controller.CONF)
+            new_value = proc_func(_value, param.CONF_NAME, controller.CONF)
             if new_value != _value:
-                msg = output_messages.INFO_CHANGED_VALUE
-                print msg % (_value, new_value)
+                if param.MASK_INPUT == False:
+                    msg = output_messages.INFO_CHANGED_VALUE
+                    print msg % (_value, new_value)
                 _value = new_value
             else:
                 logging.debug("Processor returned the original "
@@ -429,6 +429,19 @@ def _getanswerfilepath():
     controller.MESSAGES.append(msg)
     return path
 
+def _gettmpanswerfilepath():
+    path = None
+    msg = "Could not find a suitable path on which to create the temporary answerfile"
+
+    ts = datetime.datetime.now().strftime('%Y%m%d-%H%M%S')
+
+    p = os.path.expanduser("~/")
+    if os.access(p, os.W_OK):
+        path = os.path.abspath(os.path.join(p, "tmp-packstack-answers-%s.txt"%ts))
+        tmpfiles.append(path)
+
+    return path
+
 def _handleInteractiveParams():
     try:
         logging.debug("Groups: %s" % ', '.join([x.GROUP_NAME for x in controller.getAllGroups()]))
@@ -474,12 +487,7 @@ def _handleInteractiveParams():
             else:
                 logging.debug("no post condition check for group %s" % group.GROUP_NAME)
 
-        path = _getanswerfilepath()
-
         _displaySummary()
-
-        if path:
-            generateAnswerFile(path)
 
     except KeyboardInterrupt:
         logging.error("keyboard interrupt caught")
@@ -589,6 +597,11 @@ def _main(configFile=None):
     # Get parameters
     _handleParams(configFile)
 
+    # Generate answer file
+    path = _getanswerfilepath()
+    if path:
+        generateAnswerFile(path)
+
     # Update masked_value_list with user input values
     _updateMaskedValueSet()
 
@@ -630,6 +643,20 @@ def remove_remote_var_dirs():
             server.execute()
         except Exception as e:
             msg = output_messages.ERR_REMOVE_REMOTE_VAR % (host_dir, host)
+            logging.error(msg)
+            logging.exception(e)
+            controller.MESSAGES.append(utils.color_text(msg, 'red'))
+
+def remove_temp_files():
+    """
+    Removes any temporary files generated during
+    configuration
+    """
+    for myfile in tmpfiles:
+        try:
+            os.unlink(myfile)
+        except Exception as e:
+            msg = output_messages.ERR_REMOVE_TMP_FILE % (myfile)
             logging.error(msg)
             logging.exception(e)
             controller.MESSAGES.append(utils.color_text(msg, 'red'))
@@ -688,7 +715,7 @@ def single_step_aio_install(options):
     single_step_install(options)
 
 def single_step_install(options):
-    answerfilepath =  _getanswerfilepath()
+    answerfilepath =  _gettmpanswerfilepath()
     if not answerfilepath:
         _printAdditionalMessages()
         return
@@ -892,6 +919,12 @@ def main():
         if options.gen_answer_file:
             # Make sure only --gen-answer-file was supplied
             validateSingleFlag(options, "gen_answer_file")
+            answerfilepath =  _gettmpanswerfilepath()
+            if not answerfilepath:
+                _printAdditionalMessages()
+                return
+            generateAnswerFile(answerfilepath)
+            _handleParams(answerfilepath)
             generateAnswerFile(options.gen_answer_file)
         # Are we installing an all in one
         elif options.allinone:
@@ -926,6 +959,7 @@ def main():
 
     finally:
         remove_remote_var_dirs()
+        remove_temp_files()
 
         # Always print user params to log
         _printAdditionalMessages()

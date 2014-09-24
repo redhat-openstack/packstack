@@ -9,6 +9,7 @@ import uuid
 
 from packstack.installer import utils
 from packstack.installer import validators
+from packstack.installer import processors
 
 from packstack.modules.common import is_all_in_one
 from packstack.modules.ospluginutils import (appendManifestFile,
@@ -81,7 +82,8 @@ def initConfig(controller):
             "PROMPT": "Enter the password for the Tempest Provisioning user",
             "OPTION_LIST": [],
             "VALIDATORS": [validators.validate_not_empty],
-            "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+            "DEFAULT_VALUE": "PW_PLACEHOLDER",
+            "PROCESSORS": [processors.process_password],
             "MASK_INPUT": True,
             "LOOSE_VALIDATION": False,
             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER_PW",

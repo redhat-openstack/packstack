@@ -85,5 +85,5 @@ ERR_FAILURE="General failure"
 ERR_NO_ANSWER_FILE="Error: Could not find file %s"
 ERR_ONLY_1_FLAG="Error: The %s flag is mutually exclusive to all other command line options"
 ERR_REMOVE_REMOTE_VAR="Error: Failed to remove directory %s on %s, it contains sensitive data and should be removed"
-
+ERR_REMOVE_TMP_FILE="Error: Failed to remove temporary file %s, it contains sensitive data and should be removed"
 #

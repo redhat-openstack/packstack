@@ -53,6 +53,25 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "default-password",
+             "USAGE": (
+                "Set a default password everywhere. The default password "
+                "will be overriden by whatever password is set for each "
+                "individual service or user."
+             ),
+             "PROMPT": (
+                "Enter a default password to be used. Leave blank for a "
+                "randomly generated one."
+             ),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": '',
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_DEFAULT_PASSWORD",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
+
             {"CMD_OPTION": "mariadb-install",
              "USAGE": (
                 "Set to 'y' if you would like Packstack to install MariaDB"

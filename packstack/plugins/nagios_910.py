@@ -8,6 +8,7 @@ import uuid
 import logging
 
 from packstack.installer import validators
+from packstack.installer import processors
 from packstack.installer import basedefs, output_messages
 from packstack.installer import utils
 
@@ -29,7 +30,8 @@ def initConfig(controller):
          "PROMPT": "Enter the password for the nagiosadmin user",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "PROCESSORS": [processors.process_password],
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": True,
          "CONF_NAME": "CONFIG_NAGIOS_PW",

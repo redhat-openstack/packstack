@@ -2,6 +2,7 @@
 
 import netaddr
 import os
+import uuid
 
 from .utils import ScriptRunner, force_ip
 from .exceptions import ParamProcessingError, NetworkError
@@ -11,7 +12,7 @@ __all__ = ('ParamProcessingError', 'process_cidr', 'process_host',
            'process_ssh_key')
 
 
-def process_cidr(param, process_args=None):
+def process_cidr(param, param_name, process_args=None):
     """
     Corrects given CIDR if necessary.
     """
@@ -24,7 +25,7 @@ def process_cidr(param, process_args=None):
         raise ParamProcessingError(str(ex))
 
 
-def process_host(param, process_args=None):
+def process_host(param, param_name, process_args=None):
     """
     Tries to change given parameter to IP address, if it is in hostname
     format
@@ -37,7 +38,7 @@ def process_host(param, process_args=None):
         raise ParamProcessingError(str(ex))
 
 
-def process_ssh_key(param, process_args=None):
+def process_ssh_key(param, param_name, process_args=None):
     """
     Generates SSH key if given key in param doesn't exist. In case param
     is an empty string it generates default SSH key ($HOME/.ssh/id_rsa).
@@ -63,7 +64,7 @@ def process_ssh_key(param, process_args=None):
     return param
 
 
-def process_add_quotes_around_values(param, process_args=None):
+def process_add_quotes_around_values(param, param_name, process_args=None):
     """
     Add a single quote character around each element of a comma
     separated list of values
@@ -76,4 +77,34 @@ def process_add_quotes_around_values(param, process_args=None):
             elem = elem + "'"
         params_list[index] = elem
     param = ','.join(params_list)
+    return param
+
+def process_password(param, param_name, process_args=None):
+    """
+    Process passwords, checking the following:
+    1- If there is a user-entered password, use it
+    2- Otherwise, check for a global default password, and use it if available
+    3- As a last resort, generate a random password
+    """
+    if not hasattr(process_password,"pw_dict"):
+        process_password.pw_dict = {}
+
+    if param == "PW_PLACEHOLDER":
+        if process_args["CONFIG_DEFAULT_PASSWORD"] != "":
+            param = process_args["CONFIG_DEFAULT_PASSWORD"]
+        else:
+            # We need to make sure we store the random password we provide
+            # and return it once we are asked for it again
+            if param_name.endswith("_CONFIRMED"):
+                unconfirmed_param = param_name[:-10]
+                if unconfirmed_param in process_password.pw_dict:
+                    param = process_password.pw_dict[unconfirmed_param]
+                else:
+                    param = uuid.uuid4().hex[:16]
+                    process_password.pw_dict[unconfirmed_param] = param
+            elif not param_name in process_password.pw_dict:
+                param = uuid.uuid4().hex[:16]
+                process_password.pw_dict[param_name] = param
+            else:
+                param = process_password.pw_dict[param_name]
     return param

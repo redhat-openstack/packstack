@@ -8,6 +8,7 @@ import uuid
 import logging
 
 from packstack.installer import validators
+from packstack.installer import processors
 from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer.utils import split_hosts
@@ -29,11 +30,12 @@ def initConfig(controller):
          "PROMPT": "Enter the password for the Glance DB access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "PROCESSORS": [processors.process_password],
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_GLANCE_DB_PW",
-         "USE_DEFAULT": True,
+         "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
 
@@ -43,11 +45,12 @@ def initConfig(controller):
          "PROMPT": "Enter the password for the Glance Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "PROCESSORS": [processors.process_password],
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_GLANCE_KS_PW",
-         "USE_DEFAULT": True,
+         "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
     ]

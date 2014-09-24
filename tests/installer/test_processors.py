@@ -27,13 +27,13 @@ from ..test_base import PackstackTestCaseMixin
 class ProcessorsTestCase(PackstackTestCaseMixin, TestCase):
     def test_process_host(self):
         """Test packstack.installer.processors.process_host"""
-        proc_local = process_host('localhost',
+        proc_local = process_host('localhost', 'HOSTNAME',
                                   process_args={'allow_localhost': True})
         self.assertIn(proc_local, ['127.0.0.1', '::1'])
 
     def test_process_ssh_key(self):
         """Test packstack.installer.processors.process_ssh_key"""
-        path = process_ssh_key(os.path.join(self.tempdir, 'id_rsa'))
+        path = process_ssh_key(os.path.join(self.tempdir, 'id_rsa'), 'SSH_KEY')
         # test if key was created
         self.assertEquals(True, bool(path))
         # test if key exists

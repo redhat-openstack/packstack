@@ -11,6 +11,7 @@ import logging
 import netaddr
 
 from packstack.installer import validators
+from packstack.installer import processors
 from packstack.installer.exceptions import ParamValidationError
 from packstack.installer import basedefs
 from packstack.installer import utils
@@ -34,11 +35,12 @@ def initConfig(controller):
          "PROMPT": "Enter the password for the Swift Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",
+         "PROCESSORS": [processors.process_password],
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_SWIFT_KS_PW",
-         "USE_DEFAULT": True,
+         "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
 
