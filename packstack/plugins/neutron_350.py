@@ -75,7 +75,8 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "os-neutron-l2-plugin",
-             "USAGE": "The name of the L2 plugin to be used with Neutron",
+             "USAGE": "The name of the L2 plugin to be used with Neutron. "
+                      "(eg. linuxbridge, openvswitch, ml2)",
              "PROMPT": ("Enter the name of the L2 plugin to be used "
                         "with Neutron"),
              "OPTION_LIST": ["linuxbridge", "openvswitch", "ml2"],
