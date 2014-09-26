@@ -9,7 +9,7 @@ class {"keystone":
 }
 
 class {"keystone::roles::admin":
-    email => "test@test.com",
+    email => "root@localhost",
     password => "%(CONFIG_KEYSTONE_ADMIN_PW)s",
     admin_tenant => "admin"
 }
