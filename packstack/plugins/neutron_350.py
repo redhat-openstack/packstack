@@ -597,27 +597,28 @@ def create_manifests(config, messages):
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
         # We also need to open VXLAN/GRE port for agent
+        manifest_data = ""
         if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
-            fw_details = dict()
-            key = "neutron_tunnel"
-            fw_details.setdefault(key, {})
-            fw_details[key]['host'] = "ALL"
-            fw_details[key]['service_name'] = "neutron tunnel port"
-            fw_details[key]['chain'] = "INPUT"
+            cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s"
+                                            % host)
+            for n_host in network_hosts:
+                fw_details = dict()
+                key = "neutron_tunnel_%s_%s" % (host, n_host)
+                fw_details.setdefault(key, {})
+                fw_details[key]['host'] = "%s" % n_host
+                fw_details[key]['service_name'] = "neutron tunnel port"
+                fw_details[key]['chain'] = "INPUT"
+                if use_openvswitch_vxlan(config):
+                    fw_details[key]['proto'] = 'udp'
+                    tun_port = ("%s"
+                                % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'])
+                else:
+                    fw_details[key]['proto'] = 'gre'
+                    tun_port = None
+                fw_details[key]['ports'] = tun_port
+                config[cf_fw_nt_key] = fw_details
+                manifest_data += createFirewallResources(cf_fw_nt_key)
 
-            if use_openvswitch_vxlan(config):
-                fw_details[key]['proto'] = 'udp'
-                tun_port = "%s" % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT']
-            else:
-                fw_details[key]['proto'] = 'gre'
-                tun_port = None
-
-            fw_details[key]['ports'] = tun_port
-            config['FIREWALL_NEUTRON_TUNNEL_RULES'] = fw_details
-
-            manifest_data = createFirewallResources(
-                'FIREWALL_NEUTRON_TUNNEL_RULES'
-            )
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
 
