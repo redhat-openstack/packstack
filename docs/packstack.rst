@@ -132,6 +132,9 @@ AMQP Config parameters
 Keystone Config parameters
 --------------------------
 
+**CONFIG_KEYSTONE_REGION**
+    The region name to use for the Keystone.
+
 **CONFIG_KEYSTONE_DB_PW**
     The password to use for the Keystone to access DB.
 
