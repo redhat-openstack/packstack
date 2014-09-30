@@ -5,4 +5,5 @@ class { 'neutron::server::notifications':
     nova_admin_tenant_name => 'services',
     nova_url               => 'http://%(CONFIG_CONTROLLER_HOST)s:8774/v2',
     nova_admin_auth_url    => 'http://%(CONFIG_CONTROLLER_HOST)s:35357/v2.0',
+    nova_region_name       => '%(CONFIG_KEYSTONE_REGION)s',
 }

@@ -1,5 +1,6 @@
 # heat::keystone::auth
 class {"heat::keystone::auth":
+    region => "%(CONFIG_KEYSTONE_REGION)s",
     password => "%(CONFIG_HEAT_KS_PW)s",
     public_address => "%(CONFIG_CONTROLLER_HOST)s",
     admin_address => "%(CONFIG_CONTROLLER_HOST)s",
