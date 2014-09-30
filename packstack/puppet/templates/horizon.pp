@@ -41,6 +41,13 @@ if %(CONFIG_HORIZON_SSL)s {
     require => File['/etc/pki/tls/certs/ps_generate_ssl_certs.ssh'],
     notify  => Service['httpd'],
     before  => Class['horizon'],
+  } ->
+  exec { 'nova-novncproxy-restart':
+    # ps_generate_ssl_certs.ssh is generating ssl certs for nova-novncproxy
+    # so openstack-nova-novncproxy should be restarted.
+    path      => ['/sbin', '/usr/sbin', '/bin', '/usr/bin'],
+    command   => 'systemctl restart openstack-nova-novncproxy.service',
+    logoutput => 'on_failure',
   }
 
   apache::listen { '443': }

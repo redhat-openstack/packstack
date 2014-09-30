@@ -51,3 +51,10 @@ cp /etc/pki/CA/cacert.pem $SSLCHAIN
 openssl genrsa 2048 > $SSLKEY 2> /dev/null
 answers $FQDN | openssl req -new -nodes -key $SSLKEY -out ${SSLCERT}.req
 yes | openssl ca -in ${SSLCERT}.req -out ${SSLCERT}
+
+# gen key and self signed cert for novnc
+SSL_NOVA_NOVNC_CERT=/etc/nova/nova.crt
+SSL_NOVA_NOVNC_KEY=/etc/nova/nova.key
+answers $FQDN | openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -keyout $SSL_NOVA_NOVNC_KEY -out $SSL_NOVA_NOVNC_CERT
+chown root.nova $SSL_NOVA_NOVNC_CERT $SSL_NOVA_NOVNC_KEY
+chmod 440 $SSL_NOVA_NOVNC_CERT $SSL_NOVA_NOVNC_KEY
