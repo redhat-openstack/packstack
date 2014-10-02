@@ -12,7 +12,7 @@ __all__ = ('ParamProcessingError', 'process_cidr', 'process_host',
            'process_ssh_key')
 
 
-def process_cidr(param, param_name, process_args=None):
+def process_cidr(param, param_name, config=None):
     """
     Corrects given CIDR if necessary.
     """
@@ -25,20 +25,18 @@ def process_cidr(param, param_name, process_args=None):
         raise ParamProcessingError(str(ex))
 
 
-def process_host(param, param_name, process_args=None):
+def process_host(param, param_name, config=None):
     """
     Tries to change given parameter to IP address, if it is in hostname
     format
     """
-    localhost = process_args and \
-                process_args.get('allow_localhost', False)
     try:
-        return force_ip(param, allow_localhost=localhost)
+        return force_ip(param, allow_localhost=True)
     except NetworkError as ex:
         raise ParamProcessingError(str(ex))
 
 
-def process_ssh_key(param, param_name, process_args=None):
+def process_ssh_key(param, param_name, config=None):
     """
     Generates SSH key if given key in param doesn't exist. In case param
     is an empty string it generates default SSH key ($HOME/.ssh/id_rsa).
@@ -64,7 +62,7 @@ def process_ssh_key(param, param_name, process_args=None):
     return param
 
 
-def process_add_quotes_around_values(param, param_name, process_args=None):
+def process_add_quotes_around_values(param, param_name, config=None):
     """
     Add a single quote character around each element of a comma
     separated list of values
@@ -79,7 +77,7 @@ def process_add_quotes_around_values(param, param_name, process_args=None):
     param = ','.join(params_list)
     return param
 
-def process_password(param, param_name, process_args=None):
+def process_password(param, param_name, config=None):
     """
     Process passwords, checking the following:
     1- If there is a user-entered password, use it
@@ -90,8 +88,8 @@ def process_password(param, param_name, process_args=None):
         process_password.pw_dict = {}
 
     if param == "PW_PLACEHOLDER":
-        if process_args["CONFIG_DEFAULT_PASSWORD"] != "":
-            param = process_args["CONFIG_DEFAULT_PASSWORD"]
+        if config["CONFIG_DEFAULT_PASSWORD"] != "":
+            param = config["CONFIG_DEFAULT_PASSWORD"]
         else:
             # We need to make sure we store the random password we provide
             # and return it once we are asked for it again
