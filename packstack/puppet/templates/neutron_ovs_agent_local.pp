@@ -1,12 +1,12 @@
 
-if '%(CONFIG_NEUTRON_L2_PLUGIN)s' == 'ml2' {
+if hiera('CONFIG_NEUTRON_L2_PLUGIN') == 'ml2' {
   class { 'neutron::agents::ml2::ovs':
-    bridge_mappings => %(CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS)s,
-    l2_population   => %(CONFIG_NEUTRON_USE_L2POPULATION)s,
+    bridge_mappings => hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'),
+    l2_population   => hiera('CONFIG_NEUTRON_USE_L2POPULATION'),
   }
 } else {
   class { 'neutron::agents::ovs':
-    bridge_mappings => %(CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS)s,
+    bridge_mappings => hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'),
   }
 
   file { 'ovs_neutron_plugin.ini':

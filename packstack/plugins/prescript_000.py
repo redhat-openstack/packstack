@@ -666,7 +666,7 @@ def discover(config, messages):
 
 def create_manifest(config, messages):
     key = 'CONFIG_DEBUG_MODE'
-    config[key] = config[key] == 'y' and 'true' or 'false'
+    config[key] = config[key] == 'y' and True or False
 
     for hostname in filtered_hosts(config):
         manifestfile = "%s_prescript.pp" % hostname

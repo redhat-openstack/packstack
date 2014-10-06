@@ -1,8 +1,10 @@
-class {'neutron::agents::metadata':
-  auth_password => '%(CONFIG_NEUTRON_KS_PW)s',
-  auth_url      => 'http://%(CONFIG_CONTROLLER_HOST)s:35357/v2.0',
-  auth_region   => '%(CONFIG_KEYSTONE_REGION)s',
-  shared_secret => '%(CONFIG_NEUTRON_METADATA_PW)s',
-  metadata_ip   => '%(CONFIG_CONTROLLER_HOST)s',
-  debug         => %(CONFIG_DEBUG_MODE)s,
+$neutron_metadata_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+
+class { 'neutron::agents::metadata':
+  auth_password => hiera('CONFIG_NEUTRON_KS_PW'),
+  auth_url      => "http://${neutron_metadata_cfg_ctrl_host}:35357/v2.0",
+  auth_region   => hiera('CONFIG_KEYSTONE_REGION'),
+  shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW'),
+  metadata_ip   => hiera('CONFIG_CONTROLLER_HOST'),
+  debug         => hiera('CONFIG_DEBUG_MODE'),
 }

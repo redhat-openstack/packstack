@@ -62,7 +62,7 @@ def create_manifest(config, messages):
 
     no_root_allinone = (client_host == utils.get_localhost_ip() and
                         root_home != homedir)
-    config['NO_ROOT_USER_ALLINONE'] = no_root_allinone and 'true' or 'false'
+    config['NO_ROOT_USER_ALLINONE'] = no_root_allinone and True or False
 
     manifestdata = getManifestTemplate("openstack_client.pp")
     appendManifestFile(manifestfile, manifestdata)

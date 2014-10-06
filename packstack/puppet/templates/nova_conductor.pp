@@ -1,4 +1,4 @@
 
-class {"nova::conductor":
-    enabled => true,
+class { 'nova::conductor':
+  enabled => true,
 }

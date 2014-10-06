@@ -20,7 +20,8 @@ from packstack.installer import utils
 
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             appendManifestFile)
+                                             appendManifestFile,
+                                             createFirewallResources)
 
 from packstack.installer import exceptions
 from packstack.installer import output_messages
@@ -125,10 +126,10 @@ def initConfig(controller):
                        "domain:/vol-name "),
              "PROMPT": ("Enter a single or comma separated list of gluster "
                         "volume shares to use with Cinder"),
-             "OPTION_LIST": ["^'([\d]{1,3}\.){3}[\d]{1,3}:/.*'",
-                             "^'[a-zA-Z0-9][\-\.\w]*:/.*'"],
+             "OPTION_LIST": ["^([\d]{1,3}\.){3}[\d]{1,3}:/.*",
+                             "^[a-zA-Z0-9][\-\.\w]*:/.*"],
              "VALIDATORS": [validators.validate_multi_regexp],
-             "PROCESSORS": [processors.process_add_quotes_around_values],
+             "PROCESSORS": [],
              "DEFAULT_VALUE": "",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
@@ -144,9 +145,9 @@ def initConfig(controller):
                        "mount, eg: ip-address:/export-name "),
              "PROMPT": ("Enter a single or comma seprated list of NFS exports "
                         "to use with Cinder"),
-             "OPTION_LIST": ["^'([\d]{1,3}\.){3}[\d]{1,3}:/.*'"],
+             "OPTION_LIST": ["^([\d]{1,3}\.){3}[\d]{1,3}:/.*"],
              "VALIDATORS": [validators.validate_multi_regexp],
-             "PROCESSORS": [processors.process_add_quotes_around_values],
+             "PROCESSORS": [],
              "DEFAULT_VALUE": "",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
@@ -592,9 +593,15 @@ def initSequences(controller):
     if config['CONFIG_CINDER_INSTALL'] != 'y':
         return
 
-    config['CONFIG_CINDER_BACKEND'] = str(
+    config['CONFIG_CINDER_BACKEND'] = (
         [i.strip() for i in config['CONFIG_CINDER_BACKEND'].split(',') if i]
     )
+
+    for key in ('CONFIG_CINDER_NETAPP_VOLUME_LIST',
+                'CONFIG_CINDER_GLUSTER_MOUNTS',
+                'CONFIG_CINDER_NFS_MOUNTS'):
+        if key in config:
+            config[key] = [i.strip() for i in config[key].split(',') if i]
 
     cinder_steps = [
         {'title': 'Adding Cinder Keystone manifest entries',
@@ -711,8 +718,7 @@ def create_manifest(config, messages):
     manifestfile = "%s_cinder.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata += getManifestTemplate("cinder.pp")
 
-    backends = config['CONFIG_CINDER_BACKEND'].strip('[]')
-    backends = [i.strip('\' ') for i in backends.split(',')]
+    backends = config['CONFIG_CINDER_BACKEND']
     if 'netapp' in backends:
         backends.remove('netapp')
         puppet_cdot_iscsi = "cinder_netapp_cdot_iscsi.pp"
@@ -740,24 +746,36 @@ def create_manifest(config, messages):
     if config['CONFIG_SWIFT_INSTALL'] == 'y':
         manifestdata += getManifestTemplate('cinder_backup.pp')
 
-    config['FIREWALL_SERVICE_NAME'] = "cinder"
-    config['FIREWALL_PORTS'] = "['3260']"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
-    if (config['CONFIG_NOVA_INSTALL'] == 'y' and
+    fw_details = dict()
+    for host in split_hosts(config['CONFIG_COMPUTE_HOSTS']):
+        if (config['CONFIG_NOVA_INSTALL'] == 'y' and
             config['CONFIG_VMWARE_BACKEND'] == 'n'):
-        for host in split_hosts(config['CONFIG_COMPUTE_HOSTS']):
-            config['FIREWALL_ALLOWED'] = "'%s'" % host
-            config['FIREWALL_SERVICE_ID'] = "cinder_%s" % host
-            manifestdata += getManifestTemplate("firewall.pp")
-    else:
-        config['FIREWALL_ALLOWED'] = "'ALL'"
-        config['FIREWALL_SERVICE_ID'] = "cinder_ALL"
-        manifestdata += getManifestTemplate("firewall.pp")
+            key = "cinder_%s" % host
+            fw_details.setdefault(key, {})
+            fw_details[key]['host'] = "%s" % host
+        else:
+            key = "cinder_all"
+            fw_details.setdefault(key, {})
+            fw_details[key]['host'] = "ALL"
+
+        fw_details[key]['service_name'] = "cinder"
+        fw_details[key]['chain'] = "INPUT"
+        fw_details[key]['ports'] = ['3260']
+        fw_details[key]['proto'] = "tcp"
+
+    config['FIREWALL_CINDER_RULES'] = fw_details
+    manifestdata += createFirewallResources('FIREWALL_CINDER_RULES')
+
     # cinder API should be open for everyone
-    config['FIREWALL_SERVICE_NAME'] = "cinder-api"
-    config['FIREWALL_ALLOWED'] = "'ALL'"
-    config['FIREWALL_SERVICE_ID'] = "cinder_API"
-    config['FIREWALL_PORTS'] = "['8776']"
-    manifestdata += getManifestTemplate("firewall.pp")
+    fw_details = dict()
+    key = "cinder_api"
+    fw_details.setdefault(key, {})
+    fw_details[key]['host'] = "ALL"
+    fw_details[key]['service_name'] = "cinder-api"
+    fw_details[key]['chain'] = "INPUT"
+    fw_details[key]['ports'] = ['8776']
+    fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_CINDER_API_RULES'] = fw_details
+    manifestdata += createFirewallResources('FIREWALL_CINDER_API_RULES')
+
     appendManifestFile(manifestfile, manifestdata)

@@ -18,7 +18,8 @@ from packstack.installer import utils
 from packstack.installer.utils import split_hosts
 
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             appendManifestFile, manifestfiles)
+                                             appendManifestFile, manifestfiles,
+                                             createFirewallResources)
 
 
 #------------------ oVirt installer initialization ------------------
@@ -287,13 +288,18 @@ def create_builder_manifest(config, messages):
 def create_proxy_manifest(config, messages):
     manifestfile = "%s_swift.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("swift_proxy.pp")
-    config['FIREWALL_SERVICE_NAME'] = "swift proxy"
-    config['FIREWALL_PORTS'] = "'8080'"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
-    config['FIREWALL_ALLOWED'] = "'ALL'"
-    config['FIREWALL_SERVICE_ID'] = "swift_proxy"
-    manifestdata += getManifestTemplate("firewall.pp")
+
+    fw_details = dict()
+    key = "swift_proxy"
+    fw_details.setdefault(key, {})
+    fw_details[key]['host'] = "ALL"
+    fw_details[key]['service_name'] = "swift proxy"
+    fw_details[key]['chain'] = "INPUT"
+    fw_details[key]['ports'] = ['8080']
+    fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_SWIFT_PROXY_RULES'] = fw_details
+
+    manifestdata += createFirewallResources('FIREWALL_SWIFT_PROXY_RULES')
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -324,15 +330,18 @@ def create_storage_manifest(config, messages):
     if config['CONFIG_NOVA_INSTALL'] == 'y':
         hosts |= split_hosts(config['CONFIG_COMPUTE_HOSTS'])
 
-    config['FIREWALL_SERVICE_NAME'] = "swift storage and rsync"
-    config['FIREWALL_PORTS'] = "['6000', '6001', '6002', '873']"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
+    fw_details = dict()
     for host in hosts:
-        config['FIREWALL_ALLOWED'] = "'%s'" % host
-        config['FIREWALL_SERVICE_ID'] = "swift_storage_and_rsync_%s" % host
-        manifestdata += getManifestTemplate("firewall.pp")
+        key = "swift_storage_and_rsync_%s" % host
+        fw_details.setdefault(key, {})
+        fw_details[key]['host'] = "%s" % host
+        fw_details[key]['service_name'] = "swift storage and rsync"
+        fw_details[key]['chain'] = "INPUT"
+        fw_details[key]['ports'] = ['6000', '6001', '6002', '873']
+        fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_SWIFT_STORAGE_RULES'] = fw_details
 
+    manifestdata += createFirewallResources('FIREWALL_SWIFT_STORAGE_RULES')
     appendManifestFile(manifestfile, manifestdata)
 
 

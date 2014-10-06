@@ -1,14 +1,14 @@
 
 class { 'neutron':
   rpc_backend           => 'neutron.openstack.common.rpc.impl_qpid',
-  qpid_hostname         => '%(CONFIG_AMQP_HOST)s',
-  qpid_username         => '%(CONFIG_AMQP_AUTH_USER)s',
-  qpid_password         => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
-  qpid_port             => '%(CONFIG_AMQP_CLIENTS_PORT)s',
-  qpid_protocol         => '%(CONFIG_AMQP_PROTOCOL)s',
-  core_plugin           => '%(CONFIG_NEUTRON_CORE_PLUGIN)s',
+  qpid_hostname         => hiera('CONFIG_AMQP_HOST'),
+  qpid_username         => hiera('CONFIG_AMQP_AUTH_USER'),
+  qpid_password         => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+  qpid_port             => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+  qpid_protocol         => hiera('CONFIG_AMQP_PROTOCOL'),
+  core_plugin           => hiera('CONFIG_NEUTRON_CORE_PLUGIN'),
   allow_overlapping_ips => true,
-  service_plugins       => %(SERVICE_PLUGINS)s,
+  service_plugins       => hiera_array('SERVICE_PLUGINS'),
   verbose               => true,
-  debug                 => %(CONFIG_DEBUG_MODE)s,
+  debug                 => hiera('CONFIG_DEBUG_MODE'),
 }

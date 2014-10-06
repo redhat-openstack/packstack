@@ -14,7 +14,8 @@ from packstack.installer import utils
 
 from packstack.modules.common import filtered_hosts
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             appendManifestFile)
+                                             appendManifestFile,
+                                             createFirewallResources)
 
 
 #------------------ oVirt installer initialization ------------------
@@ -185,14 +186,19 @@ def create_nrpe_manifests(config, messages):
         config['CONFIG_NRPE_HOST'] = hostname
         manifestfile = "%s_nagios_nrpe.pp" % hostname
         manifestdata = getManifestTemplate("nagios_nrpe.pp")
+
         # Only the Nagios host is allowed to talk to nrpe
-        config['FIREWALL_ALLOWED'] = "'%s'" % config['CONFIG_CONTROLLER_HOST']
-        config['FIREWALL_SERVICE_NAME'] = "nagios-nrpe"
-        config['FIREWALL_SERVICE_ID'] = "nagios_nrpe"
-        config['FIREWALL_PORTS'] = '5666'
-        config['FIREWALL_CHAIN'] = "INPUT"
-        config['FIREWALL_PROTOCOL'] = 'tcp'
-        manifestdata += getManifestTemplate("firewall.pp")
+        fw_details = dict()
+        key = "nagios_nrpe"
+        fw_details.setdefault(key, {})
+        fw_details[key]['host'] = "%s" % config['CONFIG_CONTROLLER_HOST']
+        fw_details[key]['service_name'] = "nagios-nrpe"
+        fw_details[key]['chain'] = "INPUT"
+        fw_details[key]['ports'] = ['5666']
+        fw_details[key]['proto'] = "tcp"
+        config['FIREWALL_NAGIOS_NRPE_RULES'] = fw_details
+
+        manifestdata += createFirewallResources('FIREWALL_NAGIOS_NRPE_RULES')
         appendManifestFile(manifestfile, manifestdata)
 
     messages.append("To use Nagios, browse to "

@@ -1,40 +1,47 @@
 include packstack::apache_common
 
-$horizon_packages = ["python-memcached", "python-netaddr"]
+$horizon_packages = ['python-memcached', 'python-netaddr']
 
-package {$horizon_packages:
-    notify => Class["horizon"],
-    ensure => present,
+package { $horizon_packages:
+  ensure => present,
+  notify => Class['horizon'],
+}
+
+$is_django_debug = hiera('CONFIG_DEBUG_MODE') ? {
+  true  => 'True',
+  false => 'False',
 }
 
 class {'horizon':
-  secret_key => '%(CONFIG_HORIZON_SECRET_KEY)s',
-  keystone_host => '%(CONFIG_CONTROLLER_HOST)s',
+  secret_key            => hiera('CONFIG_HORIZON_SECRET_KEY'),
+  keystone_host         => hiera('CONFIG_CONTROLLER_HOST'),
   keystone_default_role => '_member_',
-  #fqdn => ['%(CONFIG_CONTROLLER_HOST)s', "$::fqdn", 'localhost'],
+  # fqdn => [hiera('CONFIG_CONTROLLER_HOST'), "$::fqdn", 'localhost'],
   # TO-DO: Parameter fqdn is used both for ALLOWED_HOSTS in settings_local.py
-  #        and for ServerAlias directives in vhost.conf which is breaking server
-  #        accessibility. We need ALLOWED_HOSTS values, but we have to avoid
-  #        ServerAlias definitions. For now we will use this wildcard hack until
-  #        puppet-horizon will have separate parameter for each config.
-  fqdn => '*',
+  # and for ServerAlias directives in vhost.conf which is breaking server
+  # accessibility. We need ALLOWED_HOSTS values, but we have to avoid
+  # ServerAlias definitions. For now we will use this wildcard hack until
+  # puppet-horizon will have separate parameter for each config.
+  fqdn                => '*',
   can_set_mount_point => 'False',
-  django_debug => %(CONFIG_DEBUG_MODE)s ? {true => 'True', false => 'False'},
-  listen_ssl => %(CONFIG_HORIZON_SSL)s,
-  horizon_cert => '/etc/pki/tls/certs/ssl_ps_server.crt',
-  horizon_key => '/etc/pki/tls/private/ssl_ps_server.key',
-  horizon_ca => '/etc/pki/tls/certs/ssl_ps_chain.crt',
-  neutron_options => {
-    'enable_lb' => %(CONFIG_HORIZON_NEUTRON_LB)s,
-    'enable_firewall' => %(CONFIG_HORIZON_NEUTRON_FW)s
+  django_debug        => $is_django_debug,
+  listen_ssl          => hiera('CONFIG_HORIZON_SSL'),
+  horizon_cert        => '/etc/pki/tls/certs/ssl_ps_server.crt',
+  horizon_key         => '/etc/pki/tls/private/ssl_ps_server.key',
+  horizon_ca          => '/etc/pki/tls/certs/ssl_ps_chain.crt',
+  neutron_options     => {
+    'enable_lb'       => hiera('CONFIG_HORIZON_NEUTRON_LB'),
+    'enable_firewall' => hiera('CONFIG_HORIZON_NEUTRON_FW'),
   },
 }
 
-if %(CONFIG_HORIZON_SSL)s {
+$is_horizon_ssl = hiera('CONFIG_HORIZON_SSL')
+
+if $is_horizon_ssl == true {
   file {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
+    ensure  => present,
     content => template('packstack/ssl/generate_ssl_certs.sh.erb'),
-    ensure => present,
-    mode => '755',
+    mode    => '0755',
   }
 
   exec {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
@@ -62,19 +69,19 @@ if %(CONFIG_HORIZON_SSL)s {
   }
 }
 
-class {'memcached':}
+class { 'memcached': }
 
-$firewall_port = %(CONFIG_HORIZON_PORT)s
+$firewall_port = hiera('CONFIG_HORIZON_PORT')
 
 firewall { "001 horizon ${firewall_port}  incoming":
-    proto    => 'tcp',
-    dport    => [%(CONFIG_HORIZON_PORT)s],
-    action   => 'accept',
+  proto  => 'tcp',
+  dport  => [$firewall_port],
+  action => 'accept',
 }
 
-if ($::selinux != "false"){
-    selboolean{'httpd_can_network_connect':
-        value => on,
-        persistent => true,
-    }
+if ($::selinux != false) {
+  selboolean{ 'httpd_can_network_connect':
+    value      => on,
+    persistent => true,
+  }
 }

@@ -1,12 +1,12 @@
 class { 'cinder::setup_test_volume':
-  size => '%(CONFIG_CINDER_VOLUMES_SIZE)s',
+  size            => hiera('CONFIG_CINDER_VOLUMES_SIZE'),
   loopback_device => '/dev/loop2',
-  volume_path => '/var/lib/cinder',
-  volume_name => 'cinder-volumes',
+  volume_path     => '/var/lib/cinder',
+  volume_name     => 'cinder-volumes',
 }
 
 # Add loop device on boot
-$el_releases = ["RedHat", "CentOS", "Scientific"]
+$el_releases = ['RedHat', 'CentOS', 'Scientific']
 if $::operatingsystem in $el_releases and $::operatingsystemmajrelease < 7 {
 
   file_line{ 'rc.local_losetup_cinder_volume':
@@ -44,12 +44,12 @@ RequiredBy=openstack-cinder-volume.service',
 
   exec { '/usr/bin/systemctl daemon-reload':
     refreshonly => true,
-    before => Service['openstack-losetup'],
+    before      => Service['openstack-losetup'],
   }
 
   service { 'openstack-losetup':
-    ensure => running,
-    enable => true,
+    ensure  => running,
+    enable  => true,
     require => Class['cinder::setup_test_volume'],
   }
 
@@ -70,8 +70,8 @@ file_line { 'snapshot_autoextend_percent':
 }
 
 cinder::backend::iscsi { 'lvm':
-  iscsi_ip_address => '%(CONFIG_STORAGE_HOST)s',
-  require => Package['lvm2'],
+  iscsi_ip_address => hiera('CONFIG_STORAGE_HOST'),
+  require          => Package['lvm2'],
 }
 
 cinder::type { 'iscsi':

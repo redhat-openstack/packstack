@@ -13,7 +13,8 @@ from packstack.installer import basedefs
 from packstack.installer import utils
 
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             appendManifestFile)
+                                             appendManifestFile,
+                                             createFirewallResources)
 
 
 #------------------ oVirt installer initialization ------------------
@@ -142,12 +143,15 @@ def create_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("keystone.pp")
 
-    config['FIREWALL_ALLOWED'] = "'ALL'"
-    config['FIREWALL_SERVICE_NAME'] = "keystone"
-    config['FIREWALL_SERVICE_ID'] = "keystone"
-    config['FIREWALL_PORTS'] = "['5000', '35357']"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
-    manifestdata += getManifestTemplate("firewall.pp")
+    fw_details = dict()
+    key = "keystone"
+    fw_details.setdefault(key, {})
+    fw_details[key]['host'] = "ALL"
+    fw_details[key]['service_name'] = "keystone"
+    fw_details[key]['chain'] = "INPUT"
+    fw_details[key]['ports'] = ['5000', '35357']
+    fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_KEYSTONE_RULES'] = fw_details
 
+    manifestdata += createFirewallResources('FIREWALL_KEYSTONE_RULES')
     appendManifestFile(manifestfile, manifestdata)

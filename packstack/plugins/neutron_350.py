@@ -19,7 +19,8 @@ from packstack.installer.utils import split_hosts
 from packstack.modules.common import filtered_hosts
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             appendManifestFile)
+                                             appendManifestFile,
+                                             createFirewallResources)
 
 
 #------------------ oVirt installer initialization ------------------
@@ -569,9 +570,12 @@ def initSequences(controller):
                     'CONFIG_NEUTRON_ML2_VLAN_RANGES',
                     'CONFIG_NEUTRON_ML2_TUNNEL_ID_RANGES',
                     'CONFIG_NEUTRON_ML2_VNI_RANGES'):
-            config[key] = str([i.strip() for i in config[key].split(',') if i])
+            if config[key] == '':
+                config[key] = []
+            else:
+                config[key] = [i.strip() for i in config[key].split(',') if i]
         key = 'CONFIG_NEUTRON_ML2_VXLAN_GROUP'
-        config[key] = "'%s'" % config[key] if config[key] else 'undef'
+        config[key] = "%s" % config[key] if config[key] else ''
 
     config['CONFIG_NEUTRON_L2_DBNAME'] = plugin_db
     config['CONFIG_NEUTRON_CORE_PLUGIN'] = plugin_path
@@ -702,8 +706,7 @@ def get_agent_type(config):
     # "vlan,gre" or "vlan,vxlan" so that VLANs are used if available,
     # but tunnels are used if not.
     tenant_types = config.get('CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES',
-                              "['local']").strip('[]')
-    tenant_types = [i.strip('"\'') for i in tenant_types.split(',')]
+                              "local")
 
     for i in ['gre', 'vxlan', 'vlan']:
         if i in tenant_types:
@@ -737,7 +740,7 @@ def create_manifests(config, messages):
             'neutron.services.firewall.fwaas_plugin.FirewallPlugin'
         )
 
-    config['SERVICE_PLUGINS'] = (str(service_plugins) if service_plugins
+    config['SERVICE_PLUGINS'] = (service_plugins if service_plugins
                                  else 'undef')
 
     if config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch':
@@ -765,33 +768,44 @@ def create_manifests(config, messages):
             # XXX I am not completely sure about this, but it seems necessary:
             manifest_data += getManifestTemplate(plugin_manifest)
 
-            #Firewall
-            config['FIREWALL_SERVICE_NAME'] = "neutron server"
-            config['FIREWALL_PORTS'] = "'9696'"
-            config['FIREWALL_CHAIN'] = "INPUT"
-            config['FIREWALL_PROTOCOL'] = 'tcp'
-            config['FIREWALL_ALLOWED'] = "'ALL'"
-            config['FIREWALL_SERVICE_ID'] = ("neutron_server_%s"
-                                                 % (host))
-            manifest_data += getManifestTemplate("firewall.pp")
+            # Firewall
+            fw_details = dict()
+            key = "neutron_server_%s" % host
+            fw_details.setdefault(key, {})
+            fw_details[key]['host'] = "ALL"
+            fw_details[key]['service_name'] = "neutron server"
+            fw_details[key]['chain'] = "INPUT"
+            fw_details[key]['ports'] = ['9696']
+            fw_details[key]['proto'] = "tcp"
+            config['FIREWALL_NEUTRON_SERVER_RULES'] = fw_details
 
+            manifest_data += createFirewallResources(
+                'FIREWALL_NEUTRON_SERVER_RULES'
+            )
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
         # We also need to open VXLAN/GRE port for agent
         if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
+            fw_details = dict()
+            key = "neutron_tunnel"
+            fw_details.setdefault(key, {})
+            fw_details[key]['host'] = "ALL"
+            fw_details[key]['service_name'] = "neutron tunnel port"
+            fw_details[key]['chain'] = "INPUT"
+
             if use_openvswitch_vxlan(config):
-                config['FIREWALL_PROTOCOL'] = 'udp'
-                tunnel_port = ("'%s'"
-                               % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'])
+                fw_details[key]['proto'] = 'udp'
+                tun_port = "%s" % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT']
             else:
-                config['FIREWALL_PROTOCOL'] = 'gre'
-                tunnel_port = 'undef'
-            config['FIREWALL_ALLOWED'] = "'ALL'"
-            config['FIREWALL_SERVICE_NAME'] = "neutron tunnel port"
-            config['FIREWALL_SERVICE_ID'] = ("neutron_tunnel")
-            config['FIREWALL_PORTS'] = tunnel_port
-            config['FIREWALL_CHAIN'] = "INPUT"
-            manifest_data = getManifestTemplate('firewall.pp')
+                fw_details[key]['proto'] = 'gre'
+                tun_port = 'undef'
+
+            fw_details[key]['ports'] = tun_port
+            config['FIREWALL_NEUTRON_TUNNEL_RULES'] = fw_details
+
+            manifest_data = createFirewallResources(
+                'FIREWALL_NEUTRON_TUNNEL_RULES'
+            )
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
 
@@ -839,21 +853,32 @@ def create_dhcp_manifests(config, messages):
         manifest_data = getManifestTemplate("neutron_dhcp.pp")
         manifest_file = "%s_neutron.pp" % (host,)
         # Firewall Rules for dhcp in
-        config['FIREWALL_PROTOCOL'] = 'udp'
-        config['FIREWALL_ALLOWED'] = "'ALL'"
-        config['FIREWALL_SERVICE_NAME'] = "neutron dhcp in: "
-        config['FIREWALL_SERVICE_ID'] = "neutron_dhcp_in_%s" % host
-        config['FIREWALL_PORTS'] = "'67'"
-        config['FIREWALL_CHAIN'] = "INPUT"
-        manifest_data += getManifestTemplate("firewall.pp")
+        fw_details = dict()
+        key = "neutron_dhcp_in_%s" % host
+        fw_details.setdefault(key, {})
+        fw_details[key]['host'] = "ALL"
+        fw_details[key]['service_name'] = "neutron dhcp in"
+        fw_details[key]['chain'] = "INPUT"
+        fw_details[key]['ports'] = ['67']
+        fw_details[key]['proto'] = "udp"
+        config['FIREWALL_NEUTRON_DHCPIN_RULES'] = fw_details
+        manifest_data += createFirewallResources(
+            'FIREWALL_NEUTRON_DHCPIN_RULES'
+        )
+
         # Firewall Rules for dhcp out
-        config['FIREWALL_PROTOCOL'] = 'udp'
-        config['FIREWALL_ALLOWED'] = "'ALL'"
-        config['FIREWALL_SERVICE_NAME'] = "neutron dhcp out: "
-        config['FIREWALL_SERVICE_ID'] = "neutron_dhcp_out_%s" % host
-        config['FIREWALL_PORTS'] = "'68'"
-        config['FIREWALL_CHAIN'] = "OUTPUT"
-        manifest_data += getManifestTemplate("firewall.pp")
+        fw_details = dict()
+        key = "neutron_dhcp_out_%s" % host
+        fw_details.setdefault(key, {})
+        fw_details[key]['host'] = "ALL"
+        fw_details[key]['service_name'] = "neutron dhcp out"
+        fw_details[key]['chain'] = "OUTPUT"
+        fw_details[key]['ports'] = ['68']
+        fw_details[key]['proto'] = "udp"
+        config['FIREWALL_NEUTRON_DHCPOUT_RULES'] = fw_details
+        manifest_data += createFirewallResources(
+            'FIREWALL_NEUTRON_DHCPOUT_RULES'
+        )
 
         appendManifestFile(manifest_file, manifest_data, 'neutron')
 
@@ -895,12 +920,11 @@ def create_l2_agent_manifests(config, messages):
     # for other plugin template generation
     if ('l2population' in
             config.get('CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS', [])):
-        config['CONFIG_NEUTRON_USE_L2POPULATION'] = 'true'
+        config['CONFIG_NEUTRON_USE_L2POPULATION'] = True
     else:
-        config['CONFIG_NEUTRON_USE_L2POPULATION'] = 'false'
+        config['CONFIG_NEUTRON_USE_L2POPULATION'] = False
 
     if agent == "openvswitch":
-        host_var = 'CONFIG_NEUTRON_OVS_HOST'
         if plugin == agent:
             # monolithic plugin installation
             ovs_type = 'CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'
@@ -919,7 +943,7 @@ def create_l2_agent_manifests(config, messages):
         # expects this parameter to be an array, this parameter must be
         # properly formatted by packstack, then consumed by the puppet module.
         # For example, the input string 'A, B' should formatted as '['A','B']'.
-        config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"] = str(bm_arr)
+        config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"] = bm_arr
     elif agent == "linuxbridge":
         host_var = 'CONFIG_NEUTRON_LB_HOST'
         template_name = 'neutron_lb_agent.pp'
@@ -927,9 +951,9 @@ def create_l2_agent_manifests(config, messages):
         raise KeyError("Unknown layer2 agent")
 
     for host in network_hosts | compute_hosts:
-        config[host_var] = host
         manifestfile = "%s_neutron.pp" % (host,)
-        manifestdata = getManifestTemplate(template_name)
+        manifestdata = "$cfg_neutron_ovs_host = '%s'\n" % host
+        manifestdata += getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
         # neutron ovs port only on network hosts
         if (

@@ -1,7 +1,7 @@
 cinder::backend::vmdk { 'vmdk':
-  host_ip       => "%(CONFIG_VCENTER_HOST)s",
-  host_username => "%(CONFIG_VCENTER_USER)s",
-  host_password => "%(CONFIG_VCENTER_PASSWORD)s",
+  host_ip       => hiera('CONFIG_VCENTER_HOST'),
+  host_username => hiera('CONFIG_VCENTER_USER'),
+  host_password => hiera('CONFIG_VCENTER_PASSWORD'),
 }
 
 cinder::type { 'vmdk':

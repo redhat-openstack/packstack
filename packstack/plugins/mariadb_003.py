@@ -14,7 +14,8 @@ from packstack.installer.utils import split_hosts
 from packstack.modules.common import filtered_hosts
 
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             appendManifestFile)
+                                             appendManifestFile,
+                                             createFirewallResources)
 
 
 #------------------ oVirt installer initialization ------------------
@@ -114,13 +115,16 @@ def create_manifest(config, messages):
 
     hosts = filtered_hosts(config, exclude=False, dbhost=True)
 
-    config['FIREWALL_SERVICE_NAME'] = "mariadb"
-    config['FIREWALL_PORTS'] = "'3306'"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
+    fw_details = dict()
     for host in hosts:
-        config['FIREWALL_ALLOWED'] = "'%s'" % host
-        config['FIREWALL_SERVICE_ID'] = "mariadb_%s" % host
-        manifestdata.append(getManifestTemplate("firewall.pp"))
+        key = "mariadb_%s" % host
+        fw_details.setdefault(key, {})
+        fw_details[key]['host'] = "%s" % host
+        fw_details[key]['service_name'] = "mariadb"
+        fw_details[key]['chain'] = "INPUT"
+        fw_details[key]['ports'] = ['3306']
+        fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_MARIADB_RULES'] = fw_details
 
+    manifestdata.append(createFirewallResources('FIREWALL_MARIADB_RULES'))
     appendManifestFile(manifestfile, "\n".join(manifestdata), 'pre')

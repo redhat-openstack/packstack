@@ -1,7 +1,7 @@
 package { 'nfs-utils': ensure => present }
 
 cinder::backend::nfs { 'nfs':
-  nfs_servers       => [%(CONFIG_CINDER_NFS_MOUNTS)s],
+  nfs_servers       => hiera_array('CONFIG_CINDER_NFS_MOUNTS'),
   require           => Package['nfs-utils'],
   nfs_shares_config => '/etc/cinder/nfs_shares.conf',
 }

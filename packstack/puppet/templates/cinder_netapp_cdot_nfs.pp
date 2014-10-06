@@ -3,18 +3,18 @@
 package { 'nfs-utils': ensure => present }
 
 cinder::backend::netapp { 'netapp':
-  netapp_login              => "%(CONFIG_CINDER_NETAPP_LOGIN)s",
-  netapp_password           => "%(CONFIG_CINDER_NETAPP_PASSWORD)s",
-  netapp_server_hostname    => "%(CONFIG_CINDER_NETAPP_HOSTNAME)s",
-  netapp_server_port        => "%(CONFIG_CINDER_NETAPP_SERVER_PORT)s",
-  netapp_storage_family     => "%(CONFIG_CINDER_NETAPP_STORAGE_FAMILY)s",
-  netapp_storage_protocol   => "%(CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL)s",
-  netapp_transport_type     => "%(CONFIG_CINDER_NETAPP_TRANSPORT_TYPE)s",
-  netapp_vserver            => "%(CONFIG_CINDER_NETAPP_VSERVER)s",
-  expiry_thres_minutes      => "%(CONFIG_CINDER_NETAPP_EXPIRY_THRES_MINUTES)s",
-  thres_avl_size_perc_start => "%(CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_START)s",
-  thres_avl_size_perc_stop  => "%(CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_STOP)s",
-  nfs_shares_config         => "%(CONFIG_CINDER_NETAPP_NFS_SHARES_CONFIG)s",
+  netapp_login              => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
+  netapp_password           => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
+  netapp_server_hostname    => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
+  netapp_server_port        => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
+  netapp_storage_family     => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
+  netapp_storage_protocol   => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
+  netapp_transport_type     => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
+  netapp_vserver            => hiera('CONFIG_CINDER_NETAPP_VSERVER'),
+  expiry_thres_minutes      => hiera('CONFIG_CINDER_NETAPP_EXPIRY_THRES_MINUTES'),
+  thres_avl_size_perc_start => hiera('CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_START'),
+  thres_avl_size_perc_stop  => hiera('CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_STOP'),
+  nfs_shares_config         => hiera('CONFIG_CINDER_NETAPP_NFS_SHARES_CONFIG'),
   require                   => Package['nfs-utils'],
 }
 

@@ -15,7 +15,8 @@ from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (NovaConfig, getManifestTemplate,
-                                             appendManifestFile, manifestfiles)
+                                             appendManifestFile, manifestfiles,
+                                             createFirewallResources)
 
 
 #------------------ oVirt installer initialization ------------------
@@ -427,16 +428,21 @@ def create_api_manifest(config, messages):
         config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = 'undef'
     else:
         config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = \
-            "'%s'" % config['CONFIG_NEUTRON_METADATA_PW']
+            "%s" % config['CONFIG_NEUTRON_METADATA_PW']
     manifestfile = "%s_api_nova.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("nova_api.pp")
-    config['FIREWALL_SERVICE_NAME'] = "nova api"
-    config['FIREWALL_PORTS'] = "['8773', '8774', '8775']"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
-    config['FIREWALL_ALLOWED'] = "'ALL'"
-    config['FIREWALL_SERVICE_ID'] = "nova_api"
-    manifestdata += getManifestTemplate("firewall.pp")
+
+    fw_details = dict()
+    key = "nova_api"
+    fw_details.setdefault(key, {})
+    fw_details[key]['host'] = "ALL"
+    fw_details[key]['service_name'] = "nova api"
+    fw_details[key]['chain'] = "INPUT"
+    fw_details[key]['ports'] = ['8773', '8774', '8775']
+    fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_NOVA_API_RULES'] = fw_details
+    manifestdata += createFirewallResources('FIREWALL_NOVA_API_RULES')
+
     appendManifestFile(manifestfile, manifestdata, 'novaapi')
 
 
@@ -473,6 +479,8 @@ def create_compute_manifest(config, messages):
         )
 
     ssh_hostkeys = ''
+
+    ssh_keys_details = {}
     for host in compute_hosts:
         try:
             hostname, aliases, addrs = socket.gethostbyaddr(host)
@@ -485,27 +493,33 @@ def create_compute_manifest(config, messages):
                 continue
 
             _, host_key_type, host_key_data = hostkey.split()
-            config['SSH_HOST_NAME'] = hostname
-            config['SSH_HOST_ALIASES'] = ','.join(
-                '"%s"' % addr for addr in aliases + addrs
-            )
-            config['SSH_HOST_KEY'] = host_key_data
-            config['SSH_HOST_KEY_TYPE'] = host_key_type
-            ssh_hostkeys += getManifestTemplate("sshkey.pp")
+            key = "%s.%s" % (host_key_type, hostname)
+            ssh_keys_details.setdefault(key, {})
+            ssh_keys_details[key]['ensure'] = 'present'
+            ssh_keys_details[key]['host_aliases'] = aliases + addrs
+            ssh_keys_details[key]['key'] = host_key_data
+            ssh_keys_details[key]['type'] = host_key_type
+
+    config['SSH_KEYS'] = ssh_keys_details
+    ssh_hostkeys += getManifestTemplate("sshkey.pp")
 
     for host in compute_hosts:
         config["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute.pp")
 
+        fw_details = dict()
+        cf_fw_qemu_mig_key = "FIREWALL_NOVA_QEMU_MIG_RULES_%s" % host
         for c_host in compute_hosts:
-            config['FIREWALL_SERVICE_NAME'] = "nova qemu migration"
-            config['FIREWALL_PORTS'] = ['16509', '49152-49215']
-            config['FIREWALL_CHAIN'] = "INPUT"
-            config['FIREWALL_PROTOCOL'] = 'tcp'
-            config['FIREWALL_ALLOWED'] = "'%s'" % c_host
-            config['FIREWALL_SERVICE_ID'] = ("nova_qemu_migration_%s_%s"
-                                                 % (host, c_host))
-            manifestdata += getManifestTemplate("firewall.pp")
+            key = "nova_qemu_migration_%s_%s" % (host, c_host)
+            fw_details.setdefault(key, {})
+            fw_details[key]['host'] = "%s" % c_host
+            fw_details[key]['service_name'] = "nova qemu migration"
+            fw_details[key]['chain'] = "INPUT"
+            fw_details[key]['ports'] = ['16509', '49152-49215']
+            fw_details[key]['proto'] = "tcp"
+
+        config[cf_fw_qemu_mig_key] = fw_details
+        manifestdata += createFirewallResources(cf_fw_qemu_mig_key)
 
         if config['CONFIG_VMWARE_BACKEND'] == 'y':
             manifestdata += getManifestTemplate("nova_compute_vmware.pp")
@@ -540,14 +554,19 @@ def create_compute_manifest(config, messages):
             manifestdata += getManifestTemplate(mq_template)
             manifestdata += getManifestTemplate("nova_ceilometer.pp")
 
-        config['FIREWALL_PORTS'] = ['5900-5999']
-        config['FIREWALL_ALLOWED'] = "'%s'" % config['CONFIG_CONTROLLER_HOST']
-        config['FIREWALL_SERVICE_NAME'] = "nova compute"
-        config['FIREWALL_SERVICE_ID'] = "nova_compute"
-        config['FIREWALL_CHAIN'] = "INPUT"
-        config['FIREWALL_PROTOCOL'] = 'tcp'
-        manifestdata += getManifestTemplate("firewall.pp")
+        fw_details = dict()
+        key = "nova_compute"
+        fw_details.setdefault(key, {})
+        fw_details[key]['host'] = "%s" % config['CONFIG_CONTROLLER_HOST']
+        fw_details[key]['service_name'] = "nova compute"
+        fw_details[key]['chain'] = "INPUT"
+        fw_details[key]['ports'] = ['5900-5999']
+        fw_details[key]['proto'] = "tcp"
+        config['FIREWALL_NOVA_COMPUTE_RULES'] = fw_details
 
+        manifestdata += "\n" + createFirewallResources(
+            'FIREWALL_NOVA_COMPUTE_RULES'
+            )
         manifestdata += "\n" + nova_config_options.getManifestEntry()
         manifestdata += "\n" + ssh_hostkeys
         appendManifestFile(manifestfile, manifestdata)
@@ -617,6 +636,7 @@ def create_common_manifest(config, messages):
     dbacces_hosts |= network_hosts
 
     for manifestfile, marker in manifestfiles.getFiles():
+        pw_in_sqlconn = False
         if manifestfile.endswith("_nova.pp"):
             host, manifest = manifestfile.split('_', 1)
             host = host.strip()
@@ -625,10 +645,17 @@ def create_common_manifest(config, messages):
                 # we should omit password in case we are installing only
                 # nova-compute to the host
                 perms = "nova"
+                pw_in_sqlconn = False
             else:
-                perms = "nova:%(CONFIG_NOVA_DB_PW)s"
-            sqlconn = "mysql://%s@%%(CONFIG_MARIADB_HOST)s/nova" % perms
-            config['CONFIG_NOVA_SQL_CONN'] = sqlconn % config
+                perms = "nova:%s" % config['CONFIG_NOVA_DB_PW']
+                pw_in_sqlconn = True
+
+            sqlconn = "mysql://%s@%s/nova" % (perms,
+                                              config['CONFIG_MARIADB_HOST'])
+            if pw_in_sqlconn:
+                config['CONFIG_NOVA_SQL_CONN_PW'] = sqlconn
+            else:
+                config['CONFIG_NOVA_SQL_CONN_NOPW'] = sqlconn
 
             # for nova-network in multihost mode each compute host is metadata
             # host otherwise we use api host
@@ -640,7 +667,10 @@ def create_common_manifest(config, messages):
             config['CONFIG_NOVA_METADATA_HOST'] = metadata
 
             data = getManifestTemplate(get_mq(config, "nova_common"))
-            data += getManifestTemplate("nova_common.pp")
+            if pw_in_sqlconn:
+                data += getManifestTemplate("nova_common_pw.pp")
+            else:
+                data += getManifestTemplate("nova_common_nopw.pp")
             appendManifestFile(os.path.split(manifestfile)[1], data)
 
 

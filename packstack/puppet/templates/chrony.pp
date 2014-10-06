@@ -1,7 +1,10 @@
+$cfg_ntp_server_def = hiera('CONFIG_NTP_SERVER_DEF')
+$cfg_ntp_servers    = hiera('CONFIG_NTP_SERVERS')
+
 $config_content = "
 # Use public servers from the pool.ntp.org project.
 # Please consider joining the pool (http://www.pool.ntp.org/join.html).
-%(CONFIG_NTP_SERVER_DEF)s
+${cfg_ntp_server_def}
 
 # Ignore stratum in source selection.
 stratumweight 0
@@ -44,38 +47,43 @@ logdir /var/log/chrony
 #log measurements statistics tracking
 "
 
-package {'chrony':
-    ensure => 'installed',
-    name => 'chrony',
+package { 'chrony':
+  ensure => 'installed',
+  name   => 'chrony',
 }
 
-package {'ntpdate':
-    ensure => 'installed',
-    name => 'ntpdate',
+package { 'ntpdate':
+  ensure => 'installed',
+  name   => 'ntpdate',
 }
 
-file {'chrony_conf':
-    path => '/etc/chrony.conf',
-    ensure => file,
-    mode => '0644',
-    content => $config_content,
+file { 'chrony_conf':
+  ensure  => file,
+  path    => '/etc/chrony.conf',
+  mode    => '0644',
+  content => $config_content,
 }
 
-exec {'stop-chronyd':
-  command     =>  '/usr/bin/systemctl stop chronyd.service',
+exec { 'stop-chronyd':
+  command => '/usr/bin/systemctl stop chronyd.service',
 }
 
-exec {'ntpdate':
-    command => '/usr/sbin/ntpdate %(CONFIG_NTP_SERVERS)s',
-    tries   => 3,
+exec { 'ntpdate':
+  command => "/usr/sbin/ntpdate ${cfg_ntp_servers}",
+  tries   => 3,
 }
 
-service {'chronyd':
-    ensure => 'running',
-    enable => true,
-    name => 'chronyd',
-    hasstatus => true,
-    hasrestart => true,
+service { 'chronyd':
+  ensure     => running,
+  enable     => true,
+  name       => 'chronyd',
+  hasstatus  => true,
+  hasrestart => true,
 }
 
-Package['chrony'] -> Package['ntpdate'] -> File['chrony_conf'] -> Exec['stop-chronyd'] -> Exec['ntpdate'] -> Service['chronyd']
+Package['chrony'] ->
+Package['ntpdate'] ->
+File['chrony_conf'] ->
+Exec['stop-chronyd'] ->
+Exec['ntpdate'] ->
+Service['chronyd']
