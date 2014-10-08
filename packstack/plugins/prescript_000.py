@@ -252,6 +252,24 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "os-trove-install",
+             "USAGE": (
+                "Set to 'y' if you would like Packstack to install "
+                "OpenStack Database (Trove)"
+             ),
+             "PROMPT": (
+                "Should Packstack install OpenStack Database (Trove)"
+             ),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_TROVE_INSTALL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "os-client-install",
              "USAGE": (
                  "Set to 'y' if you would like Packstack to install "

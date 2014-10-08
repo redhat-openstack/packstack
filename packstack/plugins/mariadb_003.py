@@ -105,7 +105,8 @@ def create_manifest(config, messages):
         manifestdata.append(getManifestTemplate(template))
 
     append_for("keystone", suffix)
-    for mod in ['nova', 'cinder', 'glance', 'neutron', 'heat', 'sahara']:
+    for mod in ['nova', 'cinder', 'glance', 'neutron', 'heat', 'sahara',
+                'trove']:
         if config['CONFIG_%s_INSTALL' % mod.upper()] == 'y':
             append_for(mod, suffix)
 

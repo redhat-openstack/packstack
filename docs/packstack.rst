@@ -68,6 +68,9 @@ Global Options
 **CONFIG_MARIADB_INSTALL**
     Set to 'y' if you would like Packstack to install MariaDB.
 
+**CONFIG_TROVE_INSTALL**
+    Set to 'y' if you would like Packstack to install Openstack Database (Trove)
+
 **CONFIG_CONTROLLER_HOST**
     The IP address of the server on which to install OpenStack services specific to controller role such as API servers, Horizon, etc. This parameter replaced following deprecated parameters: CONFIG_CEILOMETER_HOST, CONFIG_CINDER_HOST, CONFIG_GLANCE_HOST, CONFIG_HORIZON_HOST, CONFIG_HEAT_HOST, CONFIG_KEYSTONE_HOST, CONFIG_NAGIOS_HOST, CONFIG_NEUTRON_SERVER_HOST, CONFIG_NEUTRON_LBAAS_HOSTS, CONFIG_NOVA_API_HOST, CONFIG_NOVA_CERT_HOST, CONFIG_NOVA_VNCPROXY_HOST, CONFIG_NOVA_SCHED_HOST, CONFIG_OSCLIENT_HOST, CONFIG_SWIFT_PROXY_HOSTS.
 
@@ -511,6 +514,24 @@ Neutron Config Parameters
 
 **CONFIG_NEUTRON_ML2_VNI_RANGES**
     A comma separated list of **<vni_min>:<vni_max>** tuples enumerating ranges of VXLAN VNI IDs that are available for tenant network allocation. Min value is 0 and Max value is 16777215.
+
+Trove Config Parameters
+-----------------------
+
+**CONFIG_TROVE_DB_PW**
+    The password to use for Trove to access DB.
+
+**CONFIG_TROVE_KS_PW**
+    The password to use for Trove to authenticate with Keystone.
+
+**CONFIG_TROVE_NOVA_USER**
+    The user to use when Trove launches instances in Nova
+
+**CONFIG_TROVE_NOVA_TENANT**
+    The tenant to use when Trove launches instances in Nova
+
+**CONFIG_TROVE_NOVA_PW**
+    The password to use when Trove launches instances in Nova
 
 Provision Config Parameters
 ---------------------------
