@@ -1,16 +1,4 @@
 
-# on EL6 we need to wait for innodb changes before starting mysqld
-if $::operatingsystem in ['RedHat','CentOS','Scientific'] and $::operatingsystemmajrelease < 7 {
-    $manage_service = false
-    service { 'mysqld':
-      enable  => true,
-      ensure  => 'running',
-      require => [ Package['mysql-server'], File['/etc/my.cnf'] ],
-    }
-} else {
-    $manage_service = true
-}
-
 # Package mariadb-server conflicts with mariadb-galera-server
 package {"mariadb-server":
     ensure => absent,
@@ -18,7 +6,6 @@ package {"mariadb-server":
 
 class {"mysql::server":
     package_name     => "mariadb-galera-server",
-    service_manage   => $manage_service,
     restart          => true,
     root_password    => "%(CONFIG_MARIADB_PW)s",
     require          => Package['mariadb-server'],
