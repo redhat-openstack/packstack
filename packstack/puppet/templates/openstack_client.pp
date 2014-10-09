@@ -8,6 +8,10 @@ $clientlibs = ['python-novaclient', 'python-keystoneclient',
 
 package { $clientlibs: }
 
+if hiera('CONFIG_MANILA_INSTALL') == 'y' {
+  package { 'python-manilaclient': }
+}
+
 $ost_cl_keystone_admin_pw = hiera('CONFIG_KEYSTONE_ADMIN_PW')
 $ost_cl_ctrl_host         = hiera('CONFIG_CONTROLLER_HOST')
 $ost_cl_keystone_region   = hiera('CONFIG_KEYSTONE_REGION')
