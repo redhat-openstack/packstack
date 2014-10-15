@@ -11,8 +11,6 @@ class {"glance::api":
     mysql_module => '2.2',
 }
 
-class { 'glance::backend::file': }
-
 class {"glance::registry":
     auth_host => "%(CONFIG_CONTROLLER_HOST)s",
     keystone_tenant => "services",
