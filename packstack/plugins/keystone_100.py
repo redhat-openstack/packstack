@@ -97,7 +97,7 @@ def initConfig(controller):
          "PROMPT": "Enter the Keystone token format.",
          "OPTION_LIST": ['UUID', 'PKI'],
          "VALIDATORS": [validators.validate_options],
-         "DEFAULT_VALUE": 'PKI',
+         "DEFAULT_VALUE": 'UUID',
          "MASK_INPUT": False,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": 'CONFIG_KEYSTONE_TOKEN_FORMAT',
