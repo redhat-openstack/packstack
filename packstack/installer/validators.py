@@ -31,7 +31,7 @@ __all__ = ('ParamValidationError', 'validate_integer', 'validate_float',
            'validate_options', 'validate_multi_options', 'validate_ip',
            'validate_multi_ip', 'validate_file', 'validate_ping',
            'validate_multi_ping', 'validate_ssh', 'validate_multi_ssh',
-           'validate_sshkey')
+           'validate_sshkey', 'validate_ldap_url', 'validate_ldap_dn')
 
 
 def validate_integer(param, options=None):
@@ -282,4 +282,49 @@ def validate_sshkey(param, options=None):
     if re.search('BEGIN [RD]SA PRIVATE KEY', line):
         msg = 'Public SSH key is required. You passed private key.'
     if msg:
+        raise ParamValidationError(msg)
+
+
+def validate_ldap_url(param, options=None):
+    """
+    Raises ParamValidationError if provided param is not a valid LDAP URL
+    """
+    if not param:
+        return
+    try:
+        import ldapurl
+    except ImportError:
+        msg = (
+            'The python ldap package is required to use this functionality.'
+        )
+        raise ParamValidationError(msg)
+
+    try:
+        ldapurl.LDAPUrl(param)
+    except ValueError as ve:
+        msg = ('The given string [%s] is not a valid LDAP URL: %s' %
+               (param, ve))
+        raise ParamValidationError(msg)
+
+
+def validate_ldap_dn(param, options=None):
+    """
+    Raises ParamValidationError if provided param is not a valid LDAP DN
+    """
+    if not param:
+        return
+    try:
+        import ldap
+        import ldap.dn
+    except ImportError:
+        msg = (
+            'The python ldap package is required to use this functionality.'
+        )
+        raise ParamValidationError(msg)
+
+    try:
+        ldap.dn.str2dn(param)
+    except ldap.DECODING_ERROR as de:
+        msg = ('The given string [%s] is not a valid LDAP DN: %s' %
+               (param, de))
         raise ParamValidationError(msg)

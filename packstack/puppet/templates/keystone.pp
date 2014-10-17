@@ -43,6 +43,65 @@ keystone::resource::service_identity { 'keystone':
   configure_user_role => false,
 }
 
+# default assignment driver is SQL
+$assignment_driver = "keystone.assignment.backends.sql.Assignment"
+
+if hiera('CONFIG_KEYSTONE_IDENTITY_BACKEND') == 'ldap' {
+
+  if hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_EMULATION_DN', undef) {
+    $user_enabled_emulation = true
+  } else {
+    $user_enabled_emulation = false
+  }
+
+  # should be supported and enabled in the next release of puppet-keystone
+#    user_enabled_invert                 => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_INVERT'),
+  class {"keystone::ldap":
+    url                                 => hiera_undef('CONFIG_KEYSTONE_LDAP_URL', undef),
+    user                                => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_DN', undef),
+    password                            => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_PASSWORD', undef),
+    suffix                              => hiera_undef('CONFIG_KEYSTONE_LDAP_SUFFIX', undef),
+    query_scope                         => hiera_undef('CONFIG_KEYSTONE_LDAP_QUERY_SCOPE', undef),
+    page_size                           => hiera_undef('CONFIG_KEYSTONE_LDAP_PAGE_SIZE', undef),
+    user_tree_dn                        => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_SUBTREE', undef),
+    user_filter                         => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_FILTER', undef),
+    user_objectclass                    => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_OBJECTCLASS', undef),
+    user_id_attribute                   => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ID_ATTRIBUTE', undef),
+    user_name_attribute                 => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_NAME_ATTRIBUTE', undef),
+    user_mail_attribute                 => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_MAIL_ATTRIBUTE', undef),
+    user_enabled_attribute              => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_ATTRIBUTE', undef),
+    user_enabled_mask                   => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_MASK', undef),
+    user_enabled_default                => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_DEFAULT', undef),
+    user_attribute_ignore               => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ATTRIBUTE_IGNORE', undef),
+    user_default_project_id_attribute   => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_DEFAULT_PROJECT_ID_ATTRIBUTE', undef),
+    user_allow_create                   => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ALLOW_CREATE', undef),
+    user_allow_update                   => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ALLOW_UPDATE', undef),
+    user_allow_delete                   => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ALLOW_DELETE', undef),
+    user_pass_attribute                 => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_PASS_ATTRIBUTE', undef),
+    user_enabled_emulation              => $user_enabled_emulation,
+    user_enabled_emulation_dn           => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_EMULATION_DN', undef),
+    user_additional_attribute_mapping   => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ADDITIONAL_ATTRIBUTE_MAPPING', undef),
+    group_tree_dn                       => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_SUBTREE', undef),
+    group_filter                        => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_FILTER', undef),
+    group_objectclass                   => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_OBJECTCLASS', undef),
+    group_id_attribute                  => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_ID_ATTRIBUTE', undef),
+    group_name_attribute                => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_NAME_ATTRIBUTE', undef),
+    group_member_attribute              => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_MEMBER_ATTRIBUTE', undef),
+    group_desc_attribute                => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_DESC_ATTRIBUTE', undef),
+    group_attribute_ignore              => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_ATTRIBUTE_IGNORE', undef),
+    group_allow_create                  => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_CREATE', undef),
+    group_allow_update                  => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_UPDATE', undef),
+    group_allow_delete                  => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_DELETE', undef),
+    group_additional_attribute_mapping  => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_ADDITIONAL_ATTRIBUTE_MAPPING', undef),
+    use_tls                             => hiera_undef('CONFIG_KEYSTONE_LDAP_USE_TLS', undef),
+    tls_cacertdir                       => hiera_undef('CONFIG_KEYSTONE_LDAP_TLS_CACERTDIR', undef),
+    tls_cacertfile                      => hiera_undef('CONFIG_KEYSTONE_LDAP_TLS_CACERTFILE', undef),
+    tls_req_cert                        => hiera_undef('CONFIG_KEYSTONE_LDAP_TLS_REQ_CERT', undef),
+    identity_driver                     => "keystone.identity.backends.ldap.Identity",
+    assignment_driver                   => $assignment_driver,
+  }
+}
+
 # Run token flush every minute (without output so we won't spam admins)
 cron { 'token-flush':
   ensure  => 'present',
