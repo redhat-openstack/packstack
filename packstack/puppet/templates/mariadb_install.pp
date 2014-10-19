@@ -20,8 +20,6 @@ class {"mysql::server":
                     root_password => "%(CONFIG_MARIADB_PW)s",}
 }
 
-include packstack::innodb
-
 # deleting database users for security
 # this is done in mysql::server::account_security but has problems
 # when there is no fqdn, so we're defining a slightly different one here
