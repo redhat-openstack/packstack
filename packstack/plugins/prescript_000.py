@@ -684,8 +684,20 @@ def create_ntp_manifest(config, messages):
     config['CONFIG_NTP_SERVER_DEF'] = '%s\n' % definiton
 
     marker = uuid.uuid4().hex[:16]
+
     for hostname in filtered_hosts(config):
-        manifestdata = getManifestTemplate('ntpd.pp')
-        appendManifestFile('%s_ntpd.pp' % hostname,
-                           manifestdata,
-                           marker=marker)
+        releaseos = config['HOST_DETAILS'][hostname]['os']
+        releasever = config['HOST_DETAILS'][hostname]['release'].split('.')[0]
+
+        # Configure chrony for Fedora or RHEL/CentOS 7
+        if releaseos == 'Fedora' or releasever == '7':
+            manifestdata = getManifestTemplate('chrony.pp')
+            appendManifestFile('%s_chrony.pp' % hostname,
+                               manifestdata,
+                               marker=marker)
+        # For previous versions, configure ntpd
+        else:
+            manifestdata = getManifestTemplate('ntpd.pp')
+            appendManifestFile('%s_ntpd.pp' % hostname,
+                               manifestdata,
+                               marker=marker)
