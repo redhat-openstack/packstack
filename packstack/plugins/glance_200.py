@@ -53,6 +53,23 @@ def initConfig(controller):
          "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
+
+        {"CMD_OPTION": "glance-backend",
+         "USAGE": ("Glance storage backend controls how Glance stores disk "
+                   "images. Supported values: file, swift. Note that Swift "
+                   "installation have to be enabled to have swift backend "
+                   "working. Otherwise Packstack will fallback to 'file'."),
+         "PROMPT": "Glance storage backend",
+         "OPTION_LIST": ["file", "swift"],
+         "VALIDATORS": [validators.validate_options],
+         "PROCESSORS": [process_backend],
+         "DEFAULT_VALUE": "file",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME": "CONFIG_GLANCE_BACKEND",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
     ]
     group = {"GROUP_NAME": "GLANCE",
              "DESCRIPTION": "Glance Config parameters",
@@ -80,6 +97,14 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Glance", [], [], glancesteps)
 
 
+#------------------------- helper functions -------------------------
+
+def process_backend(value, param_name, config):
+    if value == 'swift' and config['CONFIG_SWIFT_INSTALL'] != 'y':
+        return 'file'
+    return value
+
+
 #-------------------------- step functions --------------------------
 
 def create_keystone_manifest(config, messages):
@@ -100,6 +125,9 @@ def create_manifest(config, messages):
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
         mq_template = get_mq(config, "glance_ceilometer")
         manifestdata += getManifestTemplate(mq_template)
+
+    manifestdata += getManifestTemplate(
+        'glance_%s.pp' % config['CONFIG_GLANCE_BACKEND'])
 
     config['FIREWALL_SERVICE_NAME'] = "glance"
     config['FIREWALL_PORTS'] = "'9292'"
