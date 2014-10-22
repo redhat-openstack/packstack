@@ -591,16 +591,17 @@ def _summaryParamsToLog():
 def runSequences():
     controller.runAllSequences()
 
-def _main(configFile=None):
+def _main(options, configFile=None):
     print output_messages.INFO_HEADER
 
     # Get parameters
     _handleParams(configFile)
 
-    # Generate answer file
-    path = _getanswerfilepath()
-    if path:
-        generateAnswerFile(path)
+    # Generate answer file, only if no answer file was provided
+    if not options.answer_file:
+        path = _getanswerfilepath()
+        if path:
+            generateAnswerFile(path)
 
     # Update masked_value_list with user input values
     _updateMaskedValueSet()
@@ -742,7 +743,7 @@ def single_step_install(options):
         overrides[key] = value
 
     generateAnswerFile(answerfilepath, overrides)
-    _main(answerfilepath)
+    _main(options,answerfilepath)
 
 def initCmdLineParser():
     """
@@ -946,7 +947,7 @@ def main():
                     raise Exception(output_messages.ERR_NO_ANSWER_FILE % confFile)
             else:
                 _set_command_line_values(options)
-            _main(confFile)
+            _main(options,confFile)
 
     except FlagValidationError as ex:
         optParser.error(str(ex))
