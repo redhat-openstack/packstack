@@ -16,7 +16,7 @@ Packstack is a utility that uses uses puppet modules to install OpenStack. It ca
 - packstack [options]
 - packstack --gen-answer-file=<file>  / packstack --answer-file=<file>
 
-The third option allows the user to generate a default answer file, edit the default options and finally run Packstack a second time using this answer file. This is the easiest way to run Packstack and the one that will be documented here. When <file> is created the OPTIONS below will be contained and can be edited by the user.
+The third option allows the user to generate a default answer file, edit the default options and finally run Packstack a second time using this answer file. This is the easiest way to run Packstack and the one that will be documented here. When <file> is created, it will contain the OPTIONS below, which can then be edited by the user.
 
 OPTIONS
 =======
