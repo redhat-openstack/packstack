@@ -65,3 +65,55 @@ Debugging
 To make packstack write more detailed information into the log file you can use the -d switch:
 
 $ packstack -d --allinone
+
+Developing
+
+!!! Warning: this procedure installs openstack-puppet-modules containing code
+!!! that has not been upstreamed and fully tested yet and as such will not be
+!!! as robust as the other install procedures.  It is recommended to install
+!!! from RPM instead.
+
+To ease development of packstack and openstack-puppet-modules, it can be
+useful to install from git such that updates to the git repositories are
+immediately effective without reinstallation of packstack and
+openstack-puppet-modules.
+
+To do this, start with a minimal fedora20 installation.  Then remove any
+relevant packages that might conflict:
+
+# yum -y erase openstack-{packstack*,puppet-modules}
+
+Disable selinux by changing "enforcing" to "permissive" in
+/etc/sysconfig/selinux, then reboot to allow service changes to take effect
+and swap over networking.  Then install packages:
+
+# yum -y install git python-setuptools
+
+And install RDO:
+
+# yum -y install https://rdo.fedorapeople.org/rdo-release.rpm
+# yum -y update
+
+Now we get openstack-puppet-modules.  Because `python setup.py
+install_puppet_modules` from packstack copies rather than linking, this is not
+entirely straightforward:
+
+# git clone https://github.com/redhat-openstack/openstack-puppet-modules
+# cd openstack-puppet-modules
+# git checkout master-patches
+# mkdir /usr/share/openstack-puppet
+# ln -sv /root/openstack-puppet-modules /usr/share/openstack-puppet/modules
+
+Then we get packstack, and perform a similar dance:
+
+# git clone https://github.com/stackforge/packstack
+# cd packstack
+# python setup.py develop
+# cd /usr/share/openstack-puppet/modules
+# ln -sv /root/packstack/packstack/puppet/modules/packstack
+# ln -sv /root/packstack/packstack/puppet/modules/remote
+
+
+And we're done.  Changes to the contents of packstack and
+openstack-puppet-modules repositories are picked up by the packstack
+executable without further intervention, and packstack is ready to install.
