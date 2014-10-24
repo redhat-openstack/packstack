@@ -10,13 +10,10 @@ import re
 import uuid
 
 from packstack.installer import utils
-from packstack.installer import exceptions
 from packstack.installer import validators
 from packstack.installer import processors
-from packstack.installer import output_messages
 from packstack.installer.utils import split_hosts
 
-from packstack.modules.common import filtered_hosts
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
@@ -601,8 +598,6 @@ def initSequences(controller):
          'functions': [create_metering_agent_manifests]},
         {'title': 'Adding Neutron Metadata Agent manifest entries',
          'functions': [create_metadata_manifests]},
-        {'title': 'Checking if NetworkManager is enabled and running',
-         'functions': [check_nm_status]},
     ]
     controller.addSequence("Installing OpenStack Neutron", [], [],
                            neutron_steps)
@@ -958,39 +953,3 @@ def create_metadata_manifests(config, messages):
         manifestdata = getManifestTemplate('neutron_metadata.pp')
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + "\n")
-
-
-def check_nm_status(config, messages):
-    hosts_with_nm = []
-    for host in filtered_hosts(config):
-        server = utils.ScriptRunner(host)
-        server.append("systemctl")
-        rc, out = server.execute(can_fail=False)
-        server.clear()
-
-        if rc < 1:
-            server.append("systemctl is-enabled NetworkManager")
-            rc, is_enabled = server.execute(can_fail=False)
-            is_enabled = is_enabled.strip("\n ")
-            server.clear()
-
-            server.append("systemctl is-active NetworkManager")
-            rc, is_active = server.execute(can_fail=False)
-            is_active = is_active.strip("\n ")
-
-            if is_enabled == "enabled" or is_active == "active":
-                hosts_with_nm.append(host)
-        else:
-            server.clear()
-            server.append("service NetworkManager status")
-            rc, out = server.execute(can_fail=False)
-
-            if rc < 1:
-                hosts_with_nm.append(host)
-
-        server.clear()
-
-    if hosts_with_nm:
-        hosts_list = ', '.join("%s" % x for x in hosts_with_nm)
-        msg = output_messages.WARN_NM_ENABLED
-        messages.append(utils.color_text(msg % hosts_list, 'yellow'))

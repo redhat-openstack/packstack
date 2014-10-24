@@ -55,9 +55,6 @@ INFO_CINDER_VOLUMES_EXISTS="Did not create a cinder volume group, one already ex
 INFO_REMOVE_REMOTE_VAR="Removing %s on %s (if it is a remote host)"
 
 WARN_WEAK_PASS="Warning: Weak Password."
-WARN_NM_ENABLED=("Warning: NetworkManager is active on %s. OpenStack "
-                 "networking currently does not work on systems that have "
-                 "the Network Manager service enabled.")
 
 ERR_PING = "Error: the provided hostname is unreachable"
 ERR_SSH = "Error: could not connect to the ssh server: %s"
