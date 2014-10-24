@@ -732,7 +732,7 @@ def create_manifests(config, messages):
             'neutron.services.metering.metering_plugin.MeteringPlugin'
         )
 
-    if config['CONFIG_NEUTRON_FWAAS']:
+    if config['CONFIG_NEUTRON_FWAAS'] == 'y':
         service_plugins.append(
             'neutron.services.firewall.fwaas_plugin.FirewallPlugin'
         )
@@ -823,8 +823,8 @@ def create_l3_manifests(config, messages):
             manifestdata = getManifestTemplate('neutron_ovs_bridge.pp')
             appendManifestFile(manifestfile, manifestdata + '\n')
 
-        if config['CONFIG_NEUTRON_FWAAS']:
-            manifestfile = "%s_neutron_fwaas.pp" % (host,)
+        if config['CONFIG_NEUTRON_FWAAS'] == 'y':
+#            manifestfile = "%s_neutron_fwaas.pp" % (host,)
             manifestdata = getManifestTemplate("neutron_fwaas.pp")
             appendManifestFile(manifestfile, manifestdata + '\n')
 
