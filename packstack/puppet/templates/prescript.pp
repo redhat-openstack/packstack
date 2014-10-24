@@ -19,14 +19,6 @@ if $::operatingsystem in $el_releases and $::operatingsystemmajrelease < 7 {
   }
 }
 
-# Stop firewalld since everything uses iptables. Firewalld provider will
-# have to be implemented in puppetlabs-firewall in future.
-service { "firewalld":
-  ensure => "stopped",
-  enable => false,
-  before => Service['iptables'],
-}
-
 package { 'audit':
   ensure => present,
 } ->
