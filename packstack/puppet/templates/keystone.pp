@@ -4,14 +4,13 @@ $keystone_cfg_ks_db_pw = hiera('CONFIG_KEYSTONE_DB_PW')
 $keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 
 class { 'keystone':
-  admin_token    => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
-  sql_connection => "mysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
-  token_format   => hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'),
-  verbose        => true,
-  debug          => hiera('CONFIG_DEBUG_MODE'),
-  mysql_module   => '2.2',
-  service_name   => $keystone_service_name,
-  enable_ssl     => $keystone_use_ssl,
+  admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
+  database_connection => "mysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
+  token_format        => hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'),
+  verbose             => true,
+  debug               => hiera('CONFIG_DEBUG_MODE'),
+  service_name        => $keystone_service_name,
+  enable_ssl          => $keystone_use_ssl,
 }
 
 if $keystone_service_name == 'httpd' {

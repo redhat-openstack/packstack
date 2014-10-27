@@ -3,5 +3,4 @@ class { 'keystone::db::mysql':
   password      => hiera('CONFIG_KEYSTONE_DB_PW'),
   allowed_hosts => '%%',
   charset       => 'utf8',
-  mysql_module  => '2.2',
 }

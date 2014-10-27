@@ -3,5 +3,4 @@ class { 'glance::db::mysql':
   host          => '%%',
   allowed_hosts => '%%',
   charset       => 'utf8',
-  mysql_module  => '2.2',
 }
