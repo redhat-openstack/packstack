@@ -565,6 +565,10 @@ def manage_rdo(host, config):
     except exceptions.ExecuteRuntimeError:
         # RDO repo is not installed, so we don't need to continue
         return
+    # We are installing RDO. EPEL is a requirement, so enable it, overriding
+    # any configured option
+    config['CONFIG_USE_EPEL'] = 'y'
+
     match = re.match(r'^(?P<version>\w+)\-(?P<release>\d+\.[\d\w]+)\n', out)
     version, release = match.group('version'), match.group('release')
     rdo_url = ("http://rdo.fedorapeople.org/openstack/openstack-%(version)s/"
@@ -653,10 +657,10 @@ def server_prep(config, messages):
                       'echo "no rhos-log-collector available"' % sos_rpms)
         server.execute()
 
-        # enable or disable EPEL according to configuration
-        manage_epel(hostname, config)
         # enable RDO if it is installed locally
         manage_rdo(hostname, config)
+        # enable or disable EPEL according to configuration
+        manage_epel(hostname, config)
 
         reponame = 'rhel-server-ost-6-4-rpms'
         server.clear()
