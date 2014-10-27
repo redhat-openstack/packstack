@@ -1,4 +1,9 @@
 include firewall
+# This does the initial apache setup for all components that
+# require apache/httpd.
+# Other packstack components that use apache should do
+#   include packstack_apache_common
+include ::apache
 
 $el_releases = ['RedHat', 'CentOS', 'Scientific']
 
