@@ -289,7 +289,7 @@ Server Prepare Configs
 ----------------------
 
 **CONFIG_USE_EPEL**
-    Install OpenStack from EPEL. If set to "y" EPEL will be installed on each server ['y', 'n'].
+    Install OpenStack from EPEL. If set to "y" EPEL will be installed on each server ['y', 'n']. When installing RDO, this option will be overriden, as EPEL is a requirement for RDO.
 
 **CONFIG_REPO**
     A comma separated list of URLs to any additional yum repositories to install.

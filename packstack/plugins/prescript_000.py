@@ -25,7 +25,7 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 
 def initConfig(controller):
-    default_ssh_key = os.path.join(os.environ["HOME"], ".ssh/*.pub")
+    default_ssh_key = os.path.expanduser('~/.ssh/*.pub')
     default_ssh_key = (glob.glob(default_ssh_key) + [""])[0]
     params = {
         "GLOBAL": [
