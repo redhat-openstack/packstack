@@ -857,7 +857,7 @@ def countCmdLineFlags(options, flag):
     counter = 0
     # make sure only flag was supplied
     for key, value  in options.__dict__.items():
-        if key in (flag, 'debug', 'timeout', 'dry_run'):
+        if key in (flag, 'debug', 'timeout', 'dry_run', 'default_password'):
             next
         # If anything but flag was called, increment
         elif value:
@@ -924,7 +924,12 @@ def main():
             if not answerfilepath:
                 _printAdditionalMessages()
                 return
-            generateAnswerFile(answerfilepath)
+            # We can also override defaults with command line options
+            overrides = {}
+            _set_command_line_values(options)
+            for key,value in commandLineValues.items():
+                overrides[key] = value
+            generateAnswerFile(answerfilepath,overrides)
             _handleParams(answerfilepath)
             generateAnswerFile(options.gen_answer_file)
         # Are we installing an all in one
@@ -942,6 +947,12 @@ def main():
             # Make sure only --answer-file was supplied
             if options.answer_file:
                 validateSingleFlag(options, "answer_file")
+                # If using an answer file, setting a default password
+                # does not really make sense
+                if getattr(options,'default_password',None):
+                        msg = ('Please do not set --default-password '
+                               'when specifying an answer file.')
+                        raise FlagValidationError(msg)
                 confFile = os.path.expanduser(options.answer_file)
                 if not os.path.exists(confFile):
                     raise Exception(output_messages.ERR_NO_ANSWER_FILE % confFile)
