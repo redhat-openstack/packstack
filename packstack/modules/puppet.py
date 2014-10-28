@@ -17,7 +17,8 @@ re_error = re.compile(
     '^Invalid parameter|^Duplicate declaration:|^Could not find resource|'
     '^Could not parse for|^/usr/bin/puppet:\d+: .+|.+\(LoadError\)|'
     '^Could not autoload|'
-    '^\/usr\/bin\/env\: jruby\: No such file or directory'
+    '^\/usr\/bin\/env\: jruby\: No such file or directory|'
+    'failed to execute puppet'
 )
 re_ignore = re.compile(
     # Puppet preloads a provider using the mysql command before it is installed
