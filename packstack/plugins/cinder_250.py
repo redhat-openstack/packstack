@@ -598,15 +598,18 @@ def initSequences(controller):
 
     cinder_steps = [
         {'title': 'Adding Cinder Keystone manifest entries',
-         'functions': [create_keystone_manifest]},
-        {'title': 'Adding Cinder manifest entries',
-         'functions': [create_manifest]}
+         'functions': [create_keystone_manifest]}
     ]
 
     if 'lvm' in config['CONFIG_CINDER_BACKEND']:
         cinder_steps.append(
             {'title': 'Checking if the Cinder server has a cinder-volumes vg',
              'functions': [check_cinder_vg]})
+
+    cinder_steps.append(
+        {'title': 'Adding Cinder manifest entries',
+         'functions': [create_manifest]}
+    )
     controller.addSequence("Installing OpenStack Cinder", [], [], cinder_steps)
 
 
@@ -675,12 +678,22 @@ def check_cinder_vg(config, messages):
     if config['CONFIG_UNSUPPORTED'] != 'y':
         config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
 
-    if config["CONFIG_CINDER_VOLUMES_CREATE"] != "y":
+    # Do we have a cinder-volumes vg?
+    have_cinders_volume = False
+    server = utils.ScriptRunner(config['CONFIG_STORAGE_HOST'])
+    server.append('vgdisplay %s' % cinders_volume)
+    try:
+        server.execute()
+        have_cinders_volume = True
+    except exceptions.ScriptRuntimeError:
+        pass
+
+    if config["CONFIG_CINDER_VOLUMES_CREATE"] == "n":
         if not have_cinders_volume:
             raise exceptions.MissingRequirements("The cinder server should "
                                                  "contain a cinder-volumes "
                                                  "volume group")
-
+    else:
         match = re.match('^(?P<size>\d+)G$',
                          config['CONFIG_CINDER_VOLUMES_SIZE'].strip())
         if not match:
@@ -691,7 +704,7 @@ def check_cinder_vg(config, messages):
         cinders_reserve = int(cinders_volume_size * 0.03)
 
         cinders_volume_size = cinders_volume_size + cinders_reserve
-        config['CONFIG_CINDER_VOLUMES_SIZE'] = 'sM' % cinders_volume_size
+        config['CONFIG_CINDER_VOLUMES_SIZE'] = '%sM' % cinders_volume_size
 
 
 def create_keystone_manifest(config, messages):
