@@ -1,4 +1,7 @@
+$mongodb_host = hiera('CONFIG_MONGODB_HOST')
+
 class { 'mongodb::server':
-    smallfiles   => true,
-    bind_ip      => ['%(CONFIG_MONGODB_HOST)s'],
+  smallfiles => true,
+  bind_ip    => [$mongodb_host],
 }
+

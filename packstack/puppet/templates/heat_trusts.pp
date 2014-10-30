@@ -8,3 +8,4 @@ keystone_user_role { 'admin@admin':
   ensure => present,
   roles  => ['admin', '_member_', 'heat_stack_owner'],
 }
+

@@ -1,8 +1,8 @@
 
-class {"glance::keystone::auth":
-    region => "%(CONFIG_KEYSTONE_REGION)s",
-    password => "%(CONFIG_GLANCE_KS_PW)s",
-    public_address => "%(CONFIG_STORAGE_HOST)s",
-    admin_address => "%(CONFIG_STORAGE_HOST)s",
-    internal_address => "%(CONFIG_STORAGE_HOST)s",
+class { 'glance::keystone::auth':
+  region           => hiera('CONFIG_KEYSTONE_REGION'),
+  password         => hiera('CONFIG_GLANCE_KS_PW'),
+  public_address   => hiera('CONFIG_STORAGE_HOST'),
+  admin_address    => hiera('CONFIG_STORAGE_HOST'),
+  internal_address => hiera('CONFIG_STORAGE_HOST'),
 }

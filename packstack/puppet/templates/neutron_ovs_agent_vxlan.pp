@@ -1,27 +1,28 @@
+$ovs_agent_vxlan_cfg_neut_ovs_tun_if = hiera('CONFIG_NEUTRON_OVS_TUNNEL_IF')
 
-if "%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s" {
-  $iface = regsubst('%(CONFIG_NEUTRON_OVS_TUNNEL_IF)s', '[\.\-\:]', '_', 'G')
+if $ovs_agent_vxlan_cfg_neut_ovs_tun_if != '' {
+  $iface = regsubst($ovs_agent_vxlan_cfg_neut_ovs_tun_if, '[\.\-\:]', '_', 'G')
   $localip = inline_template("<%%= scope.lookupvar('::ipaddress_${iface}') %%>")
 } else {
-  $localip = '%(CONFIG_NEUTRON_OVS_HOST)s'
+  $localip = $cfg_neutron_ovs_host
 }
 
-if '%(CONFIG_NEUTRON_L2_PLUGIN)s' == 'ml2' {
+if hiera('CONFIG_NEUTRON_L2_PLUGIN') == 'ml2' {
   class { 'neutron::agents::ml2::ovs':
-    bridge_mappings  => %(CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS)s,
+    bridge_mappings  => hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'),
     enable_tunneling => true,
     tunnel_types     => ['vxlan'],
     local_ip         => $localip,
-    vxlan_udp_port   => %(CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT)s,
-    l2_population    => %(CONFIG_NEUTRON_USE_L2POPULATION)s,
+    vxlan_udp_port   => hiera('CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'),
+    l2_population    => hiera('CONFIG_NEUTRON_USE_L2POPULATION'),
   }
 } else {
   class { 'neutron::agents::ovs':
-    bridge_mappings  => %(CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS)s,
+    bridge_mappings  => hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'),
     enable_tunneling => true,
     tunnel_types     => ['vxlan'],
     local_ip         => $localip,
-    vxlan_udp_port   => %(CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT)s,
+    vxlan_udp_port   => hiera('CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'),
   }
 
   file { 'ovs_neutron_plugin.ini':

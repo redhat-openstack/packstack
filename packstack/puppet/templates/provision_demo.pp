@@ -1,26 +1,27 @@
   ## Keystone
   # non admin user
   $username                  = 'demo'
-  $password                  = '%(CONFIG_KEYSTONE_DEMO_PW)s'
+  $password                  = hiera('CONFIG_KEYSTONE_DEMO_PW')
   $tenant_name               = 'demo'
   # admin user
   $admin_username            = 'admin'
-  $admin_password            = '%(CONFIG_KEYSTONE_ADMIN_PW)s'
+  $admin_password            = hiera('CONFIG_KEYSTONE_ADMIN_PW')
   $admin_tenant_name         = 'admin'
 
   # Heat Using Trusts
-  $heat_using_trusts         = '%(CONFIG_HEAT_USING_TRUSTS)s'
+  $heat_using_trusts         = hiera('CONFIG_HEAT_USING_TRUSTS')
 
   ## Neutron
   $public_network_name       = 'public'
   $public_subnet_name        = 'public_subnet'
-  $floating_range            = '%(CONFIG_PROVISION_DEMO_FLOATRANGE)s'
+  $floating_range            = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
   $private_network_name      = 'private'
   $private_subnet_name       = 'private_subnet'
   $fixed_range               = '10.0.0.0/24'
   $router_name               = 'router1'
-  $setup_ovs_bridge          = %(CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE)s
-  $public_bridge_name        = '%(CONFIG_NEUTRON_L3_EXT_BRIDGE)s'
+  $setup_ovs_bridge          = hiera('CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
+  $public_bridge_name        = hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE')
+  $provision_neutron_avail   = hiera('PROVISION_NEUTRON_AVAILABLE')
 
   ## Users
 
@@ -30,23 +31,22 @@
     description => 'default tenant',
   }
   keystone_user { $username:
-    ensure      => present,
-    enabled     => true,
-    tenant      => $tenant_name,
-    password    => $password,
+    ensure   => present,
+    enabled  => true,
+    tenant   => $tenant_name,
+    password => $password,
   }
 
   if $heat_using_trusts == 'y' {
     keystone_user_role { "${username}@${tenant_name}":
-      ensure  => present,
-      roles   => ['_member_', 'heat_stack_owner'],
+      ensure => present,
+      roles  => ['_member_', 'heat_stack_owner'],
     }
   }
 
-  
   ## Neutron
 
-  if %(PROVISION_NEUTRON_AVAILABLE)s {
+  if $provision_neutron_avail {
     $neutron_deps = [Neutron_network[$public_network_name]]
 
     neutron_network { $public_network_name:
@@ -55,11 +55,11 @@
       tenant_name     => $admin_tenant_name,
     }
     neutron_subnet { $public_subnet_name:
-      ensure          => 'present',
-      cidr            => $floating_range,
-      enable_dhcp     => false,
-      network_name    => $public_network_name,
-      tenant_name     => $admin_tenant_name,
+      ensure       => 'present',
+      cidr         => $floating_range,
+      enable_dhcp  => false,
+      network_name => $public_network_name,
+      tenant_name  => $admin_tenant_name,
     }
     neutron_network { $private_network_name:
       ensure      => present,
@@ -92,27 +92,27 @@
     }
   }
 
-if %(CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE)s {
+if $setup_ovs_bridge {
   firewall { '000 nat':
-    chain  => 'POSTROUTING',
-    jump   => 'MASQUERADE',
-    source => $::openstack::provision::floating_range,
+    chain    => 'POSTROUTING',
+    jump     => 'MASQUERADE',
+    source   => $::openstack::provision::floating_range,
     outiface => $::gateway_device,
-    table => 'nat',
-    proto => 'all',
+    table    => 'nat',
+    proto    => 'all',
   }
 
   firewall { '000 forward out':
-    chain => 'FORWARD',
-    action  => 'accept',
-    outiface => '%(CONFIG_NEUTRON_L3_EXT_BRIDGE)s',
-    proto => 'all',
+    chain    => 'FORWARD',
+    action   => 'accept',
+    outiface => $public_bridge_name,
+    proto    => 'all',
   }
 
   firewall { '000 forward in':
-    chain => 'FORWARD',
+    chain   => 'FORWARD',
     action  => 'accept',
-    iniface => '%(CONFIG_NEUTRON_L3_EXT_BRIDGE)s',
-    proto => 'all',
+    iniface => $public_bridge_name,
+    proto   => 'all',
   }
 }

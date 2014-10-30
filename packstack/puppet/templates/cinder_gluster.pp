@@ -1,7 +1,9 @@
-package { 'glusterfs-fuse': ensure => present }
+package { 'glusterfs-fuse':
+  ensure => present,
+}
 
 cinder::backend::glusterfs { 'gluster':
-  glusterfs_shares        => [%(CONFIG_CINDER_GLUSTER_MOUNTS)s],
+  glusterfs_shares        => hiera_array('CONFIG_CINDER_GLUSTER_MOUNTS'),
   require                 => Package['glusterfs-fuse'],
   glusterfs_shares_config => '/etc/cinder/glusterfs_shares.conf',
 }

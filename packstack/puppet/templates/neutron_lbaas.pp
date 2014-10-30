@@ -1,6 +1,6 @@
 class { 'neutron::agents::lbaas':
-  interface_driver => '%(CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER)s',
+  interface_driver => hiera('CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'),
   device_driver    => 'neutron.services.loadbalancer.drivers.haproxy.namespace_driver.HaproxyNSDriver',
   user_group       => 'haproxy',
-  debug            => %(CONFIG_DEBUG_MODE)s,
+  debug            => hiera('CONFIG_DEBUG_MODE'),
 }

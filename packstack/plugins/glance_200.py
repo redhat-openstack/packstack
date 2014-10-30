@@ -15,7 +15,8 @@ from packstack.installer.utils import split_hosts
 
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             appendManifestFile)
+                                             appendManifestFile,
+                                             createFirewallResources)
 
 #------------------ oVirt installer initialization ------------------
 
@@ -126,15 +127,15 @@ def create_manifest(config, messages):
         mq_template = get_mq(config, "glance_ceilometer")
         manifestdata += getManifestTemplate(mq_template)
 
-    manifestdata += getManifestTemplate(
-        'glance_%s.pp' % config['CONFIG_GLANCE_BACKEND'])
+    fw_details = dict()
+    key = "glance_api"
+    fw_details.setdefault(key, {})
+    fw_details[key]['host'] = "ALL"
+    fw_details[key]['service_name'] = "glance"
+    fw_details[key]['chain'] = "INPUT"
+    fw_details[key]['ports'] = ['9292']
+    fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_GLANCE_RULES'] = fw_details
 
-    config['FIREWALL_SERVICE_NAME'] = "glance"
-    config['FIREWALL_PORTS'] = "'9292'"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
-    config['FIREWALL_ALLOWED'] = "'ALL'"
-    config['FIREWALL_SERVICE_ID'] = "glance_API"
-    manifestdata += getManifestTemplate("firewall.pp")
-
+    manifestdata += createFirewallResources('FIREWALL_GLANCE_RULES')
     appendManifestFile(manifestfile, manifestdata)

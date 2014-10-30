@@ -1,23 +1,26 @@
+$glance_ks_pw = hiera('CONFIG_GLANCE_DB_PW')
+$glance_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 
-class {"glance::api":
-    auth_host => "%(CONFIG_CONTROLLER_HOST)s",
-    keystone_tenant => "services",
-    keystone_user => "glance",
-    keystone_password => "%(CONFIG_GLANCE_KS_PW)s",
-    pipeline => 'keystone',
-    sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MARIADB_HOST)s/glance",
-    verbose => true,
-    debug => %(CONFIG_DEBUG_MODE)s,
-    mysql_module => '2.2',
+class { 'glance::api':
+  auth_host         => hiera('CONFIG_CONTROLLER_HOST'),
+  keystone_tenant   => 'services',
+  keystone_user     => 'glance',
+  keystone_password => hiera('CONFIG_GLANCE_KS_PW'),
+  pipeline          => 'keystone',
+  sql_connection    => "mysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
+  verbose           => true,
+  debug             => hiera('CONFIG_DEBUG_MODE'),
+  mysql_module      => '2.2',
 }
 
-class {"glance::registry":
-    auth_host => "%(CONFIG_CONTROLLER_HOST)s",
-    keystone_tenant => "services",
-    keystone_user => "glance",
-    keystone_password => "%(CONFIG_GLANCE_KS_PW)s",
-    sql_connection => "mysql://glance:%(CONFIG_GLANCE_DB_PW)s@%(CONFIG_MARIADB_HOST)s/glance",
-    verbose => true,
-    debug => %(CONFIG_DEBUG_MODE)s,
-    mysql_module => '2.2',
+class { 'glance::registry':
+  auth_host         => hiera('CONFIG_CONTROLLER_HOST'),
+  keystone_tenant   => 'services',
+  keystone_user     => 'glance',
+  keystone_password => hiera('CONFIG_GLANCE_KS_PW'),
+  sql_connection    => "mysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
+  verbose           => true,
+  debug             => hiera('CONFIG_DEBUG_MODE'),
+  mysql_module      => '2.2',
 }
+

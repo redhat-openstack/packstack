@@ -13,7 +13,8 @@ from packstack.installer import validators
 from packstack.installer import processors
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             appendManifestFile)
+                                             appendManifestFile,
+                                             createFirewallResources)
 
 
 #------------------ oVirt installer initialization ------------------
@@ -112,13 +113,17 @@ def create_manifest(config, messages):
     manifestdata = getManifestTemplate(get_mq(config, "ceilometer"))
     manifestdata += getManifestTemplate("ceilometer.pp")
 
-    config['FIREWALL_ALLOWED'] = "'ALL'"
-    config['FIREWALL_SERVICE_NAME'] = 'ceilometer-api'
-    config['FIREWALL_SERVICE_ID'] = 'ceilometer_api'
-    config['FIREWALL_PORTS'] = "'8777'"
-    config['FIREWALL_CHAIN'] = "INPUT"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
-    manifestdata += getManifestTemplate("firewall.pp")
+    fw_details = dict()
+    key = "ceilometer_api"
+    fw_details.setdefault(key, {})
+    fw_details[key]['host'] = "ALL"
+    fw_details[key]['service_name'] = "ceilometer-api"
+    fw_details[key]['chain'] = "INPUT"
+    fw_details[key]['ports'] = ['8777']
+    fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_CEILOMETER_RULES'] = fw_details
+    manifestdata += createFirewallResources('FIREWALL_CEILOMETER_RULES')
+
     # Add a template that creates a group for nova because the ceilometer
     # class needs it
     if config['CONFIG_NOVA_INSTALL'] == 'n':
@@ -129,11 +134,18 @@ def create_manifest(config, messages):
 def create_mongodb_manifest(config, messages):
     manifestfile = "%s_mongodb.pp" % config['CONFIG_MONGODB_HOST']
     manifestdata = getManifestTemplate("mongodb.pp")
-    config['FIREWALL_ALLOWED'] = "'%s'" % config['CONFIG_CONTROLLER_HOST']
-    config['FIREWALL_SERVICE_NAME'] = 'mongodb-server'
-    config['FIREWALL_PORTS'] = "'27017'"
-    config['FIREWALL_PROTOCOL'] = 'tcp'
-    manifestdata += getManifestTemplate("firewall.pp")
+
+    fw_details = dict()
+    key = "mongodb_server"
+    fw_details.setdefault(key, {})
+    fw_details[key]['host'] = "%s" % config['CONFIG_CONTROLLER_HOST']
+    fw_details[key]['service_name'] = "mongodb-server"
+    fw_details[key]['chain'] = "INPUT"
+    fw_details[key]['ports'] = ['27017']
+    fw_details[key]['proto'] = "tcp"
+    config['FIREWALL_MONGODB_RULES'] = fw_details
+
+    manifestdata += createFirewallResources('FIREWALL_MONGODB_RULES')
     appendManifestFile(manifestfile, manifestdata, 'pre')
 
 

@@ -246,9 +246,9 @@ def initSequences(controller):
 
 def marshall_conf_bool(conf, key):
     if conf[key] == 'y':
-        conf[key] = 'true'
+        conf[key] = True
     else:
-        conf[key] = 'false'
+        conf[key] = False
 
 
 def using_heat(config):

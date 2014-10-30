@@ -1,1 +1,1 @@
-Exec { timeout => %(DEFAULT_EXEC_TIMEOUT)s }
+Exec { timeout => hiera('DEFAULT_EXEC_TIMEOUT') }

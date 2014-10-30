@@ -1,9 +1,9 @@
 
-class {"nova::keystone::auth":
-    region => "%(CONFIG_KEYSTONE_REGION)s",
-    password    => "%(CONFIG_NOVA_KS_PW)s",
-    public_address => "%(CONFIG_CONTROLLER_HOST)s",
-    admin_address => "%(CONFIG_CONTROLLER_HOST)s",
-    internal_address => "%(CONFIG_CONTROLLER_HOST)s",
-    cinder => true,
+class { 'nova::keystone::auth':
+  region           => hiera('CONFIG_KEYSTONE_REGION'),
+  password         => hiera('CONFIG_NOVA_KS_PW'),
+  public_address   => hiera('CONFIG_CONTROLLER_HOST'),
+  admin_address    => hiera('CONFIG_CONTROLLER_HOST'),
+  internal_address => hiera('CONFIG_CONTROLLER_HOST'),
+  cinder           => true,
 }

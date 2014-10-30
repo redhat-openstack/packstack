@@ -1,42 +1,43 @@
-$amqp = '%(CONFIG_AMQP_BACKEND)s'
+$amqp = hiera('CONFIG_AMQP_BACKEND')
+
 case $amqp  {
   'qpid': {
-    enable_qpid {"qpid":
-      enable_ssl  => %(CONFIG_AMQP_ENABLE_SSL)s,
-      enable_auth => '%(CONFIG_AMQP_ENABLE_AUTH)s',
+    enable_qpid { 'qpid':
+      enable_ssl  => hiera('CONFIG_AMQP_ENABLE_SSL'),
+      enable_auth => hiera('CONFIG_AMQP_ENABLE_AUTH'),
     }
   }
   'rabbitmq': {
-    enable_rabbitmq {"rabbitmq":}
-
+    enable_rabbitmq { 'rabbitmq': }
   }
+  default: {}
 }
 
 
 define enable_rabbitmq {
-  package { "erlang":
-    ensure => "installed"
+  package { 'erlang':
+    ensure => 'installed',
   }
 
-  class {"rabbitmq":
-    port             => '%(CONFIG_AMQP_CLIENTS_PORT)s',
-    ssl_management_port      => '%(CONFIG_AMQP_SSL_PORT)s',
-    ssl              => %(CONFIG_AMQP_ENABLE_SSL)s,
-    ssl_cert         => '%(CONFIG_AMQP_SSL_CERT_FILE)s',
-    ssl_key          => '%(CONFIG_AMQP_SSL_KEY_FILE)s',
-    default_user     => '%(CONFIG_AMQP_AUTH_USER)s',
-    default_pass     => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
-    package_provider => 'yum',
-    admin_enable     => false,
+  class { 'rabbitmq':
+    port                => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+    ssl_management_port => hiera('CONFIG_AMQP_SSL_PORT'),
+    ssl                 => hiera('CONFIG_AMQP_ENABLE_SSL'),
+    ssl_cert            => hiera('CONFIG_AMQP_SSL_CERT_FILE'),
+    ssl_key             => hiera('CONFIG_AMQP_SSL_KEY_FILE'),
+    default_user        => hiera('CONFIG_AMQP_AUTH_USER'),
+    default_pass        => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+    package_provider    => 'yum',
+    admin_enable        => false,
   }
 
-  Package['erlang']->Class['rabbitmq']
+  Package['erlang'] -> Class['rabbitmq']
 }
 
 define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
   case $::operatingsystem {
     'Fedora': {
-      if (is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 20) or $::operatingsystemrelease == "Rawhide" {
+      if (is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 20) or $::operatingsystemrelease == 'Rawhide' {
         $config = '/etc/qpid/qpidd.conf'
       } else {
         $config = '/etc/qpidd.conf'
@@ -56,18 +57,18 @@ define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
     }
   }
 
-  class {"qpid::server":
-    config_file => $config,
-    auth => $enable_auth ? {
-	    'y'  => 'yes',
-	    default => 'no',
-	    },
-    clustered => false,
-	    ssl_port      => '%(CONFIG_AMQP_SSL_PORT)s',
-	    ssl           => %(CONFIG_AMQP_ENABLE_SSL)s,
-	    ssl_cert      => '%(CONFIG_AMQP_SSL_CERT_FILE)s',
-	    ssl_key       => '%(CONFIG_AMQP_SSL_KEY_FILE)s',
-	    ssl_database_password => '%(CONFIG_AMQP_NSS_CERTDB_PW)s',
+  class { 'qpid::server':
+    config_file             => $config,
+    auth                    => $enable_auth ? {
+      'y'     => 'yes',
+      default => 'no',
+      },
+    clustered               => false,
+      ssl_port              => hiera('CONFIG_AMQP_SSL_PORT'),
+      ssl                   => hiera('CONFIG_AMQP_ENABLE_SSL'),
+      ssl_cert              => hiera('CONFIG_AMQP_SSL_CERT_FILE'),
+      ssl_key               => hiera('CONFIG_AMQP_SSL_KEY_FILE'),
+      ssl_database_password => hiera('CONFIG_AMQP_NSS_CERTDB_PW'),
   }
 
   if $enable_ssl {
@@ -82,25 +83,27 @@ define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
   }
 
   if $enable_auth == 'y' {
-    add_qpid_user {"qpid_user":}
+    add_qpid_user { 'qpid_user': }
   }
 
 }
 
 define add_qpid_user {
-  qpid_user { '%(CONFIG_AMQP_AUTH_USER)s':
-    password  => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
-    file      => '/var/lib/qpidd/qpidd.sasldb',
-    realm     => 'QPID',
-    provider  => 'saslpasswd2',
-    require   => Class['qpid::server'],
+  $config_amqp_auth_user = hiera('CONFIG_AMQP_AUTH_USER')
+  qpid_user { $config_amqp_auth_user:
+    password => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+    file     => '/var/lib/qpidd/qpidd.sasldb',
+    realm    => 'QPID',
+    provider => 'saslpasswd2',
+    require  => Class['qpid::server'],
   }
 
   file { 'sasldb_file':
-    path => '/var/lib/qpidd/qpidd.sasldb',
-    ensure => file,
-    owner => 'qpidd',
-    group => 'qpidd',
+    ensure  => file,
+    path    => '/var/lib/qpidd/qpidd.sasldb',
+    owner   => 'qpidd',
+    group   => 'qpidd',
     require => Package['qpid-cpp-server'],
   }
 }
+

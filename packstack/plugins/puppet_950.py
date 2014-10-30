@@ -15,7 +15,8 @@ from packstack.installer import basedefs, output_messages
 from packstack.installer.exceptions import ScriptRuntimeError, PuppetError
 
 from packstack.modules.common import filtered_hosts
-from packstack.modules.ospluginutils import manifestfiles
+from packstack.modules.ospluginutils import (manifestfiles,
+                                            generateHieraDataFile)
 from packstack.modules.puppet import scan_logfile, validate_logfile
 
 
@@ -129,7 +130,7 @@ def run_cleanup(config, messages):
 
 
 def install_deps(config, messages):
-    deps = ["puppet", "openssh-clients", "tar", "nc"]
+    deps = ["puppet", "hiera", "openssh-clients", "tar", "nc"]
     modules_pkg = 'openstack-puppet-modules'
 
     local = utils.ScriptRunner()
@@ -157,6 +158,18 @@ def install_deps(config, messages):
         # yum does not fail if one of the packages is missing
         for package in deps:
             server.append("rpm -q --whatprovides %s" % (package))
+
+        # To avoid warning messages such as
+        # "Warning: Config file /etc/puppet/hiera.yaml not found, using Hiera
+        # defaults". We create a symbolic link to /etc/hiera.yaml.
+        server.append('[[ ! -L /etc/puppet/hiera.yaml ]] && '
+                      'ln -s /etc/hiera.yaml /etc/puppet/hiera.yaml || '
+                      'echo "hiera.yaml symlink already created"')
+
+        server.append("sed -i 's;:datadir:.*;:datadir: "
+                      "%s/hieradata;g' /etc/puppet/hiera.yaml"
+                      % config['HOST_DETAILS'][hostname]['tmpdir'])
+
         server.execute()
 
 
@@ -170,12 +183,21 @@ def copy_puppet_modules(config, messages):
                            'vcsrepo', 'vlan', 'vswitch', 'xinetd',
                            'openstacklib'))
 
-        # write puppet manifest to disk
+    # write puppet manifest to disk
     manifestfiles.writeManifests()
+    # write hieradata file to disk
+    generateHieraDataFile()
 
     server = utils.ScriptRunner()
     for hostname in filtered_hosts(config):
         host_dir = config['HOST_DETAILS'][hostname]['tmpdir']
+        # copy hiera defaults.yaml file
+        server.append("cd %s" % basedefs.HIERADATA_DIR)
+        server.append("tar --dereference -cpzf - ../hieradata | "
+                      "ssh -o StrictHostKeyChecking=no "
+                      "-o UserKnownHostsFile=/dev/null "
+                      "root@%s tar -C %s -xpzf -" % (hostname, host_dir))
+
         # copy Packstack manifests
         server.append("cd %s/puppet" % basedefs.DIR_PROJECT_DIR)
         server.append("cd %s" % basedefs.PUPPET_MANIFEST_DIR)

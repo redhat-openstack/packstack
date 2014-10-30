@@ -1,3 +1,6 @@
+$cfg_ntp_server_def = hiera('CONFIG_NTP_SERVER_DEF')
+$cfg_ntp_servers    = hiera('CONFIG_NTP_SERVERS')
+
 $config_content = "
 driftfile /var/lib/ntp/drift
 
@@ -17,7 +20,7 @@ restrict -6 ::1
 
 # Use public servers from the pool.ntp.org project.
 # Please consider joining the pool (http://www.pool.ntp.org/join.html).
-%(CONFIG_NTP_SERVER_DEF)s
+${cfg_ntp_server_def}
 
 #broadcast 192.168.1.255 autokey    # broadcast server
 #broadcastclient            # broadcast client
@@ -53,42 +56,47 @@ keys /etc/ntp/keys
 #statistics clockstats cryptostats loopstats peerstats
 "
 
-
-package {'ntp':
-    ensure => 'installed',
-    name => 'ntp',
+package { 'ntp':
+  ensure => 'installed',
+  name   => 'ntp',
 }
 
-file {'ntp_config':
-    path => '/etc/ntp.conf',
-    ensure => file,
-    mode => '0644',
-    content => $config_content,
+file { 'ntp_config':
+  ensure  => file,
+  path    => '/etc/ntp.conf',
+  mode    => '0644',
+  content => $config_content,
 }
 
-exec {'stop-ntpd':
-  command     => $osfamily ? {
-    # Unfortunately, the RedHat osfamily doesn't only include RHEL and
-    # derivatives thereof but also Fedora so further differentiation by
-    # operatingsystem is necessary.
-    'RedHat' => $operatingsystem ? {
-      'Fedora' => '/usr/bin/systemctl stop ntpd.service',
-      default  => '/sbin/service ntpd stop',
-    },
+# Unfortunately, the RedHat osfamily doesn't only include RHEL and
+# derivatives thereof but also Fedora so further differentiation by
+# operatingsystem is necessary.
+$command = $osfamily ? {
+  'RedHat' => $operatingsystem ? {
+  'Fedora' => '/usr/bin/systemctl stop ntpd.service',
+  default  => '/sbin/service ntpd stop',
   },
 }
 
-exec {'ntpdate':
-    command => '/usr/sbin/ntpdate %(CONFIG_NTP_SERVERS)s',
-    tries   => 3,
+exec { 'stop-ntpd':
+  command => $command,
 }
 
-service {'ntpd':
-    ensure => 'running',
-    enable => true,
-    name => 'ntpd',
-    hasstatus => true,
-    hasrestart => true,
+exec { 'ntpdate':
+  command => "/usr/sbin/ntpdate ${cfg_ntp_servers}",
+  tries   => 3,
 }
 
-Package['ntp'] -> File['ntp_config'] -> Exec['stop-ntpd'] -> Exec['ntpdate'] -> Service['ntpd']
+service { 'ntpd':
+  ensure     => running,
+  enable     => true,
+  name       => 'ntpd',
+  hasstatus  => true,
+  hasrestart => true,
+}
+
+Package['ntp'] ->
+File['ntp_config'] ->
+Exec['stop-ntpd'] ->
+Exec['ntpdate'] ->
+Service['ntpd']

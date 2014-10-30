@@ -123,11 +123,11 @@ def create_manifest(config, messages):
     manifestfile = "%s_horizon.pp" % horizon_host
 
     proto = "http"
-    config["CONFIG_HORIZON_PORT"] = "'80'"
+    config["CONFIG_HORIZON_PORT"] = 80
     sslmanifestdata = ''
     if config["CONFIG_HORIZON_SSL"] == 'y':
-        config["CONFIG_HORIZON_SSL"] = 'true'
-        config["CONFIG_HORIZON_PORT"] = "'443'"
+        config["CONFIG_HORIZON_SSL"] = True
+        config["CONFIG_HORIZON_PORT"] = 443
         proto = "https"
 
         # Are we using the users cert/key files
@@ -160,16 +160,16 @@ def create_manifest(config, messages):
                 "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
                 % (utils.COLORS['red'], utils.COLORS['nocolor'], horizon_host))
     else:
-        config["CONFIG_HORIZON_SSL"] = 'false'
+        config["CONFIG_HORIZON_SSL"] = False
 
-    config["CONFIG_HORIZON_NEUTRON_LB"] = 'false'
-    config["CONFIG_HORIZON_NEUTRON_FW"] = 'false'
+    config["CONFIG_HORIZON_NEUTRON_LB"] = False
+    config["CONFIG_HORIZON_NEUTRON_FW"] = False
 
     if config['CONFIG_NEUTRON_INSTALL'] == 'y':
         if config["CONFIG_LBAAS_INSTALL"] == 'y':
-            config["CONFIG_HORIZON_NEUTRON_LB"] = 'true'
+            config["CONFIG_HORIZON_NEUTRON_LB"] = True
         if config["CONFIG_NEUTRON_FWAAS"] == 'y':
-            config["CONFIG_HORIZON_NEUTRON_FW"] = 'true'
+            config["CONFIG_HORIZON_NEUTRON_FW"] = True
 
     manifestdata = getManifestTemplate("horizon.pp")
     appendManifestFile(manifestfile, manifestdata)

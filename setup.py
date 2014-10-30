@@ -90,7 +90,7 @@ setup(
     include_package_data=True,
     long_description=read('README'),
     zip_safe=False,
-    install_requires=['netaddr'],
+    install_requires=['netaddr', 'PyYAML'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
