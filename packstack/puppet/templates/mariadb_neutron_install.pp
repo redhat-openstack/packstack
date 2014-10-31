@@ -4,5 +4,4 @@ class { 'neutron::db::mysql':
   allowed_hosts => '%%',
   dbname        => hiera('CONFIG_NEUTRON_L2_DBNAME'),
   charset       => 'utf8',
-  mysql_module  => '2.2',
 }
