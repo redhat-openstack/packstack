@@ -237,13 +237,18 @@ def check_cinder_vg(config, messages):
         pass
 
     # Configure system LVM settings (snapshot_autoextend)
+    # Only if /etc/lvm/lvm.conf exists on the system.
     server = utils.ScriptRunner(config['CONFIG_STORAGE_HOST'])
-    server.append('sed -i -r "s/^ *snapshot_autoextend_threshold +=.*/'
+    server.append('[[ -f /etc/lvm/lvm.conf ]] && '
+                  'sed -i -r "s/^ *snapshot_autoextend_threshold +=.*/'
                   '    snapshot_autoextend_threshold = 80/" '
-                  '/etc/lvm/lvm.conf')
-    server.append('sed -i -r "s/^ *snapshot_autoextend_percent +=.*/'
+                  '/etc/lvm/lvm.conf || '
+                  'echo "No /etc/lvm/lvm.conf file found"')
+    server.append('[[ -f /etc/lvm/lvm.conf ]] && '
+                  'sed -i -r "s/^ *snapshot_autoextend_percent +=.*/'
                   '    snapshot_autoextend_percent = 20/" '
-                  '/etc/lvm/lvm.conf')
+                  '/etc/lvm/lvm.conf || '
+                  'echo "No /etc/lvm/lvm.conf file found"')
     try:
         server.execute()
     except exceptions.ScriptRuntimeError:
@@ -273,6 +278,19 @@ def check_cinder_vg(config, messages):
         server.clear()
         logging.info("A new cinder volumes group will be created")
         server.append('yum install -y lvm2')
+
+        # Configure system LVM settings (snapshot_autoextend)
+        # Just after the lvm2 rpm installation !
+        server.append('[[ -f /etc/lvm/lvm.conf ]] && '
+                      'sed -i -r "s/^ *snapshot_autoextend_threshold +=.*/'
+                      '    snapshot_autoextend_threshold = 80/" '
+                      '/etc/lvm/lvm.conf || '
+                      'echo "No /etc/lvm/lvm.conf file found"')
+        server.append('[[ -f /etc/lvm/lvm.conf ]] && '
+                      'sed -i -r "s/^ *snapshot_autoextend_percent +=.*/'
+                      '    snapshot_autoextend_percent = 20/" '
+                      '/etc/lvm/lvm.conf || '
+                      'echo "No /etc/lvm/lvm.conf file found"')
 
         cinders_volume_path = '/var/lib/cinder'
         server.append('mkdir -p  %s' % cinders_volume_path)
