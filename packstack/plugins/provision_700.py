@@ -21,6 +21,10 @@ from packstack.modules.ospluginutils import (appendManifestFile,
 PLUGIN_NAME = "OS-Provision"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
+DEMO_CIRRUS_URL = (
+    'http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img'
+)
+
 
 def initConfig(controller):
 
@@ -103,6 +107,21 @@ def initConfig(controller):
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_PROVISION_DEMO_FLOATRANGE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "provision-cirros-url",
+             "USAGE": "A URL or local file location for the Cirros demo image "
+                      "used for Glance",
+             "PROMPT": "Enter the URL or local file location for the Cirros "
+                       "image",
+             "OPTION_LIST": False,
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": DEMO_CIRRUS_URL,
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_PROVISION_CIRROS_URL",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
@@ -286,7 +305,7 @@ def create_storage_manifest(config, messages):
     if config['CONFIG_UNSUPPORTED'] != 'y':
         config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
 
-    if config['CONFIG_PROVISION_TEMPEST'] == "y":
+    if config['CONFIG_PROVISION_TEMPEST']:
         template = "provision_tempest_glance.pp"
     else:
         template = "provision_demo_glance.pp"

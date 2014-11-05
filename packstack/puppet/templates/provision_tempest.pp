@@ -24,7 +24,7 @@ if $provision_tempest_user != '' {
 
   ## Glance
   $image_name                = 'cirros'
-  $image_source              = 'http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img'
+  $image_source              = hiera('CONFIG_PROVISION_TEMPEST_CIRROS_URL')
   $image_ssh_user            = 'cirros'
 
   ## Neutron
