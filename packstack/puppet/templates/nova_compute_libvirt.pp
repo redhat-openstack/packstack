@@ -43,9 +43,9 @@ file_line { 'libvirt-guests':
 
 # Remove libvirt's default network (usually virbr0) as it's unnecessary and can be confusing
 exec {'virsh-net-destroy-default':
-    onlyif  => '/usr/bin/virsh net-list | grep default',
-    command => '/usr/bin/virsh net-destroy default',
-    require => Package['libvirt'],
+  onlyif  => '/usr/bin/virsh net-list | grep default',
+  command => '/usr/bin/virsh net-destroy default',
+  require => Service['libvirt'],
 }
 
 exec {'virsh-net-undefine-default':
