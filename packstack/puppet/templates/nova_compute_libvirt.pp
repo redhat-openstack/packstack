@@ -49,7 +49,7 @@ file_line { 'libvirt-guests':
 exec {'virsh-net-destroy-default':
   onlyif  => '/usr/bin/virsh net-list | grep default',
   command => '/usr/bin/virsh net-destroy default',
-  require => Package['libvirt'],
+  require => Service['libvirt'],
 }
 
 exec {'virsh-net-undefine-default':
