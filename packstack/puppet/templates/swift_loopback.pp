@@ -1,5 +1,5 @@
 
-swift::storage::loopback { 'swift_loopback':
+swift::storage::loopback { 'swiftloopback':
   base_dir     => '/srv/loopback-device',
   mnt_base_dir => '/srv/node',
   require      => Class['swift'],
