@@ -270,11 +270,6 @@ def marshall_conf_bool(conf, key):
         conf[key] = False
 
 
-def using_heat(config):
-    if config['CONFIG_HEAT_INSTALL'] != "y":
-        config['CONFIG_HEAT_USING_TRUSTS'] = "n"
-
-
 def using_neutron(config):
     # Using the neutron or nova api servers as the provisioning target
     # will suffice for the all-in-one case.
@@ -295,7 +290,6 @@ def using_neutron(config):
 
 def create_demo_manifest(config, messages):
     using_neutron(config)
-    using_heat(config)
     manifest_file = '%s_provision_demo.pp' % config['CONFIG_CONTROLLER_HOST']
     manifest_data = getManifestTemplate("provision_demo.pp")
     appendManifestFile(manifest_file, manifest_data)
@@ -316,7 +310,6 @@ def create_storage_manifest(config, messages):
 
 def create_tempest_manifest(config, messages):
     using_neutron(config)
-    using_heat(config)
     manifest_file = '%s_provision_tempest.pp' % \
                     config['CONFIG_CONTROLLER_HOST']
     manifest_data = getManifestTemplate("provision_tempest.pp")

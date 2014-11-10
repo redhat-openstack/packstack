@@ -10,6 +10,12 @@ class { 'heat::engine':
   auth_encryption_key           => hiera('CONFIG_HEAT_AUTH_ENC_KEY'),
 }
 
+keystone_user_role { 'admin@admin':
+  ensure  => present,
+  roles   => ['admin', '_member_', 'heat_stack_owner'],
+  require => Class['heat::engine'],
+}
+
 class { 'heat::keystone::domain':
   auth_url          => "http://${heat_cfg_ctrl_host}:35357/v2.0",
   keystone_admin    => 'admin',

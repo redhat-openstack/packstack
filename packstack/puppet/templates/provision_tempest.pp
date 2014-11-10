@@ -19,9 +19,6 @@ if $provision_tempest_user != '' {
   $admin_password            = hiera('CONFIG_KEYSTONE_ADMIN_PW')
   $admin_tenant_name         = 'admin'
 
-  # Heat Using Trusts
-  $heat_using_trusts         = hiera('CONFIG_HEAT_USING_TRUSTS')
-
   ## Glance
   $image_name                = 'cirros'
   $image_source              = hiera('CONFIG_PROVISION_TEMPEST_CIRROS_URL')
@@ -76,7 +73,7 @@ if $provision_tempest_user != '' {
     password => $password,
   }
 
-  if $heat_using_trusts == 'y' {
+  if hiera('CONFIG_HEAT_INSTALL') == 'y' {
     keystone_user_role { "${username}@${tenant_name}":
       ensure => present,
       roles  => ['_member_', 'heat_stack_owner'],

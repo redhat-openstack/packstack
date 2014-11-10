@@ -8,9 +8,6 @@
   $admin_password            = hiera('CONFIG_KEYSTONE_ADMIN_PW')
   $admin_tenant_name         = 'admin'
 
-  # Heat Using Trusts
-  $heat_using_trusts         = hiera('CONFIG_HEAT_USING_TRUSTS')
-
   ## Neutron
   $public_network_name       = 'public'
   $public_subnet_name        = 'public_subnet'
@@ -37,7 +34,7 @@
     password => $password,
   }
 
-  if $heat_using_trusts == 'y' {
+  if hiera('CONFIG_HEAT_INSTALL') == 'y' {
     keystone_user_role { "${username}@${tenant_name}":
       ensure => present,
       roles  => ['_member_', 'heat_stack_owner'],
