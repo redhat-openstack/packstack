@@ -845,7 +845,10 @@ def create_dhcp_manifests(config, messages):
     for host in network_hosts:
         config["CONFIG_NEUTRON_DHCP_HOST"] = host
         config['CONFIG_NEUTRON_DHCP_INTERFACE_DRIVER'] = get_if_driver(config)
-        manifest_data = getManifestTemplate("neutron_dhcp.pp")
+        if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
+            manifest_data = getManifestTemplate("neutron_dhcp_mtu.pp")
+        else:
+            manifest_data = getManifestTemplate("neutron_dhcp.pp")
         manifest_file = "%s_neutron.pp" % (host,)
         # Firewall Rules for dhcp in
         fw_details = dict()
