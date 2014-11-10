@@ -88,7 +88,7 @@ setup(
     url="https://github.com/stackforge/packstack",
     packages=find_packages('.'),
     include_package_data=True,
-    long_description=read('README'),
+    long_description=read('README.md'),
     zip_safe=False,
     install_requires=['netaddr', 'PyYAML'],
     classifiers=[

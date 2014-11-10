@@ -1,5 +1,6 @@
 include docs/*
 include LICENSE
+include README.md
 recursive-include packstack/puppet *
 recursive-include packstack/templates *
 global-exclude .gitignore
