@@ -1,7 +1,7 @@
 
   ## Glance
   $image_name                = 'cirros'
-  $image_source              = 'http://download.cirros-cloud.net/0.3.1/cirros-0.3.1-x86_64-disk.img'
+  $image_source              = hiera('CONFIG_PROVISION_CIRROS_URL')
   $image_ssh_user            = 'cirros'
 
   ## Tempest

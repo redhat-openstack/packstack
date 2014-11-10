@@ -537,6 +537,9 @@ Provision Config Parameters
 **CONFIG_PROVISION_DEMO_FLOATRANGE**
     The CIDR network address for the floating IP subnet.
 
+**CONFIG_PROVISION_CIRROS_URL**
+    A URL or local file location for the Cirros demo image used for Glance.
+
 **CONFIG_PROVISION_TEMPEST**
     Whether to configure tempest for testing.
 
@@ -551,7 +554,6 @@ Provision Config Parameters
 
 **CONFIG_PROVISION_TEMPEST_REPO_URI**
     The uri of the tempest git repository to use.
-
 
 Log files and Debug info
 ------------------------
