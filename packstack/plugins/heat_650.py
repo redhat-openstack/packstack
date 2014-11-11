@@ -189,7 +189,7 @@ def create_manifest(config, messages):
     config['FIREWALL_HEAT_RULES'] = fw_details
 
     manifestdata += createFirewallResources('FIREWALL_HEAT_RULES')
-    appendManifestFile(manifestfile, manifestdata)
+    appendManifestFile(manifestfile, manifestdata, marker='heat')
 
 
 def create_keystone_manifest(config, messages):
