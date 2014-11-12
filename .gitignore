@@ -2,4 +2,6 @@
 *.swp
 *.log
 .tox
+vendor/*
+Gemfile.lock
 packstack.egg-info

@@ -131,3 +131,31 @@ executable without further intervention, and **Packstack** is ready to install.
 **IMPORTANT** <https://docs.puppetlabs.com/guides/style_guide.html>
 
 Please, respect the Puppet Style Guide as much as possible !
+
+## Running local Puppet-lint tests
+
+It assumes that both `bundler` as well as `rubygems` (and `ruby`) are already
+installed on the system. If not, run this command:
+
+    $ sudo yum install rubygems rubygem-bundler ruby ruby-devel -y
+
+Go into the **Packstack** root directory.
+
+    $ cd packstack/
+
+A `Rakefile` contains all you need to run puppet-lint task automatically over
+all the puppet manifests included in the **Packstack** project.
+
+    $ ls -l packstack/puppet/templates/
+
+and
+
+    $ ls -l packstack/puppet/modules/
+
+The default puppet-lint pattern for `.pp` files is `**/*.pp`. So there is no
+need to go inside those directories to run puppet-lint !
+
+    $ mkdir vendor
+    $ export GEM_HOME=vendor
+    $ bundle install
+    $ bundle exec rake lint
