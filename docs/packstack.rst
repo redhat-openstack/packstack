@@ -422,6 +422,15 @@ Ceilometer Config Parameters
 **CONFIG_CEILOMETER_KS_PW**
     The password to use for Ceilometer to authenticate with Keystone.
 
+**CONFIG_CEILOMETER_COORDINATION_BACKEND**
+    Specify an optional backend for group membership coordination in the alarm evaluator and central agent. Currently the only valid option are 'redis' or 'none'. The default is 'redis'.
+
+**CONFIG_REDIS_HOST**
+    The IP address of the server on which to install Redis, if Redis is being used for coordination.
+
+**CONFIG_REDIS_PORT**
+    The port on which the Redis server will listen, if Redis is being used for coordination.
+
 Heat Config Parameters
 ----------------------
 
