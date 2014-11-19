@@ -2,6 +2,7 @@ $keystone_use_ssl = false
 $keystone_service_name = hiera('CONFIG_KEYSTONE_SERVICE_NAME')
 $keystone_cfg_ks_db_pw = hiera('CONFIG_KEYSTONE_DB_PW')
 $keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
+$keystone_endpoint_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
 
 class { 'keystone':
   admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
@@ -28,10 +29,10 @@ class { 'keystone::roles::admin':
 }
 
 class { 'keystone::endpoint':
-  region           => hiera('CONFIG_KEYSTONE_REGION'),
-  public_address   => hiera('CONFIG_CONTROLLER_HOST'),
-  admin_address    => hiera('CONFIG_CONTROLLER_HOST'),
-  internal_address => hiera('CONFIG_CONTROLLER_HOST'),
+  public_url   => "http://${keystone_endpoint_cfg_ctrl_host}:5000",
+  internal_url => "http://${keystone_endpoint_cfg_ctrl_host}:5000",
+  admin_url    => "http://${keystone_endpoint_cfg_ctrl_host}:35357",
+  region       => hiera('CONFIG_KEYSTONE_REGION'),
 }
 
 # Run token flush every minute (without output so we won't spam admins)
