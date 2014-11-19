@@ -22,16 +22,18 @@ class {'horizon':
   # accessibility. We need ALLOWED_HOSTS values, but we have to avoid
   # ServerAlias definitions. For now we will use this wildcard hack until
   # puppet-horizon will have separate parameter for each config.
-  fqdn                => '*',
-  can_set_mount_point => 'False',
-  django_debug        => $is_django_debug,
-  listen_ssl          => hiera('CONFIG_HORIZON_SSL'),
-  horizon_cert        => '/etc/pki/tls/certs/ssl_ps_server.crt',
-  horizon_key         => '/etc/pki/tls/private/ssl_ps_server.key',
-  horizon_ca          => '/etc/pki/tls/certs/ssl_ps_chain.crt',
-  neutron_options     => {
-    'enable_lb'       => hiera('CONFIG_HORIZON_NEUTRON_LB'),
-    'enable_firewall' => hiera('CONFIG_HORIZON_NEUTRON_FW'),
+  fqdn                 => '*',
+  can_set_mount_point  => 'False',
+  compress_offline     => false,
+  django_debug         => $is_django_debug,
+  file_upload_temp_dir => '/var/tmp',
+  listen_ssl           => hiera('CONFIG_HORIZON_SSL'),
+  horizon_cert         => '/etc/pki/tls/certs/ssl_ps_server.crt',
+  horizon_key          => '/etc/pki/tls/private/ssl_ps_server.key',
+  horizon_ca           => '/etc/pki/tls/certs/ssl_ps_chain.crt',
+  neutron_options      => {
+    'enable_lb'        => hiera('CONFIG_HORIZON_NEUTRON_LB'),
+    'enable_firewall'  => hiera('CONFIG_HORIZON_NEUTRON_FW'),
   },
 }
 
