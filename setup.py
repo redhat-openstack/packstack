@@ -15,7 +15,7 @@ MODULES_DIR = os.environ.get('PACKSTACK_PUPPETDIR',
                              '/usr/share/openstack-puppet/modules')
 MODULES_REPO = ('https://github.com/redhat-openstack/'
                 'openstack-puppet-modules.git')
-MODULES_BRANCH = 'havana'
+MODULES_BRANCH = 'f20-patches'
 
 
 class InstallModulesCommand(Command):
@@ -49,8 +49,7 @@ class InstallModulesCommand(Command):
                 pass
             print 'Cloning %(repo)s to %(destination)s' % locals()
             cmd = ('cd %(basedir)s; git clone %(repo)s %(repodir)s; '
-                   'cd %(repodir)s; git checkout %(branch)s; '
-                   'git submodule update --init' % locals())
+                   'cd %(repodir)s; git checkout %(branch)s;' % locals())
             proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                                     stderr=subprocess.PIPE)
             out, err = proc.communicate()
