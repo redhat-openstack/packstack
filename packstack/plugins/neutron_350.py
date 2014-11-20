@@ -793,7 +793,7 @@ def create_manifests(config, messages):
                 tun_port = "%s" % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT']
             else:
                 fw_details[key]['proto'] = 'gre'
-                tun_port = 'undef'
+                tun_port = None
 
             fw_details[key]['ports'] = tun_port
             config['FIREWALL_NEUTRON_TUNNEL_RULES'] = fw_details
