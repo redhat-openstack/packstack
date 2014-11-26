@@ -696,19 +696,6 @@ def get_values(val):
     return [x.strip() for x in val.split(',')] if val else []
 
 
-def get_agent_type(config):
-    # The only real use case I can think of for multiples right now is to list
-    # "vlan,gre" or "vlan,vxlan" so that VLANs are used if available,
-    # but tunnels are used if not.
-    tenant_types = config.get('CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES',
-                              "local")
-
-    for i in ['gre', 'vxlan', 'vlan']:
-        if i in tenant_types:
-            return i
-    return tenant_types[0]
-
-
 #-------------------------- step functions --------------------------
 
 def create_manifests(config, messages):
@@ -928,10 +915,15 @@ def create_l2_agent_manifests(config, messages):
             ovs_type = 'CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'
             ovs_type = config.get(ovs_type, 'local')
         elif plugin == 'ml2':
-            ovs_type = get_agent_type(config)
+            ovs_type = 'CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'
+            ovs_type = config.get(ovs_type, 'local')
         else:
             raise RuntimeError('Invalid combination of plugin and agent.')
-        template_name = "neutron_ovs_agent_%s.pp" % ovs_type
+        tunnel = use_openvswitch_vxlan(config) or use_openvswitch_gre(config)
+        config["CONFIG_NEUTRON_OVS_TUNNELING"] = tunnel
+        tunnel_types = set(ovs_type) & set(['gre', 'vxlan'])
+        config["CONFIG_NEUTRON_OVS_TUNNEL_TYPES"] = list(tunnel_types)
+        template_name = "neutron_ovs_agent.pp"
 
         bm_arr = get_values(config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"])
         iface_arr = get_values(config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"])
@@ -956,8 +948,8 @@ def create_l2_agent_manifests(config, messages):
         # neutron ovs port only on network hosts
         if (
                agent == "openvswitch" and (
-                   (host in network_hosts and ovs_type in ['vxlan', 'gre'])
-                   or ovs_type == 'vlan')
+                   (host in network_hosts and tunnel_types)
+                   or 'vlan' in ovs_type)
            ):
                 bridge_key = 'CONFIG_NEUTRON_OVS_BRIDGE'
                 iface_key = 'CONFIG_NEUTRON_OVS_IFACE'
