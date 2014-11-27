@@ -180,8 +180,7 @@ def initConfig(controller):
         return (config.get('CONFIG_PROVISION_TEMPEST', 'n') == 'y')
 
     def allow_all_in_one_ovs_bridge(config):
-        return (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
-                config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch')
+        return (config['CONFIG_NEUTRON_INSTALL'] == 'y')
 
     conf_groups = [
         {"GROUP_NAME": "PROVISION_INIT",

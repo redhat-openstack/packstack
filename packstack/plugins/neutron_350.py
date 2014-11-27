@@ -78,21 +78,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "os-neutron-l2-plugin",
-             "USAGE": "The name of the L2 plugin to be used with Neutron. "
-                      "(eg. linuxbridge, openvswitch, ml2)",
-             "PROMPT": ("Enter the name of the L2 plugin to be used "
-                        "with Neutron"),
-             "OPTION_LIST": ["linuxbridge", "openvswitch", "ml2"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "ml2",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_NEUTRON_L2_PLUGIN",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "os-neutron-metadata-pw",
              "USAGE": "Neutron metadata agent password",
              "PROMPT": "Enter Neutron metadata agent password",
@@ -149,40 +134,7 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
-        "NEUTRON_LB_PLUGIN": [
-            {"CMD_OPTION": "os-neutron-lb-tenant-network-type",
-             "USAGE": ("The type of network to allocate for tenant networks "
-                       "(eg. vlan, local)"),
-             "PROMPT": ("Enter the type of network to allocate for tenant "
-                        "networks"),
-             "OPTION_LIST": ["local", "vlan"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "local",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_NEUTRON_LB_TENANT_NETWORK_TYPE",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "os-neutron-lb-vlan-ranges",
-             "USAGE": ("A comma separated list of VLAN ranges for the Neutron "
-                       "linuxbridge plugin (eg. physnet1:1:4094,physnet2,"
-                       "physnet3:3000:3999)"),
-             "PROMPT": ("Enter a comma separated list of VLAN ranges for "
-                        "the Neutron linuxbridge plugin"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [],
-             "DEFAULT_VALUE": "",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NEUTRON_LB_VLAN_RANGES",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
-
-        "NEUTRON_LB_PLUGIN_AND_AGENT": [
+        "NEUTRON_LB_AGENT": [
             {"CMD_OPTION": "os-neutron-lb-interface-mappings",
              "USAGE": ("A comma separated list of interface mappings for the "
                        "Neutron linuxbridge plugin (eg. physnet1:br-eth1,"
@@ -200,40 +152,7 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
-        "NEUTRON_OVS_PLUGIN": [
-            {"CMD_OPTION": "os-neutron-ovs-tenant-network-type",
-             "USAGE": ("Type of network to allocate for tenant networks "
-                       "(eg. vlan, local, gre, vxlan)"),
-             "PROMPT": ("Enter the type of network to allocate for tenant "
-                        "networks"),
-             "OPTION_LIST": ["local", "vlan", "gre", "vxlan"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "vxlan",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "os-neutron-ovs-vlan-ranges",
-             "USAGE": ("A comma separated list of VLAN ranges for the Neutron "
-                       "openvswitch plugin (eg. physnet1:1:4094,physnet2,"
-                       "physnet3:3000:3999)"),
-             "PROMPT": ("Enter a comma separated list of VLAN ranges for the "
-                        "Neutron openvswitch plugin"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [],
-             "DEFAULT_VALUE": "",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NEUTRON_OVS_VLAN_RANGES",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
-
-        "NEUTRON_OVS_PLUGIN_AND_AGENT": [
+        "NEUTRON_OVS_AGENT": [
             {"CMD_OPTION": "os-neutron-ovs-bridge-mappings",
              "USAGE": ("A comma separated list of bridge mappings for the "
                        "Neutron openvswitch plugin (eg. physnet1:br-eth1,"
@@ -267,24 +186,7 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
-        "NEUTRON_OVS_PLUGIN_TUNNEL": [
-            {"CMD_OPTION": "os-neutron-ovs-tunnel-ranges",
-             "USAGE": ("A comma separated list of tunnel ranges for the "
-                       "Neutron openvswitch plugin (eg. 1:1000)"),
-             "PROMPT": ("Enter a comma separated list of tunnel ranges for "
-                        "the Neutron openvswitch plugin"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [],
-             "DEFAULT_VALUE": "",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NEUTRON_OVS_TUNNEL_RANGES",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
-
-        "NEUTRON_OVS_PLUGIN_AND_AGENT_TUNNEL": [
+        "NEUTRON_OVS_AGENT_TUNNEL": [
             {"CMD_OPTION": "os-neutron-ovs-tunnel-if",
              "USAGE": ("The interface for the OVS tunnel. Packstack will "
                        "override the IP address used for tunnels on this "
@@ -303,7 +205,7 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
-        "NEUTRON_OVS_PLUGIN_AND_AGENT_VXLAN": [
+        "NEUTRON_OVS_AGENT_VXLAN": [
             {"CMD_OPTION": "os-neutron-ovs-vxlan-udp-port",
              "CONF_NAME": "CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT",
              "USAGE": "VXLAN UDP port",
@@ -313,7 +215,6 @@ def initConfig(controller):
              "DEFAULT_VALUE": 4789,
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
-
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
@@ -487,54 +388,33 @@ def initConfig(controller):
 
         {"GROUP_NAME": "NEUTRON_ML2_PLUGIN",
          "DESCRIPTION": "Neutron ML2 plugin config",
-         "PRE_CONDITION": use_ml2_plugin,
+         "PRE_CONDITION": neutron_install,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-        {"GROUP_NAME": "NEUTRON_LB_PLUGIN",
-         "DESCRIPTION": "Neutron LB plugin config",
-         "PRE_CONDITION": use_linuxbridge_plugin,
-         "PRE_CONDITION_MATCH": True,
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
-        {"GROUP_NAME": "NEUTRON_LB_PLUGIN_AND_AGENT",
+        {"GROUP_NAME": "NEUTRON_LB_AGENT",
          "DESCRIPTION": "Neutron LB agent config",
-         "PRE_CONDITION": use_linuxbridge_agent,
+         "PRE_CONDITION": use_ml2_with_linuxbridge,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-        {"GROUP_NAME": "NEUTRON_OVS_PLUGIN",
-         "DESCRIPTION": "Neutron OVS plugin config",
-         "PRE_CONDITION": use_openvswitch_plugin,
-         "PRE_CONDITION_MATCH": True,
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
-        {"GROUP_NAME": "NEUTRON_OVS_PLUGIN_AND_AGENT",
+        {"GROUP_NAME": "NEUTRON_OVS_AGENT",
          "DESCRIPTION": "Neutron OVS agent config",
-         "PRE_CONDITION": use_openvswitch_agent,
+         "PRE_CONDITION": use_ml2_with_ovs,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-        {"GROUP_NAME": "NEUTRON_OVS_PLUGIN_TUNNEL",
-         "DESCRIPTION": "Neutron OVS plugin config for tunnels",
-         "PRE_CONDITION": use_openvswitch_plugin_tunnel,
-         "PRE_CONDITION_MATCH": True,
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
-        {"GROUP_NAME": "NEUTRON_OVS_PLUGIN_AND_AGENT_TUNNEL",
+        {"GROUP_NAME": "NEUTRON_OVS_AGENT_TUNNEL",
          "DESCRIPTION": "Neutron OVS agent config for tunnels",
-         "PRE_CONDITION": use_openvswitch_agent_tunnel,
+         "PRE_CONDITION": use_ml2_with_ovs,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-        {"GROUP_NAME": "NEUTRON_OVS_PLUGIN_AND_AGENT_VXLAN",
+        {"GROUP_NAME": "NEUTRON_OVS_AGENT_VXLAN",
          "DESCRIPTION": "Neutron OVS agent config for VXLAN",
          "PRE_CONDITION": use_openvswitch_vxlan,
          "PRE_CONDITION_MATCH": True,
@@ -551,31 +431,22 @@ def initSequences(controller):
     if config['CONFIG_NEUTRON_INSTALL'] != 'y':
         return
 
-    if config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch':
-        plugin_db = 'ovs_neutron'
-        plugin_path = ('neutron.plugins.openvswitch.ovs_neutron_plugin.'
-                       'OVSNeutronPluginV2')
-    elif config['CONFIG_NEUTRON_L2_PLUGIN'] == 'linuxbridge':
-        plugin_db = 'neutron_linux_bridge'
-        plugin_path = ('neutron.plugins.linuxbridge.lb_neutron_plugin.'
-                       'LinuxBridgePluginV2')
-    elif config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2':
-        plugin_db = 'neutron'
-        plugin_path = 'neutron.plugins.ml2.plugin.Ml2Plugin'
-        # values modification
-        for key in ('CONFIG_NEUTRON_ML2_TYPE_DRIVERS',
-                    'CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES',
-                    'CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS',
-                    'CONFIG_NEUTRON_ML2_FLAT_NETWORKS',
-                    'CONFIG_NEUTRON_ML2_VLAN_RANGES',
-                    'CONFIG_NEUTRON_ML2_TUNNEL_ID_RANGES',
-                    'CONFIG_NEUTRON_ML2_VNI_RANGES'):
-            if config[key] == '':
-                config[key] = []
-            else:
-                config[key] = [i.strip() for i in config[key].split(',') if i]
-        key = 'CONFIG_NEUTRON_ML2_VXLAN_GROUP'
-        config[key] = "%s" % config[key] if config[key] else ''
+    plugin_db = 'neutron'
+    plugin_path = 'neutron.plugins.ml2.plugin.Ml2Plugin'
+    # values modification
+    for key in ('CONFIG_NEUTRON_ML2_TYPE_DRIVERS',
+                'CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES',
+                'CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS',
+                'CONFIG_NEUTRON_ML2_FLAT_NETWORKS',
+                'CONFIG_NEUTRON_ML2_VLAN_RANGES',
+                'CONFIG_NEUTRON_ML2_TUNNEL_ID_RANGES',
+                'CONFIG_NEUTRON_ML2_VNI_RANGES'):
+        if config[key] == '':
+            config[key] = []
+        else:
+            config[key] = [i.strip() for i in config[key].split(',') if i]
+    key = 'CONFIG_NEUTRON_ML2_VXLAN_GROUP'
+    config[key] = "%s" % config[key] if config[key] else ''
 
     config['CONFIG_NEUTRON_L2_DBNAME'] = plugin_db
     config['CONFIG_NEUTRON_CORE_PLUGIN'] = plugin_path
@@ -614,75 +485,35 @@ def initSequences(controller):
 
 #------------------------- helper functions -------------------------
 
-def use_ml2_plugin(config):
-    return (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
-            config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2')
+def neutron_install(config):
+    return config['CONFIG_NEUTRON_INSTALL'] == 'y'
 
 
-def use_linuxbridge_plugin(config):
-    result = (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
-              config['CONFIG_NEUTRON_L2_PLUGIN'] == 'linuxbridge')
-    if result:
-        config["CONFIG_NEUTRON_L2_AGENT"] = 'linuxbridge'
-    return result
-
-
-def use_linuxbridge_agent(config):
-    ml2_used = (use_ml2_plugin(config) and
+def use_ml2_with_linuxbridge(config):
+    ml2_used = (neutron_install(config) and
                 config["CONFIG_NEUTRON_L2_AGENT"] == 'linuxbridge')
-    return use_linuxbridge_plugin(config) or ml2_used
-
-
-def use_openvswitch_plugin(config):
-    result = (config['CONFIG_NEUTRON_INSTALL'] == 'y' and
-              config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch')
-    if result:
-        config["CONFIG_NEUTRON_L2_AGENT"] = 'openvswitch'
-    return result
-
-
-def use_openvswitch_plugin_tunnel(config):
-    tun_types = ('gre', 'vxlan')
-    return (use_openvswitch_plugin(config) and
-            config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] in tun_types)
+    return ml2_used
 
 
 def use_ml2_with_ovs(config):
-    return (use_ml2_plugin(config) and
+    return (neutron_install(config) and
             config["CONFIG_NEUTRON_L2_AGENT"] == 'openvswitch')
 
 
-def use_openvswitch_agent(config):
-    return use_openvswitch_plugin(config) or use_ml2_with_ovs(config)
-
-
-def use_openvswitch_agent_tunnel(config):
-    return (use_openvswitch_plugin_tunnel(config) or
-            use_ml2_with_ovs(config))
-
-
 def use_openvswitch_vxlan(config):
-    ovs_vxlan = (
-        use_openvswitch_plugin_tunnel(config) and
-        config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'vxlan'
-    )
     ml2_vxlan = (
         use_ml2_with_ovs(config) and
         'vxlan' in config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES']
     )
-    return ovs_vxlan or ml2_vxlan
+    return ml2_vxlan
 
 
 def use_openvswitch_gre(config):
-    ovs_vxlan = (
-        use_openvswitch_plugin_tunnel(config) and
-        config['CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'] == 'gre'
-    )
     ml2_vxlan = (
         use_ml2_with_ovs(config) and
         'gre' in config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES']
     )
-    return ovs_vxlan or ml2_vxlan
+    return ml2_vxlan
 
 
 def get_if_driver(config):
@@ -711,11 +542,11 @@ def create_manifests(config, messages):
         service_plugins.append(
             'neutron.services.loadbalancer.plugin.LoadBalancerPlugin'
         )
-    if config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2':
-        # ML2 uses the L3 Router service plugin to implement l3 agent
-        service_plugins.append(
-            'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
-        )
+
+    # ML2 uses the L3 Router service plugin to implement l3 agent
+    service_plugins.append(
+        'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
+    )
 
     if config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
         service_plugins.append(
@@ -730,13 +561,7 @@ def create_manifests(config, messages):
     config['SERVICE_PLUGINS'] = (service_plugins if service_plugins
                                  else 'undef')
 
-    if config['CONFIG_NEUTRON_L2_PLUGIN'] == 'openvswitch':
-        nettype = config.get("CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE", "local")
-        plugin_manifest = 'neutron_ovs_plugin_%s.pp' % nettype
-    elif config['CONFIG_NEUTRON_L2_PLUGIN'] == 'linuxbridge':
-        plugin_manifest = 'neutron_lb_plugin.pp'
-    elif config['CONFIG_NEUTRON_L2_PLUGIN'] == 'ml2':
-        plugin_manifest = 'neutron_ml2_plugin.pp'
+    plugin_manifest = 'neutron_ml2_plugin.pp'
 
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
@@ -805,7 +630,6 @@ def create_keystone_manifest(config, messages):
 def create_l3_manifests(config, messages):
     global network_hosts
 
-    plugin = config['CONFIG_NEUTRON_L2_PLUGIN']
     if config['CONFIG_NEUTRON_L3_EXT_BRIDGE'] == 'provider':
         config['CONFIG_NEUTRON_L3_EXT_BRIDGE'] = ''
 
@@ -833,7 +657,6 @@ def create_l3_manifests(config, messages):
 def create_dhcp_manifests(config, messages):
     global network_hosts
 
-    plugin = config['CONFIG_NEUTRON_L2_PLUGIN']
     for host in network_hosts:
         config["CONFIG_NEUTRON_DHCP_HOST"] = host
         config['CONFIG_NEUTRON_DHCP_INTERFACE_DRIVER'] = get_if_driver(config)
@@ -902,7 +725,6 @@ def create_metering_agent_manifests(config, messages):
 def create_l2_agent_manifests(config, messages):
     global network_hosts, compute_hosts
 
-    plugin = config['CONFIG_NEUTRON_L2_PLUGIN']
     agent = config["CONFIG_NEUTRON_L2_AGENT"]
 
     # CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS will be available only for ML2
@@ -915,15 +737,8 @@ def create_l2_agent_manifests(config, messages):
         config['CONFIG_NEUTRON_USE_L2POPULATION'] = False
 
     if agent == "openvswitch":
-        if plugin == agent:
-            # monolithic plugin installation
-            ovs_type = 'CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE'
-            ovs_type = config.get(ovs_type, 'local')
-        elif plugin == 'ml2':
-            ovs_type = 'CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'
-            ovs_type = config.get(ovs_type, 'local')
-        else:
-            raise RuntimeError('Invalid combination of plugin and agent.')
+        ovs_type = 'CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'
+        ovs_type = config.get(ovs_type, 'local')
         tunnel = use_openvswitch_vxlan(config) or use_openvswitch_gre(config)
         config["CONFIG_NEUTRON_OVS_TUNNELING"] = tunnel
         tunnel_types = set(ovs_type) & set(['gre', 'vxlan'])
