@@ -42,18 +42,6 @@ class { 'nova::compute':
   vncserver_proxyclient_address => hiera('CONFIG_NOVA_COMPUTE_HOST'),
 }
 
-
-# Note : remove this once we're installing a version of openstack that isn't
-#        supported on RHEL 6.3
-if $::is_virtual_packstack == 'true' and $::osfamily == 'RedHat' and
-    $::operatingsystemrelease == '6.3'{
-  file { '/usr/bin/qemu-system-x86_64':
-    ensure => link,
-    target => '/usr/libexec/qemu-kvm',
-    notify => Service['nova-compute'],
-  }
-}
-
 # Tune the host with a virtual hosts profile
 package { 'tuned':
   ensure => present,
