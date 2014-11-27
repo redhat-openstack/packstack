@@ -461,38 +461,20 @@ Neutron Config Parameters
 **CONFIG_NEUTRON_L3_EXT_BRIDGE**
     The name of the bridge that the Neutron L3 agent will use for external traffic, or 'provider' if using provider networks.
 
-**CONFIG_NEUTRON_L2_PLUGIN**
-    The name of the L2 plugin to be used with Neutron. (eg. linuxbridge, openvswitch, ml2).
-
 **CONFIG_NEUTRON_METADATA_PW**
     A comma separated list of IP addresses on which to install Neutron metadata agent.
 
 **CONFIG_NEUTRON_FWAAS**
     Whether to configure neutron Firewall as a Service.
 
-**CONFIG_NEUTRON_LB_TENANT_NETWORK_TYPE**
-    The type of network to allocate for tenant networks (eg. vlan, local, gre).
-
-**CONFIG_NEUTRON_LB_VLAN_RANGES**
-    A comma separated list of VLAN ranges for the Neutron linuxbridge plugin (eg. physnet1:1:4094,physnet2,physnet3:3000:3999).
-
 **CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS**
     A comma separated list of interface mappings for the Neutron linuxbridge plugin (eg. physnet1:br-eth1,physnet2:br-eth2,physnet3:br-eth3).
-
-**CONFIG_NEUTRON_OVS_TENANT_NETWORK_TYPE**
-    Type of network to allocate for tenant networks (eg. vlan, local, gre).
-
-**CONFIG_NEUTRON_OVS_VLAN_RANGES**
-    A comma separated list of VLAN ranges for the Neutron openvswitch plugin (eg. physnet1:1:4094,physnet2,physnet3:3000:3999).
 
 **CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS**
     A comma separated list of bridge mappings for the Neutron openvswitch plugin (eg. physnet1:br-eth1,physnet2:br-eth2,physnet3:br-eth3).
 
 **CONFIG_NEUTRON_OVS_BRIDGE_IFACES**
     A comma separated list of colon-separated OVS brid.
-
-**CONFIG_NEUTRON_OVS_TUNNEL_RANGES**
-    A comma separated list of tunnel ranges for the Neutron openvswitch plugin.
 
 **CONFIG_NEUTRON_OVS_TUNNEL_IF**
     Override the IP used for GRE tunnels on this hypervisor to the IP found on the specified interface (defaults to the HOST IP).
