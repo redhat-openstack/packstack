@@ -1,16 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Installs and configures neutron
+Installs and configures Neutron
 """
 
-import logging
-import os
-import re
-import uuid
-
 from packstack.installer import utils
-from packstack.installer import exceptions
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer import output_messages
@@ -23,7 +17,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Neutron Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Neutron"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -483,7 +477,7 @@ def initSequences(controller):
                            neutron_steps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def neutron_install(config):
     return config['CONFIG_NEUTRON_INSTALL'] == 'y'
@@ -532,7 +526,7 @@ def get_values(val):
     return [x.strip() for x in val.split(',')] if val else []
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_manifests(config, messages):
     global q_hosts
@@ -649,7 +643,7 @@ def create_l3_manifests(config, messages):
             appendManifestFile(manifestfile, manifestdata + '\n')
 
         if config['CONFIG_NEUTRON_FWAAS'] == 'y':
-#            manifestfile = "%s_neutron_fwaas.pp" % (host,)
+            # manifestfile = "%s_neutron_fwaas.pp" % (host,)
             manifestdata = getManifestTemplate("neutron_fwaas.pp")
             appendManifestFile(manifestfile, manifestdata + '\n')
 
@@ -767,16 +761,16 @@ def create_l2_agent_manifests(config, messages):
         appendManifestFile(manifestfile, manifestdata + "\n")
         # neutron ovs port only on network hosts
         if (
-               agent == "openvswitch" and (
-                   (host in network_hosts and tunnel_types)
-                   or 'vlan' in ovs_type)
-           ):
-                bridge_key = 'CONFIG_NEUTRON_OVS_BRIDGE'
-                iface_key = 'CONFIG_NEUTRON_OVS_IFACE'
-                for if_map in iface_arr:
-                    config[bridge_key], config[iface_key] = if_map.split(':')
-                    manifestdata = getManifestTemplate("neutron_ovs_port.pp")
-                    appendManifestFile(manifestfile, manifestdata + "\n")
+            agent == "openvswitch" and (
+                (host in network_hosts and tunnel_types)
+                or 'vlan' in ovs_type)
+        ):
+            bridge_key = 'CONFIG_NEUTRON_OVS_BRIDGE'
+            iface_key = 'CONFIG_NEUTRON_OVS_IFACE'
+            for if_map in iface_arr:
+                config[bridge_key], config[iface_key] = if_map.split(':')
+                manifestdata = getManifestTemplate("neutron_ovs_port.pp")
+                appendManifestFile(manifestfile, manifestdata + "\n")
         # Additional configurations required for compute hosts and
         # network hosts.
         manifestdata = getManifestTemplate('neutron_bridge_module.pp')

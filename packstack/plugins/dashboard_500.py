@@ -4,12 +4,10 @@
 Installs and configures OpenStack Horizon
 """
 
-import logging
 import os
 import uuid
 
 from packstack.installer import validators
-from packstack.installer import basedefs, output_messages
 from packstack.installer import exceptions
 from packstack.installer import utils
 
@@ -17,7 +15,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Horizon Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Horizon"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -115,7 +113,7 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Horizon", [], [], steps)
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
     config["CONFIG_HORIZON_SECRET_KEY"] = uuid.uuid4().hex

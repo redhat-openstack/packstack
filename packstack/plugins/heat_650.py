@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Installs and configures heat
+Installs and configures Heat
 """
 
 import uuid
-import logging
-import os
 
 from packstack.installer import utils
 from packstack.installer import validators
@@ -14,12 +12,11 @@ from packstack.installer import processors
 
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
-                                             manifestfiles,
                                              appendManifestFile,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Heat Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Heat"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -171,7 +168,7 @@ def initSequences(controller):
     controller.addSequence("Installing Heat", [], [], steps)
 
 
-#-------------------------- step functions --------------------------
+# ------------------------ step functions -------------------------
 
 def create_manifest(config, messages):
     manifestfile = "%s_heat.pp" % config['CONFIG_CONTROLLER_HOST']

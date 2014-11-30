@@ -5,7 +5,6 @@ Plugin responsible for setting OpenStack global options
 """
 
 import glob
-import logging
 import os
 import re
 import uuid
@@ -18,7 +17,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Prescript Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "Prescript"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -31,18 +30,18 @@ def initConfig(controller):
         "GLOBAL": [
             {"CMD_OPTION": "ssh-public-key",
              "USAGE": (
-                "Path to a Public key to install on servers. If a usable "
-                "key has not been installed on the remote servers the user "
-                "will be prompted for a password and this key will be "
-                "installed so the password will not be required again"
+                 "Path to a Public key to install on servers. If a usable "
+                 "key has not been installed on the remote servers the user "
+                 "will be prompted for a password and this key will be "
+                 "installed so the password will not be required again"
              ),
              "PROMPT": (
-                "Enter the path to your ssh Public key to install on servers"
+                 "Enter the path to your ssh Public key to install on servers"
              ),
              "OPTION_LIST": [],
              "VALIDATORS": [
-                validators.validate_file,
-                validators.validate_sshkey
+                 validators.validate_file,
+                 validators.validate_sshkey
              ],
              "PROCESSORS": [processors.process_ssh_key],
              "DEFAULT_VALUE": default_ssh_key,
@@ -55,13 +54,13 @@ def initConfig(controller):
 
             {"CMD_OPTION": "default-password",
              "USAGE": (
-                "Set a default password everywhere. The default password "
-                "will be overriden by whatever password is set for each "
-                "individual service or user."
+                 "Set a default password everywhere. The default password "
+                 "will be overriden by whatever password is set for each "
+                 "individual service or user."
              ),
              "PROMPT": (
-                "Enter a default password to be used. Leave blank for a "
-                "randomly generated one."
+                 "Enter a default password to be used. Leave blank for a "
+                 "randomly generated one."
              ),
              "OPTION_LIST": [],
              "DEFAULT_VALUE": '',
@@ -74,7 +73,7 @@ def initConfig(controller):
 
             {"CMD_OPTION": "mariadb-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install MariaDB"
+                 "Set to 'y' if you would like Packstack to install MariaDB"
              ),
              "PROMPT": "Should Packstack install MariaDB",
              "OPTION_LIST": ["y", "n"],
@@ -90,11 +89,11 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-glance-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Image Service (Glance)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Image Service (Glance)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Image Service (Glance)"
+                 "Should Packstack install OpenStack Image Service (Glance)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -108,12 +107,12 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-cinder-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Block Storage (Cinder)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Block Storage (Cinder)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Block Storage "
-                        "(Cinder) service"
+                 "Should Packstack install OpenStack Block Storage "
+                 "(Cinder) service"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -127,11 +126,11 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-nova-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Compute (Nova)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Compute (Nova)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Compute (Nova) service"
+                 "Should Packstack install OpenStack Compute (Nova) service"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -145,13 +144,13 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Networking (Neutron). Otherwise Nova Network "
-                "will be used."
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Networking (Neutron). Otherwise Nova Network "
+                 "will be used."
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Networking (Neutron) "
-                "service"
+                 "Should Packstack install OpenStack Networking (Neutron) "
+                 "service"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -165,11 +164,11 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-horizon-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Dashboard (Horizon)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Dashboard (Horizon)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Dashboard (Horizon)"
+                 "Should Packstack install OpenStack Dashboard (Horizon)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -183,11 +182,11 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-swift-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Object Storage (Swift)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Object Storage (Swift)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Object Storage (Swift)"
+                 "Should Packstack install OpenStack Object Storage (Swift)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -201,11 +200,11 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-ceilometer-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Metering (Ceilometer)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Metering (Ceilometer)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Metering (Ceilometer)"
+                 "Should Packstack install OpenStack Metering (Ceilometer)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -219,11 +218,11 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-heat-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Orchestration (Heat)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Orchestration (Heat)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Orchestration (Heat)"
+                 "Should Packstack install OpenStack Orchestration (Heat)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -237,9 +236,9 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-client-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "the OpenStack Client packages. An admin \"rc\" file will "
-                "also be installed"
+                 "Set to 'y' if you would like Packstack to install "
+                 "the OpenStack Client packages. An admin \"rc\" file will "
+                 "also be installed"
              ),
              "PROMPT": "Should Packstack install OpenStack client tools",
              "OPTION_LIST": ["y", "n"],
@@ -269,12 +268,12 @@ def initConfig(controller):
 
             {"CMD_OPTION": "nagios-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install Nagios "
-                "to monitor OpenStack hosts"
+                 "Set to 'y' if you would like Packstack to install Nagios "
+                 "to monitor OpenStack hosts"
              ),
              "PROMPT": (
-                "Should Packstack install Nagios to monitor OpenStack "
-                "hosts"
+                 "Should Packstack install Nagios to monitor OpenStack "
+                 "hosts"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -288,15 +287,15 @@ def initConfig(controller):
 
             {"CMD_OPTION": "exclude-servers",
              "USAGE": (
-                "Comma separated list of servers to be excluded from "
-                "installation in case you are running Packstack the second "
-                "time with the same answer file and don't want Packstack "
-                "to touch these servers. Leave plain if you don't need to "
-                "exclude any server."
+                 "Comma separated list of servers to be excluded from "
+                 "installation in case you are running Packstack the second "
+                 "time with the same answer file and don't want Packstack "
+                 "to touch these servers. Leave plain if you don't need to "
+                 "exclude any server."
              ),
              "PROMPT": (
-                "Enter a comma separated list of server(s) to be excluded."
-                " Leave plain if you don't need to exclude any server."
+                 "Enter a comma separated list of server(s) to be excluded."
+                 " Leave plain if you don't need to exclude any server."
              ),
              "OPTION_LIST": [],
              "DEFAULT_VALUE": '',
@@ -309,8 +308,8 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-debug-mode",
              "USAGE": (
-                "Set to 'y' if you want to run OpenStack services in debug "
-                "mode. Otherwise set to 'n'."
+                 "Set to 'y' if you want to run OpenStack services in debug "
+                 "mode. Otherwise set to 'n'."
              ),
              "PROMPT": "Do you want to run OpenStack services in debug mode",
              "OPTION_LIST": ["y", "n"],
@@ -326,9 +325,9 @@ def initConfig(controller):
             {"CONF_NAME": "CONFIG_CONTROLLER_HOST",
              "CMD_OPTION": "os-controller-host",
              "USAGE": (
-                "The IP address of the server on which to install OpenStack"
-                " services specific to controller role such as API servers,"
-                " Horizon, etc."
+                 "The IP address of the server on which to install OpenStack"
+                 " services specific to controller role such as API servers,"
+                 " Horizon, etc."
              ),
              "PROMPT": "Enter the IP address of the controller host",
              "OPTION_LIST": [],
@@ -359,12 +358,12 @@ def initConfig(controller):
             {"CONF_NAME": "CONFIG_COMPUTE_HOSTS",
              "CMD_OPTION": "os-compute-hosts",
              "USAGE": (
-                "The list of IP addresses of the server on which to install"
-                " the Nova compute service"
+                 "The list of IP addresses of the server on which to install"
+                 " the Nova compute service"
              ),
              "PROMPT": (
-                "Enter list of IP addresses on which to install compute "
-                "service"
+                 "Enter list of IP addresses on which to install compute "
+                 "service"
              ),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_multi_ip,
@@ -400,12 +399,12 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-vmware",
              "USAGE": (
-                "Set to 'y' if you want to use VMware vCenter as hypervisor"
-                " and storage. Otherwise set to 'n'."
+                 "Set to 'y' if you want to use VMware vCenter as hypervisor"
+                 " and storage. Otherwise set to 'n'."
              ),
              "PROMPT": (
-                "Do you want to use VMware vCenter as hypervisor and "
-                "datastore"
+                 "Do you want to use VMware vCenter as hypervisor and "
+                 "datastore"
              ),
              "OPTION_LIST": ["y", "n"],
              "DEFAULT_VALUE": "n",
@@ -419,12 +418,12 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-vmware",
              "USAGE": (
-                "Set to 'y' if you want to use VMware vCenter as hypervisor"
-                " and storage. Otherwise set to 'n'."
+                 "Set to 'y' if you want to use VMware vCenter as hypervisor"
+                 " and storage. Otherwise set to 'n'."
              ),
              "PROMPT": (
-                "Do you want to use VMware vCenter as hypervisor and "
-                "datastore"
+                 "Do you want to use VMware vCenter as hypervisor and "
+                 "datastore"
              ),
              "OPTION_LIST": ["y", "n"],
              "DEFAULT_VALUE": "n",
@@ -438,14 +437,14 @@ def initConfig(controller):
 
             {"CMD_OPTION": "unsupported",
              "USAGE": (
-                "Set to 'y' if you want to use unsupported parameters. "
-                "This should be used only if you know what you are doing."
-                "Issues caused by using unsupported options won't be fixed "
-                "before next major release."
+                 "Set to 'y' if you want to use unsupported parameters. "
+                 "This should be used only if you know what you are doing."
+                 "Issues caused by using unsupported options won't be fixed "
+                 "before next major release."
              ),
              "PROMPT": (
-                "Enable this on your own risk. Do you want to use unsupported "
-                "parameters"
+                 "Enable this on your own risk. Do you want to use "
+                 "insupported parameters"
              ),
              "OPTION_LIST": ["y", "n"],
              "DEFAULT_VALUE": "n",
@@ -462,8 +461,8 @@ def initConfig(controller):
             {"CMD_OPTION": "vcenter-host",
              "USAGE": "The IP address of the VMware vCenter server",
              "PROMPT": (
-                "Enter the IP address of the VMware vCenter server to use "
-                "with Nova"
+                 "Enter the IP address of the VMware vCenter server to use "
+                 "with Nova"
              ),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_ip],
@@ -515,9 +514,9 @@ def initConfig(controller):
             {"CONF_NAME": "CONFIG_STORAGE_HOST",
              "CMD_OPTION": "os-storage-host",
              "USAGE": (
-                "(Unsupported!) The IP address of the server on which "
-                "to install OpenStack services specific to storage servers "
-                "such as Glance and Cinder."
+                 "(Unsupported!) The IP address of the server on which "
+                 "to install OpenStack services specific to storage servers "
+                 "such as Glance and Cinder."
              ),
              "PROMPT": "Enter the IP address of the storage host",
              "OPTION_LIST": [],
@@ -588,7 +587,7 @@ def initSequences(controller):
                            prescript_steps)
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def install_keys_on_host(hostname, sshkeydata):
     server = utils.ScriptRunner(hostname)

@@ -1,16 +1,14 @@
 # -*- coding: utf-8 -*-
 
 """
-prepare server
+Plugin responsible for Server Preparation.
 """
 
 import os
 import re
-import uuid
 import logging
 import platform
 
-from packstack.installer import basedefs
 from packstack.installer import exceptions
 from packstack.installer import utils
 from packstack.installer import validators
@@ -18,7 +16,7 @@ from packstack.installer import validators
 from packstack.modules.common import filtered_hosts, is_all_in_one
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------ Server Preparation Packstack Plugin Initialization -------------
 
 PLUGIN_NAME = "OS-SERVERPREPARE"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -372,7 +370,7 @@ def initSequences(controller):
     controller.addSequence("Preparing servers", [], [], preparesteps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def is_rhel():
     return 'Red Hat Enterprise Linux' in platform.linux_distribution()[0]
@@ -452,8 +450,8 @@ def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
     # configure proxy if it is necessary
     if proxy_server:
         cmd = ('subscription-manager config '
-                    '--server.proxy_hostname=%(proxy_server)s '
-                    '--server.proxy_port=%(proxy_port)s')
+               '--server.proxy_hostname=%(proxy_server)s '
+               '--server.proxy_port=%(proxy_port)s')
         if proxy_user:
             cmd += (' --server.proxy_user=%(proxy_user)s '
                     '--server.proxy_password=%(proxy_password)s')
@@ -598,7 +596,7 @@ def manage_rdo(host, config):
         raise exceptions.ScriptRuntimeError(msg)
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def server_prep(config, messages):
     rh_username = None
@@ -631,11 +629,11 @@ def server_prep(config, messages):
         # Subscribe to Red Hat Repositories if configured
         if rh_username:
             run_rhsm_reg(hostname, rh_username, rh_password,
-                optional=(config.get('CONFIG_RH_OPTIONAL') == 'y'),
-                proxy_server=config.get('CONFIG_RH_PROXY'),
-                proxy_port=config.get('CONFIG_RH_PROXY_PORT'),
-                proxy_user=config.get('CONFIG_RH_PROXY_USER'),
-                proxy_password=config.get('CONFIG_RH_PROXY_PASSWORD'))
+                         optional=(config.get('CONFIG_RH_OPTIONAL') == 'y'),
+                         proxy_server=config.get('CONFIG_RH_PROXY'),
+                         proxy_port=config.get('CONFIG_RH_PROXY_PORT'),
+                         proxy_user=config.get('CONFIG_RH_PROXY_USER'),
+                         proxy_password=config.get('CONFIG_RH_PROXY_PASSWORD'))
 
         # Subscribe to RHN Satellite if configured
         if sat_url and hostname not in sat_registered:
@@ -649,8 +647,8 @@ def server_prep(config, messages):
         # Installing rhos-log-collector and sos-plugins-openstack if
         # these rpms are available from yum.
         sos_rpms = ' '.join(('rhos-log-collector',
-                            'sos',
-                            'sos-plugins-openstack'))
+                             'sos',
+                             'sos-plugins-openstack'))
 
         server.append('yum list available rhos-log-collector && '
                       'yum -y install %s || '

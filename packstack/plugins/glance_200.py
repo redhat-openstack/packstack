@@ -4,21 +4,16 @@
 Installs and configures Glance
 """
 
-import uuid
-import logging
-
 from packstack.installer import validators
 from packstack.installer import processors
-from packstack.installer import basedefs
 from packstack.installer import utils
-from packstack.installer.utils import split_hosts
 
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile,
                                              createFirewallResources)
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Glance Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Glance"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -98,7 +93,7 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Glance", [], [], glancesteps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def process_backend(value, param_name, config):
     if value == 'swift' and config['CONFIG_SWIFT_INSTALL'] != 'y':
@@ -106,7 +101,7 @@ def process_backend(value, param_name, config):
     return value
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_keystone_manifest(config, messages):
     if config['CONFIG_UNSUPPORTED'] != 'y':
