@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 
 """
-Installs and configures an OpenStack Swift
+Installs and configures Swift
 """
 
 import os
 import re
 import uuid
-import logging
 import netaddr
 
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer.exceptions import ParamValidationError
-from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer.utils import split_hosts
 
@@ -22,7 +20,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Swift Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Swift"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -163,7 +161,7 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Swift", [], [], steps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def validate_storage(param, options=None):
     if not param:
@@ -246,7 +244,7 @@ def get_storage_size(config):
             return intsize
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_keystone_manifest(config, messages):
     # parse devices in first step

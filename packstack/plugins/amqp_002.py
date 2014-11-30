@@ -1,16 +1,11 @@
 # -*- coding: utf-8 -*-
 
 """
-Installs and configures amqp
+Installs and configures AMQP
 """
-
-import logging
-import uuid
-import os
 
 from packstack.installer import validators
 from packstack.installer import processors
-from packstack.installer import basedefs
 from packstack.installer import utils
 
 from packstack.modules.common import filtered_hosts
@@ -19,7 +14,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- AMQP Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "AMQP"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -215,7 +210,7 @@ def initSequences(controller):
     controller.addSequence("Installing AMQP", [], [], amqpsteps)
 
 
-#-------------------------- step functions --------------------------
+# ------------------------ step functions -------------------------
 
 def create_manifest(config, messages):
     server = utils.ScriptRunner(config['CONFIG_AMQP_HOST'])

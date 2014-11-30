@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Installs and configures neutron
+Installs and configures Provisioning for demo usage and testing
 """
-
-import logging
-import uuid
 
 from packstack.installer import utils
 from packstack.installer import validators
@@ -16,7 +13,7 @@ from packstack.modules.ospluginutils import (appendManifestFile,
                                              getManifestTemplate)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Provision Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Provision"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -82,20 +79,20 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-tempest-user-passwd",
-            "USAGE": "The password to use for the Tempest Provisioning user",
-            "PROMPT": "Enter the password for the Tempest Provisioning user",
-            "OPTION_LIST": [],
-            "VALIDATORS": [validators.validate_not_empty],
-            "DEFAULT_VALUE": "PW_PLACEHOLDER",
-            "PROCESSORS": [processors.process_password],
-            "MASK_INPUT": True,
-            "LOOSE_VALIDATION": False,
-            "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER_PW",
-            "USE_DEFAULT": False,
-            "NEED_CONFIRM": True,
-            "CONDITION": False},
+             "USAGE": "The password to use for the Tempest Provisioning user",
+             "PROMPT": "Enter the password for the Tempest Provisioning user",
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "PW_PLACEHOLDER",
+             "PROCESSORS": [processors.process_password],
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
 
-            ],
+        ],
 
         "PROVISION_DEMO": [
             {"CMD_OPTION": "provision-demo-floatrange",
@@ -125,7 +122,7 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
-            ],
+        ],
 
         "TEMPEST_GIT_REFS": [
             {"CMD_OPTION": "provision-tempest-repo-uri",
@@ -209,7 +206,7 @@ def initConfig(controller):
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
-        ]
+    ]
     for group in conf_groups:
         paramList = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, paramList)
@@ -232,7 +229,7 @@ def initSequences(controller):
     config = controller.CONF
 
     if (config['CONFIG_PROVISION_DEMO'] != "y" and
-        config['CONFIG_PROVISION_TEMPEST'] != "y"):
+            config['CONFIG_PROVISION_TEMPEST'] != "y"):
         return
 
     provision_steps = []
@@ -249,9 +246,9 @@ def initSequences(controller):
              'functions': [create_tempest_manifest]}
         )
     provision_steps.append(
-            {'title': 'Adding Provisioning Glance manifest entries',
-             'functions': [create_storage_manifest]}
-        )
+        {'title': 'Adding Provisioning Glance manifest entries',
+         'functions': [create_storage_manifest]}
+    )
 
     marshall_conf_bool(config, 'CONFIG_PROVISION_TEMPEST')
     marshall_conf_bool(config, 'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
@@ -260,7 +257,7 @@ def initSequences(controller):
                            [], [], provision_steps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def marshall_conf_bool(conf, key):
     if conf[key] == 'y':
@@ -285,7 +282,7 @@ def using_neutron(config):
     marshall_conf_bool(config, 'PROVISION_NEUTRON_AVAILABLE')
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_demo_manifest(config, messages):
     using_neutron(config)

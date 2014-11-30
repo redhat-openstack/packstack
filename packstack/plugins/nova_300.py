@@ -1,12 +1,10 @@
 # -*- coding: utf-8 -*-
 
 """
-Installs and configures nova
+Installs and configures Nova
 """
 
 import os
-import uuid
-import logging
 import platform
 import socket
 
@@ -19,7 +17,7 @@ from packstack.modules.ospluginutils import (NovaConfig, getManifestTemplate,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Nova Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Nova"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -347,7 +345,7 @@ def initSequences(controller):
                            novaapisteps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def check_ifcfg(host, device):
     """
@@ -381,7 +379,7 @@ def bring_up_ifcfg(host, device):
             raise ScriptRuntimeError(msg)
 
 
-#-------------------------- step functions --------------------------
+# ------------------------ Step Functions -------------------------
 
 def create_ssh_keys(config, messages):
     migration_key = os.path.join(basedefs.VAR_DIR, 'nova_migration_key')

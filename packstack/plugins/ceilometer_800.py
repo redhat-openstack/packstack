@@ -4,8 +4,6 @@
 Installs and configures Ceilometer
 """
 
-import logging
-import os
 import uuid
 
 from packstack.installer import utils
@@ -17,7 +15,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Ceilometer Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Ceilometer"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -106,7 +104,7 @@ def initSequences(controller):
                            steps)
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
     manifestfile = "%s_ceilometer.pp" % config['CONFIG_CONTROLLER_HOST']
