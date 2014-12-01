@@ -629,8 +629,7 @@ def check_lvm_options(config):
 
 def check_lvm_vg_options(config):
     return (config['CONFIG_CINDER_INSTALL'] == 'y' and
-            'lvm' in config['CONFIG_CINDER_BACKEND'] and
-            config['CONFIG_CINDER_VOLUMES_CREATE'] == 'y')
+            'lvm' in config['CONFIG_CINDER_BACKEND'])
 
 
 def check_gluster_options(config):
@@ -700,18 +699,17 @@ def check_cinder_vg(config, messages):
             raise exceptions.MissingRequirements("The cinder server should "
                                                  "contain a cinder-volumes "
                                                  "volume group")
-    else:
-        match = re.match('^(?P<size>\d+)G$',
-                         config['CONFIG_CINDER_VOLUMES_SIZE'].strip())
-        if not match:
-            msg = 'Invalid Cinder volumes VG size.'
-            raise exceptions.ParamValidationError(msg)
+    match = re.match('^(?P<size>\d+)G$',
+                        config['CONFIG_CINDER_VOLUMES_SIZE'].strip())
+    if not match:
+        msg = 'Invalid Cinder volumes VG size.'
+        raise exceptions.ParamValidationError(msg)
 
-        cinders_volume_size = int(match.group('size')) * 1024
-        cinders_reserve = int(cinders_volume_size * 0.03)
+    cinders_volume_size = int(match.group('size')) * 1024
+    cinders_reserve = int(cinders_volume_size * 0.03)
 
-        cinders_volume_size = cinders_volume_size + cinders_reserve
-        config['CONFIG_CINDER_VOLUMES_SIZE'] = '%sM' % cinders_volume_size
+    cinders_volume_size = cinders_volume_size + cinders_reserve
+    config['CONFIG_CINDER_VOLUMES_SIZE'] = '%sM' % cinders_volume_size
 
 
 def create_keystone_manifest(config, messages):
