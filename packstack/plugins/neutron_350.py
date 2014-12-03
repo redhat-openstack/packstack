@@ -56,14 +56,14 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "os-neutron-l3-ext-bridge",
-             "USAGE": ("The name of the bridge that the Neutron L3 agent will "
-                       "use for external traffic, or 'provider' if using "
-                       "provider networks"),
-             "PROMPT": ("Enter the bridge the Neutron L3 agent will use for "
-                        "external traffic, or 'provider' if using provider "
-                        "networks"),
+             "USAGE": ("The name of the ovs bridge (or empty for linuxbridge)"
+                       " that the Neutron L3 agent will use for external "
+                       " traffic, or 'provider' using provider networks. "),
+             "PROMPT": ("Enter the ovs bridge the Neutron L3 agent will use "
+                        "for external traffic, or 'provider' if using "
+                        "provider networks."),
              "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
+             "VALIDATORS": [],
              "DEFAULT_VALUE": "br-ex",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
@@ -131,8 +131,8 @@ def initConfig(controller):
         "NEUTRON_LB_AGENT": [
             {"CMD_OPTION": "os-neutron-lb-interface-mappings",
              "USAGE": ("A comma separated list of interface mappings for the "
-                       "Neutron linuxbridge plugin (eg. physnet1:br-eth1,"
-                       "physnet2:br-eth2,physnet3:br-eth3)"),
+                       "Neutron linuxbridge plugin (eg. physnet1:eth1,"
+                       "physnet2:eth2,physnet3:eth3)"),
              "PROMPT": ("Enter a comma separated list of interface mappings "
                         "for the Neutron linuxbridge plugin"),
              "OPTION_LIST": [],
@@ -633,14 +633,16 @@ def create_l3_manifests(config, messages):
         manifestdata = getManifestTemplate("neutron_l3.pp")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + '\n')
-        ext_bridge = config['CONFIG_NEUTRON_L3_EXT_BRIDGE']
-        mapping = find_mapping(config['CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'],
-                               ext_bridge) if ext_bridge else None
-        if (config['CONFIG_NEUTRON_L2_AGENT'] == 'openvswitch' and ext_bridge
-                and not mapping):
-            config['CONFIG_NEUTRON_OVS_BRIDGE'] = ext_bridge
-            manifestdata = getManifestTemplate('neutron_ovs_bridge.pp')
-            appendManifestFile(manifestfile, manifestdata + '\n')
+
+        if config['CONFIG_NEUTRON_L2_AGENT'] == 'openvswitch':
+            ext_bridge = config['CONFIG_NEUTRON_L3_EXT_BRIDGE']
+            mapping = find_mapping(
+                config['CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'],
+                ext_bridge) if ext_bridge else None
+            if (ext_bridge and not mapping):
+                config['CONFIG_NEUTRON_OVS_BRIDGE'] = ext_bridge
+                manifestdata = getManifestTemplate('neutron_ovs_bridge.pp')
+                appendManifestFile(manifestfile, manifestdata + '\n')
 
         if config['CONFIG_NEUTRON_FWAAS'] == 'y':
             # manifestfile = "%s_neutron_fwaas.pp" % (host,)
