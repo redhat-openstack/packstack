@@ -4,13 +4,9 @@
 Installs and configures MariaDB
 """
 
-import uuid
-import logging
-
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer import utils
-from packstack.installer.utils import split_hosts
 from packstack.modules.common import filtered_hosts
 
 from packstack.modules.ospluginutils import (getManifestTemplate,
@@ -18,7 +14,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- MariaDB Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "MariaDB"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -88,7 +84,7 @@ def initSequences(controller):
     controller.addSequence("Installing MariaDB", [], [], mariadbsteps)
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
     if config['CONFIG_MARIADB_INSTALL'] == 'y':

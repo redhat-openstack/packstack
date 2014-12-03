@@ -4,17 +4,13 @@
 Installs and configures Cinder
 """
 
-import os
 import re
-import uuid
-import logging
 
 from packstack.installer import exceptions
 from packstack.installer import processors
 from packstack.installer import validators
 from packstack.installer.utils import split_hosts
 
-from packstack.installer import basedefs
 from packstack.installer import utils
 
 
@@ -23,11 +19,8 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile,
                                              createFirewallResources)
 
-from packstack.installer import exceptions
-from packstack.installer import output_messages
 
-
-#------------------ oVirt installer initialization ------------------
+# ------------------ Cinder Packstack Plugin initialization ------------------
 
 PLUGIN_NAME = "OS-Cinder"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -453,7 +446,7 @@ def initConfig(controller):
             {"CMD_OPTION": "cinder-netapp-sa-password",
              "USAGE": ("(optional) Password for the NetApp E-Series storage "
                        "array. "
-                        "Defaults to ''."),
+                       "Defaults to ''."),
              "PROMPT": ("Enter a password"),
              "OPTION_LIST": [""],
              "VALIDATORS": [],
@@ -502,7 +495,7 @@ def initConfig(controller):
              "USE_DEFAULT": True,
              "NEED_CONFIRM": False,
              "CONDITION": False},
-         ]
+            ]
     }
 
     conf_groups = [
@@ -527,62 +520,62 @@ def initConfig(controller):
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-         {"GROUP_NAME": "CINDERGLUSTERMOUNTS",
-          "DESCRIPTION": "Cinder gluster Config parameters",
-          "PRE_CONDITION": check_gluster_options,
-          "PRE_CONDITION_MATCH": True,
-          "POST_CONDITION": False,
-          "POST_CONDITION_MATCH": True},
+        {"GROUP_NAME": "CINDERGLUSTERMOUNTS",
+         "DESCRIPTION": "Cinder gluster Config parameters",
+         "PRE_CONDITION": check_gluster_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
 
-         {"GROUP_NAME": "CINDERNFSMOUNTS",
-          "DESCRIPTION": "Cinder NFS Config parameters",
-          "PRE_CONDITION": check_nfs_options,
-          "PRE_CONDITION_MATCH": True,
-          "POST_CONDITION": False,
-          "POST_CONDITION_MATCH": True},
+        {"GROUP_NAME": "CINDERNFSMOUNTS",
+         "DESCRIPTION": "Cinder NFS Config parameters",
+         "PRE_CONDITION": check_nfs_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
 
-         {"GROUP_NAME": "CINDERNETAPPMAIN",
-          "DESCRIPTION": "Cinder NetApp main configuration",
-          "PRE_CONDITION": check_netapp_options,
-          "PRE_CONDITION_MATCH": True,
-          "POST_CONDITION": False,
-          "POST_CONDITION_MATCH": True},
+        {"GROUP_NAME": "CINDERNETAPPMAIN",
+         "DESCRIPTION": "Cinder NetApp main configuration",
+         "PRE_CONDITION": check_netapp_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
 
-         {"GROUP_NAME": "CINDERNETAPPONTAPISCSI",
-          "DESCRIPTION": "Cinder NetApp ONTAP-iSCSI configuration",
-          "PRE_CONDITION": check_netapp_ontap_iscsi_options,
-          "PRE_CONDITION_MATCH": True,
-          "POST_CONDITION": False,
-          "POST_CONDITION_MATCH": True},
+        {"GROUP_NAME": "CINDERNETAPPONTAPISCSI",
+         "DESCRIPTION": "Cinder NetApp ONTAP-iSCSI configuration",
+         "PRE_CONDITION": check_netapp_ontap_iscsi_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
 
-         {"GROUP_NAME": "CINDERNETAPPNFS",
-          "DESCRIPTION": "Cinder NetApp NFS configuration",
-          "PRE_CONDITION": check_netapp_nfs_settings,
-          "PRE_CONDITION_MATCH": True,
-          "POST_CONDITION": False,
-          "POST_CONDITION_MATCH": True},
+        {"GROUP_NAME": "CINDERNETAPPNFS",
+         "DESCRIPTION": "Cinder NetApp NFS configuration",
+         "PRE_CONDITION": check_netapp_nfs_settings,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
 
-         {"GROUP_NAME": "CINDERNETAPPISCSI7MODE",
-          "DESCRIPTION": "Cinder NetApp iSCSI & 7-mode configuration",
-          "PRE_CONDITION": check_netapp_7modeiscsi_options,
-          "PRE_CONDITION_MATCH": True,
-          "POST_CONDITION": False,
-          "POST_CONDITION_MATCH": True},
+        {"GROUP_NAME": "CINDERNETAPPISCSI7MODE",
+         "DESCRIPTION": "Cinder NetApp iSCSI & 7-mode configuration",
+         "PRE_CONDITION": check_netapp_7modeiscsi_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
 
-         {"GROUP_NAME": "CINDERNETAPPVSERVER",
-          "DESCRIPTION": "Cinder NetApp vServer configuration",
-          "PRE_CONDITION": check_netapp_vserver_options,
-          "PRE_CONDITION_MATCH": True,
-          "POST_CONDITION": False,
-          "POST_CONDITION_MATCH": True},
+        {"GROUP_NAME": "CINDERNETAPPVSERVER",
+         "DESCRIPTION": "Cinder NetApp vServer configuration",
+         "PRE_CONDITION": check_netapp_vserver_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
 
-         {"GROUP_NAME": "CINDERNETAPPESERIES",
-          "DESCRIPTION": "Cinder NetApp E-Series configuration",
-          "PRE_CONDITION": check_netapp_eseries_options,
-          "PRE_CONDITION_MATCH": True,
-          "POST_CONDITION": False,
-          "POST_CONDITION_MATCH": True},
-    ]
+        {"GROUP_NAME": "CINDERNETAPPESERIES",
+         "DESCRIPTION": "Cinder NetApp E-Series configuration",
+         "PRE_CONDITION": check_netapp_eseries_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True}
+        ]
     for group in conf_groups:
         params = conf_params[group["GROUP_NAME"]]
         controller.addGroup(group, params)
@@ -620,7 +613,7 @@ def initSequences(controller):
     controller.addSequence("Installing OpenStack Cinder", [], [], cinder_steps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def check_lvm_options(config):
     return (config['CONFIG_CINDER_INSTALL'] == 'y' and
@@ -677,7 +670,7 @@ def check_netapp_eseries_options(config):
             config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "eseries")
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def check_cinder_vg(config, messages):
     cinders_volume = 'cinder-volumes'
@@ -700,7 +693,7 @@ def check_cinder_vg(config, messages):
                                                  "contain a cinder-volumes "
                                                  "volume group")
     match = re.match('^(?P<size>\d+)G$',
-                        config['CONFIG_CINDER_VOLUMES_SIZE'].strip())
+                     config['CONFIG_CINDER_VOLUMES_SIZE'].strip())
     if not match:
         msg = 'Invalid Cinder volumes VG size.'
         raise exceptions.ParamValidationError(msg)

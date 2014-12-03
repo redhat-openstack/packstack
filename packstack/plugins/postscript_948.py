@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 
 """
-Installs and configures an OpenStack Client
+Plugin responsible for post-installation configuration
 """
-
-import logging
 
 from packstack.installer import utils
 
@@ -13,7 +11,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Postscript Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "Postscript"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -38,7 +36,7 @@ def initSequences(controller):
                            postscript_steps)
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
     for hostname in filtered_hosts(config):

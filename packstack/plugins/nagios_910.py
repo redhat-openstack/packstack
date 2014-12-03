@@ -4,12 +4,8 @@
 Installs and configures Nagios
 """
 
-import uuid
-import logging
-
 from packstack.installer import validators
 from packstack.installer import processors
-from packstack.installer import basedefs, output_messages
 from packstack.installer import utils
 
 from packstack.modules.common import filtered_hosts
@@ -18,7 +14,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Nagios Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Nagios"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -62,7 +58,7 @@ def initSequences(controller):
     controller.addSequence("Installing Nagios", [], [], nagiossteps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def _serviceentry(**kwargs):
     s = 'define service {\n'
@@ -90,7 +86,7 @@ def nagios_host(hostname, **kwargs):
     return "%s}\n" % out
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
     manifest_entries = ''

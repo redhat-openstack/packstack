@@ -4,12 +4,10 @@
 Installs and configures Keystone
 """
 
-import logging
 import uuid
 
 from packstack.installer import validators
 from packstack.installer import processors
-from packstack.installer import basedefs
 from packstack.installer import utils
 
 from packstack.modules.ospluginutils import (getManifestTemplate,
@@ -17,7 +15,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              createFirewallResources)
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Keystone Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Keystone"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -137,7 +135,7 @@ def initSequences(controller):
                            keystonesteps)
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']

@@ -1,26 +1,25 @@
 # -*- coding: utf-8 -*-
 
 """
-Installs and configures puppet
+Installs and configures Puppet
 """
 
 import sys
 import logging
 import os
-import platform
 import time
 
 from packstack.installer import utils
-from packstack.installer import basedefs, output_messages
+from packstack.installer import basedefs
 from packstack.installer.exceptions import ScriptRuntimeError, PuppetError
 
 from packstack.modules.common import filtered_hosts
 from packstack.modules.ospluginutils import (manifestfiles,
-                                            generateHieraDataFile)
+                                             generateHieraDataFile)
 from packstack.modules.puppet import scan_logfile, validate_logfile
 
 
-#------------------ oVirt installer initialization ------------------
+# ------------- Puppet Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "Puppet"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -60,7 +59,7 @@ def initSequences(controller):
     controller.addSequence("Puppet", [], [], puppetsteps)
 
 
-#------------------------- helper functions -------------------------
+# ------------------------- helper functions -------------------------
 
 def wait_for_puppet(currently_running, messages):
     log_len = 0
@@ -121,7 +120,7 @@ def wait_for_puppet(currently_running, messages):
                 raise
 
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 def run_cleanup(config, messages):
     localserver = utils.ScriptRunner()
@@ -151,10 +150,8 @@ def install_deps(config, messages):
     for hostname in filtered_hosts(config):
         server = utils.ScriptRunner(hostname)
         packages = ' '.join(deps)
-        server.append("yum install -y %s"
-                          % packages)
-        server.append("yum update -y %s"
-                          % packages)
+        server.append("yum install -y %s" % packages)
+        server.append("yum update -y %s" % packages)
         # yum does not fail if one of the packages is missing
         for package in deps:
             server.append("rpm -q --whatprovides %s" % (package))
