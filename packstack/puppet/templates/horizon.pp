@@ -81,7 +81,7 @@ firewall { "001 horizon ${firewall_port}  incoming":
   action => 'accept',
 }
 
-if ($::selinux != false) {
+if str2bool($::selinux) {
   selboolean{ 'httpd_can_network_connect':
     value      => on,
     persistent => true,
