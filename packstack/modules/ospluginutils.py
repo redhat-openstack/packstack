@@ -74,6 +74,8 @@ manifestfiles = ManifestFiles()
 
 
 def getManifestTemplate(template_name):
+    if not template_name.endswith(".pp"):
+        template_name += ".pp"
     with open(os.path.join(PUPPET_TEMPLATE_DIR, template_name)) as fp:
         return fp.read() % controller.CONF
 
