@@ -29,6 +29,9 @@ define enable_rabbitmq {
     default_pass        => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
     package_provider    => 'yum',
     admin_enable        => false,
+    config_variables    => {
+        'tcp_listen_options'  => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]"
+    }
   }
 
   Package['erlang'] -> Class['rabbitmq']
