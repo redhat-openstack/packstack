@@ -21,7 +21,7 @@ if $provision_tempest_user != '' {
 
   ## Glance
   $image_name                = 'cirros'
-  $image_source              = hiera('CONFIG_PROVISION_TEMPEST_CIRROS_URL')
+  $image_source              = hiera('CONFIG_PROVISION_CIRROS_URL')
   $image_ssh_user            = 'cirros'
 
   ## Neutron
@@ -160,10 +160,7 @@ if $provision_tempest_user != '' {
   ## Tempest
 
   if $configure_tempest {
-    $tempest_requires = concat([
-                                Keystone_user[$username],
-                                Glance_image[$image_name],
-                                ], $neutron_deps)
+    $tempest_requires = concat([Keystone_user[$username]], $neutron_deps)
 
     class { 'tempest':
       tempest_repo_uri          => $tempest_repo_uri,
