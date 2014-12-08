@@ -173,7 +173,7 @@ def initSequences(controller):
 def create_manifest(config, messages):
     manifestfile = "%s_heat.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
-    manifestdata += getManifestTemplate("heat.pp")
+    manifestdata += getManifestTemplate("heat")
 
     fw_details = dict()
     key = "heat"
@@ -191,14 +191,14 @@ def create_manifest(config, messages):
 
 def create_keystone_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_heat.pp")
+    manifestdata = getManifestTemplate("keystone_heat")
     appendManifestFile(manifestfile, manifestdata)
 
 
 def create_cloudwatch_manifest(config, messages):
     manifestfile = "%s_heatcw.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
-    manifestdata += getManifestTemplate("heat_cloudwatch.pp")
+    manifestdata += getManifestTemplate("heat_cloudwatch")
 
     fw_details = dict()
     key = "heat_api_cloudwatch"
@@ -217,7 +217,7 @@ def create_cloudwatch_manifest(config, messages):
 def create_cfn_manifest(config, messages):
     manifestfile = "%s_heatcnf.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
-    manifestdata += getManifestTemplate("heat_cfn.pp")
+    manifestdata += getManifestTemplate("heat_cfn")
 
     fw_details = dict()
     key = "heat_cfn"

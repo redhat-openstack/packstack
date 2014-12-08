@@ -555,19 +555,19 @@ def create_manifests(config, messages):
     config['SERVICE_PLUGINS'] = (service_plugins if service_plugins
                                  else 'undef')
 
-    plugin_manifest = 'neutron_ml2_plugin.pp'
+    plugin_manifest = 'neutron_ml2_plugin'
 
     for host in q_hosts:
         manifest_file = "%s_neutron.pp" % (host,)
-        manifest_data = getManifestTemplate("neutron.pp")
+        manifest_data = getManifestTemplate("neutron")
         manifest_data += getManifestTemplate(get_mq(config, "neutron"))
         appendManifestFile(manifest_file, manifest_data, 'neutron')
 
         if host in api_hosts:
             manifest_file = "%s_neutron.pp" % (host,)
-            manifest_data = getManifestTemplate("neutron_api.pp")
+            manifest_data = getManifestTemplate("neutron_api")
             if config['CONFIG_NOVA_INSTALL'] == 'y':
-                template_name = "neutron_notifications.pp"
+                template_name = "neutron_notifications"
                 manifest_data += getManifestTemplate(template_name)
 
             # Set up any l2 plugin configs we need only on neutron api nodes
@@ -618,7 +618,7 @@ def create_manifests(config, messages):
 
 def create_keystone_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_neutron.pp")
+    manifestdata = getManifestTemplate("keystone_neutron")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -631,7 +631,7 @@ def create_l3_manifests(config, messages):
     for host in network_hosts:
         config['CONFIG_NEUTRON_L3_HOST'] = host
         config['CONFIG_NEUTRON_L3_INTERFACE_DRIVER'] = get_if_driver(config)
-        manifestdata = getManifestTemplate("neutron_l3.pp")
+        manifestdata = getManifestTemplate("neutron_l3")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + '\n')
 
@@ -642,12 +642,12 @@ def create_l3_manifests(config, messages):
                 ext_bridge) if ext_bridge else None
             if (ext_bridge and not mapping):
                 config['CONFIG_NEUTRON_OVS_BRIDGE'] = ext_bridge
-                manifestdata = getManifestTemplate('neutron_ovs_bridge.pp')
+                manifestdata = getManifestTemplate('neutron_ovs_bridge')
                 appendManifestFile(manifestfile, manifestdata + '\n')
 
         if config['CONFIG_NEUTRON_FWAAS'] == 'y':
             # manifestfile = "%s_neutron_fwaas.pp" % (host,)
-            manifestdata = getManifestTemplate("neutron_fwaas.pp")
+            manifestdata = getManifestTemplate("neutron_fwaas")
             appendManifestFile(manifestfile, manifestdata + '\n')
 
 
@@ -658,9 +658,9 @@ def create_dhcp_manifests(config, messages):
         config["CONFIG_NEUTRON_DHCP_HOST"] = host
         config['CONFIG_NEUTRON_DHCP_INTERFACE_DRIVER'] = get_if_driver(config)
         if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
-            manifest_data = getManifestTemplate("neutron_dhcp_mtu.pp")
+            manifest_data = getManifestTemplate("neutron_dhcp_mtu")
         else:
-            manifest_data = getManifestTemplate("neutron_dhcp.pp")
+            manifest_data = getManifestTemplate("neutron_dhcp")
         manifest_file = "%s_neutron.pp" % (host,)
         # Firewall Rules for dhcp in
         fw_details = dict()
@@ -701,7 +701,7 @@ def create_lbaas_manifests(config, messages):
 
     for host in network_hosts:
         config['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = get_if_driver(config)
-        manifestdata = getManifestTemplate("neutron_lbaas.pp")
+        manifestdata = getManifestTemplate("neutron_lbaas")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + "\n")
 
@@ -714,7 +714,7 @@ def create_metering_agent_manifests(config, messages):
 
     for host in network_hosts:
         config['CONFIG_NEUTRON_METERING_IFCE_DRIVER'] = get_if_driver(config)
-        manifestdata = getManifestTemplate("neutron_metering_agent.pp")
+        manifestdata = getManifestTemplate("neutron_metering_agent")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + "\n")
 
@@ -740,7 +740,7 @@ def create_l2_agent_manifests(config, messages):
         config["CONFIG_NEUTRON_OVS_TUNNELING"] = tunnel
         tunnel_types = set(ovs_type) & set(['gre', 'vxlan'])
         config["CONFIG_NEUTRON_OVS_TUNNEL_TYPES"] = list(tunnel_types)
-        template_name = "neutron_ovs_agent.pp"
+        template_name = "neutron_ovs_agent"
 
         bm_arr = get_values(config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"])
         iface_arr = get_values(config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"])
@@ -753,7 +753,7 @@ def create_l2_agent_manifests(config, messages):
         config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"] = bm_arr
     elif agent == "linuxbridge":
         host_var = 'CONFIG_NEUTRON_LB_HOST'
-        template_name = 'neutron_lb_agent.pp'
+        template_name = 'neutron_lb_agent'
     else:
         raise KeyError("Unknown layer2 agent")
 
@@ -772,11 +772,11 @@ def create_l2_agent_manifests(config, messages):
             iface_key = 'CONFIG_NEUTRON_OVS_IFACE'
             for if_map in iface_arr:
                 config[bridge_key], config[iface_key] = if_map.split(':')
-                manifestdata = getManifestTemplate("neutron_ovs_port.pp")
+                manifestdata = getManifestTemplate("neutron_ovs_port")
                 appendManifestFile(manifestfile, manifestdata + "\n")
         # Additional configurations required for compute hosts and
         # network hosts.
-        manifestdata = getManifestTemplate('neutron_bridge_module.pp')
+        manifestdata = getManifestTemplate('neutron_bridge_module')
         appendManifestFile(manifestfile, manifestdata + '\n')
 
 
@@ -786,7 +786,7 @@ def create_metadata_manifests(config, messages):
         return
     for host in network_hosts:
         config['CONFIG_NEUTRON_METADATA_HOST'] = host
-        manifestdata = getManifestTemplate('neutron_metadata.pp')
+        manifestdata = getManifestTemplate('neutron_metadata')
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + "\n")
 

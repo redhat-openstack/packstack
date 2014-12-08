@@ -108,7 +108,7 @@ def create_keystone_manifest(config, messages):
         config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
 
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_glance.pp")
+    manifestdata = getManifestTemplate("keystone_glance")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -117,7 +117,7 @@ def create_manifest(config, messages):
         config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
 
     manifestfile = "%s_glance.pp" % config['CONFIG_STORAGE_HOST']
-    manifestdata = getManifestTemplate("glance.pp")
+    manifestdata = getManifestTemplate("glance")
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
         mq_template = get_mq(config, "glance_ceilometer")
         manifestdata += getManifestTemplate(mq_template)
