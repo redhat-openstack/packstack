@@ -31,7 +31,7 @@ options have yet to be added.
 Then edit `ans.txt` as appropriate e.g.
 
 - set `CONFIG_SSH_KEY` to a public ssh key to be installed to remote machines
-- Edit the IP address to anywhere you want to install a piece of openstack on another server
+- Edit the IP address to anywhere you want to install a piece of OpenStack on another server
 - Edit the 3 network interfaces to whatever makes sense in your setup
 
 you'll need to use a icehouse repository for example for RHEL
@@ -44,7 +44,7 @@ you'll need to use a icehouse repository for example for RHEL
 
     $ packstack
 
-that's it, if everything went well you can now start using openstack
+that's it, if everything went well you can now start using OpenStack
 
     $ cd
     $ . keystonerc_admin
