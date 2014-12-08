@@ -173,7 +173,7 @@ def create_manifest(config, messages):
     config['CONFIG_NAGIOS_MANIFEST_CONFIG'] = manifest_entries
 
     manifestfile = "%s_nagios.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nagios_server.pp")
+    manifestdata = getManifestTemplate("nagios_server")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -181,7 +181,7 @@ def create_nrpe_manifests(config, messages):
     for hostname in filtered_hosts(config):
         config['CONFIG_NRPE_HOST'] = hostname
         manifestfile = "%s_nagios_nrpe.pp" % hostname
-        manifestdata = getManifestTemplate("nagios_nrpe.pp")
+        manifestdata = getManifestTemplate("nagios_nrpe")
 
         # Only the Nagios host is allowed to talk to nrpe
         fw_details = dict()

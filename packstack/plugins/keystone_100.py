@@ -139,7 +139,7 @@ def initSequences(controller):
 
 def create_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone.pp")
+    manifestdata = getManifestTemplate("keystone")
 
     fw_details = dict()
     key = "keystone"

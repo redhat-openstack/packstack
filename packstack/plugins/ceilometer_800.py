@@ -157,7 +157,7 @@ def initSequences(controller):
 def create_manifest(config, messages):
     manifestfile = "%s_ceilometer.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "ceilometer"))
-    manifestdata += getManifestTemplate("ceilometer.pp")
+    manifestdata += getManifestTemplate("ceilometer")
 
     fw_details = dict()
     key = "ceilometer_api"
@@ -173,13 +173,13 @@ def create_manifest(config, messages):
     # Add a template that creates a group for nova because the ceilometer
     # class needs it
     if config['CONFIG_NOVA_INSTALL'] == 'n':
-        manifestdata += getManifestTemplate("ceilometer_nova_disabled.pp")
+        manifestdata += getManifestTemplate("ceilometer_nova_disabled")
     appendManifestFile(manifestfile, manifestdata, 'ceilometer')
 
 
 def create_mongodb_manifest(config, messages):
     manifestfile = "%s_mongodb.pp" % config['CONFIG_MONGODB_HOST']
-    manifestdata = getManifestTemplate("mongodb.pp")
+    manifestdata = getManifestTemplate("mongodb")
 
     fw_details = dict()
     key = "mongodb_server"
@@ -216,5 +216,5 @@ def create_redis_manifest(config, messages):
 
 def create_keystone_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_ceilometer.pp")
+    manifestdata = getManifestTemplate("keystone_ceilometer")
     appendManifestFile(manifestfile, manifestdata)

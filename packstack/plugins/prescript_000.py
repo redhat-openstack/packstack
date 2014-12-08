@@ -669,7 +669,7 @@ def create_manifest(config, messages):
 
     for hostname in filtered_hosts(config):
         manifestfile = "%s_prescript.pp" % hostname
-        manifestdata = getManifestTemplate("prescript.pp")
+        manifestdata = getManifestTemplate("prescript")
         appendManifestFile(manifestfile, manifestdata)
 
 
@@ -690,13 +690,13 @@ def create_ntp_manifest(config, messages):
 
         # Configure chrony for Fedora or RHEL/CentOS 7
         if releaseos == 'Fedora' or releasever == '7':
-            manifestdata = getManifestTemplate('chrony.pp')
+            manifestdata = getManifestTemplate('chrony')
             appendManifestFile('%s_chrony.pp' % hostname,
                                manifestdata,
                                marker=marker)
         # For previous versions, configure ntpd
         else:
-            manifestdata = getManifestTemplate('ntpd.pp')
+            manifestdata = getManifestTemplate('ntpd')
             appendManifestFile('%s_ntpd.pp' % hostname,
                                manifestdata,
                                marker=marker)
