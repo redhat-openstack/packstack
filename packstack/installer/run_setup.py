@@ -33,11 +33,8 @@ masked_value_set = set()
 tmpfiles = []
 
 def initLogging (debug):
-    global logFile
-
     try:
-        logFilename = "openstack-setup.log"
-        logFile = os.path.join(basedefs.DIR_LOG, logFilename)
+        logFile = os.path.join(basedefs.DIR_LOG, basedefs.FILE_LOG)
 
         # Create the log file with specific permissions, puppet has a habbit of putting
         # passwords in logs
@@ -60,6 +57,8 @@ def initLogging (debug):
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_INIT_LOGGER)
+
+    return logFile
 
 def _getInputFromUser(param):
     """
@@ -568,7 +567,7 @@ def _printAdditionalMessages():
     for msg in controller.MESSAGES:
         print output_messages.INFO_ADDTIONAL_MSG_BULLET%(msg)
 
-def _addFinalInfoMsg():
+def _addFinalInfoMsg(logFile):
     """
     add info msg to the user finalizing the
     successfull install of rhemv
@@ -591,8 +590,10 @@ def _summaryParamsToLog():
 def runSequences():
     controller.runAllSequences()
 
-def _main(options, configFile=None):
+def _main(options, configFile=None, logFile=None):
     print output_messages.INFO_HEADER
+    print("")
+    print(output_messages.INFO_LOG_FILE_PATH % logFile)
 
     # Get parameters
     _handleParams(configFile)
@@ -622,7 +623,7 @@ def _main(options, configFile=None):
     #_lockRpmVersion()
 
     # Print info
-    _addFinalInfoMsg()
+    _addFinalInfoMsg(logFile)
     print output_messages.INFO_INSTALL_SUCCESS
 
 
@@ -693,7 +694,7 @@ def generateAnswerFile(outputFile, overrides={}):
                         'conf_name': param.CONF_NAME}
                 ans_file.write(fmt % args)
 
-def single_step_aio_install(options):
+def single_step_aio_install(options, logFile):
     """ Installs an All in One host on this host"""
 
     options.install_hosts = utils.get_localhost_ip()
@@ -713,9 +714,9 @@ def single_step_aio_install(options):
         not options.provision_all_in_one_ovs_bridge):
             options.provision_all_in_one_ovs_bridge = "y"
 
-    single_step_install(options)
+    single_step_install(options, logFile)
 
-def single_step_install(options):
+def single_step_install(options, logFile):
     answerfilepath =  _gettmpanswerfilepath()
     if not answerfilepath:
         _printAdditionalMessages()
@@ -743,7 +744,7 @@ def single_step_install(options):
         overrides[key] = value
 
     generateAnswerFile(answerfilepath, overrides)
-    _main(options,answerfilepath)
+    _main(options,answerfilepath, logFile)
 
 def initCmdLineParser():
     """
@@ -907,7 +908,7 @@ def main():
             raise SystemExit
 
         # Initialize logging
-        initLogging (options.debug)
+        logFile = initLogging (options.debug)
 
         # Parse parameters
         runConfiguration = True
@@ -938,10 +939,10 @@ def main():
                 msg = ('Please use either --allinone or --answer-file, '
                        'but not both.')
                 raise FlagValidationError(msg)
-            single_step_aio_install(options)
+            single_step_aio_install(options, logFile)
         # Are we installing in a single step
         elif options.install_hosts:
-            single_step_install(options)
+            single_step_install(options, logFile)
         # Otherwise, run main()
         else:
             # Make sure only --answer-file was supplied
@@ -958,7 +959,7 @@ def main():
                     raise Exception(output_messages.ERR_NO_ANSWER_FILE % confFile)
             else:
                 _set_command_line_values(options)
-            _main(options,confFile)
+            _main(options, confFile, logFile)
 
     except FlagValidationError as ex:
         optParser.error(str(ex))
