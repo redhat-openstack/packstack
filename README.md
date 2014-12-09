@@ -87,7 +87,7 @@ useful to install from *git* such that updates to the git repositories are
 immediately effective without reinstallation of packstack and
 **openstack-puppet-modules**.
 
-To do this, start with a minimal **Fedora 20** installation.  Then remove any
+To do this, start with a minimal **Fedora 21** installation.  Then remove any
 relevant packages that might conflict:
 
     $ yum -y erase openstack-{packstack*,puppet-modules}
