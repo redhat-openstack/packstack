@@ -23,6 +23,10 @@ if $::operatingsystem in $el_releases and $::operatingsystemmajrelease < 7 {
   }
 }
 
+package { 'sos':
+  ensure => present,
+}
+
 package { 'audit':
   ensure => present,
 } ->

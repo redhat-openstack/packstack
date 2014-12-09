@@ -645,15 +645,12 @@ def server_prep(config, messages):
         server.append('rpm -q --whatprovides yum-utils || '
                       'yum install -y yum-utils')
 
-        # Installing rhos-log-collector and sos-plugins-openstack if
-        # these rpms are available from yum.
-        sos_rpms = ' '.join(('rhos-log-collector',
-                             'sos',
-                             'sos-plugins-openstack'))
+        if is_rhel():
+            # Installing rhos-log-collector if it is available from yum.
+            server.append('yum list available rhos-log-collector && '
+                          'yum -y install rhos-log-collector || '
+                          'echo "no rhos-log-collector available"')
 
-        server.append('yum list available rhos-log-collector && '
-                      'yum -y install %s || '
-                      'echo "no rhos-log-collector available"' % sos_rpms)
         server.execute()
 
         # enable RDO if it is installed locally
