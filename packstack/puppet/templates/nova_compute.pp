@@ -40,6 +40,7 @@ class { 'nova::compute':
   vncproxy_host                 => hiera('CONFIG_CONTROLLER_HOST'),
   vncproxy_protocol             => $vncproxy_proto,
   vncserver_proxyclient_address => hiera('CONFIG_NOVA_COMPUTE_HOST'),
+  compute_manager               => hiera('CONFIG_NOVA_COMPUTE_MANAGER'),
 }
 
 

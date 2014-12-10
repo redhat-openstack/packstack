@@ -424,6 +424,12 @@ def initSequences(controller):
     config = controller.CONF
     if config['CONFIG_NEUTRON_INSTALL'] != 'y':
         return
+    if config['CONFIG_IRONIC_INSTALL'] == 'y':
+        config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS'] += ', flat'
+        config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'] += ', flat'
+        if 'openvswitch' not in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']:
+            config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += 'openvswitch'
+        config['CONFIG_NEUTRON_ML2_FLAT_NETWORKS'] = 'physnet1'
 
     plugin_db = 'neutron'
     plugin_path = 'neutron.plugins.ml2.plugin.Ml2Plugin'
