@@ -270,6 +270,24 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "os-ironic-install",
+             "USAGE": (
+                "Set to 'y' if you would like Packstack to install "
+                "OpenStack Bare Metal (Ironic)"
+             ),
+             "PROMPT": (
+                "Should Packstack install OpenStack Bare Metal (Ironic)"
+             ),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_IRONIC_INSTALL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "os-client-install",
              "USAGE": (
                  "Set to 'y' if you would like Packstack to install "
@@ -380,6 +398,7 @@ def initConfig(controller):
                             'CONFIG_GLANCE_HOST',
                             'CONFIG_HORIZON_HOST',
                             'CONFIG_HEAT_HOST',
+                            'CONFIG_IRONIC_HOST',
                             'CONFIG_KEYSTONE_HOST',
                             'CONFIG_NAGIOS_HOST',
                             'CONFIG_NEUTRON_SERVER_HOST',
