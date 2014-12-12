@@ -11,7 +11,7 @@ class { 'swift::ringserver':
   local_net_ip => hiera('CONFIG_CONTROLLER_HOST'),
 }
 
-if ($::selinux != false) {
+if str2bool($::selinux) {
   selboolean { 'rsync_export_all_ro':
     value      => on,
     persistent => true,
