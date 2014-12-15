@@ -95,13 +95,13 @@ def create_manifest(config, messages):
         host = config['CONFIG_CONTROLLER_HOST']
 
     manifestfile = "%s_mariadb.pp" % host
-    manifestdata = [getManifestTemplate('mariadb_%s.pp' % suffix)]
+    manifestdata = [getManifestTemplate('mariadb_%s' % suffix)]
 
     def append_for(module, suffix):
         # Modules have to be appended to the existing mysql.pp
         # otherwise pp will fail for some of them saying that
         # Mysql::Config definition is missing.
-        template = "mariadb_%s_%s.pp" % (module, suffix)
+        template = "mariadb_%s_%s" % (module, suffix)
         manifestdata.append(getManifestTemplate(template))
 
     append_for("keystone", suffix)

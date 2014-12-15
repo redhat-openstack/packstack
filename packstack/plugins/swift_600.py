@@ -251,7 +251,7 @@ def create_keystone_manifest(config, messages):
     global devices
     devices = parse_devices(config)
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_swift.pp")
+    manifestdata = getManifestTemplate("keystone_swift")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -267,7 +267,7 @@ def create_builder_manifest(config, messages):
         return fmt % (dev_type, host, dev_port, devicename, zone)
 
     manifestfile = "%s_ring_swift.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("swift_builder.pp")
+    manifestdata = getManifestTemplate("swift_builder")
 
     # Add each device to the ring
     devicename = 0
@@ -285,7 +285,7 @@ def create_builder_manifest(config, messages):
 
 def create_proxy_manifest(config, messages):
     manifestfile = "%s_swift.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("swift_proxy.pp")
+    manifestdata = getManifestTemplate("swift_proxy")
 
     fw_details = dict()
     key = "swift_proxy"
@@ -305,7 +305,7 @@ def create_storage_manifest(config, messages):
     global devices
 
     manifestfile = "%s_swift.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("swift_storage.pp")
+    manifestdata = getManifestTemplate("swift_storage")
 
     # this need to happen once per storage device
     for device in devices:
@@ -321,7 +321,7 @@ def create_storage_manifest(config, messages):
         else:
             # create loopback device if none was specified
             config['CONFIG_SWIFT_STORAGE_SEEK'] = get_storage_size(config)
-            manifestdata += "\n" + getManifestTemplate("swift_loopback.pp")
+            manifestdata += "\n" + getManifestTemplate("swift_loopback")
 
     # set allowed hosts for firewall
     hosts = set([config['CONFIG_CONTROLLER_HOST']])
@@ -346,5 +346,5 @@ def create_storage_manifest(config, messages):
 def create_common_manifest(config, messages):
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_swift.pp"):
-            data = getManifestTemplate("swift_common.pp")
+            data = getManifestTemplate("swift_common")
             appendManifestFile(os.path.split(manifestfile)[1], data)

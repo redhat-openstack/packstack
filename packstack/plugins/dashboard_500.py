@@ -169,7 +169,7 @@ def create_manifest(config, messages):
         if config["CONFIG_NEUTRON_FWAAS"] == 'y':
             config["CONFIG_HORIZON_NEUTRON_FW"] = True
 
-    manifestdata = getManifestTemplate("horizon.pp")
+    manifestdata = getManifestTemplate("horizon")
     appendManifestFile(manifestfile, manifestdata)
 
     msg = ("To access the OpenStack Dashboard browse to %s://%s/dashboard .\n"
