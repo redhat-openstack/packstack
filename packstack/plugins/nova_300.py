@@ -109,6 +109,7 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
         ],
 
         "NOVA_NETWORK": [
@@ -192,20 +193,6 @@ def initConfig(controller):
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_NOVA_NETWORK_FLOATRANGE",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-default-floating-pool",
-             "USAGE": ("Name of the default floating pool to which the "
-                       "specified floating ranges are added to"),
-             "PROMPT": "What should the default floating pool be called?",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": "nova",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_DEFAULTFLOATINGPOOL",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},

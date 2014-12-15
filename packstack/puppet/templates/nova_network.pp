@@ -1,9 +1,7 @@
 
-$default_floating_pool   = hiera('CONFIG_NOVA_NETWORK_DEFAULTFLOATINGPOOL')
 $auto_assign_floating_ip = hiera('CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP')
 
 nova_config {
-  'DEFAULT/default_floating_pool':   value => $default_floating_pool;
   'DEFAULT/auto_assign_floating_ip': value => $auto_assign_floating_ip;
 }
 
