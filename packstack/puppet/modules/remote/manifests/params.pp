@@ -6,11 +6,7 @@ class remote::params {
       case $::operatingsystem {
 
         'Fedora': {
-          if (is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 19) or $::operatingsystemrelease == 'Rawhide' {
-            $mysql_client_package = 'mariadb'
-          } else {
-            $mysql_client_package = 'mysql'
-          }
+          $mysql_client_package = 'mariadb'
         }
 
         'RedHat', 'CentOS', 'Scientific': {
