@@ -41,6 +41,7 @@ finally:
 _tmpdirprefix = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-')
 VAR_DIR = tempfile.mkdtemp(prefix=_tmpdirprefix, dir=PACKSTACK_VAR_DIR)
 DIR_LOG = VAR_DIR
+FILE_LOG = 'openstack-setup.log'
 PUPPET_MANIFEST_RELATIVE = "manifests"
 PUPPET_MANIFEST_DIR = os.path.join(VAR_DIR, PUPPET_MANIFEST_RELATIVE)
 HIERADATA_FILE_RELATIVE = "hieradata"
