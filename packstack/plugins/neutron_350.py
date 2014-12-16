@@ -593,9 +593,9 @@ def create_manifests(config, messages):
         # We also need to open VXLAN/GRE port for agent
         manifest_data = ""
         if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
-            cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s"
-                                            % host)
             for n_host in network_hosts:
+                cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s_%s"
+                                            % (host, n_host))
                 fw_details = dict()
                 key = "neutron_tunnel_%s_%s" % (host, n_host)
                 fw_details.setdefault(key, {})
