@@ -530,6 +530,7 @@ def manage_epel(host, config):
         enabled = '(0|False)'
 
     server.clear()
+    server.append('rpm -q yum-utils || yum -y install yum-utils')
     server.append('yum-config-manager --%(cmd)s epel' % locals())
     rc, out = server.execute()
 
