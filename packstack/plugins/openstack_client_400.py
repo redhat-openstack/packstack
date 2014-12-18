@@ -61,7 +61,7 @@ def create_manifest(config, messages):
                         root_home != homedir)
     config['NO_ROOT_USER_ALLINONE'] = no_root_allinone and True or False
 
-    manifestdata = getManifestTemplate("openstack_client.pp")
+    manifestdata = getManifestTemplate("openstack_client")
     appendManifestFile(manifestfile, manifestdata)
 
     msg = ("File %s/keystonerc_admin has been created on OpenStack client host"

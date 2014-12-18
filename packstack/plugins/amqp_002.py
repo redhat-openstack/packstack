@@ -241,7 +241,7 @@ def create_manifest(config, messages):
         config['CONFIG_AMQP_AUTH_USER'] = 'guest'
 
     manifestfile = "%s_amqp.pp" % config['CONFIG_AMQP_HOST']
-    manifestdata = getManifestTemplate('amqp.pp')
+    manifestdata = getManifestTemplate('amqp')
 
     fw_details = dict()
     # All hosts should be able to talk to amqp

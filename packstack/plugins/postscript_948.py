@@ -41,7 +41,7 @@ def initSequences(controller):
 def create_manifest(config, messages):
     for hostname in filtered_hosts(config):
         manifestfile = "%s_postscript.pp" % hostname
-        manifestdata = getManifestTemplate("postscript.pp")
+        manifestdata = getManifestTemplate("postscript")
         appendManifestFile(manifestfile, manifestdata, 'postscript')
         # TO-DO: remove this temporary fix for nova-network/neutron
         #        undeterministic behavior
@@ -52,5 +52,5 @@ def create_manifest(config, messages):
         if config.get('CONFIG_NEUTRON_INSTALL', 'n') == 'y' and provision:
             fmted = config['CONFIG_NEUTRON_L3_EXT_BRIDGE'].replace('-', '_')
             config['EXT_BRIDGE_VAR'] = fmted
-            manifestdata = getManifestTemplate("persist_ovs_bridge.pp")
+            manifestdata = getManifestTemplate("persist_ovs_bridge")
             appendManifestFile(manifestfile, manifestdata, 'postscript')

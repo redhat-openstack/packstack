@@ -287,7 +287,7 @@ def using_neutron(config):
 def create_demo_manifest(config, messages):
     using_neutron(config)
     manifest_file = '%s_provision_demo.pp' % config['CONFIG_CONTROLLER_HOST']
-    manifest_data = getManifestTemplate("provision_demo.pp")
+    manifest_data = getManifestTemplate("provision_demo")
     appendManifestFile(manifest_file, manifest_data)
 
 
@@ -296,10 +296,10 @@ def create_storage_manifest(config, messages):
         config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
 
     if config['CONFIG_PROVISION_TEMPEST']:
-        template = "provision_tempest_glance.pp"
+        template = "provision_tempest_glance"
     else:
-        template = "provision_demo_glance.pp"
-    manifest_file = '%s_provision_glance.pp' % config['CONFIG_STORAGE_HOST']
+        template = "provision_demo_glance"
+    manifest_file = '%s_provision_glance' % config['CONFIG_STORAGE_HOST']
     manifest_data = getManifestTemplate(template)
     appendManifestFile(manifest_file, manifest_data)
 
@@ -308,5 +308,5 @@ def create_tempest_manifest(config, messages):
     using_neutron(config)
     manifest_file = '%s_provision_tempest.pp' % \
                     config['CONFIG_CONTROLLER_HOST']
-    manifest_data = getManifestTemplate("provision_tempest.pp")
+    manifest_data = getManifestTemplate("provision_tempest")
     appendManifestFile(manifest_file, manifest_data)

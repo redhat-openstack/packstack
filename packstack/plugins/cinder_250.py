@@ -710,7 +710,7 @@ def create_keystone_manifest(config, messages):
         config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
 
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_cinder.pp")
+    manifestdata = getManifestTemplate("keystone_cinder")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -720,16 +720,16 @@ def create_manifest(config, messages):
 
     manifestdata = getManifestTemplate(get_mq(config, "cinder"))
     manifestfile = "%s_cinder.pp" % config['CONFIG_STORAGE_HOST']
-    manifestdata += getManifestTemplate("cinder.pp")
+    manifestdata += getManifestTemplate("cinder")
 
     backends = config['CONFIG_CINDER_BACKEND']
     if 'netapp' in backends:
         backends.remove('netapp')
-        puppet_cdot_iscsi = "cinder_netapp_cdot_iscsi.pp"
-        puppet_cdot_nfs = "cinder_netapp_cdot_nfs.pp"
-        puppet_7mode_iscsi = "cinder_netapp_7mode_iscsi.pp"
-        puppet_7mode_nfs = "cinder_netapp_7mode_nfs.pp"
-        puppet_eseries = "cinder_netapp_eseries.pp"
+        puppet_cdot_iscsi = "cinder_netapp_cdot_iscsi"
+        puppet_cdot_nfs = "cinder_netapp_cdot_nfs"
+        puppet_7mode_iscsi = "cinder_netapp_7mode_iscsi"
+        puppet_7mode_nfs = "cinder_netapp_7mode_nfs"
+        puppet_eseries = "cinder_netapp_eseries"
         if config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "ontap_cluster":
             if config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == "iscsi":
                 manifestdata += getManifestTemplate(puppet_cdot_iscsi)
@@ -743,12 +743,12 @@ def create_manifest(config, messages):
         elif config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "eseries":
             manifestdata += getManifestTemplate(puppet_eseries)
     for backend in backends:
-        manifestdata += getManifestTemplate('cinder_%s.pp' % backend)
+        manifestdata += getManifestTemplate('cinder_%s' % backend)
 
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
-        manifestdata += getManifestTemplate('cinder_ceilometer.pp')
+        manifestdata += getManifestTemplate('cinder_ceilometer')
     if config['CONFIG_SWIFT_INSTALL'] == 'y':
-        manifestdata += getManifestTemplate('cinder_backup.pp')
+        manifestdata += getManifestTemplate('cinder_backup')
 
     fw_details = dict()
     for host in split_hosts(config['CONFIG_COMPUTE_HOSTS']):

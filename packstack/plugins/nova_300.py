@@ -415,7 +415,7 @@ def create_api_manifest(config, messages):
         config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = \
             "%s" % config['CONFIG_NEUTRON_METADATA_PW']
     manifestfile = "%s_api_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_api.pp")
+    manifestdata = getManifestTemplate("nova_api")
 
     fw_details = dict()
     key = "nova_api"
@@ -433,19 +433,19 @@ def create_api_manifest(config, messages):
 
 def create_keystone_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_nova.pp")
+    manifestdata = getManifestTemplate("keystone_nova")
     appendManifestFile(manifestfile, manifestdata)
 
 
 def create_cert_manifest(config, messages):
     manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_cert.pp")
+    manifestdata = getManifestTemplate("nova_cert")
     appendManifestFile(manifestfile, manifestdata)
 
 
 def create_conductor_manifest(config, messages):
     manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_conductor.pp")
+    manifestdata = getManifestTemplate("nova_conductor")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -486,11 +486,11 @@ def create_compute_manifest(config, messages):
             ssh_keys_details[key]['type'] = host_key_type
 
     config['SSH_KEYS'] = ssh_keys_details
-    ssh_hostkeys += getManifestTemplate("sshkey.pp")
+    ssh_hostkeys += getManifestTemplate("sshkey")
 
     for host in compute_hosts:
         config["CONFIG_NOVA_COMPUTE_HOST"] = host
-        manifestdata = getManifestTemplate("nova_compute.pp")
+        manifestdata = getManifestTemplate("nova_compute")
 
         fw_details = dict()
         cf_fw_qemu_mig_key = "FIREWALL_NOVA_QEMU_MIG_RULES_%s" % host
@@ -507,17 +507,17 @@ def create_compute_manifest(config, messages):
         manifestdata += createFirewallResources(cf_fw_qemu_mig_key)
 
         if config['CONFIG_VMWARE_BACKEND'] == 'y':
-            manifestdata += getManifestTemplate("nova_compute_vmware.pp")
+            manifestdata += getManifestTemplate("nova_compute_vmware")
         else:
-            manifestdata += getManifestTemplate("nova_compute_libvirt.pp")
+            manifestdata += getManifestTemplate("nova_compute_libvirt")
         if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
                 config['CONFIG_CINDER_INSTALL'] == 'y' and
                 'gluster' in config['CONFIG_CINDER_BACKEND']):
-            manifestdata += getManifestTemplate("nova_gluster.pp")
+            manifestdata += getManifestTemplate("nova_gluster")
         if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
                 config['CONFIG_CINDER_INSTALL'] == 'y' and
                 'nfs' in config['CONFIG_CINDER_BACKEND']):
-            manifestdata += getManifestTemplate("nova_nfs.pp")
+            manifestdata += getManifestTemplate("nova_nfs")
         manifestfile = "%s_nova.pp" % host
 
         nova_config_options = NovaConfig()
@@ -537,7 +537,7 @@ def create_compute_manifest(config, messages):
         if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
             mq_template = get_mq(config, "nova_ceilometer")
             manifestdata += getManifestTemplate(mq_template)
-            manifestdata += getManifestTemplate("nova_ceilometer.pp")
+            manifestdata += getManifestTemplate("nova_ceilometer")
 
         fw_details = dict()
         key = "nova_compute"
@@ -589,26 +589,26 @@ def create_network_manifest(config, messages):
         config['CONFIG_NOVA_NETWORK_FIXEDSIZE'] = str(net_size)
 
         manifestfile = "%s_nova.pp" % host
-        manifestdata = getManifestTemplate("nova_network.pp")
+        manifestdata = getManifestTemplate("nova_network")
         # Restart libvirt if we deploy nova network on compute
         if host in compute_hosts:
-            manifestdata += getManifestTemplate("nova_network_libvirt.pp")
+            manifestdata += getManifestTemplate("nova_network_libvirt")
 
         # in multihost mode each compute host runs nova-api-metadata
         if multihost and host != api_host and host in compute_hosts:
-            manifestdata += getManifestTemplate("nova_metadata.pp")
+            manifestdata += getManifestTemplate("nova_metadata")
         appendManifestFile(manifestfile, manifestdata)
 
 
 def create_sched_manifest(config, messages):
     manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_sched.pp")
+    manifestdata = getManifestTemplate("nova_sched")
     appendManifestFile(manifestfile, manifestdata)
 
 
 def create_vncproxy_manifest(config, messages):
     manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_vncproxy.pp")
+    manifestdata = getManifestTemplate("nova_vncproxy")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -653,9 +653,9 @@ def create_common_manifest(config, messages):
 
             data = getManifestTemplate(get_mq(config, "nova_common"))
             if pw_in_sqlconn:
-                data += getManifestTemplate("nova_common_pw.pp")
+                data += getManifestTemplate("nova_common_pw")
             else:
-                data += getManifestTemplate("nova_common_nopw.pp")
+                data += getManifestTemplate("nova_common_nopw")
             appendManifestFile(os.path.split(manifestfile)[1], data)
 
 
@@ -668,5 +668,5 @@ def create_neutron_manifest(config, messages):
 
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
-            data = getManifestTemplate("nova_neutron.pp")
+            data = getManifestTemplate("nova_neutron")
             appendManifestFile(os.path.split(manifestfile)[1], data)
