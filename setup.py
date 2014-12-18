@@ -82,7 +82,7 @@ setup(
     version=version.version_string(),
     author="Derek Higgins",
     author_email="derekh@redhat.com",
-    description=("A utility to install openstack"),
+    description=("A utility to install OpenStack"),
     license="ASL 2.0",
     keywords="openstack",
     url="https://github.com/stackforge/packstack",

@@ -296,7 +296,7 @@ def initSequences(controller):
         return
 
     if controller.CONF['CONFIG_NEUTRON_INSTALL'] == 'y':
-        network_title = ('Adding Openstack Network-related '
+        network_title = ('Adding OpenStack Network-related '
                          'Nova manifest entries')
         network_function = create_neutron_manifest
     else:
@@ -361,7 +361,7 @@ def bring_up_ifcfg(host, device):
             server.execute()
         except ScriptRuntimeError:
             msg = ('Failed to bring up network interface %s on host %s.'
-                   ' Interface should be up so Openstack can work'
+                   ' Interface should be up so OpenStack can work'
                    ' properly.' % (device, host))
             raise ScriptRuntimeError(msg)
 
