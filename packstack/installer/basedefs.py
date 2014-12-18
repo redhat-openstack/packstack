@@ -13,7 +13,7 @@ import tempfile
 from .utils import get_current_user
 
 
-APP_NAME = "Installer"
+APP_NAME = "Packstack"
 
 FILE_YUM_VERSION_LOCK = "/etc/yum/pluginconf.d/versionlock.list"
 

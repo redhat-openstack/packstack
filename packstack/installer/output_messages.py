@@ -18,7 +18,7 @@ import basedefs
 ####INFO MESSAGES####
 #####################
 
-INFO_HEADER="Welcome to %s setup utility" % basedefs.APP_NAME
+INFO_HEADER="Welcome to the %s setup utility" % basedefs.APP_NAME
 INFO_INSTALL_SUCCESS="\n **** Installation completed successfully ******\n"
 INFO_INSTALL="Installing:"
 INFO_DSPLY_PARAMS="\n%s will be installed using the following configuration:" % basedefs.APP_NAME
