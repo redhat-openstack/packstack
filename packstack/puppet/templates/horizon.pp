@@ -1,5 +1,7 @@
 include packstack::apache_common
 
+$keystone_host = hiera('CONFIG_CONTROLLER_HOST')
+
 $horizon_packages = ['python-memcached', 'python-netaddr']
 
 package { $horizon_packages:
@@ -14,7 +16,7 @@ $is_django_debug = hiera('CONFIG_DEBUG_MODE') ? {
 
 class {'horizon':
   secret_key            => hiera('CONFIG_HORIZON_SECRET_KEY'),
-  keystone_host         => hiera('CONFIG_CONTROLLER_HOST'),
+  keystone_url          => "http://${keystone_host}:5000/v2.0",
   keystone_default_role => '_member_',
   # fqdn => [hiera('CONFIG_CONTROLLER_HOST'), "$::fqdn", 'localhost'],
   # TO-DO: Parameter fqdn is used both for ALLOWED_HOSTS in settings_local.py

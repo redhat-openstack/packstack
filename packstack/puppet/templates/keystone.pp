@@ -3,11 +3,12 @@ $keystone_service_name = hiera('CONFIG_KEYSTONE_SERVICE_NAME')
 $keystone_cfg_ks_db_pw = hiera('CONFIG_KEYSTONE_DB_PW')
 $keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 $keystone_endpoint_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$keystone_token_provider_str = downcase(hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'))
 
 class { 'keystone':
   admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
   database_connection => "mysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
-  token_format        => hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'),
+  token_provider      => "keystone.token.providers.${keystone_token_provider_str}.Provider",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
   service_name        => $keystone_service_name,
