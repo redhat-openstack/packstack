@@ -110,6 +110,20 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "nova-compute-manager",
+             "USAGE": ("The manager that will run nova compute."),
+             "PROMPT": ("Enter the compute manager for nova "
+                        "migration"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "nova.compute.manager.ComputeManager",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NOVA_COMPUTE_MANAGER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
         ],
 
         "NOVA_NETWORK": [
@@ -489,6 +503,10 @@ def create_compute_manifest(config, messages):
     ssh_hostkeys += getManifestTemplate("sshkey")
 
     for host in compute_hosts:
+        if config['CONFIG_IRONIC_INSTALL'] == 'y':
+            cm = 'ironic.nova.compute.manager.ClusteredComputeManager'
+            config['CONFIG_NOVA_COMPUTE_MANAGER'] = cm
+
         config["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute")
 
@@ -507,9 +525,12 @@ def create_compute_manifest(config, messages):
         manifestdata += createFirewallResources(cf_fw_qemu_mig_key)
 
         if config['CONFIG_VMWARE_BACKEND'] == 'y':
-            manifestdata += getManifestTemplate("nova_compute_vmware")
+            manifestdata += getManifestTemplate("nova_compute_vmware.pp")
+        elif config['CONFIG_IRONIC_INSTALL'] == 'y':
+            manifestdata += getManifestTemplate("nova_compute_ironic.pp")
         else:
-            manifestdata += getManifestTemplate("nova_compute_libvirt")
+            manifestdata += getManifestTemplate("nova_compute_libvirt.pp")
+
         if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
                 config['CONFIG_CINDER_INSTALL'] == 'y' and
                 'gluster' in config['CONFIG_CINDER_BACKEND']):
@@ -602,7 +623,13 @@ def create_network_manifest(config, messages):
 
 def create_sched_manifest(config, messages):
     manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_sched")
+    if config['CONFIG_IRONIC_INSTALL'] == 'y':
+        manifestdata = getManifestTemplate("nova_sched_ironic.pp")
+        ram_alloc = '1.0'
+        config['CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO'] = ram_alloc
+        manifestdata += getManifestTemplate("nova_sched.pp")
+    else:
+        manifestdata = getManifestTemplate("nova_sched.pp")
     appendManifestFile(manifestfile, manifestdata)
 
 
@@ -663,8 +690,12 @@ def create_neutron_manifest(config, messages):
     if config['CONFIG_NEUTRON_INSTALL'] != "y":
         return
 
-    virt_driver = 'nova.virt.libvirt.vif.LibvirtGenericVIFDriver'
-    config['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = virt_driver
+    if config['CONFIG_IRONIC_INSTALL'] == 'y':
+        virt_driver = 'nova.virt.firewall.NoopFirewallDriver'
+        config['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = virt_driver
+    else:
+        virt_driver = 'nova.virt.libvirt.vif.LibvirtGenericVIFDriver'
+        config['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = virt_driver
 
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):

@@ -44,6 +44,9 @@ Global Options
 **CONFIG_SAHARA_INSTALL**
     Set to 'y' if you would like Packstack to install Sahara ['y', 'n'].
 
+**CONFIG_IRONIC_INSTALL**
+    Set to 'y' if you would like Packstack to install Ironic ['y', 'n'].
+
 **CONFIG_CLIENT_INSTALL**
     Set to 'y' if you would like Packstack to install the OpenStack Client packages. An admin "rc" file will also be installed ['y', 'n'].
 
@@ -72,7 +75,7 @@ Global Options
     Set to 'y' if you would like Packstack to install Openstack Database (Trove)
 
 **CONFIG_CONTROLLER_HOST**
-    The IP address of the server on which to install OpenStack services specific to controller role such as API servers, Horizon, etc. This parameter replaced following deprecated parameters: CONFIG_CEILOMETER_HOST, CONFIG_CINDER_HOST, CONFIG_GLANCE_HOST, CONFIG_HORIZON_HOST, CONFIG_HEAT_HOST, CONFIG_KEYSTONE_HOST, CONFIG_NAGIOS_HOST, CONFIG_NEUTRON_SERVER_HOST, CONFIG_NEUTRON_LBAAS_HOSTS, CONFIG_NOVA_API_HOST, CONFIG_NOVA_CERT_HOST, CONFIG_NOVA_VNCPROXY_HOST, CONFIG_NOVA_SCHED_HOST, CONFIG_OSCLIENT_HOST, CONFIG_SWIFT_PROXY_HOSTS.
+    The IP address of the server on which to install OpenStack services specific to controller role such as API servers, Horizon, etc. This parameter replaced following deprecated parameters: CONFIG_CEILOMETER_HOST, CONFIG_CINDER_HOST, CONFIG_GLANCE_HOST, CONFIG_HORIZON_HOST, CONFIG_HEAT_HOST, CONFIG_IRONIC_HOST, CONFIG_KEYSTONE_HOST, CONFIG_NAGIOS_HOST, CONFIG_NEUTRON_SERVER_HOST, CONFIG_NEUTRON_LBAAS_HOSTS, CONFIG_NOVA_API_HOST, CONFIG_NOVA_CERT_HOST, CONFIG_NOVA_VNCPROXY_HOST, CONFIG_NOVA_SCHED_HOST, CONFIG_OSCLIENT_HOST, CONFIG_SWIFT_PROXY_HOSTS.
 
 **CONFIG_COMPUTE_HOSTS**
     The list of IP addresses of the server on which to install the Nova compute service. This parameter replaced following deprecated parameters: CONFIG_NOVA_COMPUTE_HOSTS.
@@ -275,6 +278,9 @@ Nova Options
 **CONFIG_NOVA_NETWORK_HOSTS**
     List of IP address of the servers on which to install the Nova Network service.
 
+**CONFIG_NOVA_COMPUTE_MANAGER**
+    The driver that will manage the running instances from creation to destruction.
+
 **CONFIG_NOVA_DB_PW**
     The password to use for the Nova to access DB.
 
@@ -319,6 +325,15 @@ Nova Options
 
 **CONFIG_NOVA_NETWORK_VLAN_START**
     First VLAN for private networks.
+
+Ironic Config parameters
+-----------------------
+
+**CONFIG_IRONIC_DB_PW**
+    The password used by Ironic user to authenticate against MariaDB.
+
+**CONFIG_IRONIC_KS_PW**
+    The password to use for the Ironic to authenticate with Keystone.
 
 OpenStack Horizon Config parameters
 -----------------------------------
@@ -426,7 +441,8 @@ Ceilometer Config Parameters
     The password to use for Ceilometer to authenticate with Keystone.
 
 **CONFIG_CEILOMETER_COORDINATION_BACKEND**
-    Specify an optional backend for group membership coordination in the alarm evaluator and central agent. Currently the only valid option are 'redis' or 'none'. The default is 'redis'.
+    Specify an optional backend for group membership coordination in the alarm evaluator and central
+ agent. Currently the only valid option are 'redis' or 'none'. The default is 'redis'.
 
 **CONFIG_REDIS_HOST**
     The IP address of the server on which to install Redis, if Redis is being used for coordination.
