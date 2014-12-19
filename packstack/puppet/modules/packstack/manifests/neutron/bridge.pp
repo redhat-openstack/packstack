@@ -2,6 +2,14 @@
 # Loads bridge modules and sets appropriate sysctl.conf variables
 
 class packstack::neutron::bridge {
+    if $::operatingsystem == 'Fedora' and (is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 22 or $::operatingsystemrelease == 'Rawhide') {
+        exec { 'load-br-netfilter':
+            path => ['/sbin', '/usr/sbin'],
+            command => 'modprobe -b br_netfilter',
+            logoutput => 'on_failure',
+            before => Exec['load-bridge'],
+        }
+    }
     file { 'bridge-module-loader':
         path => '/etc/sysconfig/modules/openstack-neutron.modules',
         ensure => present,
