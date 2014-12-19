@@ -234,6 +234,24 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "os-sahara-install",
+             "USAGE": (
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Clustering (Sahara)"
+             ),
+             "PROMPT": (
+                 "Should Packstack install OpenStack Clustering (Sahara)"
+             ),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SAHARA_INSTALL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "os-client-install",
              "USAGE": (
                  "Set to 'y' if you would like Packstack to install "
@@ -519,6 +537,23 @@ def initConfig(controller):
                  "such as Glance and Cinder."
              ),
              "PROMPT": "Enter the IP address of the storage host",
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_ip,
+                            validators.validate_ssh],
+             "DEFAULT_VALUE": utils.get_localhost_ip(),
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CONF_NAME": "CONFIG_SAHARA_HOST",
+             "CMD_OPTION": "os-sahara-host",
+             "USAGE": (
+                 "(Unsupported!) The IP address of the server on which "
+                 "to install OpenStack services specific to Sahara"
+             ),
+             "PROMPT": "Enter the IP address of the Sahara host",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_ip,
                             validators.validate_ssh],
