@@ -41,6 +41,9 @@ Global Options
 **CONFIG_SWIFT_INSTALL**
     Set to 'y' if you would like Packstack to install Swift ['y', 'n'].
 
+**CONFIG_SAHARA_INSTALL**
+    Set to 'y' if you would like Packstack to install Sahara ['y', 'n'].
+
 **CONFIG_CLIENT_INSTALL**
     Set to 'y' if you would like Packstack to install the OpenStack Client packages. An admin "rc" file will also be installed ['y', 'n'].
 
@@ -509,7 +512,6 @@ Neutron Config Parameters
 **CONFIG_NEUTRON_ML2_VNI_RANGES**
     A comma separated list of **<vni_min>:<vni_max>** tuples enumerating ranges of VXLAN VNI IDs that are available for tenant network allocation. Min value is 0 and Max value is 16777215.
 
-
 Provision Config Parameters
 ---------------------------
 
@@ -539,6 +541,18 @@ Provision Config Parameters
 
 **CONFIG_PROVISION_TEMPEST_REPO_URI**
     The uri of the tempest git repository to use.
+
+Sahara Config Parameters
+------------------------
+
+**CONFIG_SAHARA_DB_PW**
+    The password to use for Sahara to access DB.
+
+**CONFIG_SAHARA_HOST**
+    The IP address of the server on which to install Sahara if Sahara is being installed.
+
+**CONFIG_SAHARA_KS_PW**
+    The password to use for Sahara to authenticate with Keystone.
 
 Log files and Debug info
 ------------------------
