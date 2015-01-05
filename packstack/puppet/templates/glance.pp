@@ -10,6 +10,7 @@ class { 'glance::api':
   database_connection => "mysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
+  os_region_name      => hiera('CONFIG_KEYSTONE_REGION')
 }
 
 class { 'glance::registry':
@@ -21,4 +22,3 @@ class { 'glance::registry':
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
 }
-

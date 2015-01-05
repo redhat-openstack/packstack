@@ -12,4 +12,3 @@
     disk_format      => 'qcow2',
     source           => $image_source,
   }
-
