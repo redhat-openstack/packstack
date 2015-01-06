@@ -627,16 +627,23 @@ def _main(options, configFile=None, logFile=None):
     print output_messages.INFO_INSTALL_SUCCESS
 
 
-def remove_remote_var_dirs():
+def remove_remote_var_dirs(options, config, messages):
     """
     Removes the temp directories on remote hosts,
     doesn't remove data on localhost
     """
-    for host in gethostlist(controller.CONF):
+    for host in gethostlist(config):
         try:
-            host_dir = controller.CONF['HOST_DETAILS'][host]['tmpdir']
+            host_dir = config['HOST_DETAILS'][host]['tmpdir']
         except KeyError:
             # Nothing was added to this host yet, so we have nothing to delete
+            continue
+        if options.debug:
+            # we keep temporary directories on hosts in debug mode
+            messages.append(
+                'Note temporary directory {host_dir} on host {host} was '
+                'not deleted for debugging purposes.'.format(**locals())
+            )
             continue
         logging.debug(output_messages.INFO_REMOVE_REMOTE_VAR % (host_dir, host))
         server = utils.ScriptRunner(host)
@@ -647,7 +654,7 @@ def remove_remote_var_dirs():
             msg = output_messages.ERR_REMOVE_REMOTE_VAR % (host_dir, host)
             logging.error(msg)
             logging.exception(e)
-            controller.MESSAGES.append(utils.color_text(msg, 'red'))
+            messages.append(utils.color_text(msg, 'red'))
 
 def remove_temp_files():
     """
@@ -971,7 +978,7 @@ def main():
         sys.exit(1)
 
     finally:
-        remove_remote_var_dirs()
+        remove_remote_var_dirs(options, controller.CONF, controller.MESSAGES)
         remove_temp_files()
 
         # Always print user params to log
