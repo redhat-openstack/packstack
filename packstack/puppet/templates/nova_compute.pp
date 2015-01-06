@@ -35,11 +35,19 @@ $vncproxy_proto = $config_horizon_ssl ? {
   default => 'http',
 }
 
+if ($::fqdn != '' and $::fqdn != 'localhost') {
+  $vncproxy_server = $::fqdn
+} else {
+  # Multihost does not work without proper FQDN setup, so we use controller IP,
+  # because this case can come up only in usecase, which is all-in-one
+  $vncproxy_server = hiera('CONFIG_CONTROLLER_HOST')
+}
+
 class { 'nova::compute':
   enabled                       => true,
   vncproxy_host                 => hiera('CONFIG_CONTROLLER_HOST'),
   vncproxy_protocol             => $vncproxy_proto,
-  vncserver_proxyclient_address => hiera('CONFIG_NOVA_COMPUTE_HOST'),
+  vncserver_proxyclient_address => $vncproxy_server,
   compute_manager               => hiera('CONFIG_NOVA_COMPUTE_MANAGER'),
 }
 
@@ -58,5 +66,3 @@ exec { 'tuned-virtual-host':
   command => '/usr/sbin/tuned-adm profile virtual-host',
   require => Service['tuned'],
 }
-
-

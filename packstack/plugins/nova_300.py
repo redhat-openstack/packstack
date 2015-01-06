@@ -507,7 +507,6 @@ def create_compute_manifest(config, messages):
             cm = 'ironic.nova.compute.manager.ClusteredComputeManager'
             config['CONFIG_NOVA_COMPUTE_MANAGER'] = cm
 
-        config["CONFIG_NOVA_COMPUTE_HOST"] = host
         manifestdata = getManifestTemplate("nova_compute")
 
         fw_details = dict()
