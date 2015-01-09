@@ -15,11 +15,11 @@ def steps_new_format(steplist):
 
 class Controller(object):
 
-    __GROUPS=[]
-    __SEQUENCES=[]
-    __PLUGINS=[]
-    MESSAGES=[]
-    CONF={}
+    __GROUPS = []
+    __SEQUENCES = []
+    __PLUGINS = []
+    MESSAGES = []
+    CONF = {}
 
     __single = None # the one, true Singleton ... for god's sake why ??? :)
 
