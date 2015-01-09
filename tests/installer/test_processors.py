@@ -38,4 +38,4 @@ class ProcessorsTestCase(PackstackTestCaseMixin, TestCase):
         # test if key exists
         # XXX: process_ssh_key does not create ssh key during test run
         #      ... not sure why, nevertheless it works in normal run
-        #self.assertEquals(True, os.path.isfile(path))
+        # self.assertEquals(True, os.path.isfile(path))

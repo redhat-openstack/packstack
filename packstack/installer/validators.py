@@ -208,6 +208,8 @@ def validate_multi_ping(param, options=None):
 
 
 _tested_ports = []
+
+
 def touch_port(host, port):
     """
     Check that provided host is listening on provided port.

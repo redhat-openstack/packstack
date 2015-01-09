@@ -14,10 +14,6 @@ they are used in the engine-setup.py
 
 import basedefs
 
-#####################
-####INFO MESSAGES####
-#####################
-
 INFO_HEADER = "Welcome to the %s setup utility" % basedefs.APP_NAME
 INFO_INSTALL_SUCCESS = "\n **** Installation completed successfully ******\n"
 INFO_INSTALL = "Installing:"

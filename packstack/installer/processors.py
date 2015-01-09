@@ -77,6 +77,7 @@ def process_add_quotes_around_values(param, param_name, config=None):
     param = ','.join(params_list)
     return param
 
+
 def process_password(param, param_name, config=None):
     """
     Process passwords, checking the following:
@@ -84,7 +85,7 @@ def process_password(param, param_name, config=None):
     2- Otherwise, check for a global default password, and use it if available
     3- As a last resort, generate a random password
     """
-    if not hasattr(process_password,"pw_dict"):
+    if not hasattr(process_password, "pw_dict"):
         process_password.pw_dict = {}
 
     if param == "PW_PLACEHOLDER":
