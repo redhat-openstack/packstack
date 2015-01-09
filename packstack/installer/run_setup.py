@@ -32,7 +32,7 @@ commandLineValues = {}
 masked_value_set = set()
 tmpfiles = []
 
-def initLogging (debug):
+def initLogging(debug):
     try:
         logFile = os.path.join(basedefs.DIR_LOG, basedefs.FILE_LOG)
 
@@ -40,14 +40,14 @@ def initLogging (debug):
         # passwords in logs
         os.close(os.open(logFile, os.O_CREAT | os.O_EXCL, 0600))
 
-        hdlr = logging.FileHandler (filename=logFile, mode='w')
+        hdlr = logging.FileHandler(filename=logFile, mode='w')
         if (debug):
             level = logging.DEBUG
         else:
             level = logging.INFO
 
-        fmts='%(asctime)s::%(levelname)s::%(module)s::%(lineno)d::%(name)s:: %(message)s'
-        dfmt='%Y-%m-%d %H:%M:%S'
+        fmts = '%(asctime)s::%(levelname)s::%(module)s::%(lineno)d::%(name)s:: %(message)s'
+        dfmt = '%Y-%m-%d %H:%M:%S'
         fmt = logging.Formatter(fmts, dfmt)
         hdlr.setFormatter(fmt)
 
@@ -164,8 +164,8 @@ def _askYesNo(question=None):
     message = StringIO()
 
     while True:
-        askString = "\r%s? (yes|no): "%(question)
-        logging.debug("asking user: %s"%askString)
+        askString = "\r%s? (yes|no): " % (question)
+        logging.debug("asking user: %s" % askString)
 
         message.write(askString)
         message.seek(0)
@@ -175,7 +175,7 @@ def _askYesNo(question=None):
             continue
 
         answer = raw[0].lower()
-        logging.debug("user answered read: %s"%(answer))
+        logging.debug("user answered read: %s" % (answer))
 
         if answer not in 'yn':
             continue
@@ -398,9 +398,9 @@ def _handleAnswerFileParams(answerFile):
 
                     # Handle post condition match for group
                     if postConditionValue != group.POST_CONDITION_MATCH:
-                        logging.error("The group condition (%s) returned: %s, which differs from the excpeted output: %s"%\
+                        logging.error("The group condition (%s) returned: %s, which differs from the excpeted output: %s" %\
                                       (group.GROUP_NAME, postConditionValue, group.POST_CONDITION_MATCH))
-                        raise ValueError(output_messages.ERR_EXP_GROUP_VALIDATION_ANS_FILE%\
+                        raise ValueError(output_messages.ERR_EXP_GROUP_VALIDATION_ANS_FILE %\
                                          (group.GROUP_NAME, postConditionValue, group.POST_CONDITION_MATCH))
                     else:
                         logging.debug("condition (%s) passed" % group.POST_CONDITION)
@@ -411,7 +411,7 @@ def _handleAnswerFileParams(answerFile):
 
     except Exception as e:
         logging.error(traceback.format_exc())
-        raise Exception(output_messages.ERR_EXP_HANDLE_ANSWER_FILE%(e))
+        raise Exception(output_messages.ERR_EXP_HANDLE_ANSWER_FILE % (e))
 
 
 def _getanswerfilepath():
@@ -422,7 +422,7 @@ def _getanswerfilepath():
 
     p = os.path.expanduser("~/")
     if os.access(p, os.W_OK):
-        path = os.path.abspath(os.path.join(p, "packstack-answers-%s.txt"%ts))
+        path = os.path.abspath(os.path.join(p, "packstack-answers-%s.txt" % ts))
         msg = "A new answerfile was created in: %s" % path
 
     controller.MESSAGES.append(msg)
@@ -436,7 +436,7 @@ def _gettmpanswerfilepath():
 
     p = os.path.expanduser("~/")
     if os.access(p, os.W_OK):
-        path = os.path.abspath(os.path.join(p, "tmp-packstack-answers-%s.txt"%ts))
+        path = os.path.abspath(os.path.join(p, "tmp-packstack-answers-%s.txt" % ts))
         tmpfiles.append(path)
 
     return path
@@ -517,7 +517,7 @@ def _getConditionValue(matchMember):
             input_param(param)
         returnValue = controller.CONF[matchMember]
     else:
-        raise TypeError("%s type (%s) is not supported"%(matchMember, type(matchMember)))
+        raise TypeError("%s type (%s) is not supported" % (matchMember, type(matchMember)))
 
     return returnValue
 
@@ -565,16 +565,16 @@ def _printAdditionalMessages():
     if len(controller.MESSAGES) > 0:
         print "\n",output_messages.INFO_ADDTIONAL_MSG
     for msg in controller.MESSAGES:
-        print output_messages.INFO_ADDTIONAL_MSG_BULLET%(msg)
+        print output_messages.INFO_ADDTIONAL_MSG_BULLET % (msg)
 
 def _addFinalInfoMsg(logFile):
     """
     add info msg to the user finalizing the
     successfull install of rhemv
     """
-    controller.MESSAGES.append(output_messages.INFO_LOG_FILE_PATH%(logFile))
+    controller.MESSAGES.append(output_messages.INFO_LOG_FILE_PATH % (logFile))
     controller.MESSAGES.append(
-        output_messages.INFO_MANIFEST_PATH%(basedefs.PUPPET_MANIFEST_DIR))
+        output_messages.INFO_MANIFEST_PATH % (basedefs.PUPPET_MANIFEST_DIR))
 
 
 def _summaryParamsToLog():
@@ -724,7 +724,7 @@ def single_step_aio_install(options, logFile):
     single_step_install(options, logFile)
 
 def single_step_install(options, logFile):
-    answerfilepath =  _gettmpanswerfilepath()
+    answerfilepath = _gettmpanswerfilepath()
     if not answerfilepath:
         _printAdditionalMessages()
         return
@@ -915,7 +915,7 @@ def main():
             raise SystemExit
 
         # Initialize logging
-        logFile = initLogging (options.debug)
+        logFile = initLogging(options.debug)
 
         # Parse parameters
         runConfiguration = True
@@ -928,7 +928,7 @@ def main():
         if options.gen_answer_file:
             # Make sure only --gen-answer-file was supplied
             validateSingleFlag(options, "gen_answer_file")
-            answerfilepath =  _gettmpanswerfilepath()
+            answerfilepath = _gettmpanswerfilepath()
             if not answerfilepath:
                 _printAdditionalMessages()
                 return
@@ -974,7 +974,7 @@ def main():
         logging.error(traceback.format_exc())
         print
         print utils.color_text("ERROR : " + str(e), 'red')
-        print output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO%(logFile)
+        print output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO % (logFile)
         sys.exit(1)
 
     finally:
