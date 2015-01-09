@@ -254,11 +254,11 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-trove-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Database (Trove)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Database (Trove)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Database (Trove)"
+                 "Should Packstack install OpenStack Database (Trove)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -272,11 +272,11 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-ironic-install",
              "USAGE": (
-                "Set to 'y' if you would like Packstack to install "
-                "OpenStack Bare Metal (Ironic)"
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Bare Metal (Ironic)"
              ),
              "PROMPT": (
-                "Should Packstack install OpenStack Bare Metal (Ironic)"
+                 "Should Packstack install OpenStack Bare Metal (Ironic)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],

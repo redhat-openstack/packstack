@@ -28,9 +28,10 @@ controller = Controller()
 commandLineValues = {}
 
 # List to hold all values to be masked in logging (i.e. passwords and sensitive data)
-#TODO: read default values from conf_param?
+# TODO: read default values from conf_param?
 masked_value_set = set()
 tmpfiles = []
+
 
 def initLogging(debug):
     try:
@@ -59,6 +60,7 @@ def initLogging(debug):
         raise Exception(output_messages.ERR_EXP_FAILED_INIT_LOGGER)
 
     return logFile
+
 
 def _getInputFromUser(param):
     """
@@ -89,7 +91,7 @@ def _getInputFromUser(param):
 
                     message.write(": ")
                     message.seek(0)
-                    #mask password or hidden fields
+                    # mask password or hidden fields
 
                     if (param.MASK_INPUT):
                         userInput = getpass.getpass("%s :" % (param.PROMPT))
@@ -133,6 +135,7 @@ def _getInputFromUser(param):
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_READ_INPUT_PARAM % (param.CONF_NAME))
 
+
 def input_param(param):
     """
     this func will read input from user
@@ -141,7 +144,7 @@ def input_param(param):
     # We need to check if a param needs confirmation, (i.e. ask user twice)
     # Do not validate if it was given from the command line
     if (param.NEED_CONFIRM and not commandLineValues.has_key(param.CONF_NAME)):
-        #create a copy of the param so we can call it twice
+        # create a copy of the param so we can call it twice
         confirmedParam = copy.deepcopy(param)
         confirmedParamName = param.CONF_NAME + "_CONFIRMED"
         confirmedParam.CONF_NAME = confirmedParamName
@@ -159,6 +162,7 @@ def input_param(param):
         _getInputFromUser(param)
 
     return param
+
 
 def _askYesNo(question=None):
     message = StringIO()
@@ -182,6 +186,7 @@ def _askYesNo(question=None):
 
         return answer == 'y'
 
+
 def _addDefaultsToMaskedValueSet():
     """
     For every param in conf_params
@@ -195,6 +200,7 @@ def _addDefaultsToMaskedValueSet():
             if ((param.MASK_INPUT == True) and param.DEFAULT_VALUE != ""):
                 masked_value_set.add(param.DEFAULT_VALUE)
 
+
 def _updateMaskedValueSet():
     """
     For every param in conf
@@ -206,6 +212,7 @@ def _updateMaskedValueSet():
         # Add all needed values to masked_value_set
         if (controller.getParamKeyValue(confName, "MASK_INPUT") == True):
             masked_value_set.add(controller.CONF[confName])
+
 
 def mask(input):
     """
@@ -234,6 +241,7 @@ def mask(input):
 
     return output
 
+
 def removeMaskString(maskedString):
     """
     remove an element from masked_value_set
@@ -252,6 +260,7 @@ def removeMaskString(maskedString):
     if found:
         masked_value_set.remove(maskedString)
 
+
 def validate_param_value(param, value):
     cname = param.CONF_NAME
     logging.debug("Validating parameter %s." % cname)
@@ -264,6 +273,7 @@ def validate_param_value(param, value):
         except ParamValidationError as ex:
             print 'Parameter %s failed validation: %s' % (cname, ex)
             raise
+
 
 def process_param_value(param, value):
     _value = value
@@ -286,6 +296,7 @@ def process_param_value(param, value):
                    "failed.\n%s" % (param.CONF_NAME, ex))
             raise
     return _value
+
 
 def _handleGroupCondition(config, conditionName, conditionValue):
     """
@@ -364,6 +375,7 @@ def _loadParamFromFile(config, section, param_name):
 
     return value
 
+
 def _handleAnswerFileParams(answerFile):
     """
     handle loading and validating
@@ -428,6 +440,7 @@ def _getanswerfilepath():
     controller.MESSAGES.append(msg)
     return path
 
+
 def _gettmpanswerfilepath():
     path = None
     msg = "Could not find a suitable path on which to create the temporary answerfile"
@@ -440,6 +453,7 @@ def _gettmpanswerfilepath():
         tmpfiles.append(path)
 
     return path
+
 
 def _handleInteractiveParams():
     try:
@@ -461,7 +475,7 @@ def _handleInteractiveParams():
                     for param in group.parameters.itervalues():
                         if not param.CONDITION:
                             input_param(param)
-                            #update password list, so we know to mask them
+                            # update password list, so we know to mask them
                             _updateMaskedValueSet()
 
                     postConditionValue = True
@@ -474,8 +488,8 @@ def _handleInteractiveParams():
                         if postConditionValue == group.POST_CONDITION_MATCH:
                             inputLoop = False
                         else:
-                            #we clear the value of all params in the group
-                            #in order to re-input them by the user
+                            # we clear the value of all params in the group
+                            # in order to re-input them by the user
                             for param in group.parameters.itervalues():
                                 if controller.CONF.has_key(param.CONF_NAME):
                                     del controller.CONF[param.CONF_NAME]
@@ -498,6 +512,7 @@ def _handleInteractiveParams():
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_HANDLE_PARAMS)
 
+
 def _handleParams(configFile):
     _addDefaultsToMaskedValueSet()
     if configFile:
@@ -505,13 +520,14 @@ def _handleParams(configFile):
     else:
         _handleInteractiveParams()
 
+
 def _getConditionValue(matchMember):
     returnValue = False
     if type(matchMember) == types.FunctionType:
         returnValue = matchMember(controller.CONF)
     elif type(matchMember) == types.StringType:
-        #we assume that if we get a string as a member it is the name
-        #of a member of conf_params
+        # we assume that if we get a string as a member it is the name
+        # of a member of conf_params
         if not controller.CONF.has_key(matchMember):
             param = controller.getParamByName(matchMember)
             input_param(param)
@@ -520,6 +536,7 @@ def _getConditionValue(matchMember):
         raise TypeError("%s type (%s) is not supported" % (matchMember, type(matchMember)))
 
     return returnValue
+
 
 def _displaySummary():
 
@@ -561,11 +578,13 @@ def _displaySummary():
     else:
         logging.debug("user chose to accept user parameters")
 
+
 def _printAdditionalMessages():
     if len(controller.MESSAGES) > 0:
-        print "\n",output_messages.INFO_ADDTIONAL_MSG
+        print "\n", output_messages.INFO_ADDTIONAL_MSG
     for msg in controller.MESSAGES:
         print output_messages.INFO_ADDTIONAL_MSG_BULLET % (msg)
+
 
 def _addFinalInfoMsg(logFile):
     """
@@ -590,6 +609,7 @@ def _summaryParamsToLog():
 def runSequences():
     controller.runAllSequences()
 
+
 def _main(options, configFile=None, logFile=None):
     print output_messages.INFO_HEADER
     print("")
@@ -611,7 +631,7 @@ def _main(options, configFile=None, logFile=None):
     logging.debug(mask(controller.CONF))
 
     # Start configuration stage
-    print "\n",output_messages.INFO_INSTALL
+    print "\n", output_messages.INFO_INSTALL
 
     # Initialize Sequences
     initPluginsSequences()
@@ -620,7 +640,7 @@ def _main(options, configFile=None, logFile=None):
     runSequences()
 
     # Lock rhevm version
-    #_lockRpmVersion()
+    # _lockRpmVersion()
 
     # Print info
     _addFinalInfoMsg(logFile)
@@ -655,6 +675,7 @@ def remove_remote_var_dirs(options, config, messages):
             logging.error(msg)
             logging.exception(e)
             messages.append(utils.color_text(msg, 'red'))
+
 
 def remove_temp_files():
     """
@@ -701,6 +722,7 @@ def generateAnswerFile(outputFile, overrides={}):
                         'conf_name': param.CONF_NAME}
                 ans_file.write(fmt % args)
 
+
 def single_step_aio_install(options, logFile):
     """ Installs an All in One host on this host"""
 
@@ -717,11 +739,12 @@ def single_step_aio_install(options, logFile):
 
     # If we are doing an all-in-one install, do demo provisioning
     # unless specifically told not to
-    if (options.os_neutron_install != "n" and \
-        not options.provision_all_in_one_ovs_bridge):
-            options.provision_all_in_one_ovs_bridge = "y"
+    if (options.os_neutron_install != "n" and
+            not options.provision_all_in_one_ovs_bridge):
+        options.provision_all_in_one_ovs_bridge = "y"
 
     single_step_install(options, logFile)
+
 
 def single_step_install(options, logFile):
     answerfilepath = _gettmpanswerfilepath()
@@ -747,11 +770,12 @@ def single_step_install(options, logFile):
 
     # We can also override defaults with command line options
     _set_command_line_values(options)
-    for key,value in commandLineValues.items():
+    for key, value in commandLineValues.items():
         overrides[key] = value
 
     generateAnswerFile(answerfilepath, overrides)
-    _main(options,answerfilepath, logFile)
+    _main(options, answerfilepath, logFile)
+
 
 def initCmdLineParser():
     """
@@ -761,7 +785,7 @@ def initCmdLineParser():
 
     # Init parser and all general flags
     usage = "usage: %prog [options] [--help]"
-    parser = OptionParser(usage=usage,version="%prog {0} {1}".format(version.release_string(), version.version_string()))
+    parser = OptionParser(usage=usage, version="%prog {0} {1}".format(version.release_string(), version.version_string()))
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other options")
     parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the \
                                             configuration file. using this option excludes all other options")
@@ -796,6 +820,7 @@ def initCmdLineParser():
 
     return parser
 
+
 def printOptions():
     """
     print and document the available options to the answer file (rst format)
@@ -815,6 +840,7 @@ def printOptions():
             print "    %s %s" % (paramUsage, optionsList)
             print
 
+
 def plugin_compare(x, y):
     """
     Used to sort the plugin file list
@@ -825,6 +851,7 @@ def plugin_compare(x, y):
     y_match = re.search(".+\_(\d\d\d)", y)
     y_cmp = y_match.group(1)
     return int(x_cmp) - int(y_cmp)
+
 
 def loadPlugins():
     """
@@ -852,8 +879,9 @@ def loadPlugins():
                  logging.error(traceback.format_exc())
                  raise Exception("Failed to load plugin from file %s" % item)
 
+
 def checkPlugin(plugin):
-    for funcName in ['initConfig','initSequences']:
+    for funcName in ['initConfig', 'initSequences']:
         if not hasattr(plugin, funcName):
             raise ImportError("Plugin %s does not contain the %s function" % (plugin.__class__, funcName))
 
@@ -877,7 +905,7 @@ def countCmdLineFlags(options, flag):
 def validateSingleFlag(options, flag):
     counter = countCmdLineFlags(options, flag)
     if counter > 0:
-        flag = flag.replace("_","-")
+        flag = flag.replace("_", "-")
         msg = output_messages.ERR_ONLY_1_FLAG % ("--%s" % flag)
         raise FlagValidationError(msg)
 
@@ -886,17 +914,20 @@ def initPluginsConfig():
     for plugin in controller.getAllPlugins():
         plugin.initConfig(controller)
 
+
 def initPluginsSequences():
     for plugin in controller.getAllPlugins():
         plugin.initSequences(controller)
+
 
 def _set_command_line_values(options):
     for key, value in options.__dict__.items():
         # Replace the _ with - in the string since optparse replace _ with -
         for group in controller.getAllGroups():
-            param = group.search("CMD_OPTION", key.replace("_","-"))
+            param = group.search("CMD_OPTION", key.replace("_", "-"))
             if len(param) > 0 and value:
                 commandLineValues[param[0].CONF_NAME] = value
+
 
 def main():
     try:
@@ -935,9 +966,9 @@ def main():
             # We can also override defaults with command line options
             overrides = {}
             _set_command_line_values(options)
-            for key,value in commandLineValues.items():
+            for key, value in commandLineValues.items():
                 overrides[key] = value
-            generateAnswerFile(answerfilepath,overrides)
+            generateAnswerFile(answerfilepath, overrides)
             _handleParams(answerfilepath)
             generateAnswerFile(options.gen_answer_file)
         # Are we installing an all in one
@@ -957,7 +988,7 @@ def main():
                 validateSingleFlag(options, "answer_file")
                 # If using an answer file, setting a default password
                 # does not really make sense
-                if getattr(options,'default_password',None):
+                if getattr(options, 'default_password', None):
                         msg = ('Please do not set --default-password '
                                'when specifying an answer file.')
                         raise FlagValidationError(msg)

@@ -33,7 +33,7 @@ class SshTarballTransferMixinTestCase(PackstackTestCaseMixin, TestCase):
 
     def tearDown(self):
         # remove the temp directory
-        #shutil.rmtree(self.tempdir)
+        # shutil.rmtree(self.tempdir)
         pass
 
     def setUp(self):

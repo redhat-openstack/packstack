@@ -12,7 +12,7 @@ from packstack.modules.ospluginutils import (getManifestTemplate,
                                              appendManifestFile,
                                              createFirewallResources)
 
-#------------------ Sahara installer initialization ------------------
+# ------------------ Sahara installer initialization ------------------
 
 PLUGIN_NAME = "OS-Sahara"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, "blue")
@@ -71,7 +71,7 @@ def initSequences(controller):
     ]
     controller.addSequence("Installing Sahara", [], [], saharasteps)
 
-#-------------------------- step functions --------------------------
+# -------------------------- step functions --------------------------
 
 
 def create_keystone_manifest(config, messages):
