@@ -899,6 +899,8 @@ def _set_command_line_values(options):
                 commandLineValues[param[0].CONF_NAME] = value
 
 def main():
+    options = ""
+
     try:
         # Load Plugins
         loadPlugins()
