@@ -6,10 +6,16 @@ if $config_ceilometer_coordination_backend == 'redis' {
   $redis_host = hiera('CONFIG_REDIS_MASTER_HOST')
   $redis_port = hiera('CONFIG_REDIS_PORT')
   $sentinel_host = hiera('CONFIG_REDIS_SENTINEL_CONTACT_HOST')
+  $sentinel_fallbacks = hiera('CONFIG_REDIS_SENTINEL_FALLBACKS')
   if $sentinel_host != '' {
     $master_name = hiera('CONFIG_REDIS_MASTER_NAME')
     $sentinel_port = hiera('CONFIG_REDIS_SENTINEL_PORT')
-    $coordination_url = "redis://${sentinel_host}:${sentinel_port}?sentinel=${master_name}"
+    $base_coordination_url = "redis://${sentinel_host}:${sentinel_port}?sentinel=${master_name}"
+    if $sentinel_fallbacks != '' {
+      $coordination_url = "${base_coordination_url}&${sentinel_fallbacks}"
+    } else {
+      $coordination_url = $base_coordination_url
+    }
   } else {
     $coordination_url = "redis://${redis_host}:${redis_port}"
   }

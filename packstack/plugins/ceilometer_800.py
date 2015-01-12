@@ -249,6 +249,21 @@ def create_manifest(config, messages):
     manifestdata = getManifestTemplate(get_mq(config, "ceilometer"))
     manifestdata += getManifestTemplate("ceilometer")
 
+    if config['CONFIG_CEILOMETER_COORDINATION_BACKEND'] == 'redis':
+        # Determine if we need to configure multiple sentinel hosts as
+        # fallbacks for use in coordination url.
+        sentinel_hosts = split_hosts(config['CONFIG_REDIS_SENTINEL_HOSTS'])
+        sentinel_port = config['CONFIG_REDIS_SENTINEL_PORT']
+        sentinel_contact = config['CONFIG_REDIS_SENTINEL_CONTACT_HOST']
+        if len(sentinel_hosts) > 1:
+            sentinel_fallbacks = '&'.join(['sentinel_fallback=%s:%s' %
+                                          (host, sentinel_port)
+                                          for host in sentinel_hosts
+                                          if host != sentinel_contact])
+        else:
+            sentinel_fallbacks = ''
+        config['CONFIG_REDIS_SENTINEL_FALLBACKS'] = sentinel_fallbacks
+
     fw_details = dict()
     key = "ceilometer_api"
     fw_details.setdefault(key, {})
