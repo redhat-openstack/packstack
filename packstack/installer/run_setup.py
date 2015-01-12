@@ -943,6 +943,8 @@ def _set_command_line_values(options):
 
 
 def main():
+    options = ""
+
     try:
         # Load Plugins
         loadPlugins()
