@@ -444,11 +444,36 @@ Ceilometer Config Parameters
     Specify an optional backend for group membership coordination in the alarm evaluator and central
  agent. Currently the only valid option are 'redis' or 'none'. The default is 'redis'.
 
-**CONFIG_REDIS_HOST**
+**CONFIG_REDIS_MASTER_HOST**
     The IP address of the server on which to install Redis, if Redis is being used for coordination.
 
 **CONFIG_REDIS_PORT**
-    The port on which the Redis server will listen, if Redis is being used for coordination.
+    The port on which all Redis servers will listen, if Redis is being used for coordination.
+
+**CONFIG_REDIS_HA**
+    Whether redis-sentinel and redis-slaves should be used to to enable high availability in Redis
+ coordination. Valid options are 'y' or 'n'. Default is 'n'. The following settings only apply if
+ 'y' is chosen.
+
+**CONFIG_REDIS_SLAVE_HOSTS**
+    A comma-separated list of hosts that will operate as Redis slaves and on which Redis will be
+ installed.
+
+**CONFIG_REDIS_SENTINEL_HOSTS**
+    A comma-separated list of hosts that will operate as Redis sentinels and on which Redis will be
+ installed.
+
+**CONFIG_REDIS_SENTINEL_CONTACT_HOST**
+    One of the sentinel hosts which will be used to configure coordination.
+
+**CONFIG_REDIS_SENTINEL_PORT**
+    The port on which all Redis sentinels will listen. Defaults to 26379.
+
+**CONFIG_REDIS_SENTINEL_QUORUM**
+    The quorum value for the Redis sentinels. Default value is 2, but you should change this.
+
+**CONFIG_REDIS_MASTER_NAME**
+    The logical name of the initial Redis master, required in sentinel and client configuration.
 
 Heat Config Parameters
 ----------------------
