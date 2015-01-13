@@ -18,6 +18,7 @@ if $netapp_storage_family == 'ontap_cluster' {
       expiry_thres_minutes      => hiera('CONFIG_CINDER_NETAPP_EXPIRY_THRES_MINUTES'),
       thres_avl_size_perc_start => hiera('CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_START'),
       thres_avl_size_perc_stop  => hiera('CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_STOP'),
+      nfs_shares                => hiera_array('CONFIG_CINDER_NETAPP_NFS_SHARES'),
       nfs_shares_config         => hiera('CONFIG_CINDER_NETAPP_NFS_SHARES_CONFIG'),
     }
 
@@ -52,6 +53,7 @@ elsif $netapp_storage_family == 'ontap_7mode' {
       expiry_thres_minutes      => hiera('CONFIG_CINDER_NETAPP_EXPIRY_THRES_MINUTES'),
       thres_avl_size_perc_start => hiera('CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_START'),
       thres_avl_size_perc_stop  => hiera('CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_STOP'),
+      nfs_shares                => hiera_array('CONFIG_CINDER_NETAPP_NFS_SHARES'),
       nfs_shares_config         => hiera('CONFIG_CINDER_NETAPP_NFS_SHARES_CONFIG'),
     }
 
