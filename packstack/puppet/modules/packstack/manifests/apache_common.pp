@@ -17,7 +17,6 @@ class packstack::apache_common {
   }
   # make sure the ports.conf concat fragments from previous
   # runs are not overwritten by subsequent runs
-  include ::concat::setup
   $my_safe_name = regsubst($::apache::params::ports_file, '[/:]', '_', 'G')
   $my_fragdir = "${concat::setup::concatdir}/${my_safe_name}"
   File<| title == "${my_fragdir}/fragments" |> {
