@@ -500,8 +500,12 @@ Cinder NetApp NFS configuration
 **CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_STOP**
     (optional) When the percentage of available space on an NFS share has reached the percentage specified by this parameter, the driver will stop clearing files from the NFS image cache that have not been accessed in the last M minutes, where M is the value of the expiry_thres_minutes parameter.  Defaults to 60. ['']
 
+**CONFIG_CINDER_NETAPP_NFS_SHARES**
+    (optional) Single or comma-separated list of NetApp NFS shares for Cinder to use.  Format: ip-address:/export-name. Defaults to ''. ['']
+
 **CONFIG_CINDER_NETAPP_NFS_SHARES_CONFIG**
-    (optional) File with the list of available NFS shares.   Defaults to ''. ['']
+    (optional) File with the list of available NFS shares.   Defaults to '/etc/cinder/shares.conf'. ['']
+
 
 Cinder NetApp iSCSI & 7-mode configuration
 ------------------------------------------
