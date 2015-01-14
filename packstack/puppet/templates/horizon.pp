@@ -46,7 +46,7 @@ if %(CONFIG_HORIZON_SSL)s {
     # ps_generate_ssl_certs.ssh is generating ssl certs for nova-novncproxy
     # so openstack-nova-novncproxy should be restarted.
     path      => ['/sbin', '/usr/sbin', '/bin', '/usr/bin'],
-    command   => 'systemctl restart openstack-nova-novncproxy.service',
+    command   => 'service openstack-nova-novncproxy restart',
     logoutput => 'on_failure',
   }
 
