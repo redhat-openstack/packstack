@@ -35,12 +35,11 @@ $vncproxy_proto = $config_horizon_ssl ? {
   default => 'http',
 }
 
-if ($::fqdn != '' and $::fqdn != 'localhost') {
-  $vncproxy_server = $::fqdn
+if ($::fqdn == '' or $::fqdn =~ /localhost/) {
+  # For cases where FQDNs have not been correctly set
+  $vncproxy_server = choose_my_ip(hiera('HOST_LIST'))
 } else {
-  # Multihost does not work without proper FQDN setup, so we use controller IP,
-  # because this case can come up only in usecase, which is all-in-one
-  $vncproxy_server = hiera('CONFIG_CONTROLLER_HOST')
+  $vncproxy_server = $::fqdn
 }
 
 class { 'nova::compute':
