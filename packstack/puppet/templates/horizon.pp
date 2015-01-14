@@ -18,13 +18,8 @@ class {'horizon':
   secret_key            => hiera('CONFIG_HORIZON_SECRET_KEY'),
   keystone_url          => "http://${keystone_host}:5000/v2.0",
   keystone_default_role => '_member_',
-  # fqdn => [hiera('CONFIG_CONTROLLER_HOST'), "$::fqdn", 'localhost'],
-  # TO-DO: Parameter fqdn is used both for ALLOWED_HOSTS in settings_local.py
-  # and for ServerAlias directives in vhost.conf which is breaking server
-  # accessibility. We need ALLOWED_HOSTS values, but we have to avoid
-  # ServerAlias definitions. For now we will use this wildcard hack until
-  # puppet-horizon will have separate parameter for each config.
-  fqdn                 => '*',
+  server_aliases       => [hiera('CONFIG_CONTROLLER_HOST'), "$::fqdn", 'localhost'],
+  allowed_hosts        => '*',
   hypervisor_options   => {'can_set_mount_point' => false, },
   compress_offline     => false,
   django_debug         => $is_django_debug,
