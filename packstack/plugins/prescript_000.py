@@ -608,7 +608,8 @@ def discover(config, messages):
     #       be used for that too).
     details = {}
     release_regexp = re.compile(r'^(?P<OS>.*) release (?P<release>[\d\.]*)')
-    for host in filtered_hosts(config):
+    config['HOST_LIST'] = list(filtered_hosts(config))
+    for host in config['HOST_LIST']:
         details.setdefault(host, {})
         server = utils.ScriptRunner(host)
         # discover OS and release
