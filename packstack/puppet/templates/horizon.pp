@@ -25,7 +25,7 @@ class {'horizon':
   # ServerAlias definitions. For now we will use this wildcard hack until
   # puppet-horizon will have separate parameter for each config.
   fqdn                 => '*',
-  can_set_mount_point  => 'False',
+  hypervisor_options   => {'can_set_mount_point' => false, },
   compress_offline     => false,
   django_debug         => $is_django_debug,
   file_upload_temp_dir => '/var/tmp',
