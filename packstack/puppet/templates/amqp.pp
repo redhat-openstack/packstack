@@ -75,17 +75,6 @@ define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
       ssl_database_password => hiera('CONFIG_AMQP_NSS_CERTDB_PW'),
   }
 
-  if $enable_ssl {
-    # If there is qpid-cpp-server-ssl install it
-    exec { 'install_qpid_ssl':
-      path    => '/usr/bin',
-      command => 'yum install -y -d 0 -e 0  qpid-cpp-server-ssl',
-      onlyif  => 'yum info qpid-cpp-server-ssl',
-      before  => Service['qpidd'],
-      require => Package['qpid-cpp-server'],
-    }
-  }
-
   if $enable_auth == 'y' {
     add_qpid_user { 'qpid_user': }
   }
@@ -110,4 +99,3 @@ define add_qpid_user {
     require => Package['qpid-cpp-server'],
   }
 }
-
