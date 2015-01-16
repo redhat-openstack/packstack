@@ -753,7 +753,7 @@ def create_manifest(config, messages):
     fw_details = dict()
     for host in split_hosts(config['CONFIG_COMPUTE_HOSTS']):
         if (config['CONFIG_NOVA_INSTALL'] == 'y' and
-            config['CONFIG_VMWARE_BACKEND'] == 'n'):
+                config['CONFIG_VMWARE_BACKEND'] == 'n'):
             key = "cinder_%s" % host
             fw_details.setdefault(key, {})
             fw_details[key]['host'] = "%s" % host
