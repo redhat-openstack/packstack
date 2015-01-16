@@ -21,7 +21,7 @@ class Controller(object):
     MESSAGES = []
     CONF = {}
 
-    __single = None # the one, true Singleton ... for god's sake why ??? :)
+    __single = None  # the one, true Singleton ... for god's sake why ??? :)
 
     def __new__(self, *args, **kwargs):
         """

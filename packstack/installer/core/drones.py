@@ -249,7 +249,7 @@ class Drone(object):
         Registers an observer. Given object should be subclass of class
         DroneObserver.
         """
-        for attr in ('applying', 'checking',  'finished'):
+        for attr in ('applying', 'checking', 'finished'):
             if not hasattr(observer, attr):
                 raise ValueError('Observer object should be a subclass '
                                  'of class DroneObserver.')

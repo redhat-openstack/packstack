@@ -101,7 +101,7 @@ def process_password(param, param_name, config=None):
                 else:
                     param = uuid.uuid4().hex[:16]
                     process_password.pw_dict[unconfirmed_param] = param
-            elif not param_name in process_password.pw_dict:
+            elif param_name not in process_password.pw_dict:
                 param = uuid.uuid4().hex[:16]
                 process_password.pw_dict[param_name] = param
             else:
