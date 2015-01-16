@@ -21,7 +21,7 @@ from unittest import TestCase
 from ..test_base import PackstackTestCaseMixin
 
 from packstack.installer.exceptions import PuppetError
-from packstack.modules.puppet import validate_logfile, scan_logfile
+from packstack.modules.puppet import validate_logfile
 
 
 class PuppetTestCase(PackstackTestCaseMixin, TestCase):

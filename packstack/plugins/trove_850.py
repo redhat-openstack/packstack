@@ -4,8 +4,6 @@
 Installs and configures Trove
 """
 
-import uuid
-
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors

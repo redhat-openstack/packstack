@@ -197,7 +197,7 @@ def _addDefaultsToMaskedValueSet():
     for group in controller.getAllGroups():
         for param in group.parameters.itervalues():
             # Keep default password values masked, but ignore default empty values
-            if ((param.MASK_INPUT == True) and param.DEFAULT_VALUE != ""):
+            if ((param.MASK_INPUT is True) and param.DEFAULT_VALUE != ""):
                 masked_value_set.add(param.DEFAULT_VALUE)
 
 
@@ -210,7 +210,7 @@ def _updateMaskedValueSet():
     global masked_value_set
     for confName in controller.CONF:
         # Add all needed values to masked_value_set
-        if (controller.getParamKeyValue(confName, "MASK_INPUT") == True):
+        if (controller.getParamKeyValue(confName, "MASK_INPUT") is True):
             masked_value_set.add(controller.CONF[confName])
 
 
@@ -284,7 +284,7 @@ def process_param_value(param, value):
         try:
             new_value = proc_func(_value, param.CONF_NAME, controller.CONF)
             if new_value != _value:
-                if param.MASK_INPUT == False:
+                if param.MASK_INPUT is False:
                     msg = output_messages.INFO_CHANGED_VALUE
                     print msg % (_value, new_value)
                 _value = new_value
@@ -541,7 +541,7 @@ def _getConditionValue(matchMember):
 def _displaySummary():
 
     print output_messages.INFO_DSPLY_PARAMS
-    print  "=" * (len(output_messages.INFO_DSPLY_PARAMS) - 1)
+    print "=" * (len(output_messages.INFO_DSPLY_PARAMS) - 1)
     logging.info("*** User input summary ***")
     for group in controller.getAllGroups():
         for param in group.parameters.itervalues():
@@ -603,7 +603,7 @@ def _summaryParamsToLog():
             for param in group.parameters.itervalues():
                 if controller.CONF.has_key(param.CONF_NAME):
                     maskedValue = mask(controller.CONF[param.CONF_NAME])
-                    logging.debug("%s: %s" % (param.CMD_OPTION, maskedValue ))
+                    logging.debug("%s: %s" % (param.CMD_OPTION, maskedValue))
 
 
 def runSequences():
@@ -892,7 +892,7 @@ def countCmdLineFlags(options, flag):
     """
     counter = 0
     # make sure only flag was supplied
-    for key, value  in options.__dict__.items():
+    for key, value in options.__dict__.items():
         if key in (flag, 'debug', 'timeout', 'dry_run', 'default_password'):
             next
         # If anything but flag was called, increment

@@ -19,12 +19,7 @@ import shutil
 import tempfile
 import subprocess
 import logging
-import re
 
-from packstack.installer.utils.shell import block_fmt
-from packstack.installer.exceptions import (ScriptRuntimeError,
-                                            NetworkError)
-from packstack.installer.utils.strings import mask_string
 
 LOG = logging.getLogger(__name__)
 

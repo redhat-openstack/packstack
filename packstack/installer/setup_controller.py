@@ -86,7 +86,7 @@ class Controller(object):
         sequence will be inserted BEFORE "update x"
         """
         index = self.__getSequenceIndexByDesc(sequenceName)
-        if index == None:
+        if index is None:
             index = len(self.getAllSequences())
         self.__SEQUENCES.insert(index, Sequence(desc,
                                                 steps_new_format(steps),
@@ -119,7 +119,7 @@ class Controller(object):
         group will be inserted BEFORE "update x"
         """
         index = self.__getGroupIndexByDesc(groupName)
-        if index == None:
+        if index is None:
             index = len(self.getAllGroups())
         self.__GROUPS.insert(index, Group(group, params))
 

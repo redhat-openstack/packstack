@@ -3,7 +3,7 @@
 """
 Base class for steps & sequences
 """
-import re
+
 import sys
 import logging
 import traceback

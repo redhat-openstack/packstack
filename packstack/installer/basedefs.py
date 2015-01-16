@@ -5,7 +5,6 @@ This module provides all the predefined variables.
 """
 
 import os
-import pwd
 import sys
 import datetime
 import tempfile

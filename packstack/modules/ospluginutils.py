@@ -1,12 +1,9 @@
 
-import logging
 import os
-import re
 import yaml
 
 from packstack.installer import basedefs
 from packstack.installer.setup_controller import Controller
-from packstack.installer.exceptions import PackStackError
 
 controller = Controller()
 
