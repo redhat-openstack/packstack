@@ -15,7 +15,6 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
 from unittest import TestCase
 
 from ..test_base import PackstackTestCaseMixin

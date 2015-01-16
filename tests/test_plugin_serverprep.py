@@ -14,12 +14,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import os
 from unittest import TestCase
 
 from test_base import PackstackTestCaseMixin
 from packstack.plugins import serverprep_001
-from packstack.installer.setup_controller import Controller
 
 
 class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):

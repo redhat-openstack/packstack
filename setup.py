@@ -4,7 +4,6 @@
 import os
 import shutil
 import subprocess
-import sys
 
 from setuptools import setup, find_packages, Command
 

@@ -18,12 +18,10 @@
 import os
 import shutil
 import tempfile
-import subprocess
 from unittest import TestCase
 
 from ..test_base import PackstackTestCaseMixin
 from packstack.installer.core.drones import *
-from packstack.installer import utils
 
 
 class SshTarballTransferMixinTestCase(PackstackTestCaseMixin, TestCase):

@@ -16,8 +16,6 @@
 # under the License.
 
 import os
-import shutil
-import tempfile
 from unittest import TestCase
 from packstack.installer.processors import *
 

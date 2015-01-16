@@ -8,13 +8,9 @@ import os
 import re
 import socket
 import logging
-import tempfile
-import traceback
 
-import basedefs
 from . import utils
 
-from .setup_controller import Controller
 from .exceptions import ParamValidationError
 
 
