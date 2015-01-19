@@ -22,6 +22,7 @@ def initConfig(controller):
         {"CONF_NAME": "CONFIG_IRONIC_DB_PW",
          "CMD_OPTION": "os-ironic-db-passwd",
          "PROMPT": "Enter the password for the Ironic MySQL user",
+         "USAGE": "The password to use for the Ironic DB access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
          "DEFAULT_VALUE": "PW_PLACEHOLDER",
