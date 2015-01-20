@@ -14,6 +14,6 @@ class { 'sahara':
   os_tenant_name      => 'admin',
   os_auth_url         => "http://${sahara_cfg_controller_host}:5000/v2.0",
   identity_url        => "http://${sahara_cfg_controller_host}:35357/",
-  use_neutron         => ($sahara_cfg_controller_host == 'y'),
+  use_neutron         => ($sahara_cfg_config_neutron_install == 'y'),
   service_host        => hiera('CONFIG_SAHARA_HOST'),
 }
