@@ -27,4 +27,4 @@ class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
                 "C_HOSTS": "3.3.3.3/vdc"}
         hosts = gethostlist(conf)
         hosts.sort()
-        self.assertEquals(['1.1.1.1', '2.2.2.2', '3.3.3.3'], hosts)
+        self.assertEqual(['1.1.1.1', '2.2.2.2', '3.3.3.3'], hosts)

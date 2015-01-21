@@ -34,8 +34,8 @@ re_ignore = re.compile(
     'NetworkManager is not running'
 )
 re_notice = re.compile(r"notice: .*Notify\[packstack_info\]"
-                         "\/message: defined \'message\' as "
-                         "\'(?P<message>.*)\'")
+                       "\/message: defined \'message\' as "
+                       "\'(?P<message>.*)\'")
 
 surrogates = [
     # Value in /etc/sysctl.conf cannot be changed

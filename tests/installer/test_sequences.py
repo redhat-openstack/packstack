@@ -67,7 +67,7 @@ class SequenceTestCase(PackstackTestCaseMixin, TestCase):
                        'title': 'Step 3'}]
 
         self.seq = Sequence('test', self.steps, condition='test',
-                                                cond_match='test')
+                            cond_match='test')
 
     def tearDown(self):
         super(SequenceTestCase, self).tearDown()
