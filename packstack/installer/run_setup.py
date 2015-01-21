@@ -129,7 +129,8 @@ def _getInputFromUser(param):
                             del commandLineValues[param.CONF_NAME]
                         loop = True
     except KeyboardInterrupt:
-        print "" # add the new line so messages wont be displayed in the same line as the question
+        # add the new line so messages wont be displayed in the same line as the question
+        print ""
         raise
     except:
         logging.error(traceback.format_exc())
@@ -222,21 +223,21 @@ def mask(input):
     If it finds, it replaces them with '********'
     """
     output = copy.deepcopy(input)
-    if type(input) == types.DictType:
+    if isinstance(input, types.DictType):
         for key in input:
-            if type(input[key]) == types.StringType:
+            if isinstance(input[key], types.StringType):
                 output[key] = utils.mask_string(input[key],
                                                 masked_value_set)
-    if type(input) == types.ListType:
+    if isinstance(input, types.ListType):
         for item in input:
             org = item
             orgIndex = input.index(org)
-            if type(item) == types.StringType:
+            if isinstance(item, types.StringType):
                 item = utils.mask_string(item, masked_value_set)
             if item != org:
                 output.remove(org)
                 output.insert(orgIndex, item)
-    if type(input) == types.StringType:
+    if isinstance(input, types.StringType):
             output = utils.mask_string(input, masked_value_set)
 
     return output
@@ -312,7 +313,7 @@ def _handleGroupCondition(config, conditionName, conditionValue):
 
     # If the condition is a string - just read it to global conf
     # We assume that if we get a string as a member it is the name of a member of conf_params
-    elif type(conditionName) == types.StringType:
+    elif isinstance(conditionName, types.StringType):
         conditionValue = _loadParamFromFile(config, "general", conditionName)
     else:
         # Any other type is invalid
@@ -410,9 +411,9 @@ def _handleAnswerFileParams(answerFile):
 
                     # Handle post condition match for group
                     if postConditionValue != group.POST_CONDITION_MATCH:
-                        logging.error("The group condition (%s) returned: %s, which differs from the excpeted output: %s" %\
+                        logging.error("The group condition (%s) returned: %s, which differs from the excpeted output: %s" %
                                       (group.GROUP_NAME, postConditionValue, group.POST_CONDITION_MATCH))
-                        raise ValueError(output_messages.ERR_EXP_GROUP_VALIDATION_ANS_FILE %\
+                        raise ValueError(output_messages.ERR_EXP_GROUP_VALIDATION_ANS_FILE %
                                          (group.GROUP_NAME, postConditionValue, group.POST_CONDITION_MATCH))
                     else:
                         logging.debug("condition (%s) passed" % group.POST_CONDITION)
@@ -523,9 +524,9 @@ def _handleParams(configFile):
 
 def _getConditionValue(matchMember):
     returnValue = False
-    if type(matchMember) == types.FunctionType:
+    if isinstance(matchMember, types.FunctionType):
         returnValue = matchMember(controller.CONF)
-    elif type(matchMember) == types.StringType:
+    elif isinstance(matchMember, types.StringType):
         # we assume that if we get a string as a member it is the name
         # of a member of conf_params
         if not controller.CONF.has_key(matchMember):
@@ -875,9 +876,9 @@ def loadPlugins():
                 checkPlugin(moduleobj)
                 controller.addPlugin(moduleobj)
             except:
-                 logging.error("Failed to load plugin from file %s", item)
-                 logging.error(traceback.format_exc())
-                 raise Exception("Failed to load plugin from file %s" % item)
+                logging.error("Failed to load plugin from file %s", item)
+                logging.error(traceback.format_exc())
+                raise Exception("Failed to load plugin from file %s" % item)
 
 
 def checkPlugin(plugin):
