@@ -26,8 +26,8 @@ def initConfig(controller):
     parameters = [
         {"CMD_OPTION": "os-heat-mysql-password",
          "USAGE": ('The password used by Heat user to authenticate against '
-                   'MySQL'),
-         "PROMPT": "Enter the password for the Heat MySQL user",
+                   'DB'),
+         "PROMPT": "Enter the password for the Heat DB user",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
          "DEFAULT_VALUE": "PW_PLACEHOLDER",
