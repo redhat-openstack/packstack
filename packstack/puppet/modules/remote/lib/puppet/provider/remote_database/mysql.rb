@@ -1,6 +1,6 @@
 Puppet::Type.type(:remote_database).provide(:mysql) do
 
-  desc "Manages remote MySQL database."
+  desc "Manages remote MariaDB database."
 
   defaultfor :kernel => 'Linux'
 

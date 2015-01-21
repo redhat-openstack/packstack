@@ -12,7 +12,7 @@ Puppet::Type.newtype(:remote_database_user) do
       raise(ArgumentError, "Invalid database user #{value}") unless value =~ /[\w-]*@[\w%\.:]+/
       username = value.split('@')[0]
       if username.size > 16
-        raise ArgumentError, "MySQL usernames are limited to a maximum of 16 characters"
+        raise ArgumentError, "MariaDB usernames are limited to a maximum of 16 characters"
       end
     end
   end
