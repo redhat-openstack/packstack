@@ -44,7 +44,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def test_sorteddict(self):
-        """Test packstack.installer.utils.datastructures.SortedDict"""
+        """Test packstack.installer.utils.datastructures.SortedDict."""
         sdict = SortedDict()
         sdict['1'] = 1
         sdict['2'] = 2
@@ -53,7 +53,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
         self.assertListEqual(sdict.values(), [1, 2, 3, 4, 5])
 
     def test_retry(self):
-        """Test packstack.installer.utils.decorators.retry"""
+        """Test packstack.installer.utils.decorators.retry."""
 
         @retry(count=3, delay=0, retry_on=ValueError)
         def test_sum():
@@ -72,12 +72,12 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
         self.assertRaises(ValueError, test_sum)
 
     def test_network(self):
-        """Test packstack.installer.utils.network functions"""
+        """Test packstack.installer.utils.network functions."""
         self.assertIn(host2ip('localhost', allow_localhost=True),
                       ['127.0.0.1', '::1'])
 
     def test_shell(self):
-        """Test packstack.installer.utils.shell functions"""
+        """Test packstack.installer.utils.shell functions."""
         rc, out = execute(['echo', 'this is test'])
         self.assertEqual(out.strip(), 'this is test')
         rc, out = execute('echo "this is test"', use_shell=True)
@@ -97,9 +97,9 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
         self.assertEqual(out.strip(), 'this is test')
 
     def test_strings(self):
-        """Test packstack.installer.utils.strings functions"""
+        """Test packstack.installer.utils.strings functions."""
         self.assertEqual(color_text('test text', 'red'),
-                        '\033[0;31mtest text\033[0m')
+                         '\033[0;31mtest text\033[0m')
         self.assertEqual(mask_string('test text', mask_list=['text']),
                          'test %s' % STR_MASK)
         masked = mask_string("test '\\''text'\\''",
@@ -108,9 +108,9 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
         self.assertEqual(masked, 'test %s' % STR_MASK)
 
     def test_shortcuts(self):
-        """Test packstack.installer.utils.shortcuts functions"""
+        """Test packstack.installer.utils.shortcuts functions."""
         conf = {"A_HOST": "1.1.1.1", "B_HOSTS": "2.2.2.2,1.1.1.1",
                 "C_HOSTS": "3.3.3.3/vdc"}
         hostlist = list(hosts(conf))
         hostlist.sort()
-        self.assertEquals(['1.1.1.1', '2.2.2.2', '3.3.3.3'], hostlist)
+        self.assertEqual(['1.1.1.1', '2.2.2.2', '3.3.3.3'], hostlist)

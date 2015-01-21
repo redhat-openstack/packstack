@@ -90,8 +90,7 @@ class ScriptRunner(object):
         environ = os.environ
         environ['LANG'] = 'en_US.UTF8'
         obj = subprocess.Popen(cmd, stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
-                               close_fds=True, shell=False,
-                                env=environ)
+                               close_fds=True, shell=False, env=environ)
 
         script = "function t(){ exit $? ; } \n trap t ERR \n" + script
         out, err = obj.communicate(script)

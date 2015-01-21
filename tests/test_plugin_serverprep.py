@@ -22,7 +22,7 @@ from packstack.plugins import serverprep_001
 
 class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
     def test_rhn_creds_quoted(self):
-        """Make sure RHN password is quoted"""
+        """Make sure RHN password is quoted."""
 
         # On non-RHEL, the CONFIG_{RH,SATELLITE} options are never set,
         # i.e. this test would always fail. Therefore, only run it on RHEL.

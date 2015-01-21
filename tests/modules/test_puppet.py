@@ -27,7 +27,7 @@ from packstack.modules.puppet import validate_logfile
 class PuppetTestCase(PackstackTestCaseMixin, TestCase):
 
     def test_validate_logfile(self):
-        """Test packstack.modules.validate_logfile"""
+        """Test packstack.modules.validate_logfile."""
         filename = os.path.join(self.tempdir, "puppet.log")
         # test valid run
         with open(filename, "w") as fp:

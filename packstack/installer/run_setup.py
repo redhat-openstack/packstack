@@ -77,7 +77,7 @@ def _getInputFromUser(param):
         else:
             while loop:
                 # If the value was not supplied by the command line flags
-                if not commandLineValues.has_key(param.CONF_NAME):
+                if param.CONF_NAME not in commandLineValues:
                     message = StringIO()
                     message.write(param.PROMPT)
 
@@ -121,11 +121,11 @@ def _getInputFromUser(param):
                             controller.CONF[param.CONF_NAME] = userInput
                             continue
                         else:
-                            if commandLineValues.has_key(param.CONF_NAME):
+                            if param.CONF_NAME in commandLineValues:
                                 del commandLineValues[param.CONF_NAME]
                     else:
                         # Delete value from commandLineValues so that we will prompt the user for input
-                        if commandLineValues.has_key(param.CONF_NAME):
+                        if param.CONF_NAME in commandLineValues:
                             del commandLineValues[param.CONF_NAME]
                         loop = True
     except KeyboardInterrupt:
@@ -144,7 +144,7 @@ def input_param(param):
     """
     # We need to check if a param needs confirmation, (i.e. ask user twice)
     # Do not validate if it was given from the command line
-    if (param.NEED_CONFIRM and not commandLineValues.has_key(param.CONF_NAME)):
+    if param.NEED_CONFIRM and param.CONF_NAME not in commandLineValues:
         # create a copy of the param so we can call it twice
         confirmedParam = copy.deepcopy(param)
         confirmedParamName = param.CONF_NAME + "_CONFIRMED"
@@ -492,9 +492,9 @@ def _handleInteractiveParams():
                             # we clear the value of all params in the group
                             # in order to re-input them by the user
                             for param in group.parameters.itervalues():
-                                if controller.CONF.has_key(param.CONF_NAME):
+                                if param.CONF_NAME in controller.CONF:
                                     del controller.CONF[param.CONF_NAME]
-                                if commandLineValues.has_key(param.CONF_NAME):
+                                if param.CONF_NAME in commandLineValues:
                                     del commandLineValues[param.CONF_NAME]
                     else:
                         inputLoop = False
@@ -529,7 +529,7 @@ def _getConditionValue(matchMember):
     elif isinstance(matchMember, types.StringType):
         # we assume that if we get a string as a member it is the name
         # of a member of conf_params
-        if not controller.CONF.has_key(matchMember):
+        if matchMember not in controller.CONF:
             param = controller.getParamByName(matchMember)
             input_param(param)
         returnValue = controller.CONF[matchMember]
@@ -546,7 +546,7 @@ def _displaySummary():
     logging.info("*** User input summary ***")
     for group in controller.getAllGroups():
         for param in group.parameters.itervalues():
-            if not param.USE_DEFAULT and controller.CONF.has_key(param.CONF_NAME):
+            if not param.USE_DEFAULT and param.CONF_NAME in controller.CONF:
                 cmdOption = param.CMD_OPTION
                 l = 30 - len(cmdOption)
                 maskParam = param.MASK_INPUT
@@ -564,14 +564,14 @@ def _displaySummary():
         logging.debug("user chose to re-enter the user parameters")
         for group in controller.getAllGroups():
             for param in group.parameters.itervalues():
-                if controller.CONF.has_key(param.CONF_NAME):
+                if param.CONF_NAME in controller.CONF:
                     if not param.MASK_INPUT:
                         param.DEFAULT_VALUE = controller.CONF[param.CONF_NAME]
                     # Remove the string from mask_value_set in order
                     # to remove values that might be over overwritten.
                     removeMaskString(controller.CONF[param.CONF_NAME])
                     del controller.CONF[param.CONF_NAME]
-                if commandLineValues.has_key(param.CONF_NAME):
+                if param.CONF_NAME in commandLineValues:
                     del commandLineValues[param.CONF_NAME]
             print ""
         logging.debug("calling handleParams in interactive mode")
@@ -602,7 +602,7 @@ def _summaryParamsToLog():
         logging.debug("*** The following params were used as user input:")
         for group in controller.getAllGroups():
             for param in group.parameters.itervalues():
-                if controller.CONF.has_key(param.CONF_NAME):
+                if param.CONF_NAME in controller.CONF:
                     maskedValue = mask(controller.CONF[param.CONF_NAME])
                     logging.debug("%s: %s" % (param.CMD_OPTION, maskedValue))
 
@@ -725,7 +725,7 @@ def generateAnswerFile(outputFile, overrides={}):
 
 
 def single_step_aio_install(options, logFile):
-    """ Installs an All in One host on this host"""
+    """Installs an All in One host on this host."""
 
     options.install_hosts = utils.get_localhost_ip()
 
@@ -788,15 +788,15 @@ def initCmdLineParser():
     usage = "usage: %prog [options] [--help]"
     parser = OptionParser(usage=usage, version="%prog {0} {1}".format(version.release_string(), version.version_string()))
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other options")
-    parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the \
-                                            configuration file. using this option excludes all other options")
+    parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the"
+                                            "configuration file. using this option excludes all other options")
     parser.add_option("--install-hosts", help="Install on a set of hosts in a single step. The format should be a comma separated list "
-                                          "of hosts, the first is setup as a controller, and the others are setup as compute nodes."
-                                          "if only a single host is supplied then it is setup as an all in one installation. An answerfile "
-                                          "will also be generated and should be used if Packstack needs to be run a second time ")
+                                              "of hosts, the first is setup as a controller, and the others are setup as compute nodes."
+                                              "if only a single host is supplied then it is setup as an all in one installation. An answerfile "
+                                              "will also be generated and should be used if Packstack needs to be run a second time ")
     parser.add_option("--allinone", action="store_true", help="Shorthand for --install-hosts=<local ipaddr> --novanetwork-pubif=<dev> "
-                                          "--novacompute-privif=lo --novanetwork-privif=lo --os-swift-install=y --nagios-install=y "
-                                          ", this option can be used to install an all in one OpenStack on this host")
+                                                              "--novacompute-privif=lo --novanetwork-privif=lo --os-swift-install=y --nagios-install=y "
+                                                              ", this option can be used to install an all in one OpenStack on this host")
 
     parser.add_option("-t", "--timeout", default=300, help="The timeout for puppet Exec calls")
     parser.add_option("-o", "--options", action="store_true", dest="options", help="Print details on options available in answer file(rst format)")

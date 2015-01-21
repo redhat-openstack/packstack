@@ -325,10 +325,10 @@ def create_redis_manifest(config, messages):
 
                 slave_clients = set([config['CONFIG_CONTROLLER_HOST']]).union(
                     split_hosts(config['CONFIG_REDIS_SLAVE_HOSTS'])).union(
-                split_hosts(config['CONFIG_REDIS_SENTINEL_HOSTS']))
+                        split_hosts(config['CONFIG_REDIS_SENTINEL_HOSTS']))
                 config['FIREWALL_REDIS_SLAVE_RULES'] = (
-                        _create_redis_firewall_rules(
-                            slave_clients, config['CONFIG_REDIS_PORT']))
+                    _create_redis_firewall_rules(
+                        slave_clients, config['CONFIG_REDIS_PORT']))
 
                 manifestdata += createFirewallResources(
                     'FIREWALL_REDIS_SLAVE_RULES')
