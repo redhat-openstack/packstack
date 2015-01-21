@@ -29,10 +29,10 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
     def setUp(self):
         super(ParameterTestCase, self).setUp()
         self.data = {
-            "CMD_OPTION": "mysql-host",
+            "CMD_OPTION": "mariadb-host",
             "USAGE": ("The IP address of the server on which to "
-                      "install MySQL"),
-            "PROMPT": "Enter the IP address of the MySQL server",
+                      "install MariaDB"),
+            "PROMPT": "Enter the IP address of the MariaDB server",
             "OPTION_LIST": [],
             "VALIDATORS": [],
             "DEFAULT_VALUE": "127.0.0.1",
@@ -64,8 +64,8 @@ class GroupTestCase(PackstackTestCaseMixin, TestCase):
     def setUp(self):
         super(GroupTestCase, self).setUp()
         self.attrs = {
-            "GROUP_NAME": "MYSQL",
-            "DESCRIPTION": "MySQL Config parameters",
+            "GROUP_NAME": "MARIADB",
+            "DESCRIPTION": "MariaDB Config parameters",
             "PRE_CONDITION": "y",
             "PRE_CONDITION_MATCH": "y",
             "POST_CONDITION": False,
