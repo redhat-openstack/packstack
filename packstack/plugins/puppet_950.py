@@ -85,7 +85,7 @@ def wait_for_puppet(currently_running, messages):
                 log = log.replace(".finished", ".log")
                 local_server.append('scp -o StrictHostKeyChecking=no '
                                     '-o UserKnownHostsFile=/dev/null '
-                                    'root@%s:%s %s'
+                                    'root@[%s]:%s %s'
                                     % (hostname, finished_logfile, log))
                 # To not pollute logs we turn of logging of command execution
                 local_server.execute(log=False)
@@ -209,7 +209,7 @@ def copy_puppet_modules(config, messages):
         for path, localname in resources.get(hostname, []):
             server.append("scp -o StrictHostKeyChecking=no "
                           "-o UserKnownHostsFile=/dev/null "
-                          "%s root@%s:%s/resources/%s" %
+                          "%s root@[%s]:%s/resources/%s" %
                           (path, hostname, host_dir, localname))
 
         # copy Puppet modules required by Packstack
