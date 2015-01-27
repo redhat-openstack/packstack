@@ -21,5 +21,4 @@ class { 'nova':
   debug              => hiera('CONFIG_DEBUG_MODE'),
   nova_public_key    => $public_key,
   nova_private_key   => $private_key,
-  nova_shell         => '/bin/bash',
 }
