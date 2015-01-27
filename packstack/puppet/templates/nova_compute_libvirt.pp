@@ -10,10 +10,6 @@ if $::is_virtual == 'true' {
   $libvirt_virt_type = 'kvm'
 }
 
-nova_config{
-  'libvirt/inject_partition': value => '-1';
-}
-
 # We need to preferably install qemu-kvm-rhev
 exec { 'qemu-kvm':
   path    => '/usr/bin',
@@ -23,10 +19,11 @@ exec { 'qemu-kvm':
 }
 
 class { 'nova::compute::libvirt':
-  libvirt_virt_type => $libvirt_virt_type,
-  libvirt_cpu_mode  => $libvirt_cpu_mode,
-  vncserver_listen  => '0.0.0.0',
-  migration_support => true,
+  libvirt_virt_type        => $libvirt_virt_type,
+  libvirt_cpu_mode         => $libvirt_cpu_mode,
+  vncserver_listen         => '0.0.0.0',
+  migration_support        => true,
+  libvirt_inject_partition => '-1',
 }
 
 exec { 'load_kvm':
