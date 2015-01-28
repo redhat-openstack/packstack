@@ -757,6 +757,7 @@ def create_l2_agent_manifests(config, messages):
         # properly formatted by packstack, then consumed by the puppet module.
         # For example, the input string 'A, B' should formatted as '['A','B']'.
         config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"] = bm_arr
+        config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"] = []
     elif agent == "linuxbridge":
         host_var = 'CONFIG_NEUTRON_LB_HOST'
         template_name = 'neutron_lb_agent'
@@ -766,20 +767,15 @@ def create_l2_agent_manifests(config, messages):
     for host in network_hosts | compute_hosts:
         manifestfile = "%s_neutron.pp" % (host,)
         manifestdata = "$cfg_neutron_ovs_host = '%s'\n" % host
-        manifestdata += getManifestTemplate(template_name)
-        appendManifestFile(manifestfile, manifestdata + "\n")
         # neutron ovs port only on network hosts
         if (
             agent == "openvswitch" and (
                 (host in network_hosts and tunnel_types)
                 or 'vlan' in ovs_type)
         ):
-            bridge_key = 'CONFIG_NEUTRON_OVS_BRIDGE'
-            iface_key = 'CONFIG_NEUTRON_OVS_IFACE'
-            for if_map in iface_arr:
-                config[bridge_key], config[iface_key] = if_map.split(':')
-                manifestdata = getManifestTemplate("neutron_ovs_port")
-                appendManifestFile(manifestfile, manifestdata + "\n")
+            config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"] = iface_arr
+        manifestdata += getManifestTemplate(template_name)
+        appendManifestFile(manifestfile, manifestdata + "\n")
         # Additional configurations required for compute hosts and
         # network hosts.
         manifestdata = getManifestTemplate('neutron_bridge_module')
