@@ -8,6 +8,7 @@ if $ovs_agent_vxlan_cfg_neut_ovs_tun_if != '' {
 }
 
 class { 'neutron::agents::ml2::ovs':
+  bridge_uplinks   => hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_IFACES'),
   bridge_mappings  => hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'),
   enable_tunneling => hiera('CONFIG_NEUTRON_OVS_TUNNELING'),
   tunnel_types     => hiera_array('CONFIG_NEUTRON_OVS_TUNNEL_TYPES'),
