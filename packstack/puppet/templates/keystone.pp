@@ -29,11 +29,15 @@ class { 'keystone::roles::admin':
   admin_tenant => 'admin',
 }
 
-class { 'keystone::endpoint':
-  public_url   => "http://${keystone_endpoint_cfg_ctrl_host}:5000",
-  internal_url => "http://${keystone_endpoint_cfg_ctrl_host}:5000",
-  admin_url    => "http://${keystone_endpoint_cfg_ctrl_host}:35357",
-  region       => hiera('CONFIG_KEYSTONE_REGION'),
+keystone::resource::service_identity { 'keystone':
+  public_url          => "http://${keystone_endpoint_cfg_ctrl_host}:5000",
+  internal_url        => "http://${keystone_endpoint_cfg_ctrl_host}:5000",
+  admin_url           => "http://${keystone_endpoint_cfg_ctrl_host}:35357",
+  region              => hiera('CONFIG_KEYSTONE_REGION'),
+  service_type        => 'identity',
+  service_description => 'OpenStack Identity Service',
+  configure_user      => false,
+  configure_user_role => false,
 }
 
 # Run token flush every minute (without output so we won't spam admins)
