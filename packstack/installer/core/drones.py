@@ -24,8 +24,8 @@ class SshTarballTransferMixin(object):
         script.append("scp %(pack_path)s root@%(node)s:%(pack_dest)s"
                       % args)
         script.append("ssh -o StrictHostKeyChecking=no "
-                        "-o UserKnownHostsFile=/dev/null root@%(node)s "
-                        "tar -C %(res_dir)s -xpzf %(pack_dest)s" % args)
+                      "-o UserKnownHostsFile=/dev/null root@%(node)s "
+                      "tar -C %(res_dir)s -xpzf %(pack_dest)s" % args)
         try:
             script.execute()
         except ScriptRuntimeError as ex:
@@ -124,15 +124,15 @@ class Drone(object):
         # remote host IP or hostname
         self.node = node
         # working directories on remote host
-        self.resource_dir = resource_dir or \
-                            '/tmp/drone%s' % uuid.uuid4().hex[:8]
-        self.recipe_dir = recipe_dir or \
-                          os.path.join(self.resource_dir, 'recipes')
+        self.resource_dir = (resource_dir or
+                             '/tmp/drone%s' % uuid.uuid4().hex[:8])
+        self.recipe_dir = (recipe_dir or
+                           os.path.join(self.resource_dir, 'recipes'))
         # temporary directories
-        self.remote_tmpdir = remote_tmpdir or \
-                             '/tmp/drone%s' % uuid.uuid4().hex[:8]
-        self.local_tmpdir = local_tmpdir or \
-                            tempfile.mkdtemp(prefix='drone')
+        self.remote_tmpdir = (remote_tmpdir or
+                              '/tmp/drone%s' % uuid.uuid4().hex[:8])
+        self.local_tmpdir = (local_tmpdir or
+                             tempfile.mkdtemp(prefix='drone'))
 
     def init_node(self):
         """
@@ -335,7 +335,7 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
         server = utils.ScriptRunner(self.node)
         for pkg in ("puppet", "openssh-clients", "tar"):
             server.append("rpm -q --whatprovides %(pkg)s || "
-                              "yum install -y %(pkg)s" % locals())
+                          "yum install -y %(pkg)s" % locals())
         server.execute()
 
     def add_resource(self, path, resource_type=None):
@@ -352,8 +352,8 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
                            recipe_base.replace(".finished", ".log"))
         local = utils.ScriptRunner()
         local.append('scp -o StrictHostKeyChecking=no '
-                         '-o UserKnownHostsFile=/dev/null '
-                         'root@%s:%s %s' % (self.node, recipe, log))
+                     '-o UserKnownHostsFile=/dev/null '
+                     'root@%s:%s %s' % (self.node, recipe, log))
         try:
             # once a remote puppet run has finished, we retrieve
             # the log file and check it for errors
@@ -390,8 +390,8 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
         mdir = self._module_dir
         server.append(
             "( flock %(rdir)s/ps.lock "
-                "puppet apply %(loglevel)s --modulepath %(mdir)s "
-                "%(recipe)s > %(running)s 2>&1 < /dev/null; "
+            "puppet apply %(loglevel)s --modulepath %(mdir)s "
+            "%(recipe)s > %(running)s 2>&1 < /dev/null; "
             "mv %(running)s %(finished)s ) "
             "> /dev/null 2>&1 < /dev/null &" % locals())
         server.execute()

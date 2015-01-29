@@ -48,7 +48,6 @@ class Step(object):
             sys.stdout.flush()
 
 
-
 class Sequence(object):
     """
     Wrapper for sequence of setup steps.

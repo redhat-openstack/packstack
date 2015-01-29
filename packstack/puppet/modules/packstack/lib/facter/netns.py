@@ -117,8 +117,8 @@ class TestNetns(unittest.TestCase):
             # Check that iptables filtering and save/restore can be performed
             try:
                 iptables_filename = os.path.join(
-                                        tempfile.gettempdir(),
-                                        'iptables-%s' % str(uuid.uuid4()))
+                    tempfile.gettempdir(),
+                    'iptables-%s' % str(uuid.uuid4()))
                 e('%%(ns1)s iptables-save > %s' % iptables_filename)
                 e('%(ns1)s iptables -A INPUT -p icmp --icmp-type 8 -j DROP')
                 e('%(ns2)s ping -c 1 -w 1 %(address1_1)s', return_code=1)

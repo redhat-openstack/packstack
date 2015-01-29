@@ -24,15 +24,15 @@ from ..test_base import PackstackTestCaseMixin
 
 class ProcessorsTestCase(PackstackTestCaseMixin, TestCase):
     def test_process_host(self):
-        """Test packstack.installer.processors.process_host"""
+        """Test packstack.installer.processors.process_host."""
         proc_local = process_host('localhost', 'HOSTNAME')
         self.assertIn(proc_local, ['127.0.0.1', '::1'])
 
     def test_process_ssh_key(self):
-        """Test packstack.installer.processors.process_ssh_key"""
+        """Test packstack.installer.processors.process_ssh_key."""
         path = process_ssh_key(os.path.join(self.tempdir, 'id_rsa'), 'SSH_KEY')
         # test if key was created
-        self.assertEquals(True, bool(path))
+        self.assertEqual(True, bool(path))
         # test if key exists
         # XXX: process_ssh_key does not create ssh key during test run
         #      ... not sure why, nevertheless it works in normal run

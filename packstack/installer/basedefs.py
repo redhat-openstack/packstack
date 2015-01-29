@@ -52,8 +52,6 @@ DIR_PROJECT_DIR = os.environ.get('INSTALLER_PROJECT_DIR', os.path.join(os.getcwd
 DIR_PLUGINS = os.path.join(DIR_PROJECT_DIR, "plugins")
 DIR_MODULES = os.path.join(DIR_PROJECT_DIR, "modules")
 
-
-
 EXEC_RPM = "rpm"
 EXEC_SEMANAGE = "semanage"
 EXEC_NSLOOKUP = "nslookup"
