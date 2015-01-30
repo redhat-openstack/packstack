@@ -5,5 +5,4 @@ class { 'nova::keystone::auth':
   public_address   => hiera('CONFIG_CONTROLLER_HOST'),
   admin_address    => hiera('CONFIG_CONTROLLER_HOST'),
   internal_address => hiera('CONFIG_CONTROLLER_HOST'),
-  cinder           => true,
 }
