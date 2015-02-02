@@ -9,6 +9,8 @@ class { 'heat':
   keystone_ec2_uri    => "http://${heat_rabbitmq_cfg_ctrl_host}:35357/v2.0",
   rpc_backend         => 'heat.openstack.common.rpc.impl_kombu',
   rabbit_host         => hiera('CONFIG_AMQP_HOST'),
+  rabbit_port         => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+  rabbit_use_ssl      => hiera('CONFIG_AMQP_ENABLE_SSL'),
   rabbit_userid       => hiera('CONFIG_AMQP_AUTH_USER'),
   rabbit_password     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
   verbose             => true,
