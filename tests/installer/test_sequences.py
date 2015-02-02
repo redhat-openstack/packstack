@@ -48,8 +48,8 @@ class StepTestCase(PackstackTestCaseMixin, TestCase):
         contents = sys.stdout.getvalue()
 
         state = '[ %s ]\n' % utils.color_text('DONE', 'green')
-        if not contents.startswith('Running test') or \
-           not contents.endswith(state):
+        if(not contents.startswith('Running test') or
+           not contents.endswith(state)):
             raise AssertionError('Step run test failed: %s' % contents)
 
 

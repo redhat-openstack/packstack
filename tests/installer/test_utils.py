@@ -23,7 +23,8 @@ import shutil
 import tempfile
 from unittest import TestCase
 
-from ..test_base import PackstackTestCaseMixin, FakePopen
+from ..test_base import FakePopen
+from ..test_base import PackstackTestCaseMixin
 from packstack.installer.utils import *
 from packstack.installer.utils.strings import STR_MASK
 from packstack.installer.exceptions import ExecuteRuntimeError

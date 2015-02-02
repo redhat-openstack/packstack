@@ -1,3 +1,15 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import os
 import yaml
@@ -61,10 +73,10 @@ class ManifestFiles(object):
         if not self.global_data:
             with open(os.path.join(PUPPET_TEMPLATE_DIR, "global.pp")) as gfp:
                 self.global_data = gfp.read() % controller.CONF
-        os.mkdir(basedefs.PUPPET_MANIFEST_DIR, 0700)
+        os.mkdir(basedefs.PUPPET_MANIFEST_DIR, 0o700)
         for fname, data in self.data.items():
             path = os.path.join(basedefs.PUPPET_MANIFEST_DIR, fname)
-            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0600)
+            fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
             with os.fdopen(fd, 'w') as fp:
                 fp.write(self.global_data + data)
 manifestfiles = ManifestFiles()
@@ -82,7 +94,7 @@ def appendManifestFile(manifest_name, data, marker=''):
 
 
 def generateHieraDataFile():
-    os.mkdir(basedefs.HIERADATA_DIR, 0700)
+    os.mkdir(basedefs.HIERADATA_DIR, 0o700)
     with open(HIERA_DEFAULTS_YAML, 'w') as outfile:
         outfile.write(yaml.dump(controller.CONF,
                                 explicit_start=True,
