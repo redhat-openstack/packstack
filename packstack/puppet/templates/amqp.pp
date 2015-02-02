@@ -1,9 +1,10 @@
 $amqp = hiera('CONFIG_AMQP_BACKEND')
+$amqp_enable_ssl = hiera('CONFIG_AMQP_ENABLE_SSL')
 
 case $amqp  {
   'qpid': {
     enable_qpid { 'qpid':
-      enable_ssl  => hiera('CONFIG_AMQP_ENABLE_SSL'),
+      enable_ssl  => $amqp_enable_ssl,
       enable_auth => hiera('CONFIG_AMQP_ENABLE_AUTH'),
     }
   }
@@ -19,19 +20,50 @@ define enable_rabbitmq {
     ensure => 'installed',
   }
 
-  class { 'rabbitmq':
-    port                => hiera('CONFIG_AMQP_CLIENTS_PORT'),
-    ssl_management_port => hiera('CONFIG_AMQP_SSL_PORT'),
-    ssl                 => hiera('CONFIG_AMQP_ENABLE_SSL'),
-    ssl_cert            => hiera('CONFIG_AMQP_SSL_CERT_FILE'),
-    ssl_key             => hiera('CONFIG_AMQP_SSL_KEY_FILE'),
-    default_user        => hiera('CONFIG_AMQP_AUTH_USER'),
-    default_pass        => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-    package_provider    => 'yum',
-    admin_enable        => false,
-    config_variables    => {
+  if $amqp_enable_ssl {
+
+    $kombu_ssl_ca_certs = hiera('CONFIG_AMQP_SSL_CACERT_FILE')
+    $kombu_ssl_keyfile = hiera('CONFIG_AMQP_SSL_KEY_FILE')
+    $kombu_ssl_certfile = hiera('CONFIG_AMQP_SSL_CERT_FILE')
+
+    $files_to_set_owner = [ $kombu_ssl_keyfile, $kombu_ssl_certfile ]
+    file { $files_to_set_owner:
+      owner   => 'rabbitmq',
+      group   => 'rabbitmq',
+      require => Package['rabbitmq-server'],
+      notify  => Service['rabbitmq-server'],
+    }
+
+    class {"rabbitmq":
+      ssl_port                 => hiera('CONFIG_AMQP_SSL_PORT'),
+      ssl_only                 => true,
+      ssl                      => $amqp_enable_ssl,
+      ssl_cacert               => $kombu_ssl_ca_certs,
+      ssl_cert                 => $kombu_ssl_certfile,
+      ssl_key                  => $kombu_ssl_keyfile,
+      default_user             => hiera('CONFIG_AMQP_AUTH_USER'),
+      default_pass             => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+      package_provider         => 'yum',
+      admin_enable             => false,
+      # FIXME: it's ugly to not to require client certs
+      ssl_fail_if_no_peer_cert => false,
+      config_variables         => {
         'tcp_listen_options' => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]",
         'loopback_users'     => "[]",
+      }
+    }
+  } else {
+    class {"rabbitmq":
+      port             => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+      ssl              => $amqp_enable_ssl,
+      default_user     => hiera('CONFIG_AMQP_AUTH_USER'),
+      default_pass     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+      package_provider => 'yum',
+      admin_enable     => false,
+      config_variables  => {
+        'tcp_listen_options' => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]",
+        'loopback_users'     => "[]",
+      }
     }
   }
 

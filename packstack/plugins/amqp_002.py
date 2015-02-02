@@ -115,6 +115,21 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
 
+        {"CMD_OPTION": "amqp-ssl-cacert-file",
+         "USAGE": ("The filename of the CAcertificate that the AMQP service "
+                   "is going to use for verification"),
+         "PROMPT": ("Enter the filename of the SSL CAcertificate for the AMQP"
+                    " service"),
+         "OPTION_LIST": [],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": "/etc/pki/tls/certs/amqp_selfcert.pem",
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": True,
+         "CONF_NAME": "CONFIG_AMQP_SSL_CACERT_FILE",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
+
         {"CMD_OPTION": "amqp-ssl-cert-file",
          "USAGE": ("The filename of the certificate that the AMQP service "
                    "is going to use"),
