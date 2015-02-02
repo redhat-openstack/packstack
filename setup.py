@@ -1,11 +1,25 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import os
 import shutil
 import subprocess
 
-from setuptools import setup, find_packages, Command
+from setuptools import setup
+from setuptools import find_packages
+from setuptools import Command
 
 from packstack import version
 
@@ -42,11 +56,11 @@ class InstallModulesCommand(Command):
         # install third-party modules from openstack-puppet-modules repo
         if not os.path.exists(self.destination):
             try:
-                os.makedirs(basedir, 0755)
+                os.makedirs(basedir, 0o755)
             except OSError:
                 # base directory exists
                 pass
-            print 'Cloning %(repo)s to %(destination)s' % locals()
+            print('Cloning %(repo)s to %(destination)s' % locals())
             cmd = ('cd %(basedir)s; git clone %(repo)s %(repodir)s; '
                    'cd %(repodir)s; git checkout %(branch)s; ' % locals())
             proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
@@ -63,7 +77,7 @@ class InstallModulesCommand(Command):
                 continue
 
             dest = os.path.join(self.destination, module)
-            print 'Copying module %(module)s to %(dest)s' % locals()
+            print('Copying module %(module)s to %(dest)s' % locals())
             shutil.rmtree(dest, ignore_errors=True)
             shutil.copytree(source, dest)
 

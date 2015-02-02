@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 """
 Installs and configures Puppet
@@ -11,12 +23,14 @@ import time
 
 from packstack.installer import utils
 from packstack.installer import basedefs
-from packstack.installer.exceptions import ScriptRuntimeError, PuppetError
+from packstack.installer.exceptions import PuppetError
+from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.common import filtered_hosts
-from packstack.modules.ospluginutils import (manifestfiles,
-                                             generateHieraDataFile)
-from packstack.modules.puppet import scan_logfile, validate_logfile
+from packstack.modules.ospluginutils import generateHieraDataFile
+from packstack.modules.ospluginutils import manifestfiles
+from packstack.modules.puppet import validate_logfile
+from packstack.modules.puppet import scan_logfile
 
 
 # ------------- Puppet Packstack Plugin Initialization --------------
@@ -245,7 +259,7 @@ def apply_puppet_manifest(config, messages):
                 continue
 
             host_dir = config['HOST_DETAILS'][hostname]['tmpdir']
-            print "Applying %s" % manifest
+            print("Applying %s" % manifest)
             server = utils.ScriptRunner(hostname)
 
             man_path = os.path.join(config['HOST_DETAILS'][hostname]['tmpdir'],

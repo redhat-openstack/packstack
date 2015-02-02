@@ -1,4 +1,16 @@
 # -*- coding: utf-8 -*-
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 """
 Installs and configures Nova
@@ -8,14 +20,18 @@ import os
 import platform
 import socket
 
-from packstack.installer import basedefs, processors, utils, validators
+from packstack.installer import basedefs
+from packstack.installer import processors
+from packstack.installer import utils
+from packstack.installer import validators
 from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules.shortcuts import get_mq
-from packstack.modules.ospluginutils import (NovaConfig, getManifestTemplate,
-                                             appendManifestFile, manifestfiles,
-                                             createFirewallResources)
-
+from packstack.modules.ospluginutils import appendManifestFile
+from packstack.modules.ospluginutils import createFirewallResources
+from packstack.modules.ospluginutils import getManifestTemplate
+from packstack.modules.ospluginutils import manifestfiles
+from packstack.modules.ospluginutils import NovaConfig
 
 # ------------- Nova Packstack Plugin Initialization --------------
 
@@ -426,8 +442,7 @@ def create_api_manifest(config, messages):
     if config['CONFIG_NEUTRON_INSTALL'] != 'y':
         config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = 'undef'
     else:
-        config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = \
-            "%s" % config['CONFIG_NEUTRON_METADATA_PW']
+        config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = "%s" % config['CONFIG_NEUTRON_METADATA_PW']
     manifestfile = "%s_api_nova.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("nova_api")
 
