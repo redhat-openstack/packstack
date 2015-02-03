@@ -153,8 +153,6 @@ def initSequences(controller):
     steps = [
         {'title': 'Adding Heat manifest entries',
          'functions': [create_manifest]},
-        {'title': 'Adding Heat Keystone manifest entries',
-         'functions': [create_keystone_manifest]}
     ]
 
     if config.get('CONFIG_HEAT_CLOUDWATCH_INSTALL', 'n') == 'y':
@@ -174,6 +172,7 @@ def create_manifest(config, messages):
     manifestfile = "%s_heat.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "heat"))
     manifestdata += getManifestTemplate("heat")
+    manifestdata += getManifestTemplate("keystone_heat")
 
     fw_details = dict()
     key = "heat"
@@ -187,12 +186,6 @@ def create_manifest(config, messages):
 
     manifestdata += createFirewallResources('FIREWALL_HEAT_RULES')
     appendManifestFile(manifestfile, manifestdata, marker='heat')
-
-
-def create_keystone_manifest(config, messages):
-    manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_heat")
-    appendManifestFile(manifestfile, manifestdata)
 
 
 def create_cloudwatch_manifest(config, messages):
