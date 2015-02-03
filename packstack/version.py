@@ -6,8 +6,8 @@ import pkg_resources
 from .installer.utils import execute
 
 
-VERSION = ['2014', '2']
-OS_RELEASE = 'Juno'
+VERSION = ['2015', '1']
+OS_RELEASE = 'Kilo'
 RESERVE_STR = None
 
 
