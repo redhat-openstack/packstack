@@ -2,14 +2,6 @@
 # Loads bridge modules and sets appropriate sysctl.conf variables
 
 class packstack::neutron::bridge {
-    if $::operatingsystem == 'Fedora' and (is_integer($::operatingsystemrelease) and $::operatingsystemrelease >= 22 or $::operatingsystemrelease == 'Rawhide') {
-        exec { 'load-br-netfilter':
-            path => ['/sbin', '/usr/sbin'],
-            command => 'modprobe -b br_netfilter',
-            logoutput => 'on_failure',
-            before => Exec['load-bridge'],
-        }
-    }
     file { 'bridge-module-loader':
         path => '/etc/sysconfig/modules/openstack-neutron.modules',
         ensure => present,
@@ -19,6 +11,11 @@ class packstack::neutron::bridge {
         path => ['/sbin', '/usr/sbin'],
         command => 'modprobe -b bridge',
         logoutput => 'on_failure'
+    } -> exec { 'load-bridge-netfilter':
+        path      => ['/sbin', '/usr/sbin', '/bin', '/usr/bin'],
+        command   => 'modprobe -b br_netfilter',
+        logoutput => 'on_failure',
+        unless    => 'test -d /proc/sys/net/bridge'
     } -> file_line { '/etc/sysctl.conf bridge-nf-call-ip6tables':
         path  => '/etc/sysctl.conf',
         line  => 'net.bridge.bridge-nf-call-ip6tables=1',
