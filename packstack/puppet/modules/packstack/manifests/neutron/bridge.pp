@@ -11,6 +11,11 @@ class packstack::neutron::bridge {
         path => ['/sbin', '/usr/sbin'],
         command => 'modprobe -b bridge',
         logoutput => 'on_failure'
+    } -> exec { 'load-bridge-netfilter':
+        path      => ['/sbin', '/usr/sbin', '/bin', '/usr/bin'],
+        command   => 'modprobe -b br_netfilter',
+        logoutput => 'on_failure',
+        unless    => 'test -d /proc/sys/net/bridge'
     } -> file_line { '/etc/sysctl.conf bridge-nf-call-ip6tables':
         path  => '/etc/sysctl.conf',
         line  => 'net.bridge.bridge-nf-call-ip6tables=1',
