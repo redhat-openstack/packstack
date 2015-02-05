@@ -82,11 +82,10 @@ class SshTarballTransferMixinTestCase(PackstackTestCaseMixin, TestCase):
             tarball = tarfile.open(pack_path)
             tarball.extractall(path=self.tempdir)
         # check content of files
-        for path, content in \
-                [('resources/res1.txt', 'resource one'),
-                 ('resources/resdir/res2.txt', 'resource two'),
-                 ('recipes/rec1.pp', 'recipe one'),
-                 ('recipes/rec2.pp', 'recipe two')]:
+        for path, content in [('resources/res1.txt', 'resource one'),
+                              ('resources/resdir/res2.txt', 'resource two'),
+                              ('recipes/rec1.pp', 'recipe one'),
+                              ('recipes/rec2.pp', 'recipe two')]:
             with open(os.path.join(self.tempdir, path)) as f:
                 fcont = f.read()
                 self.assertEqual(fcont, content)

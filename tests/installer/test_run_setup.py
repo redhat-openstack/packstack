@@ -21,10 +21,13 @@ import subprocess
 import sys
 from unittest import TestCase
 
-from packstack.modules import ospluginutils, puppet
-from packstack.installer import run_setup, basedefs
+from packstack.modules import ospluginutils
+from packstack.modules import puppet
+from packstack.installer import basedefs
+from packstack.installer import run_setup
 
-from ..test_base import PackstackTestCaseMixin, FakePopen
+from ..test_base import FakePopen
+from ..test_base import PackstackTestCaseMixin
 
 
 def makefile(path, content):

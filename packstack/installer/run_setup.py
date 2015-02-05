@@ -1,3 +1,16 @@
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+# implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import ConfigParser
 import copy
 import datetime
@@ -11,14 +24,16 @@ import traceback
 import types
 import textwrap
 
-from optparse import OptionParser, OptionGroup
+from optparse import OptionGroup
+from optparse import OptionParser
 
 import basedefs
 import validators
 from . import utils
 import processors
 import output_messages
-from .exceptions import FlagValidationError, ParamValidationError
+from .exceptions import FlagValidationError
+from .exceptions import ParamValidationError
 
 from packstack import version
 from packstack.modules.ospluginutils import gethostlist
@@ -39,7 +54,7 @@ def initLogging(debug):
 
         # Create the log file with specific permissions, puppet has a habbit of putting
         # passwords in logs
-        os.close(os.open(logFile, os.O_CREAT | os.O_EXCL, 0600))
+        os.close(os.open(logFile, os.O_CREAT | os.O_EXCL, 0o600))
 
         hdlr = logging.FileHandler(filename=logFile, mode='w')
         if (debug):
@@ -82,8 +97,8 @@ def _getInputFromUser(param):
                     message.write(param.PROMPT)
 
                     val_list = param.VALIDATORS or []
-                    if validators.validate_regexp not in val_list \
-                       and param.OPTION_LIST:
+                    if(validators.validate_regexp not in val_list
+                       and param.OPTION_LIST):
                         message.write(" [%s]" % "|".join(param.OPTION_LIST))
 
                     if param.DEFAULT_VALUE:
@@ -130,7 +145,7 @@ def _getInputFromUser(param):
                         loop = True
     except KeyboardInterrupt:
         # add the new line so messages wont be displayed in the same line as the question
-        print ""
+        print("")
         raise
     except:
         logging.error(traceback.format_exc())
@@ -158,7 +173,7 @@ def input_param(param):
                 logging.debug("Param confirmation passed, value for both questions is identical")
                 break
             else:
-                print output_messages.INFO_VAL_PASSWORD_DONT_MATCH
+                print(output_messages.INFO_VAL_PASSWORD_DONT_MATCH)
     else:
         _getInputFromUser(param)
 
@@ -272,7 +287,7 @@ def validate_param_value(param, value):
         try:
             val_func(value, opt_list)
         except ParamValidationError as ex:
-            print 'Parameter %s failed validation: %s' % (cname, ex)
+            print('Parameter %s failed validation: %s' % (cname, ex))
             raise
 
 
@@ -287,14 +302,14 @@ def process_param_value(param, value):
             if new_value != _value:
                 if param.MASK_INPUT is False:
                     msg = output_messages.INFO_CHANGED_VALUE
-                    print msg % (_value, new_value)
+                    print(msg % (_value, new_value))
                 _value = new_value
             else:
                 logging.debug("Processor returned the original "
                               "value: %s" % _value)
         except processors.ParamProcessingError as ex:
-            print ("Value processing of parameter %s "
-                   "failed.\n%s" % (param.CONF_NAME, ex))
+            print("Value processing of parameter %s "
+                  "failed.\n%s" % (param.CONF_NAME, ex))
             raise
     return _value
 
@@ -541,8 +556,8 @@ def _getConditionValue(matchMember):
 
 def _displaySummary():
 
-    print output_messages.INFO_DSPLY_PARAMS
-    print "=" * (len(output_messages.INFO_DSPLY_PARAMS) - 1)
+    print(output_messages.INFO_DSPLY_PARAMS)
+    print("=" * (len(output_messages.INFO_DSPLY_PARAMS) - 1))
     logging.info("*** User input summary ***")
     for group in controller.getAllGroups():
         for param in group.parameters.itervalues():
@@ -553,11 +568,11 @@ def _displaySummary():
                 # Only call mask on a value if the param has MASK_INPUT set to True
                 if maskParam:
                     logging.info("%s: %s" % (cmdOption, mask(controller.CONF[param.CONF_NAME])))
-                    print "%s:" % (cmdOption) + " " * l + mask(controller.CONF[param.CONF_NAME])
+                    print("%s:" % (cmdOption) + " " * l + mask(controller.CONF[param.CONF_NAME]))
                 else:
                     # Otherwise, log & display it as it is
                     logging.info("%s: %s" % (cmdOption, str(controller.CONF[param.CONF_NAME])))
-                    print "%s:" % (cmdOption) + " " * l + str(controller.CONF[param.CONF_NAME])
+                    print("%s:" % (cmdOption) + " " * l + str(controller.CONF[param.CONF_NAME]))
     logging.info("*** User input summary ***")
     answer = _askYesNo(output_messages.INFO_USE_PARAMS)
     if not answer:
@@ -573,7 +588,7 @@ def _displaySummary():
                     del controller.CONF[param.CONF_NAME]
                 if param.CONF_NAME in commandLineValues:
                     del commandLineValues[param.CONF_NAME]
-            print ""
+            print("")
         logging.debug("calling handleParams in interactive mode")
         return _handleParams(None)
     else:
@@ -582,9 +597,9 @@ def _displaySummary():
 
 def _printAdditionalMessages():
     if len(controller.MESSAGES) > 0:
-        print "\n", output_messages.INFO_ADDTIONAL_MSG
+        print("\n", output_messages.INFO_ADDTIONAL_MSG)
     for msg in controller.MESSAGES:
-        print output_messages.INFO_ADDTIONAL_MSG_BULLET % (msg)
+        print(output_messages.INFO_ADDTIONAL_MSG_BULLET % (msg))
 
 
 def _addFinalInfoMsg(logFile):
@@ -612,7 +627,7 @@ def runSequences():
 
 
 def _main(options, configFile=None, logFile=None):
-    print output_messages.INFO_HEADER
+    print(output_messages.INFO_HEADER)
     print("")
     print(output_messages.INFO_LOG_FILE_PATH % logFile)
 
@@ -632,7 +647,7 @@ def _main(options, configFile=None, logFile=None):
     logging.debug(mask(controller.CONF))
 
     # Start configuration stage
-    print "\n", output_messages.INFO_INSTALL
+    print("\n", output_messages.INFO_INSTALL)
 
     # Initialize Sequences
     initPluginsSequences()
@@ -645,7 +660,7 @@ def _main(options, configFile=None, logFile=None):
 
     # Print info
     _addFinalInfoMsg(logFile)
-    print output_messages.INFO_INSTALL_SUCCESS
+    print(output_messages.INFO_INSTALL_SUCCESS)
 
 
 def remove_remote_var_dirs(options, config, messages):
@@ -703,7 +718,7 @@ def generateAnswerFile(outputFile, overrides={}):
     # the mode -rw-------
     if os.path.exists(outputFile):
         os.remove(outputFile)
-    fd = os.open(outputFile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0600)
+    fd = os.open(outputFile, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
 
     with os.fdopen(fd, "w") as ans_file:
         ans_file.write("[general]%s" % os.linesep)
@@ -829,17 +844,17 @@ def printOptions():
 
     # For each group, create a group option
     for group in controller.getAllGroups():
-        print "%s" % group.DESCRIPTION
-        print "-" * len(group.DESCRIPTION)
-        print
+        print("%s" % group.DESCRIPTION)
+        print("-" * len(group.DESCRIPTION))
+        print()
 
         for param in group.parameters.itervalues():
             cmdOption = param.CONF_NAME
             paramUsage = param.USAGE
             optionsList = param.OPTION_LIST or ""
-            print "%s" % (("**%s**" % str(cmdOption)).ljust(30))
-            print "    %s %s" % (paramUsage, optionsList)
-            print
+            print("%s" % (("**%s**" % str(cmdOption)).ljust(30)))
+            print("    %s %s" % (paramUsage, optionsList))
+            print()
 
 
 def plugin_compare(x, y):
@@ -1006,9 +1021,9 @@ def main():
         optParser.error(str(ex))
     except Exception as e:
         logging.error(traceback.format_exc())
-        print
-        print utils.color_text("ERROR : " + str(e), 'red')
-        print output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO % (logFile)
+        print()
+        print(utils.color_text("ERROR : " + str(e), 'red'))
+        print(output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO % (logFile))
         sys.exit(1)
 
     finally:
