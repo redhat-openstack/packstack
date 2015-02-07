@@ -4,7 +4,7 @@ package { $clientdeps: }
 
 $clientlibs = ['python-novaclient', 'python-keystoneclient',
   'python-glanceclient', 'python-swiftclient',
-  'python-cinderclient']
+  'python-cinderclient', 'python-openstackclient']
 
 package { $clientlibs: }
 
