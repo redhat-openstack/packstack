@@ -71,38 +71,6 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
-
-            {"CMD_OPTION": "provision-tempest-user",
-             "USAGE": "The name of the Tempest Provisioning user. If you "
-                      "don't provide a user name, Tempest will be configured "
-                      "in a standalone mode",
-             "PROMPT": ("Enter the name of the Tempest Provisioning user "
-                        "(if blank, Tempest will be configured in a "
-                        "standalone mode) "),
-             "OPTION_LIST": False,
-             "VALIDATORS": False,
-             "DEFAULT_VALUE": "",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "provision-tempest-user-passwd",
-             "USAGE": "The password to use for the Tempest Provisioning user",
-             "PROMPT": "Enter the password for the Tempest Provisioning user",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": "PW_PLACEHOLDER",
-             "PROCESSORS": [processors.process_password],
-             "MASK_INPUT": True,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER_PW",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": True,
-             "CONDITION": False},
-
         ],
 
         "PROVISION_DEMO": [
@@ -135,7 +103,51 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
-        "TEMPEST_GIT_REFS": [
+        "PROVISION_TEMPEST": [
+            {"CMD_OPTION": "provision-tempest-user",
+             "USAGE": "The name of the Tempest Provisioning user. If you "
+                      "don't provide a user name, Tempest will be configured "
+                      "in a standalone mode",
+             "PROMPT": ("Enter the name of the Tempest Provisioning user "
+                        "(if blank, Tempest will be configured in a "
+                        "standalone mode) "),
+             "OPTION_LIST": False,
+             "VALIDATORS": False,
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "provision-tempest-user-passwd",
+             "USAGE": "The password to use for the Tempest Provisioning user",
+             "PROMPT": "Enter the password for the Tempest Provisioning user",
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "PW_PLACEHOLDER",
+             "PROCESSORS": [processors.process_password],
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_USER_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "provision-tempest-floatrange",
+             "USAGE": "The CIDR network address for the floating IP subnet",
+             "PROMPT": "Enter the network address for the floating IP subnet",
+             "OPTION_LIST": False,
+             "VALIDATORS": False,
+             "DEFAULT_VALUE": "172.24.4.224/28",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_FLOATRANGE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "provision-tempest-repo-uri",
              "USAGE": "The uri of the tempest git repository to use",
              "PROMPT": "What is the uri of the Tempest git repository?",
@@ -200,12 +212,13 @@ def initConfig(controller):
 
         {"GROUP_NAME": "PROVISION_DEMO",
          "DESCRIPTION": "Provisioning demo config",
+         "PRE_CONDITION": check_provisioning_demo,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-        {"GROUP_NAME": "TEMPEST_GIT_REFS",
-         "DESCRIPTION": "Optional tempest git uri and branch",
+        {"GROUP_NAME": "PROVISION_TEMPEST",
+         "DESCRIPTION": "Provisioning tempest config",
          "PRE_CONDITION": check_provisioning_tempest,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,

@@ -93,7 +93,7 @@ if $setup_ovs_bridge {
   firewall { '000 nat':
     chain    => 'POSTROUTING',
     jump     => 'MASQUERADE',
-    source   => $::openstack::provision::floating_range,
+    source   => hiera('CONFIG_PROVISION_DEMO_FLOATRANGE'),
     outiface => $::gateway_device,
     table    => 'nat',
     proto    => 'all',
