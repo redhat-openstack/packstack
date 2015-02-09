@@ -52,9 +52,9 @@ def initConfig(controller):
 
         {"CMD_OPTION": "heat-auth-encryption-key",
          "USAGE": ("The encryption key to use for authentication info "
-                   "in database"),
+                   "in database (16, 24, or 32 chars)"),
          "PROMPT": ("Enter the authentication key for Heat to use for "
-                    "authenticate info in database"),
+                    "authenticate info in database (16, 24, or 32 chars)"),
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
          "DEFAULT_VALUE": uuid.uuid4().hex[:16],
