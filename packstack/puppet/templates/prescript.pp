@@ -11,6 +11,10 @@ if $::operatingsystem != 'Fedora' {
   }
 }
 
+package { 'sos':
+  ensure => present,
+}
+
 package { 'audit':
   ensure => present,
 } ->
