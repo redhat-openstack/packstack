@@ -197,7 +197,7 @@ if $provision_tempest_user != '' {
     firewall { '000 nat':
       chain    => 'POSTROUTING',
       jump     => 'MASQUERADE',
-      source   => $::openstack::provision::floating_range,
+      source   => hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE'),
       outiface => $::gateway_device,
       table    => 'nat',
       proto    => 'all',
