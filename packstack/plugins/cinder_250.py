@@ -63,7 +63,7 @@ def initConfig(controller):
 
             {"CMD_OPTION": "cinder-backend",
              "USAGE": ("The Cinder backend to use, valid options are: lvm, "
-                       "gluster, nfs, netapp"),
+                       "gluster, nfs, vmdk, netapp"),
              "PROMPT": "Enter the Cinder backend to be configured",
              "OPTION_LIST": ["lvm", "gluster", "nfs", "vmdk", "netapp"],
              "VALIDATORS": [validators.validate_options],
