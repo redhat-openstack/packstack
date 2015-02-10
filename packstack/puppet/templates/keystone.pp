@@ -4,6 +4,9 @@ $keystone_cfg_ks_db_pw = hiera('CONFIG_KEYSTONE_DB_PW')
 $keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 $keystone_endpoint_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
 $keystone_token_provider_str = downcase(hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'))
+$keystone_api_version_str = hiera('CONFIG_KEYSTONE_API_VERSION')
+$keystone_url = "http://${keystone_endpoint_cfg_ctrl_host}:5000/${keystone_api_version_str}"
+$keystone_admin_url = "http://${keystone_endpoint_cfg_ctrl_host}:35357/${keystone_api_version_str}"
 
 class { 'keystone':
   admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
@@ -30,9 +33,9 @@ class { 'keystone::roles::admin':
 }
 
 keystone::resource::service_identity { 'keystone':
-  public_url          => "http://${keystone_endpoint_cfg_ctrl_host}:5000",
-  internal_url        => "http://${keystone_endpoint_cfg_ctrl_host}:5000",
-  admin_url           => "http://${keystone_endpoint_cfg_ctrl_host}:35357",
+  public_url          => $keystone_url,
+  internal_url        => $keystone_url,
+  admin_url           => $keystone_admin_url,
   region              => hiera('CONFIG_KEYSTONE_REGION'),
   service_type        => 'identity',
   service_description => 'OpenStack Identity Service',

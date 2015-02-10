@@ -116,6 +116,20 @@ def initConfig(controller):
          "USE_DEFAULT": True,
          "NEED_CONFIRM": False,
          "CONDITION": False},
+
+        {"CMD_OPTION": "keystone-api-version",
+         "USAGE": "Keystone API version string",
+         "PROMPT": "Enter the Keystone API version string.",
+         "OPTION_LIST": ['v2.0', 'v3'],
+         "VALIDATORS": [validators.validate_options],
+         "DEFAULT_VALUE": 'v2.0',
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME": 'CONFIG_KEYSTONE_API_VERSION',
+         "USE_DEFAULT": True,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
+
     ]
     group = {"GROUP_NAME": "KEYSTONE",
              "DESCRIPTION": "Keystone Config parameters",
