@@ -26,6 +26,8 @@ def validate_integer(param, options=None):
     """
     Raises ParamValidationError if given param is not integer.
     """
+    if not param:
+        return
     options = options or []
     try:
         int(param)
@@ -40,6 +42,8 @@ def validate_float(param, options=None):
     """
     Raises ParamValidationError if given param is not a float.
     """
+    if not param:
+        return
     options = options or []
     try:
         float(param)
@@ -55,6 +59,8 @@ def validate_regexp(param, options=None):
     Raises ParamValidationError if given param doesn't match at least
     one of regular expressions given in options.
     """
+    if not param:
+        return
     options = options or []
     for regex in options:
         if re.search(regex, param):
@@ -81,6 +87,8 @@ def validate_port(param, options=None):
     Raises ParamValidationError if given param is not a decimal number
     in range (0, 65535).
     """
+    if not param:
+        return
     options = options or []
     validate_integer(param, options)
     port = int(param)
@@ -107,9 +115,10 @@ def validate_options(param, options=None):
     """
     Raises ParamValidationError if given param is not member of options.
     """
-    options = options or []
+    if not param:
+        return
 
-    # TO-DO: to be more flexible, remove this and exit in case param is empty
+    options = options or []
     validate_not_empty(param, options)
     if param not in options:
         logging.debug('validate_options(%s, options=%s) failed.' %
@@ -135,6 +144,8 @@ def validate_ip(param, options=None):
     Raises ParamValidationError if given parameter value is not in IPv4
     or IPv6 address.
     """
+    if not param:
+        return
     for family in (socket.AF_INET, socket.AF_INET6):
         try:
             socket.inet_pton(family, param)
@@ -162,10 +173,10 @@ def validate_file(param, options=None):
     """
     Raises ParamValidationError if provided file in param does not exist.
     """
-    options = options or []
-    # TO-DO: to be more flexible, remove this and exit in case param is empty
-    validate_not_empty(param)
+    if not param:
+        return
 
+    options = options or []
     if not os.path.isfile(param):
         logging.debug('validate_file(%s, options=%s) failed.' %
                       (param, options))
@@ -178,10 +189,9 @@ def validate_ping(param, options=None):
     Raises ParamValidationError if provided host does not answer to ICMP
     echo request.
     """
+    if not param:
+        return
     options = options or []
-    # TO-DO: to be more flexible, remove this and exit in case param is empty
-    validate_not_empty(param)
-
     rc, out = utils.execute(['/bin/ping', '-c', '1', str(param)],
                             can_fail=False)
     if rc != 0:
@@ -197,8 +207,6 @@ def validate_multi_ping(param, options=None):
     do not answer to ICMP echo request.
     """
     options = options or []
-    # TO-DO: to be more flexible, remove this and exit in case param is empty
-    validate_not_empty(param)
     for host in param.split(","):
         validate_ping(host.strip())
 
@@ -225,6 +233,8 @@ def validate_ssh(param, options=None):
     Raises ParamValidationError if provided host does not listen
     on port 22.
     """
+    if not param:
+        return
     options = options or []
     try:
         touch_port(param.strip(), 22)
