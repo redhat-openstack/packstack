@@ -138,7 +138,7 @@ def validate_ip(param, options=None):
     for family in (socket.AF_INET, socket.AF_INET6):
         try:
             socket.inet_pton(family, param)
-            break
+            return family
         except socket.error:
             continue
     else:
@@ -213,7 +213,7 @@ def touch_port(host, port):
     key = "%s:%d" % (host, port)
     if key in _tested_ports:
         return
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    s = socket.socket(validate_ip(host), socket.SOCK_STREAM)
     s.connect((host, port))
     s.shutdown(socket.SHUT_RDWR)
     s.close()
