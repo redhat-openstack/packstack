@@ -597,7 +597,7 @@ def _displaySummary():
 
 def _printAdditionalMessages():
     if len(controller.MESSAGES) > 0:
-        print("\n", output_messages.INFO_ADDTIONAL_MSG)
+        print(output_messages.INFO_ADDTIONAL_MSG)
     for msg in controller.MESSAGES:
         print(output_messages.INFO_ADDTIONAL_MSG_BULLET % (msg))
 
@@ -628,8 +628,7 @@ def runSequences():
 
 def _main(options, configFile=None, logFile=None):
     print(output_messages.INFO_HEADER)
-    print("")
-    print(output_messages.INFO_LOG_FILE_PATH % logFile)
+    print("\n" + output_messages.INFO_LOG_FILE_PATH % logFile)
 
     # Get parameters
     _handleParams(configFile)
@@ -647,7 +646,7 @@ def _main(options, configFile=None, logFile=None):
     logging.debug(mask(controller.CONF))
 
     # Start configuration stage
-    print("\n", output_messages.INFO_INSTALL)
+    print("\n" + output_messages.INFO_INSTALL)
 
     # Initialize Sequences
     initPluginsSequences()
@@ -845,16 +844,14 @@ def printOptions():
     # For each group, create a group option
     for group in controller.getAllGroups():
         print("%s" % group.DESCRIPTION)
-        print("-" * len(group.DESCRIPTION))
-        print()
+        print("-" * len(group.DESCRIPTION) + "\n")
 
         for param in group.parameters.itervalues():
             cmdOption = param.CONF_NAME
             paramUsage = param.USAGE
             optionsList = param.OPTION_LIST or ""
             print("%s" % (("**%s**" % str(cmdOption)).ljust(30)))
-            print("    %s %s" % (paramUsage, optionsList))
-            print()
+            print("    %s %s" % (paramUsage, optionsList) + "\n")
 
 
 def plugin_compare(x, y):
@@ -1019,8 +1016,7 @@ def main():
         optParser.error(str(ex))
     except Exception as e:
         logging.error(traceback.format_exc())
-        print()
-        print(utils.color_text("ERROR : " + str(e), 'red'))
+        print("\n" + utils.color_text("ERROR : " + str(e), 'red'))
         print(output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO % (logFile))
         sys.exit(1)
 
