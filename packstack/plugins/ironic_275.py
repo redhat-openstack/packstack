@@ -43,7 +43,7 @@ def initConfig(controller):
          "PROCESSORS": [processors.process_password],
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
-         "USE_DEFAULT": True,
+         "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
 
@@ -58,7 +58,7 @@ def initConfig(controller):
          "PROCESSORS": [processors.process_password],
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
-         "USE_DEFAULT": True,
+         "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
     ]
