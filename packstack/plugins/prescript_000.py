@@ -139,6 +139,25 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "os-manila-install",
+             "USAGE": (
+                 "Set to 'y' if you would like Packstack to install "
+                 "OpenStack Shared File System (Manila)"
+             ),
+             "PROMPT": (
+                 "Should Packstack install OpenStack Shared File System "
+                 "(Manila) service"
+             ),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "y",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_INSTALL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "os-nova-install",
              "USAGE": (
                  "Set to 'y' if you would like Packstack to install "
