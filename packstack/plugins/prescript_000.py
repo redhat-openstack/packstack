@@ -150,7 +150,7 @@ def initConfig(controller):
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "y",
+             "DEFAULT_VALUE": "n",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_MANILA_INSTALL",
