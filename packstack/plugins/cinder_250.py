@@ -733,27 +733,7 @@ def create_manifest(config, messages):
     manifestfile = "%s_cinder.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata += getManifestTemplate("cinder")
 
-    backends = config['CONFIG_CINDER_BACKEND']
-    if 'netapp' in backends:
-        backends.remove('netapp')
-        puppet_cdot_iscsi = "cinder_netapp_cdot_iscsi"
-        puppet_cdot_nfs = "cinder_netapp_cdot_nfs"
-        puppet_7mode_iscsi = "cinder_netapp_7mode_iscsi"
-        puppet_7mode_nfs = "cinder_netapp_7mode_nfs"
-        puppet_eseries = "cinder_netapp_eseries"
-        if config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "ontap_cluster":
-            if config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == "iscsi":
-                manifestdata += getManifestTemplate(puppet_cdot_iscsi)
-            elif config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == "nfs":
-                manifestdata += getManifestTemplate(puppet_cdot_nfs)
-        elif config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "ontap_7mode":
-            if config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == "iscsi":
-                manifestdata += getManifestTemplate(puppet_7mode_iscsi)
-            elif config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == "nfs":
-                manifestdata += getManifestTemplate(puppet_7mode_nfs)
-        elif config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "eseries":
-            manifestdata += getManifestTemplate(puppet_eseries)
-    for backend in backends:
+    for backend in config['CONFIG_CINDER_BACKEND']:
         manifestdata += getManifestTemplate('cinder_%s' % backend)
 
     if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
