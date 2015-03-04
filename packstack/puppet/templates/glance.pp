@@ -4,7 +4,7 @@ $glance_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
 
 class { 'glance::api':
   auth_uri            => "http://${glance_cfg_ctrl_host}:5000/",
-  identity_uri        => "http://${glance_cfg_ctrl_host}:35357/v2.0",
+  identity_uri        => "http://${glance_cfg_ctrl_host}:35357",
   keystone_tenant     => 'services',
   keystone_user       => 'glance',
   keystone_password   => hiera('CONFIG_GLANCE_KS_PW'),
@@ -17,7 +17,7 @@ class { 'glance::api':
 
 class { 'glance::registry':
   auth_uri            => "http://${glance_cfg_ctrl_host}:5000/",
-  identity_uri        => "http://${glance_cfg_ctrl_host}:35357/v2.0",
+  identity_uri        => "http://${glance_cfg_ctrl_host}:35357",
   keystone_tenant     => 'services',
   keystone_user       => 'glance',
   keystone_password   => hiera('CONFIG_GLANCE_KS_PW'),
