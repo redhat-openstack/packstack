@@ -801,7 +801,7 @@ def initCmdLineParser():
     # Init parser and all general flags
     usage = "usage: %prog [options] [--help]"
     parser = OptionParser(usage=usage, version="%prog {0} {1}".format(version.release_string(), version.version_string()))
-    parser.add_option("--gen-answer-file", help="Generate a template of an answer file, using this option excludes all other options")
+    parser.add_option("--gen-answer-file", help="Generate a template of an answer file.")
     parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the"
                                             "configuration file. using this option excludes all other options")
     parser.add_option("--install-hosts", help="Install on a set of hosts in a single step. The format should be a comma separated list "
@@ -970,8 +970,6 @@ def main():
 
         # If --gen-answer-file was supplied, do not run main
         if options.gen_answer_file:
-            # Make sure only --gen-answer-file was supplied
-            validateSingleFlag(options, "gen_answer_file")
             answerfilepath = _gettmpanswerfilepath()
             if not answerfilepath:
                 _printAdditionalMessages()

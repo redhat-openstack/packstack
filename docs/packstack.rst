@@ -14,9 +14,9 @@ Packstack is a utility that uses uses puppet modules to install OpenStack. It ca
 
 - packstack
 - packstack [options]
-- packstack --gen-answer-file=<file> [--default-password=<passwd>] / packstack --answer-file=<file>
+- packstack --gen-answer-file=<file> [options] / packstack --answer-file=<file>
 
-The third option allows the user to generate a default answer file, edit the default options and finally run Packstack a second time using this answer file. This is the easiest way to run Packstack and the one that will be documented here. Optionally, it is possible to specify a default password when generating the answer file, and this default password will be used for all accounts.
+The third option allows the user to generate a default answer file, edit the default options and finally run Packstack a second time using this answer file. This is the easiest way to run Packstack and the one that will be documented here. Optionally, it is possible to set additional command-line options (such as a default password), and those options will be set in the answer file.
 
 When <file> is created, it will contain the OPTIONS below, which can then be edited by the user.
 
