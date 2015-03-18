@@ -29,9 +29,12 @@ from packstack.modules.ospluginutils import getManifestTemplate
 PLUGIN_NAME = "OS-Provision"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
-DEMO_CIRRUS_URL = (
+DEMO_IMAGE_NAME = 'cirros'
+DEMO_IMAGE_URL = (
     'http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img'
 )
+DEMO_IMAGE_SSH_USER = 'cirros'
+DEMO_IMAGE_FORMAT = 'qcow2'
 
 
 def initConfig(controller):
@@ -87,17 +90,58 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "provision-cirros-url",
-             "USAGE": "A URL or local file location for the Cirros demo image "
-                      "used for Glance",
-             "PROMPT": "Enter the URL or local file location for the Cirros "
-                       "image",
+            {"CMD_OPTION": "provision-image-name",
+             "USAGE": "A named to be used for the demo image in Glance",
+             "PROMPT": "Enter the name to be assigned to the demo image",
              "OPTION_LIST": False,
              "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": DEMO_CIRRUS_URL,
+             "DEFAULT_VALUE": DEMO_IMAGE_NAME,
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_CIRROS_URL",
+             "CONF_NAME": "CONFIG_PROVISION_IMAGE_NAME",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "provision-image-url",
+             "USAGE": ("A URL or local file location for an image "
+                       "to be loaded into Glance"),
+             "PROMPT": ("Enter the location of an image to be loaded "
+                        "into Glance"),
+             "OPTION_LIST": False,
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": DEMO_IMAGE_URL,
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_PROVISION_IMAGE_URL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "provision-image-format",
+             "USAGE": ("Disk format (qcow2, raw, etc) of demo image"),
+             "PROMPT": ("Enter the format of the demo image"),
+             "OPTION_LIST": False,
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": DEMO_IMAGE_FORMAT,
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_PROVISION_IMAGE_FORMAT",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "provision-image-ssh-user",
+             "USAGE": ("Name of a user to use when connecting via ssh to "
+                       "instances booted from the demo image"),
+             "PROMPT": ("Enter the name of a user to use when connecting "
+                        "to the demo image via ssh"),
+             "OPTION_LIST": False,
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": DEMO_IMAGE_SSH_USER,
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_PROVISION_IMAGE_SSH_USER",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},

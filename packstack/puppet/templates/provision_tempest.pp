@@ -20,9 +20,10 @@ if $provision_tempest_user != '' {
   $admin_tenant_name         = 'admin'
 
   ## Glance
-  $image_name                = 'cirros'
-  $image_source              = hiera('CONFIG_PROVISION_CIRROS_URL')
-  $image_ssh_user            = 'cirros'
+  $image_name               = hiera('CONFIG_PROVISION_IMAGE_NAME')
+  $image_source             = hiera('CONFIG_PROVISION_IMAGE_URL')
+  $image_ssh_user           = hiera('CONFIG_PROVISION_IMAGE_SSH_USER')
+  $image_format             = hiera('CONFIG_PROVISION_IMAGE_FORMAT')
 
   ## Neutron
   $public_network_name       = 'public'

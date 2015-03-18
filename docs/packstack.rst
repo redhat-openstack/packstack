@@ -825,8 +825,17 @@ Provisioning demo config
 **CONFIG_PROVISION_DEMO_FLOATRANGE**
     CIDR network address for the floating IP subnet.
 
-**CONFIG_PROVISION_CIRROS_URL**
-    A URL or local file location for the Cirros demo image (provided as an initial image in the Image service).
+**CONFIG_PROVISION_IMAGE_URL**
+    A URL or local file location for an image to download and provision in Glance (defaults to a URL for a recent "cirros" image).
+
+**CONFIG_PROVISION_IMAGE_NAME**
+    The name to be assigned to the demo image in Glance (default "cirros").
+
+**CONFIG_PROVISION_IMAGE_FORMAT**
+    Format for the demo image (default "qcow2").
+
+**CONFIG_PROVISION_IMAGE_SSH_USER**
+    User to use when connecting to instances booted from the demo image.
 
 Provisioning tempest config
 ---------------------------
