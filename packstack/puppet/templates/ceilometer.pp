@@ -3,11 +3,12 @@ $config_mongodb_host = hiera('CONFIG_MONGODB_HOST')
 $config_ceilometer_coordination_backend = hiera('CONFIG_CEILOMETER_COORDINATION_BACKEND')
 
 if $config_ceilometer_coordination_backend == 'redis' {
+  $redis_ha = hiera('CONFIG_REDIS_HA')
   $redis_host = hiera('CONFIG_REDIS_MASTER_HOST')
   $redis_port = hiera('CONFIG_REDIS_PORT')
   $sentinel_host = hiera('CONFIG_REDIS_SENTINEL_CONTACT_HOST')
   $sentinel_fallbacks = hiera('CONFIG_REDIS_SENTINEL_FALLBACKS')
-  if $sentinel_host != '' {
+  if ($sentinel_host != '' and $redis_ha == 'y') {
     $master_name = hiera('CONFIG_REDIS_MASTER_NAME')
     $sentinel_port = hiera('CONFIG_REDIS_SENTINEL_PORT')
     $base_coordination_url = "redis://${sentinel_host}:${sentinel_port}?sentinel=${master_name}"
