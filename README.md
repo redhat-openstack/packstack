@@ -24,7 +24,22 @@ options have yet to be added.
 
     $ sudo python setup.py install_puppet_modules
 
-### Option 1 (using answer file)
+### Option 1 (all-in-one)
+
+    $ packstack --allinone
+
+This will install all **OpenStack** services on a single host without
+prompting for any configuration information.  This will generate an
+"answers" file (`packstack-answers-<date>-<time>.txt`) containing all
+the values used for the install.
+
+If you need to re-run packstack, you must use the `--answer-file`
+option in order for packstack to use the correct values for passwords
+and other authentication credentials:
+
+    $ packstack --answer-file packstack-answers-<date>-<time>.txt
+
+### Option 2 (using answer file)
 
     $ packstack --gen-answer-file=ans.txt
 
@@ -40,7 +55,7 @@ you'll need to use a icehouse repository for example for RHEL
 
     $ packstack --answer-file=ans.txt
 
-### Option 2 (prompts for configuration options)
+### Option 3 (prompts for configuration options)
 
     $ packstack
 
