@@ -54,3 +54,22 @@ exec {'virsh-net-undefine-default':
   command => '/usr/bin/virsh net-undefine default',
   require => Exec['virsh-net-destroy-default'],
 }
+
+$libvirt_debug = hiera('CONFIG_DEBUG_MODE')
+if $libvirt_debug {
+
+  file_line { '/etc/libvirt/libvirt.conf log_filters':
+    path   => '/etc/libvirt/libvirtd.conf',
+    line   => 'log_filters = "1:libvirt 1:qemu 1:conf 1:security 3:event 3:json 3:file 1:util"',
+    match  => 'log_filters =',
+    notify => Service['libvirt'],
+  }
+
+  file_line { '/etc/libvirt/libvirt.conf log_outputs':
+    path   => '/etc/libvirt/libvirtd.conf',
+    line   => 'log_outputs = "1:file:/var/log/libvirt/libvirtd.log"',
+    match  => 'log_outputs =',
+    notify => Service['libvirt'],
+  }
+
+}
