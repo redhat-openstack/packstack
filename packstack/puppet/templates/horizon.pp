@@ -1,4 +1,4 @@
-include packstack::apache_common
+include concat::setup
 
 $horizon_packages = ["python-memcached", "python-netaddr"]
 

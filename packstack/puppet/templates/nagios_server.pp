@@ -1,5 +1,3 @@
-include packstack::apache_common
-
 package{['nagios', 'nagios-plugins-nrpe']:
     ensure => present,
     before => Class['nagios_configs']
@@ -65,7 +63,11 @@ class{'nagios_configs':
     notify => [Service['nagios'], Service['httpd']],
 }
 
-include ::apache
+include concat::setup
+
+class {'apache':
+    purge_configs => false,
+}
 class {'apache::mod::php': }
 
 service{['nagios']:
@@ -78,4 +80,9 @@ firewall { '001 nagios incoming':
     proto    => 'tcp',
     dport    => ['80'],
     action   => 'accept',
+}
+
+# ensure that we won't stop listening on 443 if horizon has ssl enabled
+if %(CONFIG_HORIZON_SSL)s {
+    apache::listen { '443': }
 }
