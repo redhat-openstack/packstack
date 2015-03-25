@@ -223,7 +223,83 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
-        ]
+        ],
+
+        "MANILANETWORK": [
+            {"CMD_OPTION": "manila-network-type",
+             "PROMPT": ("Enter a network type"),
+             "OPTION_LIST": ['neutron', 'nova-network', 'standalone'],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "neutron",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETWORK_TYPE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
+
+        "MANILANETWORKSTANDALONE": [
+            {"CMD_OPTION": "standalone_network_plugin_gateway",
+             "PROMPT": ("Enter a plugin gateway"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETWORK_STANDALONE_GATEWAY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "standalone_network_plugin_mask",
+             "PROMPT": ("Enter a network mask"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETWORK_STANDALONE_NETMASK",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "standalone_network_plugin_segmentation_id",
+             "PROMPT": ("Enter a segmentation ID"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETWORK_STANDALONE_SEG_ID",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "standalone_network_plugin_ip_range",
+             "PROMPT": ("Enter a network mask"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETWORK_STANDALONE_IP_RANGE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "standalone_network_plugin_ip_version",
+             "PROMPT": ("Enter an IP version"),
+             "OPTION_LIST": ['4', '6'],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "4",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETWORK_STANDALONE_IP_VERSION",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
     }
     update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
     conf_groups = [
@@ -244,6 +320,20 @@ def initConfig(controller):
         {"GROUP_NAME": "MANILAGENERIC",
          "DESCRIPTION": "Manila generic driver configuration",
          "PRE_CONDITION": check_generic_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "MANILANETWORK",
+         "DESCRIPTION": "Manila general network configuration",
+         "PRE_CONDITION": "CONFIG_MANILA_INSTALL",
+         "PRE_CONDITION_MATCH": "y",
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "MANILANETWORKSTANDALONE",
+         "DESCRIPTION": "Manila standalone network configuration",
+         "PRE_CONDITION": check_network_standalone_options,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
@@ -284,6 +374,11 @@ def check_generic_options(config):
             config.get('CONFIG_MANILA_BACKEND', 'generic') == 'generic')
 
 
+def check_network_standalone_options(config):
+    return (config['CONFIG_MANILA_INSTALL'] == 'y' and
+            config['CONFIG_MANILA_NETWORK_TYPE'] == 'standalone')
+
+
 # -------------------------- step functions --------------------------
 
 def create_keystone_manifest(config, messages):
@@ -302,6 +397,7 @@ def create_manifest(config, messages):
     manifestdata = getManifestTemplate(get_mq(config, "manila"))
     manifestfile = "%s_manila.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata += getManifestTemplate("manila.pp")
+    manifestdata += getManifestTemplate("manila_network.pp")
 
     backends = config['CONFIG_MANILA_BACKEND']
     for backend in backends:
