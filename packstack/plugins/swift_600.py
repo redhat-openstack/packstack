@@ -21,12 +21,14 @@ import re
 import uuid
 import netaddr
 
+from packstack.installer import basedefs
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer.exceptions import ParamValidationError
 from packstack.installer import utils
 from packstack.installer.utils import split_hosts
 
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import getManifestTemplate
@@ -41,8 +43,6 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 def initConfig(controller):
     params = [
         {"CMD_OPTION": "os-swift-ks-passwd",
-         "USAGE": ("The password to use for the Swift to authenticate "
-                   "with Keystone"),
          "PROMPT": "Enter the password for the Swift Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -56,13 +56,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-swift-storages",
-         "USAGE": ("A comma separated list of devices which to use as Swift "
-                   "Storage device. Each entry should take the format "
-                   "/path/to/dev, for example /dev/vdb will install /dev/vdb "
-                   "as Swift storage device (packstack does not create "
-                   "the filesystem, you must do this first). If value is "
-                   "omitted Packstack will create a loopback device for test "
-                   "setup"),
          "PROMPT": "Enter the Swift Storage devices e.g. /path/to/dev",
          "OPTION_LIST": [],
          "VALIDATORS": [validate_storage],
@@ -76,8 +69,6 @@ def initConfig(controller):
          "DEPRECATES": ['CONFIG_SWIFT_STORAGE_HOSTS']},
 
         {"CMD_OPTION": "os-swift-storage-zones",
-         "USAGE": ("Number of swift storage zones, this number MUST be "
-                   "no bigger than the number of storage devices configured"),
          "PROMPT": ("Enter the number of swift storage zones, MUST be no "
                     "bigger than the number of storage devices configured"),
          "OPTION_LIST": [],
@@ -91,8 +82,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-swift-storage-replicas",
-         "USAGE": ("Number of swift storage replicas, this number MUST be "
-                   "no bigger than the number of storage zones configured"),
          "PROMPT": ("Enter the number of swift storage replicas, MUST be no "
                     "bigger than the number of storage zones configured"),
          "OPTION_LIST": [],
@@ -106,7 +95,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-swift-storage-fstype",
-         "USAGE": "FileSystem type for storage nodes",
          "PROMPT": "Enter FileSystem type for storage nodes",
          "OPTION_LIST": ['xfs', 'ext4'],
          "VALIDATORS": [validators.validate_options],
@@ -119,7 +107,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-swift-hash",
-         "USAGE": "Shared secret for Swift",
          "PROMPT": "Enter hash for Swift shared secret",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -132,7 +119,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-swift-storage-size",
-         "USAGE": "Size of the swift loopback file storage device",
          "PROMPT": ("Enter the size of the storage device (eg. 2G, 2000M, "
                     "2000000K)"),
          "OPTION_LIST": [],
@@ -145,6 +131,7 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "OSSWIFT",
              "DESCRIPTION": "OpenStack Swift Config parameters",
              "PRE_CONDITION": "CONFIG_SWIFT_INSTALL",

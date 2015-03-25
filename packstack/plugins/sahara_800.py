@@ -16,9 +16,12 @@
 Installs and configures Sahara
 """
 
+from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
+
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -35,7 +38,6 @@ def initConfig(controller):
         {"CONF_NAME": "CONFIG_SAHARA_DB_PW",
          "CMD_OPTION": "sahara-db-passwd",
          "PROMPT": "Enter the password to use for Sahara to access the DB",
-         "USAGE": "The password to use for the Sahara DB access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
          "DEFAULT_VALUE": "PW_PLACEHOLDER",
@@ -48,8 +50,6 @@ def initConfig(controller):
 
         {"CONF_NAME": "CONFIG_SAHARA_KS_PW",
          "CMD_OPTION": "sahara-ks-passwd",
-         "USAGE": ("The password to use for Sahara to authenticate "
-                   "with Keystone"),
          "PROMPT": "Enter the password for Sahara Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -61,6 +61,7 @@ def initConfig(controller):
          "NEED_CONFIRM": True,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "SAHARA",
              "DESCRIPTION": "Sahara Config parameters",
              "PRE_CONDITION": "CONFIG_SAHARA_INSTALL",

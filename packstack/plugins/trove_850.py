@@ -16,9 +16,12 @@
 Installs and configures Trove
 """
 
+from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
+
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -45,7 +48,6 @@ def initConfig(controller):
         {"CONF_NAME": "CONFIG_TROVE_DB_PW",
          "CMD_OPTION": "trove-db-passwd",
          "PROMPT": "Enter the password to use for Trove to access the DB",
-         "USAGE": "The password to use for the Trove DB access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
          "DEFAULT_VALUE": "PW_PLACEHOLDER",
@@ -58,8 +60,6 @@ def initConfig(controller):
 
         {"CONF_NAME": "CONFIG_TROVE_KS_PW",
          "CMD_OPTION": "trove-ks-passwd",
-         "USAGE": ("The password to use for Trove to authenticate "
-                   "with Keystone"),
          "PROMPT": "Enter the password for Trove Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -73,7 +73,6 @@ def initConfig(controller):
 
         {"CONF_NAME": "CONFIG_TROVE_NOVA_USER",
          "CMD_OPTION": "trove-nova-user",
-         "USAGE": "The user to use when Trove connects to Nova",
          "PROMPT": "Enter the user for Trove to use to connect to Nova",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -86,7 +85,6 @@ def initConfig(controller):
 
         {"CONF_NAME": "CONFIG_TROVE_NOVA_TENANT",
          "CMD_OPTION": "trove-nova-tenant",
-         "USAGE": "The tenant to use when Trove connects to Nova",
          "PROMPT": "Enter the tenant for Trove to use to connect to Nova",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -99,7 +97,6 @@ def initConfig(controller):
 
         {"CONF_NAME": "CONFIG_TROVE_NOVA_PW",
          "CMD_OPTION": "trove-nova-passwd",
-         "USAGE": "The password to use when Trove connects to Nova",
          "PROMPT": "Enter the password for Trove to use to connect to Nova",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -111,7 +108,7 @@ def initConfig(controller):
          "NEED_CONFIRM": True,
          "CONDITION": False},
     ]
-
+    update_params_usage(basedefs.PACKSTACK_DOC, parameters, sectioned=False)
     group = {"GROUP_NAME": "Trove",
              "DESCRIPTION": "Trove config parameters",
              "PRE_CONDITION": "CONFIG_TROVE_INSTALL",

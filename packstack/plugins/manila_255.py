@@ -15,10 +15,13 @@
 """
 Installs and configures Manila
 """
+
+from packstack.installer import basedefs
 from packstack.installer import processors
 from packstack.installer import validators
 from packstack.installer import utils
 
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import appendManifestFile
@@ -34,7 +37,6 @@ def initConfig(controller):
     conf_params = {
         "MANILA": [
             {"CMD_OPTION": "manila-db-passwd",
-             "USAGE": "The password to use for the Manila to access DB",
              "PROMPT": "Enter the password for the Manila DB access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -48,8 +50,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-ks-passwd",
-             "USAGE": ("The password to use for the Manila to authenticate "
-                       "with Keystone"),
              "PROMPT": "Enter the password for the Manila Keystone access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -63,8 +63,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-backend",
-             "USAGE": ("The Manila backend to use, valid options are: "
-                       "generic, netapp"),
              "PROMPT": "Enter the Manila backend to be configured",
              "OPTION_LIST": ["generic", "netapp"],
              "VALIDATORS": [validators.validate_options],
@@ -79,10 +77,6 @@ def initConfig(controller):
 
         "MANILANETAPP": [
             {"CMD_OPTION": "manila-netapp-nas-transport-type",
-             "USAGE": ("The transport protocol used when "
-                       "communicating with ONTAPI on the storage system or "
-                       "proxy server. Valid values are http or https.  "
-                       "Defaults to http"),
              "PROMPT": ("Enter a NetApp transport type"),
              "OPTION_LIST": ["http", "https"],
              "VALIDATORS": [validators.validate_options],
@@ -95,8 +89,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-netapp-nas-login",
-             "USAGE": ("Administrative user account name used to "
-                       "access the storage system or proxy server. "),
              "PROMPT": ("Enter a NetApp login"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
@@ -109,8 +101,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-netapp-nas-password",
-             "USAGE": ("Password for the administrative user "
-                       "account specified in the netapp_nas_login parameter."),
              "PROMPT": ("Enter a NetApp password"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
@@ -123,8 +113,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-netapp-nas-server-hostname",
-             "USAGE": ("The hostname (or IP address) for the "
-                       "storage system or proxy server."),
              "PROMPT": ("Enter a NetApp hostname"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -138,8 +126,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-netapp-aggregate-name-search-pattern",
-             "USAGE": ("Pattern for searching available aggregates "
-                       "for provisioning."),
              "PROMPT": ("Enter a NetApp aggregate name search pattern"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -152,8 +138,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-netapp-root-volume-aggregate",
-             "USAGE": ("Name of aggregate to create root volume "
-                       "on. "),
              "PROMPT": ("Enter a NetApp root volume aggregate"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -166,7 +150,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-netapp-root-volume-name",
-             "USAGE": ("Root volume name. "),
              "PROMPT": ("Enter a NetApp root volume name"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -181,8 +164,6 @@ def initConfig(controller):
 
         "MANILAGENERIC": [
             {"CMD_OPTION": "manila-generic-volume-name-template",
-             "USAGE": ("Volume name template. "
-                       "Defaults to manila-share-%s"),
              "PROMPT": ("Enter a volume name template"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -195,8 +176,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-generic-share-mount-path",
-             "USAGE": ("Share mount path. "
-                       "Defaults to /shares"),
              "PROMPT": ("Enter a share mount path"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -209,8 +188,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-service-image-location",
-             "USAGE": ("Location of disk image for service "
-                       "instance."),
              "PROMPT": ("Enter a service image location"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -224,7 +201,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-service-instance-user",
-             "USAGE": ("User in service instance."),
              "PROMPT": ("Enter a service instance user"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -237,7 +213,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-service-instance-password",
-             "USAGE": ("Password to service instance user."),
              "PROMPT": ("Enter a service instance password"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -250,7 +225,7 @@ def initConfig(controller):
              "CONDITION": False},
         ]
     }
-
+    update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
     conf_groups = [
         {"GROUP_NAME": "MANILA",
          "DESCRIPTION": "Manila Config parameters",

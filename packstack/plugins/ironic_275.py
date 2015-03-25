@@ -16,10 +16,12 @@
 Installs and configures Ironic
 """
 
+from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
 
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -36,7 +38,6 @@ def initConfig(controller):
         {"CONF_NAME": "CONFIG_IRONIC_DB_PW",
          "CMD_OPTION": "os-ironic-db-passwd",
          "PROMPT": "Enter the password for the Ironic DB user",
-         "USAGE": "The password to use for the Ironic DB access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
          "DEFAULT_VALUE": "PW_PLACEHOLDER",
@@ -49,8 +50,6 @@ def initConfig(controller):
 
         {"CONF_NAME": "CONFIG_IRONIC_KS_PW",
          "CMD_OPTION": "os-ironic-ks-passwd",
-         "USAGE": ("The password to use for Ironic to authenticate "
-                   "with Keystone"),
          "PROMPT": "Enter the password for Ironic Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -62,7 +61,7 @@ def initConfig(controller):
          "NEED_CONFIRM": True,
          "CONDITION": False},
     ]
-
+    update_params_usage(basedefs.PACKSTACK_DOC, ironic_params, sectioned=False)
     ironic_group = {"GROUP_NAME": "IRONIC",
                     "DESCRIPTION": "Ironic Options",
                     "PRE_CONDITION": "CONFIG_IRONIC_INSTALL",

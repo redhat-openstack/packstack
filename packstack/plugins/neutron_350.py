@@ -16,6 +16,7 @@
 Installs and configures Neutron
 """
 
+from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
@@ -23,6 +24,7 @@ from packstack.installer import output_messages
 from packstack.installer.utils import split_hosts
 
 from packstack.modules.common import filtered_hosts
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -38,8 +40,6 @@ def initConfig(controller):
     conf_params = {
         "NEUTRON": [
             {"CMD_OPTION": "os-neutron-ks-password",
-             "USAGE": ("The password to use for Neutron to authenticate "
-                       "with Keystone"),
              "PROMPT": "Enter the password for Neutron Keystone access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -53,7 +53,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "os-neutron-db-password",
-             "USAGE": "The password to use for Neutron to access DB",
              "PROMPT": "Enter the password for Neutron DB access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -67,9 +66,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "os-neutron-l3-ext-bridge",
-             "USAGE": ("The name of the ovs bridge (or empty for linuxbridge)"
-                       " that the Neutron L3 agent will use for external "
-                       " traffic, or 'provider' using provider networks. "),
              "PROMPT": ("Enter the ovs bridge the Neutron L3 agent will use "
                         "for external traffic, or 'provider' if using "
                         "provider networks."),
@@ -84,7 +80,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "os-neutron-metadata-pw",
-             "USAGE": "Neutron metadata agent password",
              "PROMPT": "Enter Neutron metadata agent password",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -98,8 +93,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "os-neutron-lbaas-install",
-             "USAGE": ("Set to 'y' if you would like Packstack to install "
-                       "Neutron LBaaS"),
              "PROMPT": "Should Packstack install Neutron LBaaS",
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -112,8 +105,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "os-neutron-metering-agent-install",
-             "USAGE": ("Set to 'y' if you would like Packstack to install "
-                       "Neutron L3 Metering agent"),
              "PROMPT": ("Should Packstack install Neutron L3 Metering agent"),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -126,7 +117,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "neutron-fwaas",
-             "USAGE": ("Whether to configure neutron Firewall as a Service"),
              "PROMPT": "Would you like to configure neutron FWaaS?",
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -141,9 +131,6 @@ def initConfig(controller):
 
         "NEUTRON_LB_AGENT": [
             {"CMD_OPTION": "os-neutron-lb-interface-mappings",
-             "USAGE": ("A comma separated list of interface mappings for the "
-                       "Neutron linuxbridge plugin (eg. physnet1:eth1,"
-                       "physnet2:eth2,physnet3:eth3)"),
              "PROMPT": ("Enter a comma separated list of interface mappings "
                         "for the Neutron linuxbridge plugin"),
              "OPTION_LIST": [],
@@ -159,9 +146,6 @@ def initConfig(controller):
 
         "NEUTRON_OVS_AGENT": [
             {"CMD_OPTION": "os-neutron-ovs-bridge-mappings",
-             "USAGE": ("A comma separated list of bridge mappings for the "
-                       "Neutron openvswitch plugin (eg. physnet1:br-eth1,"
-                       "physnet2:br-eth2,physnet3:br-eth3)"),
              "PROMPT": ("Enter a comma separated list of bridge mappings for "
                         "the Neutron openvswitch plugin"),
              "OPTION_LIST": [],
@@ -175,9 +159,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "os-neutron-ovs-bridge-interfaces",
-             "USAGE": ("A comma separated list of colon-separated OVS "
-                       "bridge:interface pairs. The interface will be added "
-                       "to the associated bridge."),
              "PROMPT": ("Enter a comma separated list of OVS bridge:interface "
                         "pairs for the Neutron openvswitch plugin"),
              "OPTION_LIST": [],
@@ -193,10 +174,6 @@ def initConfig(controller):
 
         "NEUTRON_OVS_AGENT_TUNNEL": [
             {"CMD_OPTION": "os-neutron-ovs-tunnel-if",
-             "USAGE": ("The interface for the OVS tunnel. Packstack will "
-                       "override the IP address used for tunnels on this "
-                       "hypervisor to the IP found on the specified interface."
-                       " (eg. eth1)"),
              "PROMPT": ("Enter interface with IP to override the default "
                         "tunnel local_ip"),
              "OPTION_LIST": [],
@@ -213,7 +190,6 @@ def initConfig(controller):
         "NEUTRON_OVS_AGENT_VXLAN": [
             {"CMD_OPTION": "os-neutron-ovs-vxlan-udp-port",
              "CONF_NAME": "CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT",
-             "USAGE": "VXLAN UDP port",
              "PROMPT": "Enter VXLAN UDP port number",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_port],
@@ -228,9 +204,6 @@ def initConfig(controller):
         "NEUTRON_ML2_PLUGIN": [
             {"CMD_OPTION": "os-neutron-ml2-type-drivers",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_TYPE_DRIVERS",
-             "USAGE": ("A comma separated list of network type driver "
-                       "entrypoints to be loaded from the "
-                       "neutron.ml2.type_drivers namespace."),
              "PROMPT": ("Enter a comma separated list of network type driver "
                         "entrypoints"),
              "OPTION_LIST": ["local", "flat", "vlan", "gre", "vxlan"],
@@ -244,10 +217,6 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-ml2-tenant-network-types",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES",
-             "USAGE": ("A comma separated ordered list of network_types to "
-                       "allocate as tenant networks. The value 'local' is "
-                       "only useful for single-box testing but provides no "
-                       "connectivity between hosts."),
              "PROMPT": ("Enter a comma separated ordered list of "
                         "network_types to allocate as tenant networks"),
              "OPTION_LIST": ["local", "vlan", "gre", "vxlan"],
@@ -261,9 +230,6 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-ml2-mechanism-drivers",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS",
-             "USAGE": ("A comma separated ordered list of networking "
-                       "mechanism driver entrypoints to be loaded from the "
-                       "neutron.ml2.mechanism_drivers namespace."),
              "PROMPT": ("Enter a comma separated ordered list of networking "
                         "mechanism driver entrypoints"),
              "OPTION_LIST": ["logger", "test", "linuxbridge", "openvswitch",
@@ -279,10 +245,6 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-ml2-flat-networks",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_FLAT_NETWORKS",
-             "USAGE": ("A comma separated  list of physical_network names "
-                       "with which flat networks can be created. Use * to "
-                       "allow flat networks with arbitrary physical_network "
-                       "names."),
              "PROMPT": ("Enter a comma separated  list of physical_network "
                         "names with which flat networks can be created"),
              "OPTION_LIST": [],
@@ -296,12 +258,6 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-ml2-vlan-ranges",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_VLAN_RANGES",
-             "USAGE": ("A comma separated list of <physical_network>:"
-                       "<vlan_min>:<vlan_max> or <physical_network> "
-                       "specifying physical_network names usable for VLAN "
-                       "provider and tenant networks, as well as ranges of "
-                       "VLAN tags on each available for allocation to tenant "
-                       "networks."),
              "PROMPT": ("Enter a comma separated list of physical_network "
                         "names usable for VLAN"),
              "OPTION_LIST": [],
@@ -315,10 +271,6 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-ml2-tunnel-id-ranges",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_TUNNEL_ID_RANGES",
-             "USAGE": ("A comma separated list of <tun_min>:<tun_max> tuples "
-                       "enumerating ranges of GRE tunnel IDs that are "
-                       "available for tenant network allocation. Should be "
-                       "an array with tun_max +1 - tun_min > 1000000"),
              "PROMPT": ("Enter a comma separated list of <tun_min>:<tun_max> "
                         "tuples enumerating ranges of GRE tunnel IDs that "
                         "are available for tenant network allocation"),
@@ -333,11 +285,6 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-ml2-vxlan-group",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_VXLAN_GROUP",
-             "USAGE": ("Multicast group for VXLAN. If unset, disables VXLAN "
-                       "enable sending allocate broadcast traffic to this "
-                       "multicast group. When left unconfigured, will disable "
-                       "multicast VXLAN mode. Should be an Multicast IP "
-                       "(v4 or v6) address."),
              "PROMPT": "Enter a multicast group for VXLAN",
              "OPTION_LIST": [],
              "VALIDATORS": [],
@@ -350,10 +297,6 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-ml2-vni-ranges",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_VNI_RANGES",
-             "USAGE": ("A comma separated list of <vni_min>:<vni_max> tuples "
-                       "enumerating ranges of VXLAN VNI IDs that are "
-                       "available for tenant network allocation. Min value "
-                       "is 0 and Max value is 16777215."),
              "PROMPT": ("Enter a comma separated list of <vni_min>:<vni_max> "
                         "tuples enumerating ranges of VXLAN VNI IDs that are "
                         "available for tenant network allocation"),
@@ -368,7 +311,6 @@ def initConfig(controller):
 
             # We need to ask for this only in case of ML2 plugins
             {"CMD_OPTION": "os-neutron-l2-agent",
-             "USAGE": "The name of the L2 agent to be used with Neutron",
              "PROMPT": ("Enter the name of the L2 agent to be used "
                         "with Neutron"),
              "OPTION_LIST": ["linuxbridge", "openvswitch"],
@@ -382,7 +324,7 @@ def initConfig(controller):
              "CONDITION": False},
         ],
     }
-
+    update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
     conf_groups = [
         {"GROUP_NAME": "NEUTRON",
          "DESCRIPTION": "Neutron config",

@@ -18,10 +18,12 @@ Installs and configures Heat
 
 import uuid
 
+from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
 
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -36,8 +38,6 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 def initConfig(controller):
     parameters = [
         {"CMD_OPTION": "os-heat-mysql-password",
-         "USAGE": ('The password used by Heat user to authenticate against '
-                   'DB'),
          "PROMPT": "Enter the password for the Heat DB user",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -51,8 +51,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "heat-auth-encryption-key",
-         "USAGE": ("The encryption key to use for authentication info "
-                   "in database (16, 24, or 32 chars)"),
          "PROMPT": ("Enter the authentication key for Heat to use for "
                     "authenticate info in database (16, 24, or 32 chars)"),
          "OPTION_LIST": [],
@@ -66,8 +64,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-heat-ks-passwd",
-         "USAGE": ("The password to use for the Heat to authenticate "
-                   "with Keystone"),
          "PROMPT": "Enter the password for the Heat Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -81,8 +77,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-heat-cloudwatch-install",
-         "USAGE": ("Set to 'y' if you would like Packstack to install Heat "
-                   "CloudWatch API"),
          "PROMPT": "Should Packstack install Heat CloudWatch API",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_options],
@@ -95,8 +89,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-heat-cfn-install",
-         "USAGE": ("Set to 'y' if you would like Packstack to install Heat "
-                   "CloudFormation API"),
          "PROMPT": "Should Packstack install Heat CloudFormation API",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_options],
@@ -109,7 +101,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-heat-domain",
-         "USAGE": "Name of Keystone domain for Heat",
          "PROMPT": "Enter name of Keystone domain for Heat",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -122,7 +113,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-heat-domain-admin",
-         "USAGE": "Name of Keystone domain admin user for Heat",
          "PROMPT": "Enter name of Keystone domain admin user for Heat",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -135,7 +125,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "os-heat-domain-password",
-         "USAGE": "Password for Keystone domain admin user for Heat",
          "PROMPT": "Enter password for Keystone domain admin user for Heat",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -148,6 +137,7 @@ def initConfig(controller):
          "NEED_CONFIRM": True,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, parameters, sectioned=False)
     group = {"GROUP_NAME": "Heat",
              "DESCRIPTION": "Heat Config parameters",
              "PRE_CONDITION": "CONFIG_HEAT_INSTALL",

@@ -16,10 +16,12 @@
 Installs and configures Nagios
 """
 
+from packstack.installer import basedefs
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer import utils
 
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.common import filtered_hosts
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -34,7 +36,6 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 def initConfig(controller):
     params = [
         {"CMD_OPTION": "nagios-passwd",
-         "USAGE": "The password of the nagiosadmin user on the Nagios server",
          "PROMPT": "Enter the password for the nagiosadmin user",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -47,6 +48,7 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "NAGIOS",
              "DESCRIPTION": "Nagios Config parameters",
              "PRE_CONDITION": "CONFIG_NAGIOS_INSTALL",

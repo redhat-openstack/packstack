@@ -26,6 +26,7 @@ from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer.exceptions import ScriptRuntimeError
 
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -50,7 +51,6 @@ def initConfig(controller):
     nova_params = {
         "NOVA": [
             {"CMD_OPTION": "nova-db-passwd",
-             "USAGE": "The password to use for the Nova to access DB",
              "PROMPT": "Enter the password for the Nova DB access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -64,8 +64,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "nova-ks-passwd",
-             "USAGE": ("The password to use for the Nova to authenticate "
-                       "with Keystone"),
              "PROMPT": "Enter the password for the Nova Keystone access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -79,8 +77,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novasched-cpu-allocation-ratio",
-             "USAGE": ("The overcommitment ratio for virtual to physical CPUs."
-                       " Set to 1.0 to disable CPU overcommitment"),
              "PROMPT": "Enter the CPU overcommitment ratio. Set to 1.0 to "
                        "disable CPU overcommitment",
              "OPTION_LIST": [],
@@ -94,8 +90,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novasched-ram-allocation-ratio",
-             "USAGE": ("The overcommitment ratio for virtual to physical RAM. "
-                       "Set to 1.0 to disable RAM overcommitment"),
              "PROMPT": ("Enter the RAM overcommitment ratio. Set to 1.0 to "
                         "disable RAM overcommitment"),
              "OPTION_LIST": [],
@@ -109,11 +103,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novacompute-migrate-protocol",
-             "USAGE": ("Protocol used for instance migration. Allowed values "
-                       "are tcp and ssh. Note that by defaul nova user is "
-                       "created with /sbin/nologin shell so that ssh protocol "
-                       "won't be working. To make ssh protocol work you have "
-                       "to fix nova user on compute hosts manually."),
              "PROMPT": ("Enter protocol which will be used for instance "
                         "migration"),
              "OPTION_LIST": ['tcp', 'ssh'],
@@ -127,7 +116,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "nova-compute-manager",
-             "USAGE": ("The manager that will run nova compute."),
              "PROMPT": ("Enter the compute manager for nova "
                         "migration"),
              "OPTION_LIST": [],
@@ -144,8 +132,6 @@ def initConfig(controller):
 
         "NOVA_NETWORK": [
             {"CMD_OPTION": "novacompute-privif",
-             "USAGE": ("Private interface for Flat DHCP on the Nova compute "
-                       "servers"),
              "PROMPT": ("Enter the Private interface for Flat DHCP on the Nova"
                         " compute servers"),
              "OPTION_LIST": [],
@@ -159,7 +145,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novanetwork-manager",
-             "USAGE": "Nova network manager",
              "PROMPT": "Enter the Nova network manager",
              "OPTION_LIST": [r'^nova\.network\.manager\.\w+Manager$'],
              "VALIDATORS": [validators.validate_regexp],
@@ -172,7 +157,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novanetwork-pubif",
-             "USAGE": "Public interface on the Nova network server",
              "PROMPT": "Enter the Public interface on the Nova network server",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -185,8 +169,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novanetwork-privif",
-             "USAGE": ("Private interface for network manager on the Nova "
-                       "network server"),
              "PROMPT": ("Enter the Private interface for network manager on "
                         "the Nova network server"),
              "OPTION_LIST": [],
@@ -200,7 +182,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novanetwork-fixed-range",
-             "USAGE": "IP Range for network manager",
              "PROMPT": "Enter the IP Range for network manager",
              "OPTION_LIST": ["^[\:\.\da-fA-f]+(\/\d+){0,1}$"],
              "PROCESSORS": [processors.process_cidr],
@@ -214,7 +195,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novanetwork-floating-range",
-             "USAGE": "IP Range for Floating IP's",
              "PROMPT": "Enter the IP Range for Floating IP's",
              "OPTION_LIST": ["^[\:\.\da-fA-f]+(\/\d+){0,1}$"],
              "PROCESSORS": [processors.process_cidr],
@@ -228,7 +208,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novanetwork-auto-assign-floating-ip",
-             "USAGE": "Automatically assign a floating IP to new instances",
              "PROMPT": ("Should new instances automatically have a floating "
                         "IP assigned?"),
              "OPTION_LIST": ["y", "n"],
@@ -244,7 +223,6 @@ def initConfig(controller):
 
         "NOVA_NETWORK_VLAN": [
             {"CMD_OPTION": "novanetwork-vlan-start",
-             "USAGE": "First VLAN for private networks",
              "PROMPT": "Enter first VLAN for private networks",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -257,7 +235,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novanetwork-num-networks",
-             "USAGE": "Number of networks to support",
              "PROMPT": "How many networks should be supported",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -270,7 +247,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "novanetwork-network-size",
-             "USAGE": "Number of addresses in each private subnet",
              "PROMPT": "How many addresses should be in each private subnet",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -283,6 +259,7 @@ def initConfig(controller):
              "CONDITION": False},
         ],
     }
+    update_params_usage(basedefs.PACKSTACK_DOC, nova_params)
 
     def use_nova_network(config):
         return (config['CONFIG_NOVA_INSTALL'] == 'y' and
