@@ -2,8 +2,9 @@
 package { 'nfs-utils': ensure => present }
 
 manila::backend::generic{ 'generic':
-  volume_name_template => hiera('CONFIG_MANILA_GENERIC_VOLUME_NAME_TEMPLATE'),
-  share_mount_path     => hiera('CONFIG_MANILA_GENERIC_SHARE_MOUNT_PATH'),
+  driver_handles_share_servers => hiera('CONFIG_MANILA_GENERIC_DRV_HANDLES_SHARE_SERVERS'),
+  volume_name_template         => hiera('CONFIG_MANILA_GENERIC_VOLUME_NAME_TEMPLATE'),
+  share_mount_path             => hiera('CONFIG_MANILA_GENERIC_SHARE_MOUNT_PATH'),
 }
 
 manila::service_instance{ 'generic':
