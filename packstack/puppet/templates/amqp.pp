@@ -1,8 +1,9 @@
+$amqp_enable_ssl = %(CONFIG_AMQP_ENABLE_SSL)s
 $amqp = '%(CONFIG_AMQP_BACKEND)s'
 case $amqp  {
   'qpid': {
     enable_qpid {"qpid":
-      enable_ssl  => %(CONFIG_AMQP_ENABLE_SSL)s,
+      enable_ssl  => $amqp_enable_ssl,
       enable_auth => '%(CONFIG_AMQP_ENABLE_AUTH)s',
     }
   }
@@ -18,16 +19,49 @@ define enable_rabbitmq {
     ensure => "installed"
   }
 
-  class {"rabbitmq":
-    port             => '%(CONFIG_AMQP_CLIENTS_PORT)s',
-    ssl_management_port      => '%(CONFIG_AMQP_SSL_PORT)s',
-    ssl              => %(CONFIG_AMQP_ENABLE_SSL)s,
-    ssl_cert         => '%(CONFIG_AMQP_SSL_CERT_FILE)s',
-    ssl_key          => '%(CONFIG_AMQP_SSL_KEY_FILE)s',
-    default_user     => '%(CONFIG_AMQP_AUTH_USER)s',
-    default_pass     => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
-    package_provider => 'yum',
-    admin_enable     => false,
+  if $amqp_enable_ssl {
+
+    $kombu_ssl_ca_certs ='%(CONFIG_AMQP_SSL_CACERT_FILE)s'
+    $kombu_ssl_keyfile = '%(CONFIG_AMQP_SSL_KEY_FILE)s'
+    $kombu_ssl_certfile ='%(CONFIG_AMQP_SSL_CERT_FILE)s'
+
+    $files_to_set_owner = [ $kombu_ssl_keyfile, $kombu_ssl_certfile ]
+    file { $files_to_set_owner:
+      owner   => 'rabbitmq',
+      group   => 'rabbitmq',
+      require => Package['rabbitmq-server'],
+      notify  => Service['rabbitmq-server'],
+    }
+
+    class {"rabbitmq":
+      ssl                      => $amqp_enable_ssl,
+      ssl_cacert               => $kombu_ssl_ca_certs,
+      ssl_cert                 => $kombu_ssl_certfile,
+      ssl_key                  => $kombu_ssl_keyfile,
+      default_user             => '%(CONFIG_AMQP_AUTH_USER)s',
+      default_pass             => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
+      package_provider         => 'yum',
+      admin_enable             => false,
+      # FIXME: it's ugly to not to require client certs
+      ssl_fail_if_no_peer_cert => false,
+      config_variables         => {
+        'tcp_listen_options' => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]",
+        'loopback_users'     => "[]",
+      }
+    }
+  } else {
+    class {"rabbitmq":
+      port             => '%(CONFIG_AMQP_CLIENTS_PORT)s',
+      ssl              => $amqp_enable_ssl,
+      default_user     => '%(CONFIG_AMQP_AUTH_USER)s',
+      default_pass     => '%(CONFIG_AMQP_AUTH_PASSWORD)s',
+      package_provider => 'yum',
+      admin_enable     => false,
+      config_variables => {
+        'tcp_listen_options' => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]",
+        'loopback_users'     => "[]",
+      }
+    }
   }
 
   Package['erlang']->Class['rabbitmq']
