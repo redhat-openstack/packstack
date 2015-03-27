@@ -7,6 +7,7 @@ class { 'trove':
   rabbit_host                  => hiera('CONFIG_AMQP_HOST'),
   rabbit_port                  => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   rabbit_userid                => hiera('CONFIG_AMQP_AUTH_USER'),
+  rabbit_use_ssl               => hiera('CONFIG_AMQP_ENABLE_SSL'),
   rabbit_password              => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
   database_connection          => "mysql://trove:${trove_rabmq_cfg_trove_db_pw}@${trove_rabmq_cfg_mariadb_host}/trove",
   nova_proxy_admin_user        => hiera('CONFIG_TROVE_NOVA_USER'),
