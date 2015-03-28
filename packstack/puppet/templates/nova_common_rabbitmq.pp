@@ -9,6 +9,13 @@ $public_key = {
 }
 
 $nova_common_rabbitmq_cfg_storage_host = hiera('CONFIG_STORAGE_HOST')
+$config_horizon_ssl = hiera('CONFIG_HORIZON_SSL')
+
+$vncproxy_protocol = $config_horizon_ssl ? {
+  true    => 'https',
+  false   => 'http',
+  default => 'http',
+}
 
 class { 'nova':
   glance_api_servers => "${nova_common_rabbitmq_cfg_storage_host}:9292",
@@ -21,4 +28,6 @@ class { 'nova':
   debug              => hiera('CONFIG_DEBUG_MODE'),
   nova_public_key    => $public_key,
   nova_private_key   => $private_key,
+  vncproxy_host      => hiera('CONFIG_CONTROLLER_HOST'),
+  vncproxy_protocol  => $vncproxy_protocol,
 }
