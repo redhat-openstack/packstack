@@ -47,16 +47,9 @@ define enable_rabbitmq {
       admin_enable             => false,
       # FIXME: it's ugly to not to require client certs
       ssl_fail_if_no_peer_cert => false,
-
-      # make sure both NODE_PORT and RABBITMQ_NODE_PORT are unset
-      # (resolves https://bugzilla.redhat.com/show_bug.cgi?id=1098821).
-      environment_variables    => {
-        "NODE_PORT"            => "",
-        "RABBITMQ_NODE_PORT"   => "",
-      },
       config_variables         => {
-        'tcp_listen_options'   => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]",
-        'loopback_users'       => "[]",
+        'tcp_listen_options' => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]",
+        'loopback_users'     => "[]",
       }
     }
   } else {
