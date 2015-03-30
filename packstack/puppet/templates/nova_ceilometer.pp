@@ -1,4 +1,4 @@
-$nova_ceil_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$nova_ceil_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::ceilometer::agent::auth':
   auth_url      => "http://${nova_ceil_cfg_ctrl_host}:35357/v2.0",

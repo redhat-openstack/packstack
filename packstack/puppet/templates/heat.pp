@@ -1,7 +1,7 @@
 
 class { '::heat::api': }
 
-$heat_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$heat_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::heat::engine':
   heat_metadata_server_url      => "http://${heat_cfg_ctrl_host}:8000",

@@ -10,18 +10,14 @@ if $is_horizon_ssl == true {
   }
 }
 
-if $vncproxy_protocol == undef {
-  $vncproxy_protocol = $is_horizon_ssl ? {
-    true    => 'https',
-    false   => 'http',
-    default => 'http',
-  }
+$vnc_bind_host = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::0',
+  'ipv4' => '0.0.0.0',
 }
 
 class { '::nova::vncproxy':
-  enabled           => true,
-  host              => hiera('CONFIG_CONTROLLER_HOST'),
-  vncproxy_protocol => $vncproxy_protocol,
+  enabled => true,
+  host    => $vnc_bind_host,
 }
 
 class { '::nova::consoleauth':

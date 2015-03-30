@@ -1,7 +1,7 @@
 
 class { '::manila::keystone::auth':
   password         => hiera('CONFIG_MANILA_KS_PW'),
-  public_address   => hiera('CONFIG_CONTROLLER_HOST'),
-  admin_address    => hiera('CONFIG_CONTROLLER_HOST'),
-  internal_address => hiera('CONFIG_CONTROLLER_HOST'),
+  public_address   => hiera('CONFIG_KEYSTONE_HOST_URL'),
+  admin_address    => hiera('CONFIG_KEYSTONE_HOST_URL'),
+  internal_address => hiera('CONFIG_KEYSTONE_HOST_URL'),
 }

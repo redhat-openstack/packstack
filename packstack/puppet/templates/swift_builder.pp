@@ -8,7 +8,7 @@ class { '::swift::ringbuilder':
 
 # sets up an rsync db that can be used to sync the ring DB
 class { '::swift::ringserver':
-  local_net_ip => hiera('CONFIG_CONTROLLER_HOST'),
+  local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
 }
 
 if str2bool($::selinux) {

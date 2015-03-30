@@ -1,6 +1,6 @@
-$heat_rabbitmq_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$heat_rabbitmq_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 $heat_rabbitmq_cfg_heat_db_pw = hiera('CONFIG_HEAT_DB_PW')
-$heat_rabbitmq_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
+$heat_rabbitmq_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
 
 class { '::heat':
   keystone_host       => $heat_rabbitmq_cfg_ctrl_host,
@@ -8,7 +8,7 @@ class { '::heat':
   auth_uri            => "http://${heat_rabbitmq_cfg_ctrl_host}:35357/v2.0",
   keystone_ec2_uri    => "http://${heat_rabbitmq_cfg_ctrl_host}:35357/v2.0",
   rpc_backend         => 'heat.openstack.common.rpc.impl_kombu',
-  rabbit_host         => hiera('CONFIG_AMQP_HOST'),
+  rabbit_host         => hiera('CONFIG_AMQP_HOST_URL'),
   rabbit_port         => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   rabbit_use_ssl      => hiera('CONFIG_AMQP_ENABLE_SSL'),
   rabbit_userid       => hiera('CONFIG_AMQP_AUTH_USER'),

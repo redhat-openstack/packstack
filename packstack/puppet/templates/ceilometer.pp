@@ -1,17 +1,19 @@
-$config_mongodb_host = hiera('CONFIG_MONGODB_HOST')
+
+$config_mongodb_host = hiera('CONFIG_MONGODB_HOST_URL')
 
 $config_ceilometer_coordination_backend = hiera('CONFIG_CEILOMETER_COORDINATION_BACKEND')
 
 if $config_ceilometer_coordination_backend == 'redis' {
   $redis_ha = hiera('CONFIG_REDIS_HA')
-  $redis_host = hiera('CONFIG_REDIS_MASTER_HOST')
+  $redis_host = hiera('CONFIG_REDIS_MASTER_HOST_URL')
   $redis_port = hiera('CONFIG_REDIS_PORT')
   $sentinel_host = hiera('CONFIG_REDIS_SENTINEL_CONTACT_HOST')
+  $sentinel_host_url = hiera('CONFIG_REDIS_SENTINEL_CONTACT_HOST_URL')
   $sentinel_fallbacks = hiera('CONFIG_REDIS_SENTINEL_FALLBACKS')
   if ($sentinel_host != '' and $redis_ha == 'y') {
     $master_name = hiera('CONFIG_REDIS_MASTER_NAME')
     $sentinel_port = hiera('CONFIG_REDIS_SENTINEL_PORT')
-    $base_coordination_url = "redis://${sentinel_host}:${sentinel_port}?sentinel=${master_name}"
+    $base_coordination_url = "redis://${sentinel_host_url}:${sentinel_port}?sentinel=${master_name}"
     if $sentinel_fallbacks != '' {
       $coordination_url = "${base_coordination_url}&${sentinel_fallbacks}"
     } else {
@@ -32,7 +34,7 @@ class { '::ceilometer::collector': }
 
 class { '::ceilometer::agent::notification': }
 
-$config_controller_host = hiera('CONFIG_CONTROLLER_HOST')
+$config_controller_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::ceilometer::agent::auth':
   auth_url      => "http://${config_controller_host}:35357/v2.0",
@@ -49,7 +51,12 @@ class { '::ceilometer::alarm::evaluator':
   coordination_url => $coordination_url,
 }
 
+$bind_host = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::0',
+  'ipv4' => '0.0.0.0',
+}
 class { '::ceilometer::api':
-  keystone_host     => hiera('CONFIG_CONTROLLER_HOST'),
+  host              => $bind_host,
+  keystone_host     => hiera('CONFIG_KEYSTONE_HOST_URL'),
   keystone_password => hiera('CONFIG_CEILOMETER_KS_PW'),
 }

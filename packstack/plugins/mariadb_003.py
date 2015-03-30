@@ -105,6 +105,11 @@ def create_manifest(config, messages):
         suffix = 'noinstall'
         host = config['CONFIG_CONTROLLER_HOST']
 
+    if config['CONFIG_IP_VERSION'] == 'ipv6':
+        config['CONFIG_MARIADB_HOST_URL'] = "[%s]" % host
+    else:
+        config['CONFIG_MARIADB_HOST_URL'] = host
+
     manifestfile = "%s_mariadb.pp" % host
     manifestdata = [getManifestTemplate('mariadb_%s' % suffix)]
 

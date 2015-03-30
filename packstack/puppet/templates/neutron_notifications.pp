@@ -1,4 +1,4 @@
-$neutron_notif_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$neutron_notif_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 # Configure nova notifications system
 class { '::neutron::server::notifications':

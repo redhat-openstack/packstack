@@ -653,8 +653,8 @@ def create_common_manifest(config, messages):
                 perms = "nova:%s" % config['CONFIG_NOVA_DB_PW']
                 pw_in_sqlconn = True
 
-            sqlconn = "mysql://%s@%s/nova" % (perms,
-                                              config['CONFIG_MARIADB_HOST'])
+            mariadb_host_url = config['CONFIG_MARIADB_HOST_URL']
+            sqlconn = "mysql://%s@%s/nova" % (perms, mariadb_host_url)
             if pw_in_sqlconn:
                 config['CONFIG_NOVA_SQL_CONN_PW'] = sqlconn
             else:

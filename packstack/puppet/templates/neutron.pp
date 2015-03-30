@@ -1,4 +1,4 @@
-$neutron_db_host         = hiera('CONFIG_MARIADB_HOST')
+$neutron_db_host         = hiera('CONFIG_MARIADB_HOST_URL')
 $neutron_db_name         = hiera('CONFIG_NEUTRON_L2_DBNAME')
 $neutron_db_user         = 'neutron'
 $neutron_db_password     = hiera('CONFIG_NEUTRON_DB_PW')

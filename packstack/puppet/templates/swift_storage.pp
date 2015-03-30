@@ -1,7 +1,7 @@
 
 # install all swift storage servers together
 class { '::swift::storage::all':
-  storage_local_net_ip => hiera('CONFIG_CONTROLLER_HOST'),
+  storage_local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
   allow_versions       => true,
   require              => Class['swift'],
 }
@@ -16,7 +16,7 @@ if (!defined(File['/srv/node'])) {
 }
 
 swift::ringsync{ ['account', 'container', 'object']:
-  ring_server => hiera('CONFIG_CONTROLLER_HOST'),
+  ring_server => hiera('CONFIG_STORAGE_HOST_URL'),
   before      => Class['swift::storage::all'],
   require     => Class['swift'],
 }

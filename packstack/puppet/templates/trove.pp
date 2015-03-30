@@ -1,7 +1,7 @@
 class { '::trove::api':
   enabled           => true,
   keystone_password => hiera('CONFIG_TROVE_KS_PW'),
-  auth_host         => hiera('CONFIG_CONTROLLER_HOST'),
+  auth_host         => hiera('CONFIG_KEYSTONE_HOST_URL'),
   auth_port         => 35357,
   cert_file         => false,
   key_file          => false,
@@ -10,7 +10,7 @@ class { '::trove::api':
   debug             => hiera('CONFIG_DEBUG_MODE'),
 }
 
-$trove_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$trove_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::trove::conductor':
   auth_url => "http://${trove_cfg_ctrl_host}:5000/v2.0",

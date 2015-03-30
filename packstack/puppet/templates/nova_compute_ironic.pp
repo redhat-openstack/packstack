@@ -1,4 +1,4 @@
-$ironic_config_controller_host = hiera('CONFIG_CONTROLLER_HOST')
+$ironic_config_controller_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::nova::compute::ironic':
   admin_user        => 'ironic',

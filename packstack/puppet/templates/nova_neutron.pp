@@ -1,5 +1,5 @@
 
-$nova_neutron_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$nova_neutron_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::nova::network::neutron':
   neutron_admin_password    => hiera('CONFIG_NEUTRON_KS_PW'),

@@ -3,10 +3,22 @@
 # using FIREWALL_CHAIN
 
 define packstack::firewall($host, $service_name, $chain = "INPUT", $ports = undef, $proto = 'tcp') {
+  $ip_version = hiera('CONFIG_IP_VERSION')
+
+  $provider = $ip_version ? {
+    'ipv6'  => 'ip6tables',
+    'ipv4'  => 'iptables',
+    default => fail("IP version cannot be ${ip_version}")
+  }
+
   $source = $host ? {
-    'ALL' => '0.0.0.0/0',
+    'ALL' => $ip_version ? {
+      'ipv6'  => '::/0',
+      default => '0.0.0.0/0'
+    },
     default => $host,
   }
+
   $heading = $chain ? {
     'OUTPUT' => 'outgoing',
     default => 'incoming',
@@ -18,6 +30,7 @@ define packstack::firewall($host, $service_name, $chain = "INPUT", $ports = unde
       proto  => $proto,
       action => 'accept',
       source => $source,
+      provider => $provider,
     }
   }
   else {
@@ -27,6 +40,7 @@ define packstack::firewall($host, $service_name, $chain = "INPUT", $ports = unde
       dport  => $ports,
       action => 'accept',
       source => $source,
+      provider => $provider,
     }
   }
 }

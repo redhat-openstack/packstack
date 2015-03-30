@@ -253,9 +253,20 @@ def create_manifest(config, messages):
         # fallbacks for use in coordination url.
         sentinel_hosts = split_hosts(config['CONFIG_REDIS_SENTINEL_HOSTS'])
         sentinel_port = config['CONFIG_REDIS_SENTINEL_PORT']
+        sentinel_host = config['CONFIG_REDIS_SENTINEL_CONTACT_HOST']
+        if config['CONFIG_IP_VERSION'] == 'ipv6':
+            config['CONFIG_REDIS_SENTINEL_CONTACT_HOST_URL'] = "[%s]" % (
+                sentinel_host)
+        else:
+            config['CONFIG_REDIS_SENTINEL_CONTACT_HOST_URL'] = sentinel_host
+
         sentinel_contact = config['CONFIG_REDIS_SENTINEL_CONTACT_HOST']
         if len(sentinel_hosts) > 1:
-            sentinel_fallbacks = '&'.join(['sentinel_fallback=%s:%s' %
+            sentinel_format = 'sentinel_fallback=%s:%s'
+            if config['CONFIG_IP_VERSION'] == 'ipv6':
+                sentinel_format = 'sentinel_fallback=[%s]:%s'
+
+            sentinel_fallbacks = '&'.join([sentinel_format %
                                           (host, sentinel_port)
                                           for host in sentinel_hosts
                                           if host != sentinel_contact])
@@ -282,6 +293,11 @@ def create_manifest(config, messages):
 
 
 def create_mongodb_manifest(config, messages):
+    host = config['CONFIG_MONGODB_HOST']
+    if config['CONFIG_IP_VERSION'] == 'ipv6':
+        config['CONFIG_MONGODB_HOST_URL'] = "[%s]" % host
+    else:
+        config['CONFIG_MONGODB_HOST_URL'] = host
     manifestfile = "%s_mongodb.pp" % config['CONFIG_MONGODB_HOST']
     manifestdata = getManifestTemplate("mongodb")
 
@@ -301,6 +317,11 @@ def create_mongodb_manifest(config, messages):
 
 def create_redis_manifest(config, messages):
     if config['CONFIG_CEILOMETER_COORDINATION_BACKEND'] == 'redis':
+        redis_master_host = config['CONFIG_REDIS_MASTER_HOST']
+        if config['CONFIG_IP_VERSION'] == 'ipv6':
+            config['CONFIG_REDIS_MASTER_HOST_URL'] = "[%s]" % redis_master_host
+        else:
+            config['CONFIG_REDIS_MASTER_HOST_URL'] = redis_master_host
 
         # master
         manifestfile = "%s_redis.pp" % config['CONFIG_REDIS_MASTER_HOST']

@@ -1,6 +1,11 @@
+$bind_host = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::0',
+  'ipv4' => '0.0.0.0',
+}
 
 class { '::neutron':
-  rabbit_host           => hiera('CONFIG_AMQP_HOST'),
+  bind_host             => $bind_host,
+  rabbit_host           => hiera('CONFIG_AMQP_HOST_URL'),
   rabbit_port           => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   rabbit_use_ssl        => hiera('CONFIG_AMQP_ENABLE_SSL'),
   rabbit_user           => hiera('CONFIG_AMQP_AUTH_USER'),

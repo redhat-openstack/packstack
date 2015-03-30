@@ -18,10 +18,15 @@ exec { 'qemu-kvm':
   before  => Class['nova::compute::libvirt'],
 }
 
+$libvirt_vnc_bind_host = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::0',
+  'ipv4' => '0.0.0.0',
+}
+
 class { '::nova::compute::libvirt':
   libvirt_virt_type        => $libvirt_virt_type,
   libvirt_cpu_mode         => $libvirt_cpu_mode,
-  vncserver_listen         => '0.0.0.0',
+  vncserver_listen         => $libvirt_vnc_bind_host,
   migration_support        => true,
   libvirt_inject_partition => '-1',
 }

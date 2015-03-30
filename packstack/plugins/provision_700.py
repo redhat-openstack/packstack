@@ -344,9 +344,6 @@ def create_demo_manifest(config, messages):
 
 def create_storage_manifest(config, messages):
     if config['CONFIG_GLANCE_INSTALL'] == 'y':
-        if config['CONFIG_UNSUPPORTED'] != 'y':
-            config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
-
         if config['CONFIG_PROVISION_TEMPEST']:
             template = "provision_tempest_glance"
         else:

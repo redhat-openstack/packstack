@@ -91,9 +91,6 @@ def initSequences(controller):
 
 def create_manifest(config, messages):
 
-    if config['CONFIG_UNSUPPORTED'] != 'y':
-        config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
-
     manifestfile = "%s_ironic.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "ironic"))
     manifestdata += getManifestTemplate("ironic.pp")

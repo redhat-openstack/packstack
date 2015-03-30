@@ -1,2 +1,4 @@
 nose
 coverage
+hacking>=0.9.5,<0.10
+netaddr

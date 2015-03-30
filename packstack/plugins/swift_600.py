@@ -265,13 +265,13 @@ def create_builder_manifest(config, messages):
                '  weight => 10, }\n')
         return fmt % (dev_type, host, dev_port, devicename, zone)
 
-    manifestfile = "%s_ring_swift.pp" % config['CONFIG_CONTROLLER_HOST']
+    manifestfile = "%s_ring_swift.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata = getManifestTemplate("swift_builder")
 
     # Add each device to the ring
     devicename = 0
     for device in devices:
-        host = config['CONFIG_CONTROLLER_HOST']
+        host = config['CONFIG_STORAGE_HOST_URL']
         devicename = device['device_name']
         zone = device['zone']
         for dev_type, dev_port in [('ring_object_device', 6000),
@@ -283,7 +283,7 @@ def create_builder_manifest(config, messages):
 
 
 def create_proxy_manifest(config, messages):
-    manifestfile = "%s_swift.pp" % config['CONFIG_CONTROLLER_HOST']
+    manifestfile = "%s_swift.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata = getManifestTemplate("swift_proxy")
 
     fw_details = dict()
@@ -303,12 +303,12 @@ def create_proxy_manifest(config, messages):
 def create_storage_manifest(config, messages):
     global devices
 
-    manifestfile = "%s_swift.pp" % config['CONFIG_CONTROLLER_HOST']
+    manifestfile = "%s_swift.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata = getManifestTemplate("swift_storage")
 
     # this need to happen once per storage device
     for device in devices:
-        host = config['CONFIG_CONTROLLER_HOST']
+        host = config['CONFIG_STORAGE_HOST']
         devicename = device['device_name']
         device = device['device']
         fstype = config["CONFIG_SWIFT_STORAGE_FSTYPE"]
@@ -323,7 +323,7 @@ def create_storage_manifest(config, messages):
             manifestdata += "\n" + getManifestTemplate("swift_loopback")
 
     # set allowed hosts for firewall
-    hosts = set([config['CONFIG_CONTROLLER_HOST']])
+    hosts = set([config['CONFIG_STORAGE_HOST']])
     if config['CONFIG_NOVA_INSTALL'] == 'y':
         hosts |= split_hosts(config['CONFIG_COMPUTE_HOSTS'])
 

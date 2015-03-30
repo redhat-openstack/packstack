@@ -1,10 +1,17 @@
 
 package { 'curl': ensure => present }
 
-class { '::memcached': }
+$bind_host = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::0',
+  'ipv4' => '0.0.0.0',
+}
+
+class { '::memcached':
+  listen_ip => $bind_host,
+}
 
 class { '::swift::proxy':
-  proxy_local_net_ip => hiera('CONFIG_CONTROLLER_HOST'),
+  proxy_local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
   pipeline           => [
     'catch_errors',
     'bulk',
@@ -63,6 +70,6 @@ class { '::swift::proxy::authtoken':
   admin_tenant_name => 'services',
   admin_password    => hiera('CONFIG_SWIFT_KS_PW'),
   # assume that the controller host is the swift api server
-  auth_host         => hiera('CONFIG_CONTROLLER_HOST'),
+  auth_host         => hiera('CONFIG_STORAGE_HOST_URL'),
 }
 

@@ -552,6 +552,10 @@ def create_manifests(config, messages):
         # We also need to open VXLAN/GRE port for agent
         manifest_data = ""
         if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
+            if config['CONFIG_IP_VERSION'] == 'ipv6':
+                msg = output_messages.WARN_IPV6_OVS
+                messages.append(utils.color_text(msg % host, 'red'))
+
             for n_host in network_hosts | compute_hosts:
                 cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s_%s"
                                 % (host, n_host))

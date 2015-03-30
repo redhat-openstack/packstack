@@ -1,11 +1,15 @@
 $keystone_use_ssl = false
 $keystone_cfg_ks_db_pw = hiera('CONFIG_KEYSTONE_DB_PW')
-$keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
-$keystone_endpoint_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
+$keystone_endpoint_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 $keystone_token_provider_str = downcase(hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'))
 $keystone_api_version_str = hiera('CONFIG_KEYSTONE_API_VERSION')
 $keystone_url = "http://${keystone_endpoint_cfg_ctrl_host}:5000/${keystone_api_version_str}"
 $keystone_admin_url = "http://${keystone_endpoint_cfg_ctrl_host}:35357/${keystone_api_version_str}"
+$bind_host = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::0',
+  'ipv4' => '0.0.0.0',
+}
 
 if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'keystone' {
   $keystone_service_name = 'openstack-keystone'
@@ -21,6 +25,8 @@ class { '::keystone':
   debug               => hiera('CONFIG_DEBUG_MODE'),
   service_name        => $keystone_service_name,
   enable_ssl          => $keystone_use_ssl,
+  public_bind_host    => $bind_host,
+  admin_bind_host     => $bind_host,
 }
 
 if $keystone_service_name == 'httpd' {
@@ -119,4 +125,3 @@ service { 'crond':
   ensure => 'running',
   enable => true,
 }
-

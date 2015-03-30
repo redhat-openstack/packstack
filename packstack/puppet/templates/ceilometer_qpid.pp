@@ -1,6 +1,6 @@
 class { '::ceilometer':
   metering_secret => hiera('CONFIG_CEILOMETER_SECRET'),
-  qpid_hostname   => hiera('CONFIG_AMQP_HOST'),
+  qpid_hostname   => hiera('CONFIG_AMQP_HOST_URL'),
   qpid_username   => hiera('CONFIG_AMQP_AUTH_USER'),
   qpid_password   => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
   rpc_backend     => 'ceilometer.openstack.common.rpc.impl_qpid',

@@ -851,6 +851,8 @@ def initConfig(controller):
 
 def initSequences(controller):
     prescript_steps = [
+        {'title': 'Discovering ip protocol version',
+         'functions': [choose_ip_version]},
         {'title': 'Setting up ssh keys',
          'functions': [install_keys]},
         {'title': 'Preparing servers',
@@ -1115,6 +1117,23 @@ def manage_rdo(host, config):
 # -------------------------- step functions --------------------------
 
 
+def choose_ip_version(config, messages):
+    use_ipv6 = False
+    use_ipv4 = False
+    for hostname in filtered_hosts(config):
+        if '/' in hostname:
+            hostname = hostname.split('/')[0]
+        use_ipv6 |= utils.network.is_ipv6(hostname)
+        use_ipv4 |= utils.network.is_ipv4(hostname)
+    if use_ipv6 and use_ipv4:
+        msg = "IPv6 together with IPv4 installation is not supported"
+        raise exceptions.ParamValidationError(msg)
+    elif use_ipv6:
+        config['CONFIG_IP_VERSION'] = 'ipv6'
+    else:
+        config['CONFIG_IP_VERSION'] = 'ipv4'
+
+
 def install_keys_on_host(hostname, sshkeydata):
     server = utils.ScriptRunner(hostname)
     # TODO replace all that with ssh-copy-id
@@ -1294,6 +1313,14 @@ def server_prep(config, messages):
 def create_manifest(config, messages):
     key = 'CONFIG_DEBUG_MODE'
     config[key] = config[key] == 'y' and True or False
+
+    if config['CONFIG_UNSUPPORTED'] != 'y':
+        config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
+    if config['CONFIG_IP_VERSION'] == 'ipv6':
+        storage_host = config['CONFIG_STORAGE_HOST']
+        config['CONFIG_STORAGE_HOST_URL'] = "[%s]" % storage_host
+    else:
+        config['CONFIG_STORAGE_HOST_URL'] = config['CONFIG_STORAGE_HOST']
 
     for hostname in filtered_hosts(config):
         manifestfile = "%s_prescript.pp" % hostname

@@ -54,7 +54,7 @@ class nagios_configs(){
   }
 
   $nagios_cfg_ks_adm_pw = hiera('CONFIG_KEYSTONE_ADMIN_PW')
-  $nagios_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+  $nagios_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
   file { '/etc/nagios/keystonerc_admin':
     ensure  => file,

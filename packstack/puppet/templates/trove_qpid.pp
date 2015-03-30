@@ -1,10 +1,10 @@
 $trove_qpid_cfg_trove_db_pw = hiera('CONFIG_TROVE_DB_PW')
-$trove_qpid_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
-$trove_qpid_cfg_controller_host = hiera('CONFIG_CONTROLLER_HOST')
+$trove_qpid_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
+$trove_qpid_cfg_controller_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::trove':
   rpc_backend                  => 'trove.openstack.common.rpc.impl_qpid',
-  qpid_hostname                => hiera('CONFIG_AMQP_HOST'),
+  qpid_hostname                => hiera('CONFIG_AMQP_HOST_URL'),
   qpid_port                    => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   qpid_protocol                => hiera('CONFIG_AMQP_PROTOCOL'),
   qpid_username                => hiera('CONFIG_AMQP_AUTH_USER'),
@@ -18,4 +18,3 @@ class { '::trove':
   swift_url                    => "http://${trove_qpid_cfg_controller_host}:8080/v1/AUTH_",
   use_neutron                  => hiera('CONFIG_NEUTRON_INSTALL'),
 }
-

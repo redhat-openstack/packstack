@@ -80,7 +80,7 @@ file_line { 'snapshot_autoextend_percent':
 }
 
 cinder::backend::iscsi { 'lvm':
-  iscsi_ip_address => hiera('CONFIG_STORAGE_HOST'),
+  iscsi_ip_address => hiera('CONFIG_STORAGE_HOST_URL'),
   require          => Package['lvm2'],
 }
 

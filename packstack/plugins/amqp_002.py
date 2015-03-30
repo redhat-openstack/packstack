@@ -255,6 +255,11 @@ def create_manifest(config, messages):
     manifestfile = "%s_amqp.pp" % config['CONFIG_AMQP_HOST']
     manifestdata = getManifestTemplate('amqp')
 
+    if config['CONFIG_IP_VERSION'] == 'ipv6':
+        config['CONFIG_AMQP_HOST_URL'] = "[%s]" % config['CONFIG_AMQP_HOST']
+    else:
+        config['CONFIG_AMQP_HOST_URL'] = config['CONFIG_AMQP_HOST']
+
     fw_details = dict()
     # All hosts should be able to talk to amqp
     for host in filtered_hosts(config, exclude=False):

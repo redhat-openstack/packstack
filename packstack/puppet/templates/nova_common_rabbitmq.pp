@@ -7,11 +7,11 @@ $public_key = {
   key  => hiera('NOVA_MIGRATION_KEY_PUBLIC'),
 }
 
-$nova_common_rabbitmq_cfg_storage_host = hiera('CONFIG_STORAGE_HOST')
+$nova_common_rabbitmq_cfg_storage_host = hiera('CONFIG_STORAGE_HOST_URL')
 
 class { '::nova':
   glance_api_servers => "${nova_common_rabbitmq_cfg_storage_host}:9292",
-  rabbit_host        => hiera('CONFIG_AMQP_HOST'),
+  rabbit_host        => hiera('CONFIG_AMQP_HOST_URL'),
   rabbit_port        => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   rabbit_use_ssl     => hiera('CONFIG_AMQP_ENABLE_SSL'),
   rabbit_userid      => hiera('CONFIG_AMQP_AUTH_USER'),

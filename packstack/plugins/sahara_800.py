@@ -97,9 +97,6 @@ def create_keystone_manifest(config, messages):
 
 
 def create_manifest(config, messages):
-    if config['CONFIG_UNSUPPORTED'] != 'y':
-        config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
-
     manifestfile = "%s_sahara.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "sahara"))
     manifestdata += getManifestTemplate("sahara.pp")

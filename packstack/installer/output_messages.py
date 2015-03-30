@@ -67,6 +67,8 @@ WARN_WEAK_PASS = "Warning: Weak Password."
 WARN_NM_ENABLED = ("Warning: NetworkManager is active on %s. OpenStack "
                    "networking currently does not work on systems that have "
                    "the Network Manager service enabled.")
+WARN_IPV6_OVS = ("Warning: IPv6 and ovs tunneling is not yet supported and "
+                 "will fail on host %s see https://bugzilla.redhat.com/show_bug.cgi?id=1100360.")
 
 ERR_PING = "Error: the provided hostname is unreachable"
 ERR_SSH = "Error: could not connect to the ssh server: %s"

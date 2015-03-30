@@ -1,4 +1,4 @@
-$gla_bd_ct_h = hiera('CONFIG_CONTROLLER_HOST')
+$gla_bd_ct_h = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::glance::backend::swift':
   swift_store_user                    => 'services:glance',

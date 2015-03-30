@@ -12,9 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+netaddr_available = True
+try:
+    import netaddr
+except ImportError:
+    netaddr_available = False
+
 import re
 import socket
-
 from ..exceptions import NetworkError
 from .shell import execute
 from .shell import ScriptRunner
@@ -78,11 +83,33 @@ def host2ip(hostname, allow_localhost=False):
         raise NetworkError('Unknown error appeared: %s' % repr(ex))
 
 
-def force_ip(host, allow_localhost=False):
+def is_ipv6(host):
+    if not netaddr_available:
+        raise ImportError(
+            "netaddr module unavailable, install with pip install netaddr"
+        )
     host = host.strip()
-    ipv4_regex = re.compile('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}')
-    ipv6_regex = re.compile('[abcdef\d\:]+')
-    if not ipv4_regex.match(host) or not ipv6_regex.match(host):
+    try:
+        return netaddr.IPAddress(host).version == 6
+    except netaddr.core.AddrFormatError:
+        # Most probably a hostname, no need for bracket everywhere.
+        return False
+
+
+def is_ipv4(host):
+    if not netaddr_available:
+        raise ImportError(
+            "netaddr module unavailable, install with pip install netaddr"
+        )
+    host = host.strip()
+    try:
+        return netaddr.IPAddress(host).version == 4
+    except netaddr.core.AddrFormatError:
+        return True
+
+
+def force_ip(host, allow_localhost=False):
+    if not is_ipv6(host) or not is_ipv4(host):
         host = host2ip(host, allow_localhost=allow_localhost)
     return host
 

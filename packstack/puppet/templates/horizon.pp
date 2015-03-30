@@ -1,6 +1,6 @@
 include ::packstack::apache_common
 
-$keystone_host = hiera('CONFIG_CONTROLLER_HOST')
+$keystone_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 $horizon_packages = ['python-memcached', 'python-netaddr']
 
@@ -12,6 +12,11 @@ package { $horizon_packages:
 $is_django_debug = hiera('CONFIG_DEBUG_MODE') ? {
   true  => 'True',
   false => 'False',
+}
+
+$bind_host = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::0',
+  'ipv4' => '0.0.0.0',
 }
 
 class {'::horizon':
@@ -68,7 +73,9 @@ if $is_horizon_ssl == true {
   }
 }
 
-class { '::memcached': }
+class { '::memcached':
+  listen_ip => $bind_host,
+}
 
 $firewall_port = hiera('CONFIG_HORIZON_PORT')
 

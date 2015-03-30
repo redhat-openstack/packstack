@@ -4,13 +4,27 @@ package { 'mariadb-server':
   ensure => absent,
 }
 
+$bind_address = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::',
+  'ipv4' => '0.0.0.0',
+}
+
+# hack around galera packaging issue, they are duplicating
+# bind-address config option in galera.cnf
+class { '::galera::server':
+  wsrep_bind_address    => $bind_address,
+  manage_service        => false,
+  wsrep_provider        => 'none',
+  create_mysql_resource => false,
+}
+
 class { '::mysql::server':
   package_name     => 'mariadb-galera-server',
   restart          => true,
   root_password    => hiera('CONFIG_MARIADB_PW'),
   require          => Package['mariadb-server'],
   override_options => {
-    'mysqld' => { bind_address           => '0.0.0.0',
+    'mysqld' => { bind_address           => $bind_address,
                   default_storage_engine => 'InnoDB',
                   max_connections        => '1024',
                   open_files_limit       => '-1',

@@ -765,6 +765,12 @@ def create_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("keystone")
 
+    if config['CONFIG_IP_VERSION'] == 'ipv6':
+        host = config['CONFIG_CONTROLLER_HOST']
+        config['CONFIG_KEYSTONE_HOST_URL'] = "[%s]" % host
+    else:
+        config['CONFIG_KEYSTONE_HOST_URL'] = config['CONFIG_CONTROLLER_HOST']
+
     fw_details = dict()
     key = "keystone"
     fw_details.setdefault(key, {})
