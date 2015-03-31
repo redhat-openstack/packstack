@@ -1,4 +1,4 @@
-include firewall
+include ::firewall
 
 if $::ipaddress == hiera('CONFIG_CONTROLLER_HOST') {
   include ::apache

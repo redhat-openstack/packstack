@@ -1,4 +1,4 @@
-class { 'sahara::notify::qpid':
+class { '::sahara::notify::qpid':
   qpid_hostname => hiera('CONFIG_AMQP_HOST'),
   qpid_port     => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   qpid_protocol => hiera('CONFIG_AMQP_PROTOCOL'),

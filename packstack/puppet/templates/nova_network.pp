@@ -17,7 +17,7 @@ $manager = hiera('CONFIG_NOVA_NETWORK_MANAGER')
 
 $nova_net_manager_list = [
   'nova.network.manager.VlanManager',
-  'nova.network.manager.FlatDHCPManager'
+  'nova.network.manager.FlatDHCPManager',
 ]
 
 $overrides = {}
@@ -35,7 +35,7 @@ if $manager == 'nova.network.manager.VlanManager' {
   $net_num = 1
 }
 
-class { 'nova::network':
+class { '::nova::network':
   enabled           => true,
   network_manager   => $manager,
   num_networks      => $net_num ,

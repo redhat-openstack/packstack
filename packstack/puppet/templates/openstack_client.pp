@@ -26,14 +26,14 @@ export PS1='[\\u@\\h \\W(keystone_admin)]\\$ '
 "
 
 file { "${::home_dir}/keystonerc_admin":
-  ensure  => 'present',
+  ensure  => file,
   mode    => '0600',
   content => $rcadmin_content,
 }
 
 if hiera('CONFIG_PROVISION_DEMO') == 'y' {
   file { "${::home_dir}/keystonerc_demo":
-    ensure  => 'present',
+    ensure  => file,
     mode    => '0600',
     content => "export OS_USERNAME=demo
 export OS_TENANT_NAME=demo
@@ -47,7 +47,7 @@ export PS1='[\\u@\\h \\W(keystone_demo)]\\$ '
 if hiera('NO_ROOT_USER_ALLINONE') == true {
   $ost_cl_home_dir = hiera('HOME_DIR')
   file { "${ost_cl_home_dir}/keystonerc_admin":
-    ensure  => present,
+    ensure  => file,
     owner   => hiera('NO_ROOT_USER'),
     group   => hiera('NO_ROOT_GROUP'),
     mode    => '0600',

@@ -1,4 +1,4 @@
-class { 'neutron::services::fwaas':
+class { '::neutron::services::fwaas':
   enabled => true,
 }
 

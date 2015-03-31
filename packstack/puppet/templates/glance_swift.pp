@@ -1,6 +1,6 @@
 $gla_bd_ct_h = hiera('CONFIG_CONTROLLER_HOST')
 
-class { 'glance::backend::swift':
+class { '::glance::backend::swift':
   swift_store_user                    => 'services:glance',
   swift_store_key                     => hiera('CONFIG_GLANCE_KS_PW'),
   swift_store_auth_address            => "http://${gla_bd_ct_h}:35357/v2.0/",

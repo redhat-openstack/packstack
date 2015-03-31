@@ -8,6 +8,6 @@ nova_config{
       value => hiera('CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO');
 }
 
-class { 'nova::scheduler':
+class { '::nova::scheduler':
   enabled => true,
 }

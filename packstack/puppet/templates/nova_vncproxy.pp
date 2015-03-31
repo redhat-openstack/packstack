@@ -18,13 +18,13 @@ if $vncproxy_protocol == undef {
   }
 }
 
-class { 'nova::vncproxy':
+class { '::nova::vncproxy':
   enabled           => true,
   host              => hiera('CONFIG_CONTROLLER_HOST'),
   vncproxy_protocol => $vncproxy_protocol,
 }
 
-class { 'nova::consoleauth':
+class { '::nova::consoleauth':
   enabled => true,
 }
 

@@ -12,12 +12,12 @@ manila::service_instance{ 'generic':
   service_instance_password => hiera('CONFIG_MANILA_SERVICE_INSTANCE_PASSWORD'),
 }
 
-class { 'manila::compute::nova':
+class { '::manila::compute::nova':
   nova_admin_password    => hiera('CONFIG_NOVA_KS_PW'),
   nova_admin_tenant_name => 'services',
 }
 
-class { 'manila::volume::cinder':
+class { '::manila::volume::cinder':
   cinder_admin_password    => hiera('CONFIG_CINDER_KS_PW'),
   cinder_admin_tenant_name => 'services',
 }

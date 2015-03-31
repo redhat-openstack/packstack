@@ -1,7 +1,7 @@
 $cinder_qpid_cfg_cinder_db_pw = hiera('CONFIG_CINDER_DB_PW')
 $cinder_qpid_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 
-class {'cinder':
+class { '::cinder':
   rpc_backend         => 'cinder.openstack.common.rpc.impl_qpid',
   qpid_hostname       => hiera('CONFIG_AMQP_HOST'),
   qpid_port           => hiera('CONFIG_AMQP_CLIENTS_PORT'),

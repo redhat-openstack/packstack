@@ -5,7 +5,7 @@ if hiera('CONFIG_NEUTRON_ML2_VXLAN_GROUP') == '' {
   $vxlan_group_value = hiera('CONFIG_NEUTRON_ML2_VXLAN_GROUP')
 }
 
-class { 'neutron::plugins::ml2':
+class { '::neutron::plugins::ml2':
   type_drivers          => hiera_array('CONFIG_NEUTRON_ML2_TYPE_DRIVERS'),
   tenant_network_types  => hiera_array('CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'),
   mechanism_drivers     => hiera_array('CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'),

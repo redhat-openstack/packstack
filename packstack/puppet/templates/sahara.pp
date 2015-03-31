@@ -4,7 +4,7 @@ $sahara_cfg_sahara_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 $sahara_cfg_config_neutron_install = hiera('CONFIG_NEUTRON_INSTALL')
 
 $sahara_cfg_controller_host = hiera('CONFIG_CONTROLLER_HOST')
-class { 'sahara':
+class { '::sahara':
   database_connection =>
     "mysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
   verbose             => true,

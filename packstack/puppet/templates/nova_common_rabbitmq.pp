@@ -9,7 +9,7 @@ $public_key = {
 
 $nova_common_rabbitmq_cfg_storage_host = hiera('CONFIG_STORAGE_HOST')
 
-class { 'nova':
+class { '::nova':
   glance_api_servers => "${nova_common_rabbitmq_cfg_storage_host}:9292",
   rabbit_host        => hiera('CONFIG_AMQP_HOST'),
   rabbit_port        => hiera('CONFIG_AMQP_CLIENTS_PORT'),

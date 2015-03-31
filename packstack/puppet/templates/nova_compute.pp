@@ -1,6 +1,6 @@
 
 package{ 'python-cinderclient':
-  before => Class['nova']
+  before => Class['nova'],
 }
 
 # Install the private key to be used for live migration.  This needs to be
@@ -46,7 +46,7 @@ if ($::fqdn == '' or $::fqdn =~ /localhost/) {
   $vncproxy_server = $::fqdn
 }
 
-class { 'nova::compute':
+class { '::nova::compute':
   enabled                       => true,
   vncproxy_host                 => hiera('CONFIG_CONTROLLER_HOST'),
   vncproxy_protocol             => $vncproxy_protocol,

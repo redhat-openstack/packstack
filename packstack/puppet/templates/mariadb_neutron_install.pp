@@ -1,4 +1,4 @@
-class { 'neutron::db::mysql':
+class { '::neutron::db::mysql':
   password      => hiera('CONFIG_NEUTRON_DB_PW'),
   host          => '%%',
   allowed_hosts => '%%',

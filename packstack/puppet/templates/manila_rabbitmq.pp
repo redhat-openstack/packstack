@@ -2,7 +2,7 @@
 $db_pw = hiera('CONFIG_MANILA_DB_PW')
 $mariadb_host = hiera('CONFIG_MARIADB_HOST')
 
-class { 'manila':
+class { '::manila':
   rabbit_host     => hiera('CONFIG_AMQP_HOST'),
   rabbit_port     => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   rabbit_use_ssl  => hiera('CONFIG_AMQP_ENABLE_SSL'),

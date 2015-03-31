@@ -20,7 +20,7 @@ define enable_rabbitmq {
     ensure => 'installed',
   }
 
-  if $amqp_enable_ssl {
+  if $::amqp_enable_ssl {
 
     $kombu_ssl_ca_certs = hiera('CONFIG_AMQP_SSL_CACERT_FILE')
     $kombu_ssl_keyfile = hiera('CONFIG_AMQP_SSL_KEY_FILE')
@@ -34,10 +34,10 @@ define enable_rabbitmq {
       notify  => Service['rabbitmq-server'],
     }
 
-    class {"rabbitmq":
+    class { '::rabbitmq':
       ssl_port                 => hiera('CONFIG_AMQP_SSL_PORT'),
       ssl_only                 => true,
-      ssl                      => $amqp_enable_ssl,
+      ssl                      => $::amqp_enable_ssl,
       ssl_cacert               => $kombu_ssl_ca_certs,
       ssl_cert                 => $kombu_ssl_certfile,
       ssl_key                  => $kombu_ssl_keyfile,
@@ -48,22 +48,22 @@ define enable_rabbitmq {
       # FIXME: it's ugly to not to require client certs
       ssl_fail_if_no_peer_cert => false,
       config_variables         => {
-        'tcp_listen_options' => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]",
-        'loopback_users'     => "[]",
-      }
+        'tcp_listen_options' => '[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]',
+        'loopback_users'     => '[]',
+      },
     }
   } else {
-    class {"rabbitmq":
+    class { '::rabbitmq':
       port             => hiera('CONFIG_AMQP_CLIENTS_PORT'),
-      ssl              => $amqp_enable_ssl,
+      ssl              => $::amqp_enable_ssl,
       default_user     => hiera('CONFIG_AMQP_AUTH_USER'),
       default_pass     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
       package_provider => 'yum',
       admin_enable     => false,
-      config_variables  => {
-        'tcp_listen_options' => "[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]",
-        'loopback_users'     => "[]",
-      }
+      config_variables => {
+        'tcp_listen_options' => '[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]',
+        'loopback_users'     => '[]',
+      },
     }
   }
 
@@ -93,12 +93,12 @@ define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
     }
   }
 
-  class { 'qpid::server':
+  class { '::qpid::server':
     config_file             => $config,
     auth                    => $enable_auth ? {
       'y'     => 'yes',
       default => 'no',
-      },
+    },
     clustered               => false,
       ssl_port              => hiera('CONFIG_AMQP_SSL_PORT'),
       ssl                   => hiera('CONFIG_AMQP_ENABLE_SSL'),

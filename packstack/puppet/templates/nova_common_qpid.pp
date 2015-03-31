@@ -9,7 +9,7 @@ $public_key = {
 
 $nova_common_qpid_cfg_storage_host = hiera('CONFIG_STORAGE_HOST')
 
-class { 'nova':
+class { '::nova':
   glance_api_servers => "${nova_common_qpid_cfg_storage_host}:9292",
   qpid_hostname      => hiera('CONFIG_AMQP_HOST'),
   qpid_username      => hiera('CONFIG_AMQP_AUTH_USER'),

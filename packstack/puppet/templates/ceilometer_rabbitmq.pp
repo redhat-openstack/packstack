@@ -1,4 +1,4 @@
-class { 'ceilometer':
+class { '::ceilometer':
   metering_secret => hiera('CONFIG_CEILOMETER_SECRET'),
   verbose         => true,
   debug           => hiera('CONFIG_DEBUG_MODE'),

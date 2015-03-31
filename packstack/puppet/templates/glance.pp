@@ -2,7 +2,7 @@ $glance_ks_pw = hiera('CONFIG_GLANCE_DB_PW')
 $glance_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 $glance_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
 
-class { 'glance::api':
+class { '::glance::api':
   auth_uri            => "http://${glance_cfg_ctrl_host}:5000/",
   identity_uri        => "http://${glance_cfg_ctrl_host}:35357",
   keystone_tenant     => 'services',
@@ -12,10 +12,10 @@ class { 'glance::api':
   database_connection => "mysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
-  os_region_name      => hiera('CONFIG_KEYSTONE_REGION')
+  os_region_name      => hiera('CONFIG_KEYSTONE_REGION'),
 }
 
-class { 'glance::registry':
+class { '::glance::registry':
   auth_uri            => "http://${glance_cfg_ctrl_host}:5000/",
   identity_uri        => "http://${glance_cfg_ctrl_host}:35357",
   keystone_tenant     => 'services',

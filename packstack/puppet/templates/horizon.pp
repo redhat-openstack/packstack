@@ -1,4 +1,4 @@
-include packstack::apache_common
+include ::packstack::apache_common
 
 $keystone_host = hiera('CONFIG_CONTROLLER_HOST')
 
@@ -14,23 +14,23 @@ $is_django_debug = hiera('CONFIG_DEBUG_MODE') ? {
   false => 'False',
 }
 
-class {'horizon':
+class {'::horizon':
   secret_key            => hiera('CONFIG_HORIZON_SECRET_KEY'),
   keystone_url          => "http://${keystone_host}:5000/v2.0",
   keystone_default_role => '_member_',
-  server_aliases       => [hiera('CONFIG_CONTROLLER_HOST'), "$::fqdn", 'localhost'],
-  allowed_hosts        => '*',
-  hypervisor_options   => {'can_set_mount_point' => false, },
-  compress_offline     => false,
-  django_debug         => $is_django_debug,
-  file_upload_temp_dir => '/var/tmp',
-  listen_ssl           => hiera('CONFIG_HORIZON_SSL'),
-  horizon_cert         => '/etc/pki/tls/certs/ssl_ps_server.crt',
-  horizon_key          => '/etc/pki/tls/private/ssl_ps_server.key',
-  horizon_ca           => '/etc/pki/tls/certs/ssl_ps_chain.crt',
-  neutron_options      => {
-    'enable_lb'        => hiera('CONFIG_HORIZON_NEUTRON_LB'),
-    'enable_firewall'  => hiera('CONFIG_HORIZON_NEUTRON_FW'),
+  server_aliases        => [hiera('CONFIG_CONTROLLER_HOST'), $::fqdn, 'localhost'],
+  allowed_hosts         => '*',
+  hypervisor_options    => {'can_set_mount_point' => false, },
+  compress_offline      => false,
+  django_debug          => $is_django_debug,
+  file_upload_temp_dir  => '/var/tmp',
+  listen_ssl            => hiera('CONFIG_HORIZON_SSL'),
+  horizon_cert          => '/etc/pki/tls/certs/ssl_ps_server.crt',
+  horizon_key           => '/etc/pki/tls/private/ssl_ps_server.key',
+  horizon_ca            => '/etc/pki/tls/certs/ssl_ps_chain.crt',
+  neutron_options       => {
+    'enable_lb'       => hiera('CONFIG_HORIZON_NEUTRON_LB'),
+    'enable_firewall' => hiera('CONFIG_HORIZON_NEUTRON_FW'),
   },
 }
 
@@ -38,7 +38,7 @@ $is_horizon_ssl = hiera('CONFIG_HORIZON_SSL')
 
 if $is_horizon_ssl == true {
   file {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
-    ensure  => present,
+    ensure  => file,
     content => template('packstack/ssl/generate_ssl_certs.sh.erb'),
     mode    => '0755',
   }
@@ -68,7 +68,7 @@ if $is_horizon_ssl == true {
   }
 }
 
-class { 'memcached': }
+class { '::memcached': }
 
 $firewall_port = hiera('CONFIG_HORIZON_PORT')
 

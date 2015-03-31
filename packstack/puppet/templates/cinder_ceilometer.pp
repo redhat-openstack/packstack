@@ -1,2 +1,2 @@
 
-class { 'cinder::ceilometer': }
+class { '::cinder::ceilometer': }

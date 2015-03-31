@@ -163,7 +163,7 @@ if $provision_tempest_user != '' {
   if $configure_tempest {
     $tempest_requires = concat([Keystone_user[$username]], $neutron_deps)
 
-    class { 'tempest':
+    class { '::tempest':
       tempest_repo_uri          => $tempest_repo_uri,
       tempest_clone_path        => $tempest_clone_path,
       tempest_clone_owner       => $tempest_clone_owner,
@@ -220,7 +220,7 @@ if $provision_tempest_user != '' {
   }
 } else {
   ## Standalone Tempest installation
-  class { 'tempest':
+  class { '::tempest':
     tempest_repo_uri      => hiera('CONFIG_PROVISION_TEMPEST_REPO_URI'),
     tempest_clone_path    => '/var/lib/tempest',
     tempest_clone_owner   => 'root',

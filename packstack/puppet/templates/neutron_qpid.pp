@@ -1,5 +1,5 @@
 
-class { 'neutron':
+class { '::neutron':
   rpc_backend           => 'neutron.openstack.common.rpc.impl_qpid',
   qpid_hostname         => hiera('CONFIG_AMQP_HOST'),
   qpid_username         => hiera('CONFIG_AMQP_AUTH_USER'),

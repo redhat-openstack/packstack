@@ -1,6 +1,6 @@
 
 # install all swift storage servers together
-class { 'swift::storage::all':
+class { '::swift::storage::all':
   storage_local_net_ip => hiera('CONFIG_CONTROLLER_HOST'),
   allow_versions       => true,
   require              => Class['swift'],

@@ -1,2 +1,2 @@
 
-class { 'packstack::neutron::bridge': }
+class { '::packstack::neutron::bridge': }

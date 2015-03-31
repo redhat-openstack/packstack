@@ -4,7 +4,7 @@ package{ 'nrpe':
 }
 
 file{ '/etc/nagios/nrpe.cfg':
-  ensure  => 'present',
+  ensure  => file,
   mode    => '0644',
   owner   => 'nagios',
   group   => 'nagios',
@@ -35,7 +35,7 @@ class nagios_configs () {
   }
 }
 
-class{'nagios_configs':
+class{ '::nagios_configs':
   notify => Service['nrpe'],
 }
 

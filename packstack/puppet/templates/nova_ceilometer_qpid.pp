@@ -1,5 +1,5 @@
 
-class { 'ceilometer':
+class { '::ceilometer':
     metering_secret => hiera('CONFIG_CEILOMETER_SECRET'),
     qpid_hostname   => hiera('CONFIG_AMQP_HOST'),
     qpid_username   => hiera('CONFIG_AMQP_AUTH_USER'),

@@ -1,7 +1,7 @@
 $neutron_notif_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
 
 # Configure nova notifications system
-class { 'neutron::server::notifications':
+class { '::neutron::server::notifications':
   nova_admin_username    => 'nova',
   nova_admin_password    => hiera('CONFIG_NOVA_KS_PW'),
   nova_admin_tenant_name => 'services',

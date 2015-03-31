@@ -2,7 +2,7 @@ $trove_qpid_cfg_trove_db_pw = hiera('CONFIG_TROVE_DB_PW')
 $trove_qpid_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 $trove_qpid_cfg_controller_host = hiera('CONFIG_CONTROLLER_HOST')
 
-class { 'trove':
+class { '::trove':
   rpc_backend                  => 'trove.openstack.common.rpc.impl_qpid',
   qpid_hostname                => hiera('CONFIG_AMQP_HOST'),
   qpid_port                    => hiera('CONFIG_AMQP_CLIENTS_PORT'),

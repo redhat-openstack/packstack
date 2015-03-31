@@ -2,7 +2,7 @@ $heat_rabbitmq_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
 $heat_rabbitmq_cfg_heat_db_pw = hiera('CONFIG_HEAT_DB_PW')
 $heat_rabbitmq_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST')
 
-class { 'heat':
+class { '::heat':
   keystone_host       => $heat_rabbitmq_cfg_ctrl_host,
   keystone_password   => hiera('CONFIG_HEAT_KS_PW'),
   auth_uri            => "http://${heat_rabbitmq_cfg_ctrl_host}:35357/v2.0",

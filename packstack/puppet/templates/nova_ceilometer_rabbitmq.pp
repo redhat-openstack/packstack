@@ -1,5 +1,5 @@
 
-class { 'ceilometer':
+class { '::ceilometer':
     metering_secret => hiera('CONFIG_CEILOMETER_SECRET'),
     rabbit_host     => hiera('CONFIG_AMQP_HOST'),
     rabbit_port     => hiera('CONFIG_AMQP_CLIENTS_PORT'),

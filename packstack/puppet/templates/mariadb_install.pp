@@ -4,7 +4,7 @@ package { 'mariadb-server':
   ensure => absent,
 }
 
-class { 'mysql::server':
+class { '::mysql::server':
   package_name     => 'mariadb-galera-server',
   restart          => true,
   root_password    => hiera('CONFIG_MARIADB_PW'),
@@ -14,8 +14,8 @@ class { 'mysql::server':
                   default_storage_engine => 'InnoDB',
                   max_connections        => '1024',
                   open_files_limit       => '-1',
-    }
-  }
+    },
+  },
 }
 
 # deleting database users for security

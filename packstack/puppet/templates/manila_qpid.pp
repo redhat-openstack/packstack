@@ -2,7 +2,7 @@
 $db_pw = hiera('CONFIG_MANILA_DB_PW')
 $mariadb_host = hiera('CONFIG_MARIADB_HOST')
 
-class {'manila':
+class { '::manila':
   rpc_backend    => 'manila.openstack.common.rpc.impl_qpid',
   qpid_hostname  => hiera('CONFIG_AMQP_HOST'),
   qpid_port      => hiera('CONFIG_AMQP_CLIENTS_PORT'),

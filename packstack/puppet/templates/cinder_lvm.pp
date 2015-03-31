@@ -1,7 +1,7 @@
 $create_cinder_volume = hiera('CONFIG_CINDER_VOLUMES_CREATE')
 
 if $create_cinder_volume == 'y' {
-    class { 'cinder::setup_test_volume':
+    class { '::cinder::setup_test_volume':
       size            => hiera('CONFIG_CINDER_VOLUMES_SIZE'),
       loopback_device => '/dev/loop2',
       volume_path     => '/var/lib/cinder',

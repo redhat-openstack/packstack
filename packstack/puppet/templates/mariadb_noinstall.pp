@@ -1,2 +1,2 @@
 
-class { 'remote::db': }
+class { '::remote::db': }

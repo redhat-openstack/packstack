@@ -1,4 +1,4 @@
-include packstack::apache_common
+include ::packstack::apache_common
 
 package { ['nagios', 'nagios-plugins-nrpe']:
   ensure => present,
@@ -10,12 +10,12 @@ exec { 'nagios-plugins-ping':
   path    => '/usr/bin',
   command => 'yum install -y -d 0 -e 0 monitoring-plugins-ping',
   onlyif  => 'yum install -y -d 0 -e 0 nagios-plugins-ping &> /dev/null && exit 1 || exit 0',
-  before  => Class['nagios_configs']
+  before  => Class['nagios_configs'],
 }
 
 class nagios_configs(){
   file { ['/etc/nagios/nagios_command.cfg', '/etc/nagios/nagios_host.cfg']:
-    ensure => 'present',
+    ensure => file,
     mode   => '0644',
     owner  => 'nagios',
     group  => 'nagios',
@@ -24,7 +24,7 @@ class nagios_configs(){
   # Remove the entry for localhost, it contains services we're not
   # monitoring
   file { ['/etc/nagios/objects/localhost.cfg']:
-    ensure  => 'present',
+    ensure  => file,
     content => '',
   }
 
@@ -57,10 +57,10 @@ class nagios_configs(){
   $nagios_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
 
   file { '/etc/nagios/keystonerc_admin':
-      ensure  => 'present',
-      owner   => 'nagios',
-      mode    => '0600',
-      content => "export OS_USERNAME=admin
+    ensure  => file,
+    owner   => 'nagios',
+    mode    => '0600',
+    content => "export OS_USERNAME=admin
 export OS_TENANT_NAME=admin
 export OS_PASSWORD=${nagios_cfg_ks_adm_pw}
 export OS_AUTH_URL=http://${nagios_cfg_ctrl_host}:35357/v2.0/ ",
@@ -69,17 +69,17 @@ export OS_AUTH_URL=http://${nagios_cfg_ctrl_host}:35357/v2.0/ ",
   %(CONFIG_NAGIOS_MANIFEST_CONFIG)s
 }
 
-class { 'nagios_configs':
-  notify => [Service['nagios'], Service['httpd']],
+class { '::nagios_configs':
+  notify => [ Service['nagios'], Service['httpd']],
 }
 
-include concat::setup
+include ::concat::setup
 
-class { 'apache':
+class { '::apache':
   purge_configs => false,
 }
 
-class { 'apache::mod::php': }
+class { '::apache::mod::php': }
 
 service { ['nagios']:
   ensure    => running,
@@ -88,9 +88,9 @@ service { ['nagios']:
 }
 
 firewall { '001 nagios incoming':
-  proto    => 'tcp',
-  dport    => ['80'],
-  action   => 'accept',
+  proto  => 'tcp',
+  dport  => ['80'],
+  action => 'accept',
 }
 
 # ensure that we won't stop listening on 443 if horizon has ssl enabled

@@ -1,5 +1,5 @@
 
-class { 'neutron':
+class { '::neutron':
   rabbit_host           => hiera('CONFIG_AMQP_HOST'),
   rabbit_port           => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   rabbit_use_ssl        => hiera('CONFIG_AMQP_ENABLE_SSL'),

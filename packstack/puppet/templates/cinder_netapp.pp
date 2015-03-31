@@ -26,15 +26,15 @@ if $netapp_storage_family == 'ontap_cluster' {
   }
   elsif $netapp_storage_protocol == 'iscsi' {
     cinder::backend::netapp { $netapp_backend_name:
-      netapp_login              => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
-      netapp_password           => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
-      netapp_server_hostname    => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
-      netapp_server_port        => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
-      netapp_size_multiplier    => hiera('CONFIG_CINDER_NETAPP_SIZE_MULTIPLIER'),
-      netapp_storage_family     => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
-      netapp_storage_protocol   => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
-      netapp_transport_type     => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
-      netapp_vserver            => hiera('CONFIG_CINDER_NETAPP_VSERVER'),
+      netapp_login            => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
+      netapp_password         => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
+      netapp_server_hostname  => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
+      netapp_server_port      => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
+      netapp_size_multiplier  => hiera('CONFIG_CINDER_NETAPP_SIZE_MULTIPLIER'),
+      netapp_storage_family   => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
+      netapp_storage_protocol => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
+      netapp_transport_type   => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
+      netapp_vserver          => hiera('CONFIG_CINDER_NETAPP_VSERVER'),
     }
 
     package { 'iscsi-initiator-utils': ensure => present }
@@ -61,16 +61,16 @@ elsif $netapp_storage_family == 'ontap_7mode' {
   }
   elsif $netapp_storage_protocol == 'iscsi' {
     cinder::backend::netapp { $netapp_backend_name:
-      netapp_login              => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
-      netapp_password           => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
-      netapp_server_hostname    => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
-      netapp_server_port        => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
-      netapp_size_multiplier    => hiera('CONFIG_CINDER_NETAPP_SIZE_MULTIPLIER'),
-      netapp_storage_family     => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
-      netapp_storage_protocol   => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
-      netapp_transport_type     => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
-      netapp_vfiler             => hiera('CONFIG_CINDER_NETAPP_VFILER'),
-      netapp_volume_list        => hiera('CONFIG_CINDER_NETAPP_VOLUME_LIST'),
+      netapp_login            => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
+      netapp_password         => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
+      netapp_server_hostname  => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
+      netapp_server_port      => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
+      netapp_size_multiplier  => hiera('CONFIG_CINDER_NETAPP_SIZE_MULTIPLIER'),
+      netapp_storage_family   => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
+      netapp_storage_protocol => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
+      netapp_transport_type   => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
+      netapp_vfiler           => hiera('CONFIG_CINDER_NETAPP_VFILER'),
+      netapp_volume_list      => hiera('CONFIG_CINDER_NETAPP_VOLUME_LIST'),
     }
 
     package { 'iscsi-initiator-utils': ensure => present }
@@ -78,17 +78,17 @@ elsif $netapp_storage_family == 'ontap_7mode' {
 }
 elsif $netapp_storage_family == 'eseries' {
   cinder::backend::netapp { $netapp_backend_name:
-    netapp_login              => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
-    netapp_password           => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
-    netapp_server_hostname    => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
-    netapp_server_port        => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
-    netapp_storage_family     => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
-    netapp_storage_protocol   => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
-    netapp_transport_type     => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
-    netapp_controller_ips     => hiera('CONFIG_CINDER_NETAPP_CONTROLLER_IPS'),
-    netapp_sa_password        => hiera('CONFIG_CINDER_NETAPP_SA_PASSWORD'),
-    netapp_storage_pools      => hiera('CONFIG_CINDER_NETAPP_STORAGE_POOLS'),
-    netapp_webservice_path    => hiera('CONFIG_CINDER_NETAPP_WEBSERVICE_PATH'),
+    netapp_login            => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
+    netapp_password         => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
+    netapp_server_hostname  => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
+    netapp_server_port      => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
+    netapp_storage_family   => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
+    netapp_storage_protocol => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
+    netapp_transport_type   => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
+    netapp_controller_ips   => hiera('CONFIG_CINDER_NETAPP_CONTROLLER_IPS'),
+    netapp_sa_password      => hiera('CONFIG_CINDER_NETAPP_SA_PASSWORD'),
+    netapp_storage_pools    => hiera('CONFIG_CINDER_NETAPP_STORAGE_POOLS'),
+    netapp_webservice_path  => hiera('CONFIG_CINDER_NETAPP_WEBSERVICE_PATH'),
   }
 
   package { 'iscsi-initiator-utils': ensure => present }
