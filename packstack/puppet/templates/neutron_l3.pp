@@ -4,6 +4,10 @@ class { '::neutron::agents::l3':
   debug                   => hiera('CONFIG_DEBUG_MODE'),
 }
 
+if defined(Class['neutron::services::fwaas']) {
+  Class['neutron::services::fwaas'] -> Class['neutron::agents::l3']
+}
+
 sysctl::value { 'net.ipv4.ip_forward':
   value => '1',
 }

@@ -423,6 +423,8 @@ def initSequences(controller):
          'functions': [create_l2_agent_manifests]},
         {'title': 'Adding Neutron DHCP Agent manifest entries',
          'functions': [create_dhcp_manifests]},
+        {'title': 'Adding Neutron FWaaS Agent manifest entries',
+         'functions': [create_fwaas_manifests]},
         {'title': 'Adding Neutron LBaaS Agent manifest entries',
          'functions': [create_lbaas_manifests]},
         {'title': 'Adding Neutron Metering Agent manifest entries',
@@ -608,11 +610,6 @@ def create_l3_manifests(config, messages):
                 manifestdata = getManifestTemplate('neutron_ovs_bridge')
                 appendManifestFile(manifestfile, manifestdata + '\n')
 
-        if config['CONFIG_NEUTRON_FWAAS'] == 'y':
-            # manifestfile = "%s_neutron_fwaas.pp" % (host,)
-            manifestdata = getManifestTemplate("neutron_fwaas")
-            appendManifestFile(manifestfile, manifestdata + '\n')
-
 
 def create_dhcp_manifests(config, messages):
     global network_hosts
@@ -656,13 +653,25 @@ def create_dhcp_manifests(config, messages):
         appendManifestFile(manifest_file, manifest_data, 'neutron')
 
 
+def create_fwaas_manifests(config, messages):
+    global network_hosts
+
+    if not config['CONFIG_NEUTRON_FWAAS'] == 'y':
+        return
+
+    for host in network_hosts | api_hosts:
+        manifestdata = getManifestTemplate("neutron_fwaas")
+        manifestfile = "%s_neutron.pp" % (host,)
+        appendManifestFile(manifestfile, manifestdata + "\n")
+
+
 def create_lbaas_manifests(config, messages):
     global network_hosts
 
     if not config['CONFIG_LBAAS_INSTALL'] == 'y':
         return
 
-    for host in network_hosts:
+    for host in network_hosts | api_hosts:
         config['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = get_if_driver(config)
         manifestdata = getManifestTemplate("neutron_lbaas")
         manifestfile = "%s_neutron.pp" % (host,)
