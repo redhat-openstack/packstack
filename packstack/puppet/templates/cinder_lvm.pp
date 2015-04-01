@@ -10,7 +10,7 @@ if $create_cinder_volume == 'y' {
 
     # Add loop device on boot
     $el_releases = ['RedHat', 'CentOS', 'Scientific']
-    if $::operatingsystem in $el_releases and $::operatingsystemmajrelease < 7 {
+    if $::operatingsystem in $el_releases and (versioncmp($::operatingsystemmajrelease, '7') < 0) {
 
       file_line{ 'rc.local_losetup_cinder_volume':
         path  => '/etc/rc.d/rc.local',
