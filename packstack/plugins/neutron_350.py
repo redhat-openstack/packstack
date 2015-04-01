@@ -234,7 +234,7 @@ def initConfig(controller):
                         "mechanism driver entrypoints"),
              "OPTION_LIST": ["logger", "test", "linuxbridge", "openvswitch",
                              "hyperv", "ncs", "arista", "cisco_nexus",
-                             "l2population"],
+                             "mlnx", "l2population"],
              "VALIDATORS": [validators.validate_multi_options],
              "DEFAULT_VALUE": "openvswitch",
              "MASK_INPUT": False,
