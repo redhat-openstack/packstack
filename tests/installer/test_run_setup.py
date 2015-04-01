@@ -65,6 +65,11 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
                                      'openstack-icehouse',
                                      stdout='[openstack-icehouse]\nenabled=1')
 
+        FakePopen.register_as_script(
+            'facter -p',
+            stdout='operatingsystem => Fedora\noperatingsystemmajrelease => 21'
+        )
+
         # required by packstack.plugins.nova_300.gather_host_keys
         FakePopen.register('ssh-keyscan 127.0.0.1',
                            stdout='127.0.0.1 ssh-rsa hostkey-data')

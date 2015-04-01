@@ -425,7 +425,7 @@ def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
     """
     Registers given host to Red Hat Repositories via subscription manager.
     """
-    releasever = config['HOST_DETAILS'][host]['release'].split('.')[0]
+    releasever = config['HOST_DETAILS'][host]['operatingsystemmajrelease']
     server = utils.ScriptRunner(host)
 
     # configure proxy if it is necessary
@@ -477,11 +477,12 @@ def manage_epel(host, config):
     Installs and/or enables EPEL repo if it is required or disables it if it
     is not required.
     """
-    if config['HOST_DETAILS'][host]['os'] in ('Fedora', 'Unknown'):
+    relevant = ('redhat', 'centos', 'scientific')
+    if config['HOST_DETAILS'][host]['operatingsystem'].lower() not in relevant:
         return
 
     # yum's $releasever can be non numeric on RHEL, so interpolate here
-    releasever = config['HOST_DETAILS'][host]['release'].split('.')[0]
+    releasever = config['HOST_DETAILS'][host]['operatingsystemmajrelease']
     mirrors = ('https://mirrors.fedoraproject.org/metalink?repo=epel-%s&'
                'arch=$basearch' % releasever)
     server = utils.ScriptRunner(host)

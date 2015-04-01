@@ -36,7 +36,7 @@ from .exceptions import FlagValidationError
 from .exceptions import ParamValidationError
 
 from packstack import version
-from packstack.modules.ospluginutils import gethostlist
+from packstack.modules.common import filtered_hosts
 from setup_controller import Controller
 
 controller = Controller()
@@ -667,7 +667,7 @@ def remove_remote_var_dirs(options, config, messages):
     Removes the temp directories on remote hosts,
     doesn't remove data on localhost
     """
-    for host in gethostlist(config):
+    for host in filtered_hosts(config):
         try:
             host_dir = config['HOST_DETAILS'][host]['tmpdir']
         except KeyError:
