@@ -54,8 +54,6 @@ if hiera('CONFIG_KEYSTONE_IDENTITY_BACKEND') == 'ldap' {
     $user_enabled_emulation = false
   }
 
-  # should be supported and enabled in the next release of puppet-keystone
-#    user_enabled_invert                 => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_INVERT'),
   class {"keystone::ldap":
     url                                 => hiera_undef('CONFIG_KEYSTONE_LDAP_URL', undef),
     user                                => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_DN', undef),
@@ -80,6 +78,7 @@ if hiera('CONFIG_KEYSTONE_IDENTITY_BACKEND') == 'ldap' {
     user_pass_attribute                 => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_PASS_ATTRIBUTE', undef),
     user_enabled_emulation              => $user_enabled_emulation,
     user_enabled_emulation_dn           => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_EMULATION_DN', undef),
+    user_enabled_invert                 => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_INVERT', undef),
     user_additional_attribute_mapping   => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ADDITIONAL_ATTRIBUTE_MAPPING', undef),
     group_tree_dn                       => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_SUBTREE', undef),
     group_filter                        => hiera_undef('CONFIG_KEYSTONE_LDAP_GROUP_FILTER', undef),
