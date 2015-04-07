@@ -18,11 +18,9 @@ Plugin responsible for setting OpenStack global options
 
 import glob
 import os
-import re
 import uuid
 
 from packstack.installer import basedefs
-from packstack.installer import exceptions
 from packstack.installer import processors
 from packstack.installer import utils
 from packstack.installer import validators
@@ -552,8 +550,8 @@ def initSequences(controller):
     prescript_steps = [
         {'title': 'Setting up ssh keys',
          'functions': [install_keys]},
-        {'title': 'Discovering hosts\' details',
-         'functions': [discover]},
+        {'title': 'Preinstalling Puppet and discovering hosts\' details',
+         'functions': [preinstall_and_discover]},
         {'title': 'Adding pre install manifest entries',
          'functions': [create_manifest]},
     ]
@@ -602,49 +600,76 @@ def install_keys(config, messages):
             install_keys_on_host(hostname, sshkeydata)
 
 
-def discover(config, messages):
+def preinstall_and_discover(config, messages):
+    """Installs Puppet and it's dependencies and dependencies of Puppet
+    modules' package and discovers information about all hosts.
     """
-    Discovers details about hosts.
-    """
-    # TODO: Once Controller is refactored, move this function to it (facter can
-    #       be used for that too).
-    details = {}
-    release_regexp = re.compile(r'^(?P<OS>.*) release (?P<release>[\d\.]*)')
     config['HOST_LIST'] = list(filtered_hosts(config))
-    for host in config['HOST_LIST']:
-        details.setdefault(host, {})
-        server = utils.ScriptRunner(host)
-        # discover OS and release
-        server.append('cat /etc/redhat-release')
-        try:
-            rc, out = server.execute()
-            match = release_regexp.search(out)
-            if not match:
-                raise exceptions.ScriptRuntimeError()
-        except exceptions.ScriptRuntimeError:
-            details[host]['os'] = 'Unknown'
-            details[host]['release'] = 'Unknown'
-        else:
-            opsys = match.group('OS')
-            for pattern, surr in [('^Red Hat Enterprise Linux.*', 'RHEL'),
-                                  ('^Fedora.*', 'Fedora'),
-                                  ('^CentOS.*', 'CentOS'),
-                                  ('^Scientific Linux.*', 'SL')]:
-                opsys = re.sub(pattern, surr, opsys)
-            details[host]['os'] = opsys
-            details[host]['release'] = match.group('release')
 
-        # Create the packstack tmp directory
+    local = utils.ScriptRunner()
+    local.append('rpm -q --requires %s | egrep -v "^(rpmlib|\/|perl)"'
+                 % basedefs.PUPPET_MODULES_PKG)
+    # this can fail if there are no dependencies other than those
+    # filtered out by the egrep expression.
+    rc, modules_deps = local.execute(can_fail=False)
+
+    # modules package might not be installed if we are running from source;
+    # in this case we assume user knows what (s)he's doing and we don't
+    # install modules dependencies
+    errmsg = '%s is not installed' % basedefs.PUPPET_MODULES_PKG
+    deps = list(basedefs.PUPPET_DEPENDENCIES)
+    if errmsg not in modules_deps:
+        deps.extend([i.strip() for i in modules_deps.split() if i.strip()])
+
+    details = {}
+    for hostname in config['HOST_LIST']:
+        # install Puppet and it's dependencies
+        server = utils.ScriptRunner(hostname)
+        packages = ' '.join(deps)
+        server.append('yum install -y %s' % packages)
+        server.append('yum update -y %s' % packages)
+        # yum does not fail if one of the packages is missing
+        for package in deps:
+            server.append('rpm -q --whatprovides %s' % package)
+        server.execute()
+
+        # create the packstack tmp directory
         server.clear()
-        server.append("mkdir -p %s" % basedefs.PACKSTACK_VAR_DIR)
+        server.append('mkdir -p %s' % basedefs.PACKSTACK_VAR_DIR)
         # Separately create the tmp directory for this packstack run, this will
         # fail if the directory already exists
         host_dir = os.path.join(basedefs.PACKSTACK_VAR_DIR, uuid.uuid4().hex)
-        server.append("mkdir --mode 0700 %s" % host_dir)
+        server.append('mkdir --mode 0700 %s' % host_dir)
         for i in ('modules', 'resources'):
-            server.append("mkdir --mode 0700 %s" % os.path.join(host_dir, i))
+            server.append('mkdir --mode 0700 %s' % os.path.join(host_dir, i))
         server.execute()
-        details[host]['tmpdir'] = host_dir
+        details.setdefault(hostname, {})['tmpdir'] = host_dir
+
+        # discover other host info; Facter is installed as Puppet dependency,
+        # so we let it do the work
+        server.clear()
+        server.append('facter -p')
+        rc, stdout = server.execute()
+        for line in stdout.split('\n'):
+            try:
+                key, value = line.split('=>', 1)
+            except ValueError:
+                # this line is probably some warning, so let's skip it
+                continue
+            else:
+                details[hostname][key.strip()] = value.strip()
+
+        # create a symbolic link to /etc/hiera.yaml to avoid warning messages
+        # such as "Warning: Config file /etc/puppet/hiera.yaml not found,
+        # using Hiera defaults"
+        server.clear()
+        server.append('[[ ! -L /etc/puppet/hiera.yaml ]] && '
+                      'ln -s /etc/hiera.yaml /etc/puppet/hiera.yaml || '
+                      'echo "hiera.yaml symlink already created"')
+        server.append("sed -i 's;:datadir:.*;:datadir: "
+                      "%s/hieradata;g' /etc/puppet/hiera.yaml"
+                      % details[hostname]['tmpdir'])
+        server.execute()
     config['HOST_DETAILS'] = details
 
 
@@ -670,8 +695,9 @@ def create_ntp_manifest(config, messages):
     marker = uuid.uuid4().hex[:16]
 
     for hostname in filtered_hosts(config):
-        releaseos = config['HOST_DETAILS'][hostname]['os']
-        releasever = config['HOST_DETAILS'][hostname]['release'].split('.')[0]
+        hostnfo = config['HOST_DETAILS'][hostname]
+        releaseos = hostnfo['operatingsystem']
+        releasever = hostnfo['operatingsystemmajrelease']
 
         # Configure chrony for Fedora or RHEL/CentOS 7
         if releaseos == 'Fedora' or releasever == '7':

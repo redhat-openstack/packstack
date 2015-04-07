@@ -67,6 +67,9 @@ PUPPET_MANIFEST_DIR = os.path.join(VAR_DIR, PUPPET_MANIFEST_RELATIVE)
 HIERADATA_FILE_RELATIVE = "hieradata"
 HIERADATA_DIR = os.path.join(VAR_DIR, HIERADATA_FILE_RELATIVE)
 
+PUPPET_DEPENDENCIES = ['puppet', 'hiera', 'openssh-clients', 'tar', 'nc']
+PUPPET_MODULES_PKG = 'openstack-puppet-modules'
+
 FILE_INSTALLER_LOG = "setup.log"
 
 DIR_PROJECT_DIR = os.environ.get('INSTALLER_PROJECT_DIR', os.path.join(os.getcwd(), 'packstack'))

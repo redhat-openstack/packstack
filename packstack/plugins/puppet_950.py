@@ -61,8 +61,6 @@ def initSequences(controller):
     controller.insertSequence("Clean Up", [], [], puppetpresteps, index=0)
 
     puppetsteps = [
-        {'title': 'Installing Dependencies',
-            'functions': [install_deps]},
         {'title': 'Copying Puppet modules and manifests',
             'functions': [copy_puppet_modules]},
         {'title': 'Applying Puppet manifests',
@@ -140,48 +138,6 @@ def run_cleanup(config, messages):
     localserver = utils.ScriptRunner()
     localserver.append("rm -rf %s/*pp" % basedefs.PUPPET_MANIFEST_DIR)
     localserver.execute()
-
-
-def install_deps(config, messages):
-    deps = ["puppet", "hiera", "openssh-clients", "tar", "nc"]
-    modules_pkg = 'openstack-puppet-modules'
-
-    local = utils.ScriptRunner()
-    local.append('rpm -q --requires %s | egrep -v "^(rpmlib|\/|perl)"'
-                 % modules_pkg)
-
-    # This can fail if there are no dependencies other than those
-    # filtered out by the egrep expression.
-    rc, modules_deps = local.execute(can_fail=False)
-
-    # Modules package might not be installed if we are running from source.
-    # In this case we assume user knows what (s)he's doing and we don't
-    # install modules dependencies
-    if ('%s is not installed' % modules_pkg) not in modules_deps:
-        modules_deps = [i.strip() for i in modules_deps.split() if i.strip()]
-        deps.extend(modules_deps)
-
-    for hostname in filtered_hosts(config):
-        server = utils.ScriptRunner(hostname)
-        packages = ' '.join(deps)
-        server.append("yum install -y %s" % packages)
-        server.append("yum update -y %s" % packages)
-        # yum does not fail if one of the packages is missing
-        for package in deps:
-            server.append("rpm -q --whatprovides %s" % (package))
-
-        # To avoid warning messages such as
-        # "Warning: Config file /etc/puppet/hiera.yaml not found, using Hiera
-        # defaults". We create a symbolic link to /etc/hiera.yaml.
-        server.append('[[ ! -L /etc/puppet/hiera.yaml ]] && '
-                      'ln -s /etc/hiera.yaml /etc/puppet/hiera.yaml || '
-                      'echo "hiera.yaml symlink already created"')
-
-        server.append("sed -i 's;:datadir:.*;:datadir: "
-                      "%s/hieradata;g' /etc/puppet/hiera.yaml"
-                      % config['HOST_DETAILS'][hostname]['tmpdir'])
-
-        server.execute()
 
 
 def copy_puppet_modules(config, messages):
