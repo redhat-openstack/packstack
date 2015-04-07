@@ -3,7 +3,7 @@ Firewall <| |> -> Class['nova::compute::libvirt']
 # Ensure Firewall changes happen before libvirt service start
 # preventing a clash with rules being set by libvirt
 
-if $::is_virtual == true {
+if str2bool($::is_virtual) {
   $libvirt_virt_type = 'qemu'
   $libvirt_cpu_mode = 'none'
 } else {
