@@ -21,12 +21,14 @@ import re
 import logging
 import platform
 
+from packstack.installer import basedefs
 from packstack.installer import exceptions
 from packstack.installer import utils
 from packstack.installer import validators
 
 from packstack.modules.common import filtered_hosts
 from packstack.modules.common import is_all_in_one
+from packstack.modules.documentation import update_params_usage
 
 # ------------ Server Preparation Packstack Plugin Initialization -------------
 
@@ -38,7 +40,6 @@ def initConfig(controller):
     conf_params = {
         "SERVERPREPARE": [
             {"CMD_OPTION": "use-epel",
-             "USAGE": "To subscribe each server to EPEL enter \"y\"",
              "PROMPT": "To subscribe each server to EPEL enter \"y\"",
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -51,8 +52,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "additional-repo",
-             "USAGE": ("A comma separated list of URLs to any additional yum "
-                       "repositories to install"),
              "PROMPT": ("Enter a comma separated list of URLs to any "
                         "additional yum repositories to install"),
              "OPTION_LIST": [],
@@ -67,8 +66,6 @@ def initConfig(controller):
 
         "RHEL": [
             {"CMD_OPTION": "rh-username",
-             "USAGE": ("To subscribe each server with Red Hat subscription "
-                       "manager, include this with CONFIG_RH_PW"),
              "PROMPT": "To subscribe each server to Red Hat enter a username ",
              "OPTION_LIST": [],
              "DEFAULT_VALUE": "",
@@ -80,10 +77,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rhn-satellite-server",
-             "USAGE": ("To subscribe each server with RHN Satellite,fill "
-                       "Satellite's URL here. Note that either satellite's "
-                       "username/password or activation key has "
-                       "to be provided"),
              "PROMPT": ("To subscribe each server with RHN Satellite enter "
                         "RHN Satellite server URL"),
              "OPTION_LIST": [],
@@ -98,8 +91,6 @@ def initConfig(controller):
 
         "RHSM": [
             {"CMD_OPTION": "rh-password",
-             "USAGE": ("To subscribe each server with Red Hat subscription "
-                       "manager, include this with CONFIG_RH_USER"),
              "PROMPT": ("To subscribe each server to Red Hat enter your "
                         "password"),
              "OPTION_LIST": [],
@@ -112,7 +103,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rh-enable-optional",
-             "USAGE": "To enable RHEL optional repos use value \"y\"",
              "PROMPT": "To enable RHEL optional repos use value \"y\"",
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -125,8 +115,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rh-proxy-host",
-             "USAGE": ("Specify a HTTP proxy to use with Red Hat subscription "
-                       "manager"),
              "PROMPT": ("Specify a HTTP proxy to use with Red Hat subscription"
                         " manager"),
              "OPTION_LIST": [],
@@ -141,8 +129,6 @@ def initConfig(controller):
 
         "RHSM_PROXY": [
             {"CMD_OPTION": "rh-proxy-port",
-             "USAGE": ("Specify port of Red Hat subscription manager HTTP "
-                       "proxy"),
              "PROMPT": ("Specify port of Red Hat subscription manager HTTP "
                         "proxy"),
              "OPTION_LIST": [],
@@ -155,8 +141,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rh-proxy-user",
-             "USAGE": ("Specify a username to use with Red Hat subscription "
-                       "manager HTTP proxy"),
              "PROMPT": ("Specify a username to use with Red Hat subscription "
                         "manager HTTP proxy"),
              "OPTION_LIST": [],
@@ -169,8 +153,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rh-proxy-password",
-             "USAGE": ("Specify a password to use with Red Hat subscription "
-                       "manager HTTP proxy"),
              "PROMPT": ("Specify a password to use with Red Hat subscription "
                         "manager HTTP proxy"),
              "OPTION_LIST": [],
@@ -185,7 +167,6 @@ def initConfig(controller):
 
         "SATELLITE": [
             {"CMD_OPTION": "rhn-satellite-username",
-             "USAGE": "Username to access RHN Satellite",
              "PROMPT": ("Enter RHN Satellite username or leave plain if you "
                         "will use activation key instead"),
              "OPTION_LIST": [],
@@ -198,7 +179,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rhn-satellite-password",
-             "USAGE": "Password to access RHN Satellite",
              "PROMPT": ("Enter RHN Satellite password or leave plain if you "
                         "will use activation key instead"),
              "OPTION_LIST": [],
@@ -211,7 +191,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rhn-satellite-activation-key",
-             "USAGE": "Activation key for subscription to RHN Satellite",
              "PROMPT": ("Enter RHN Satellite activation key or leave plain if "
                         "you used username/password instead"),
              "OPTION_LIST": [],
@@ -224,7 +203,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rhn-satellite-cacert",
-             "USAGE": "Specify a path or URL to a SSL CA certificate to use",
              "PROMPT": "Specify a path or URL to a SSL CA certificate to use",
              "OPTION_LIST": [],
              "DEFAULT_VALUE": "",
@@ -236,9 +214,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rhn-satellite-profile",
-             "USAGE": ("If required specify the profile name that should be "
-                       "used as an identifier for the system "
-                       "in RHN Satellite"),
              "PROMPT": ("If required specify the profile name that should be "
                         "used as an identifier for the system "
                         "in RHN Satellite"),
@@ -252,8 +227,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rhn-satellite-flags",
-             "USAGE": ("Comma separated list of flags passed to rhnreg_ks. "
-                       "Valid flags are: novirtinfo, norhnsd, nopackages"),
              "PROMPT": ("Enter comma separated list of flags passed "
                         "to rhnreg_ks"),
              "OPTION_LIST": ['novirtinfo', 'norhnsd', 'nopackages'],
@@ -267,7 +240,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rhn-satellite-proxy-host",
-             "USAGE": "Specify a HTTP proxy to use with RHN Satellite",
              "PROMPT": "Specify a HTTP proxy to use with RHN Satellite",
              "OPTION_LIST": [],
              "DEFAULT_VALUE": "",
@@ -281,8 +253,6 @@ def initConfig(controller):
 
         "SATELLITE_PROXY": [
             {"CMD_OPTION": "rhn-satellite-proxy-username",
-             "USAGE": ("Specify a username to use with an authenticated "
-                       "HTTP proxy"),
              "PROMPT": ("Specify a username to use with an authenticated "
                         "HTTP proxy"),
              "OPTION_LIST": [],
@@ -295,8 +265,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "rhn-satellite-proxy-password",
-             "USAGE": ("Specify a password to use with an authenticated "
-                       "HTTP proxy."),
              "PROMPT": ("Specify a password to use with an authenticated "
                         "HTTP proxy."),
              "OPTION_LIST": [],
@@ -309,6 +277,7 @@ def initConfig(controller):
              "CONDITION": False}
         ]
     }
+    update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
 
     def filled_rhsm(config):
         return bool(config.get('CONFIG_RH_USER'))

@@ -16,11 +16,13 @@
 Installs and configures AMQP
 """
 
+from packstack.installer import basedefs
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer import utils
 
 from packstack.modules.common import filtered_hosts
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import getManifestTemplate
@@ -34,8 +36,6 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 def initConfig(controller):
     params = [
         {"CMD_OPTION": "amqp-backend",
-         "USAGE": ("Set the AMQP service backend. Allowed values are: "
-                   "qpid, rabbitmq"),
          "PROMPT": "Set the AMQP service backend",
          "OPTION_LIST": ["qpid", "rabbitmq"],
          "VALIDATORS": [validators.validate_options],
@@ -49,8 +49,6 @@ def initConfig(controller):
          "DEPRECATES": ['CONFIG_AMQP_SERVER']},
 
         {"CMD_OPTION": "amqp-host",
-         "USAGE": ("The IP address of the server on which to install the "
-                   "AMQP service"),
          "PROMPT": "Enter the IP address of the AMQP service",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_ssh],
@@ -63,7 +61,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-enable-ssl",
-         "USAGE": "Enable SSL for the AMQP service",
          "PROMPT": "Enable SSL for the AMQP service?",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_options],
@@ -76,7 +73,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-enable-auth",
-         "USAGE": "Enable Authentication for the AMQP service",
          "PROMPT": "Enable Authentication for the AMQP service?",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_options],
@@ -88,6 +84,7 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "AMQP",
              "DESCRIPTION": "AMQP Config parameters",
              "PRE_CONDITION": False,
@@ -98,8 +95,6 @@ def initConfig(controller):
 
     params = [
         {"CMD_OPTION": "amqp-nss-certdb-pw",
-         "USAGE": ("The password for the NSS certificate database of the AMQP "
-                   "service"),
          "PROMPT": "Enter the password for NSS certificate database",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -113,8 +108,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-ssl-port",
-         "USAGE": ("The port in which the AMQP service listens to SSL "
-                   "connections"),
          "PROMPT": "Enter the SSL port for the AMQP service",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -127,8 +120,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-ssl-cacert-file",
-         "USAGE": ("The filename of the CAcertificate that the AMQP service "
-                   "is going to use for verification"),
          "PROMPT": ("Enter the filename of the SSL CAcertificate for the AMQP"
                     " service"),
          "OPTION_LIST": [],
@@ -142,8 +133,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-ssl-cert-file",
-         "USAGE": ("The filename of the certificate that the AMQP service "
-                   "is going to use"),
          "PROMPT": ("Enter the filename of the SSL certificate for the AMQP "
                     "service"),
          "OPTION_LIST": [],
@@ -157,8 +146,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-ssl-key-file",
-         "USAGE": ("The filename of the private key that the AMQP service "
-                   "is going to use"),
          "PROMPT": "Enter the private key filename",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -171,7 +158,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-ssl-self-signed",
-         "USAGE": "Auto Generates self signed SSL certificate and key",
          "PROMPT": "Generate Self Signed SSL Certificate",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_not_empty],
@@ -183,6 +169,7 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "AMQPSSL",
              "DESCRIPTION": "AMQP Config SSL parameters",
              "PRE_CONDITION": "CONFIG_AMQP_ENABLE_SSL",
@@ -193,7 +180,6 @@ def initConfig(controller):
 
     params = [
         {"CMD_OPTION": "amqp-auth-user",
-         "USAGE": "User for amqp authentication",
          "PROMPT": "Enter the user for amqp authentication",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -206,7 +192,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "amqp-auth-password",
-         "USAGE": "Password for user authentication",
          "PROMPT": "Enter the password for user authentication",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_not_empty],
@@ -219,6 +204,7 @@ def initConfig(controller):
          "NEED_CONFIRM": True,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "AMQPAUTH",
              "DESCRIPTION": "AMQP Config Athentication parameters",
              "PRE_CONDITION": "CONFIG_AMQP_ENABLE_AUTH",

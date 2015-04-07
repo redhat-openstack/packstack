@@ -16,10 +16,12 @@
 Installs and configures Glance
 """
 
+from packstack.installer import basedefs
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer import utils
 
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -34,7 +36,6 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 def initConfig(controller):
     params = [
         {"CMD_OPTION": "glance-db-passwd",
-         "USAGE": "The password to use for the Glance to access DB",
          "PROMPT": "Enter the password for the Glance DB access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -48,8 +49,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "glance-ks-passwd",
-         "USAGE": ("The password to use for the Glance to authenticate "
-                   "with Keystone"),
          "PROMPT": "Enter the password for the Glance Keystone access",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
@@ -63,10 +62,6 @@ def initConfig(controller):
          "CONDITION": False},
 
         {"CMD_OPTION": "glance-backend",
-         "USAGE": ("Glance storage backend controls how Glance stores disk "
-                   "images. Supported values: file, swift. Note that Swift "
-                   "installation have to be enabled to have swift backend "
-                   "working. Otherwise Packstack will fallback to 'file'."),
          "PROMPT": "Glance storage backend",
          "OPTION_LIST": ["file", "swift"],
          "VALIDATORS": [validators.validate_options],
@@ -79,6 +74,7 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "GLANCE",
              "DESCRIPTION": "Glance Config parameters",
              "PRE_CONDITION": "CONFIG_GLANCE_INSTALL",

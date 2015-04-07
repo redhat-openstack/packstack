@@ -19,10 +19,12 @@ Installs and configures OpenStack Horizon
 import os
 import uuid
 
+from packstack.installer import basedefs
 from packstack.installer import validators
 from packstack.installer import exceptions
 from packstack.installer import utils
 
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import getManifestTemplate
 
@@ -35,7 +37,6 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 def initConfig(controller):
     params = [
         {"CMD_OPTION": "os-horizon-ssl",
-         "USAGE": "To set up Horizon communication over https set this to 'y'",
          "PROMPT": "Would you like to set up Horizon communication over https",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_options],
@@ -47,6 +48,7 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "OSHORIZON",
              "DESCRIPTION": "OpenStack Horizon Config parameters",
              "PRE_CONDITION": "CONFIG_HORIZON_INSTALL",
@@ -104,6 +106,7 @@ def initConfig(controller):
          "NEED_CONFIRM": False,
          "CONDITION": False},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "OSSSL",
              "DESCRIPTION": "SSL Config parameters",
              "PRE_CONDITION": "CONFIG_HORIZON_SSL",

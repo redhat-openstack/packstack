@@ -16,9 +16,10 @@
 This module provides all the predefined variables.
 """
 
-import os
-import sys
 import datetime
+import os
+import pkg_resources
+import sys
 import tempfile
 
 from .utils import get_current_user
@@ -28,7 +29,15 @@ APP_NAME = "Packstack"
 
 FILE_YUM_VERSION_LOCK = "/etc/yum/pluginconf.d/versionlock.list"
 
-PACKSTACK_VAR_DIR = "/var/tmp/packstack"
+PACKSTACK_SRC_DOC = pkg_resources.resource_filename(
+    pkg_resources.Requirement.parse('packstack'), 'docs/packstack.rst'
+)
+if os.path.exists(PACKSTACK_SRC_DOC):
+    PACKSTACK_DOC = PACKSTACK_SRC_DOC
+else:
+    PACKSTACK_DOC = '/usr/share/packstack/packstack.rst'
+
+PACKSTACK_VAR_DIR = '/var/tmp/packstack'
 try:
     os.mkdir(PACKSTACK_VAR_DIR, 0o700)
 except OSError:

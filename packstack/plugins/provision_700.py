@@ -16,11 +16,13 @@
 Installs and configures Provisioning for demo usage and testing
 """
 
+from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
 
 from packstack.modules.common import is_all_in_one
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import getManifestTemplate
 
@@ -45,9 +47,6 @@ def initConfig(controller):
     conf_params = {
         "PROVISION_INIT": [
             {"CMD_OPTION": "provision-demo",
-             "USAGE": ("Whether to provision for demo usage and testing. Note "
-                       "that provisioning is only supported for all-in-one "
-                       "installations."),
              "PROMPT": ("Would you like to provision for demo usage "
                         "and testing"),
              "OPTION_LIST": ["y", "n"],
@@ -61,7 +60,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-tempest",
-             "USAGE": "Whether to configure tempest for testing",
              "PROMPT": ("Would you like to configure Tempest (OpenStack test "
                         "suite). Note that provisioning is only supported for "
                         "all-in-one installations."),
@@ -78,7 +76,6 @@ def initConfig(controller):
 
         "PROVISION_DEMO": [
             {"CMD_OPTION": "provision-demo-floatrange",
-             "USAGE": "The CIDR network address for the floating IP subnet",
              "PROMPT": "Enter the network address for the floating IP subnet",
              "OPTION_LIST": False,
              "VALIDATORS": False,
@@ -91,7 +88,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-image-name",
-             "USAGE": "A named to be used for the demo image in Glance",
              "PROMPT": "Enter the name to be assigned to the demo image",
              "OPTION_LIST": False,
              "VALIDATORS": [validators.validate_not_empty],
@@ -104,8 +100,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-image-url",
-             "USAGE": ("A URL or local file location for an image "
-                       "to be loaded into Glance"),
              "PROMPT": ("Enter the location of an image to be loaded "
                         "into Glance"),
              "OPTION_LIST": False,
@@ -119,7 +113,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-image-format",
-             "USAGE": ("Disk format (qcow2, raw, etc) of demo image"),
              "PROMPT": ("Enter the format of the demo image"),
              "OPTION_LIST": False,
              "VALIDATORS": [validators.validate_not_empty],
@@ -132,8 +125,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-image-ssh-user",
-             "USAGE": ("Name of a user to use when connecting via ssh to "
-                       "instances booted from the demo image"),
              "PROMPT": ("Enter the name of a user to use when connecting "
                         "to the demo image via ssh"),
              "OPTION_LIST": False,
@@ -149,9 +140,6 @@ def initConfig(controller):
 
         "PROVISION_TEMPEST": [
             {"CMD_OPTION": "provision-tempest-user",
-             "USAGE": "The name of the Tempest Provisioning user. If you "
-                      "don't provide a user name, Tempest will be configured "
-                      "in a standalone mode",
              "PROMPT": ("Enter the name of the Tempest Provisioning user "
                         "(if blank, Tempest will be configured in a "
                         "standalone mode) "),
@@ -166,7 +154,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-tempest-user-passwd",
-             "USAGE": "The password to use for the Tempest Provisioning user",
              "PROMPT": "Enter the password for the Tempest Provisioning user",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -180,7 +167,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-tempest-floatrange",
-             "USAGE": "The CIDR network address for the floating IP subnet",
              "PROMPT": "Enter the network address for the floating IP subnet",
              "OPTION_LIST": False,
              "VALIDATORS": False,
@@ -193,7 +179,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-tempest-repo-uri",
-             "USAGE": "The uri of the tempest git repository to use",
              "PROMPT": "What is the uri of the Tempest git repository?",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -206,7 +191,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "provision-tempest-repo-revision",
-             "USAGE": "The revision of the tempest git repository to use",
              "PROMPT": ("What revision, branch, or tag of the Tempest git "
                         "repository should be used"),
              "OPTION_LIST": [],
@@ -222,8 +206,6 @@ def initConfig(controller):
 
         "PROVISION_ALL_IN_ONE_OVS_BRIDGE": [
             {"CMD_OPTION": "provision-all-in-one-ovs-bridge",
-             "USAGE": ("Whether to configure the ovs external bridge in an "
-                       "all-in-one deployment"),
              "PROMPT": "Would you like to configure the external ovs bridge",
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -236,6 +218,7 @@ def initConfig(controller):
              "CONDITION": False},
         ],
     }
+    update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
 
     def check_provisioning_demo(config):
         return (config.get('CONFIG_PROVISION_DEMO', 'n') == 'y')

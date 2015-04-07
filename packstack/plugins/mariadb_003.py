@@ -16,11 +16,13 @@
 Installs and configures MariaDB
 """
 
+from packstack.installer import basedefs
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer import utils
-from packstack.modules.common import filtered_hosts
 
+from packstack.modules.common import filtered_hosts
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import getManifestTemplate
@@ -34,9 +36,6 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 def initConfig(controller):
     params = [
         {"CMD_OPTION": "mariadb-host",
-         "USAGE": ("The IP address of the server on which to install MariaDB "
-                   "or IP address of DB server to use if MariaDB "
-                   "installation was not selected"),
          "PROMPT": "Enter the IP address of the MariaDB server",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_ssh],
@@ -78,6 +77,7 @@ def initConfig(controller):
          "CONDITION": False,
          "DEPRECATES": ['CONFIG_MYSQL_PW']},
     ]
+    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "MARIADB",
              "DESCRIPTION": "MariaDB Config parameters",
              "PRE_CONDITION": lambda x: 'yes',

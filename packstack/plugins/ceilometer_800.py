@@ -18,10 +18,13 @@ Installs and configures Ceilometer
 
 import uuid
 
+from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
 from packstack.installer.utils import split_hosts
+
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -38,7 +41,6 @@ def initConfig(controller):
         "CEILOMETER": [
             {"CONF_NAME": "CONFIG_CEILOMETER_SECRET",
              "CMD_OPTION": "ceilometer-secret",
-             "USAGE": "Secret key for signing metering messages",
              "PROMPT": "Enter the Ceilometer secret key",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -51,8 +53,6 @@ def initConfig(controller):
 
             {"CONF_NAME": "CONFIG_CEILOMETER_KS_PW",
              "CMD_OPTION": "ceilometer-ks-passwd",
-             "USAGE": ("The password to use for Ceilometer to authenticate "
-                       "with Keystone"),
              "PROMPT": "Enter the password for the Ceilometer Keystone access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -66,7 +66,6 @@ def initConfig(controller):
 
             {"CONF_NAME": "CONFIG_CEILOMETER_COORDINATION_BACKEND",
              "CMD_OPTION": "ceilometer-coordination-backend",
-             "USAGE": "Backend driver for group membership coordination",
              "PROMPT": "Enter the coordination driver",
              "OPTION_LIST": ['redis', 'none'],
              "VALIDATORS": [validators.validate_options],
@@ -79,8 +78,6 @@ def initConfig(controller):
 
         "MONGODB": [
             {"CMD_OPTION": "mongodb-host",
-             "USAGE": ("The IP address of the server on which to install "
-                       "MongoDB"),
              "PROMPT": "Enter the IP address of the MongoDB server",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_ssh],
@@ -94,8 +91,6 @@ def initConfig(controller):
         ],
         "REDIS": [
             {"CMD_OPTION": "redis-master-host",
-             "USAGE": ("The IP address of the server on which to install "
-                       "redis master server"),
              "PROMPT": "Enter the IP address of the redis master server",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_ssh],
@@ -108,7 +103,6 @@ def initConfig(controller):
              "CONDITION": False,
              "DEPRECATES": ["CONFIG_REDIS_HOST"]},
             {"CMD_OPTION": "redis-port",
-             "USAGE": "The port on which the redis server(s) listens",
              "PROMPT": "Enter the port of the redis server(s)",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_port],
@@ -120,7 +114,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-ha",
-             "USAGE": "Should redis try to use HA",
              "PROMPT": "Should redis try to use HA?",
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -132,7 +125,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-slaves",
-             "USAGE": "The hosts on which to install redis slaves",
              "PROMPT": "Enter the IP addresses of the redis slave servers",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_multi_ssh],
@@ -144,7 +136,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-sentinels",
-             "USAGE": "The hosts on which to install redis sentinel servers",
              "PROMPT": "Enter the IP addresses of the redis sentinel servers",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_multi_ssh],
@@ -156,7 +147,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-sentinel-contact",
-             "USAGE": "The host to configure as the coordination sentinel",
              "PROMPT":
                  "Enter the IP address of the coordination redis sentinel",
              "OPTION_LIST": [],
@@ -169,7 +159,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-sentinel-port",
-             "USAGE": "The port on which redis sentinel servers listen",
              "PROMPT": ("Enter the port on which the redis sentinel servers"
                         " listen"),
              "OPTION_LIST": [],
@@ -182,7 +171,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-sentinel-quorum",
-             "USAGE": "The quorum value for redis sentinel servers",
              "PROMPT": (
                  "Enter the quorum value for the redis sentinel servers"),
              "OPTION_LIST": [],
@@ -195,7 +183,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-sentinel-master-name",
-             "USAGE": "The name of the master server watched by the sentinel",
              "PROMPT": (
                  "Enter the logical name of the master server"),
              "OPTION_LIST": [r'[a-z]+'],
@@ -209,6 +196,7 @@ def initConfig(controller):
              "CONDITION": False},
         ],
     }
+    update_params_usage(basedefs.PACKSTACK_DOC, ceilometer_params)
 
     ceilometer_groups = [
         {"GROUP_NAME": "CEILOMETER",

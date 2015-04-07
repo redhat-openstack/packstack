@@ -851,7 +851,7 @@ def printOptions():
             paramUsage = param.USAGE
             optionsList = param.OPTION_LIST or ""
             print("%s" % (("**%s**" % str(cmdOption)).ljust(30)))
-            print("    %s %s" % (paramUsage, optionsList) + "\n")
+            print("    %s" % paramUsage + "\n")
 
 
 def plugin_compare(x, y):

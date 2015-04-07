@@ -18,6 +18,7 @@ Installs and configures Cinder
 
 import re
 
+from packstack.installer import basedefs
 from packstack.installer import exceptions
 from packstack.installer import processors
 from packstack.installer import validators
@@ -25,7 +26,7 @@ from packstack.installer.utils import split_hosts
 
 from packstack.installer import utils
 
-
+from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
@@ -44,7 +45,6 @@ def initConfig(controller):
     conf_params = {
         "CINDER": [
             {"CMD_OPTION": "cinder-db-passwd",
-             "USAGE": "The password to use for the Cinder to access DB",
              "PROMPT": "Enter the password for the Cinder DB access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -58,8 +58,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "cinder-ks-passwd",
-             "USAGE": ("The password to use for the Cinder to authenticate "
-                       "with Keystone"),
              "PROMPT": "Enter the password for the Cinder Keystone access",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -73,8 +71,6 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "cinder-backend",
-             "USAGE": ("The Cinder backend to use, valid options are: lvm, "
-                       "gluster, nfs, vmdk, netapp"),
              "PROMPT": "Enter the Cinder backend to be configured",
              "OPTION_LIST": ["lvm", "gluster", "nfs", "vmdk", "netapp"],
              "VALIDATORS": [validators.validate_options],
@@ -89,10 +85,6 @@ def initConfig(controller):
 
         "CINDERVOLUMECREATE": [
             {"CMD_OPTION": "cinder-volumes-create",
-             "USAGE": ("Create Cinder's volumes group. This should only be "
-                       "done for testing on a proof-of-concept installation "
-                       "of Cinder. This will create a file-backed volume group"
-                       " and is not suitable for production usage."),
              "PROMPT": ("Should Cinder's volumes group be created (for "
                         "proof-of-concept installation)?"),
              "OPTION_LIST": ["y", "n"],
@@ -108,9 +100,6 @@ def initConfig(controller):
 
         "CINDERVOLUMESIZE": [
             {"CMD_OPTION": "cinder-volumes-size",
-             "USAGE": ("Cinder's volumes group size. Note that actual volume "
-                       "size will be extended with 3% more space for VG "
-                       "metadata."),
              "PROMPT": "Enter Cinder's volumes group usable size",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -125,9 +114,6 @@ def initConfig(controller):
 
         "CINDERGLUSTERMOUNTS": [
             {"CMD_OPTION": "cinder-gluster-mounts",
-             "USAGE": ("A single or comma separated list of gluster volume "
-                       "shares to mount, eg: ip-address:/vol-name, "
-                       "domain:/vol-name "),
              "PROMPT": ("Enter a single or comma separated list of gluster "
                         "volume shares to use with Cinder"),
              "OPTION_LIST": ["^([\d]{1,3}\.){3}[\d]{1,3}:/.*",
@@ -145,8 +131,6 @@ def initConfig(controller):
 
         "CINDERNFSMOUNTS": [
             {"CMD_OPTION": "cinder-nfs-mounts",
-             "USAGE": ("A single or comma seprated list of NFS exports to "
-                       "mount, eg: ip-address:/export-name "),
              "PROMPT": ("Enter a single or comma seprated list of NFS exports "
                         "to use with Cinder"),
              "OPTION_LIST": ["^([\d]{1,3}\.){3}[\d]{1,3}:/.*"],
@@ -163,8 +147,6 @@ def initConfig(controller):
 
         "CINDERNETAPPMAIN": [
             {"CMD_OPTION": "cinder-netapp-login",
-             "USAGE": ("(required) Administrative user account name used to "
-                       "access the storage system or proxy server. "),
              "PROMPT": ("Enter a NetApp login"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
@@ -177,8 +159,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-password",
-             "USAGE": ("(required) Password for the administrative user "
-                       "account specified in the netapp_login parameter."),
              "PROMPT": ("Enter a NetApp password"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
@@ -191,8 +171,6 @@ def initConfig(controller):
              "NEED_CONFIRM": True,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-hostname",
-             "USAGE": ("(required) The hostname (or IP address) for the "
-                       "storage system or proxy server."),
              "PROMPT": ("Enter a NetApp hostname"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
@@ -205,12 +183,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-server-port",
-             "USAGE": ("(optional) The TCP port to use for communication with "
-                       "ONTAPI on the storage system. Traditionally, port 80 "
-                       "is used for HTTP and port 443 is used for HTTPS; "
-                       "however, this value should be changed if an alternate "
-                       "port has been configured on the storage system or "
-                       "proxy server.  Defaults to 80."),
              "PROMPT": ("Enter a NetApp server port"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_port],
@@ -223,11 +195,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-storage-family",
-             "USAGE": ("(optional) The storage family type used on the storage"
-                       " system; valid values are ontap_7mode for using Data "
-                       "ONTAP operating in 7-Mode or ontap_cluster for using "
-                       "clustered Data ONTAP, or eseries for NetApp E-Series. "
-                       "Defaults to %s." % NETAPP_DEFAULT_STORAGE_FAMILY),
              "PROMPT": ("Enter a NetApp storage family"),
              "OPTION_LIST": ["ontap_7mode", "ontap_cluster", "eseries"],
              "VALIDATORS": [validators.validate_options],
@@ -240,10 +207,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-transport-type",
-             "USAGE": ("(optional) The transport protocol used when "
-                       "communicating with ONTAPI on the storage system or "
-                       "proxy server. Valid values are http or https.  "
-                       "Defaults to http."),
              "PROMPT": ("Enter a NetApp transport type"),
              "OPTION_LIST": ["http", "https"],
              "VALIDATORS": [validators.validate_options],
@@ -256,10 +219,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-storage-protocol",
-             "USAGE": ("(optional) The storage protocol to be used on the data"
-                       " path with the storage system; valid values are iscsi "
-                       "or nfs. "
-                       "Defaults to %s." % NETAPP_DEFAULT_STORAGE_PROTOCOL),
              "PROMPT": ("Enter a NetApp storage protocol"),
              "OPTION_LIST": ["iscsi", "nfs"],
              "VALIDATORS": [validators.validate_options],
@@ -275,11 +234,6 @@ def initConfig(controller):
 
         "CINDERNETAPPONTAPISCSI": [
             {"CMD_OPTION": "cinder-netapp-size-multiplier",
-             "USAGE": ("(optional) The quantity to be multiplied by the "
-                       "requested volume size to ensure enough space is "
-                       "available on the virtual storage server (Vserver)"
-                       " to fulfill the volume creation request.  "
-                       "Defaults to 1.0."),
              "PROMPT": ("Enter a NetApp size multiplier"),
              "OPTION_LIST": [""],
              "VALIDATORS": [],
@@ -295,13 +249,6 @@ def initConfig(controller):
 
         "CINDERNETAPPNFS": [
             {"CMD_OPTION": "cinder-netapp-expiry-thres-minutes",
-             "USAGE": ("(optional) This parameter specifies the threshold for "
-                       "last access time for images in the NFS image cache. "
-                       "When a cache cleaning cycle begins, images in the "
-                       "cache that have not been accessed in the last M "
-                       "minutes, where M is the value of this parameter, will "
-                       "be deleted from the cache to create free space on the "
-                       "NFS share. Defaults to 720."),
              "PROMPT": ("Enter a threshold"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_integer],
@@ -314,10 +261,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-thres-avl-size-perc-start",
-             "USAGE": ("(optional) If the percentage of available space for an"
-                       " NFS share has dropped below the value specified by "
-                       "this parameter, the NFS image cache will be cleaned.  "
-                       "Defaults to 20"),
              "PROMPT": ("Enter a value"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_integer],
@@ -330,13 +273,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-thres-avl-size-perc-stop",
-             "USAGE": ("(optional) When the percentage of available space on "
-                       "an NFS share has reached the percentage specified by "
-                       "this parameter, the driver will stop clearing files "
-                       "from the NFS image cache that have not been accessed "
-                       "in the last M minutes, where M is the value of the "
-                       "expiry_thres_minutes parameter.  "
-                       "Defaults to 60."),
              "PROMPT": ("Enter a value"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_integer],
@@ -349,9 +285,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-nfs-shares",
-             "USAGE": ("(optional) Single or comma-separated list of NetApp NFS shares "
-                       "for Cinder to use.  Format: ip-address:/export-name"
-                       "   Defaults to ''."),
              "PROMPT": ("Enter a single or comma-separated list of NetApp NFS shares"),
              "OPTION_LIST": [""],
              "VALIDATORS": [],
@@ -364,8 +297,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-nfs-shares-config",
-             "USAGE": ("(optional) File with the list of available NFS shares."
-                       "   Defaults to '/etc/cinder/shares.conf'."),
              "PROMPT": ("Enter a NetApp NFS share config file"),
              "OPTION_LIST": [""],
              "VALIDATORS": [],
@@ -381,13 +312,6 @@ def initConfig(controller):
 
         "CINDERNETAPPISCSI7MODE": [
             {"CMD_OPTION": "cinder-netapp-volume-list",
-             "USAGE": ("(optional) This parameter is only utilized when the "
-                       "storage protocol is configured to use iSCSI. This "
-                       "parameter is used to restrict provisioning to the "
-                       "specified controller volumes. Specify the value of "
-                       "this parameter to be a comma separated list of NetApp "
-                       "controller volume names to be used for provisioning.  "
-                       "Defaults to ''."),
              "PROMPT": ("Enter a NetApp volume list"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
@@ -400,14 +324,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-vfiler",
-             "USAGE": ("(optional) The vFiler unit on which provisioning of "
-                       "block storage volumes will be done. This parameter is "
-                       "only used by the driver when connecting to an instance"
-                       " with a storage family of Data ONTAP operating in "
-                       "7-Mode and the storage protocol selected is iSCSI. "
-                       "Only use this parameter when utilizing the MultiStore "
-                       "feature on the NetApp storage system.  "
-                       "Defaults to ''."),
              "PROMPT": ("Enter a NetApp vFiler"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
@@ -423,19 +339,6 @@ def initConfig(controller):
 
         "CINDERNETAPPVSERVER": [
             {"CMD_OPTION": "cinder-netapp-vserver",
-             "USAGE": ("(optional) This parameter specifies the virtual "
-                       "storage server (Vserver) name on the storage cluster "
-                       "on which provisioning of block storage volumes should "
-                       "occur. If using the NFS storage protocol, this "
-                       "parameter is mandatory for storage service catalog "
-                       "support (utilized by Cinder volume type extra_specs "
-                       "support). If this parameter is specified, the exports "
-                       "belonging to the Vserver will only be used for "
-                       "provisioning in the future. Block storage volumes on "
-                       "exports not belonging to the Vserver specified by this"
-                       "  parameter will "
-                       "continue to function normally.  "
-                       "Defaults to ''."),
              "PROMPT": ("Enter a NetApp Vserver"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
@@ -451,13 +354,6 @@ def initConfig(controller):
 
         "CINDERNETAPPESERIES": [
             {"CMD_OPTION": "cinder-netapp-controller-ips",
-             "USAGE": ("(optional) This option is only utilized when the "
-                       "storage family is configured to eseries. This option "
-                       "is used to restrict provisioning to the specified "
-                       "controllers. Specify the value of this option to be a "
-                       "comma separated list of controller hostnames or IP "
-                       "addresses to be used for provisioning.  "
-                       "Defaults to ''."),
              "PROMPT": ("Enter a value"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_multi_ping],
@@ -470,9 +366,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-sa-password",
-             "USAGE": ("(optional) Password for the NetApp E-Series storage "
-                       "array. "
-                       "Defaults to ''."),
              "PROMPT": ("Enter a password"),
              "OPTION_LIST": [""],
              "VALIDATORS": [],
@@ -485,13 +378,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-webservice-path",
-             "USAGE": ("(optional) This option is used to specify the path to "
-                       "the E-Series proxy application on a proxy server. The "
-                       "value is combined with the value of the "
-                       "netapp_transport_type, netapp_server_hostname, and "
-                       "netapp_server_port options to create the URL used by "
-                       "the driver to connect to the proxy application.  "
-                       "Defaults to '/devmgr/v2'."),
              "PROMPT": ("Enter a path"),
              "OPTION_LIST": ["^[/].*$"],
              "VALIDATORS": [validators.validate_regexp],
@@ -504,12 +390,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-storage-pools",
-             "USAGE": ("(optional) This option is used to restrict "
-                       "provisioning to the specified storage pools. Only "
-                       "dynamic disk pools are currently supported. Specify "
-                       "the value of this option to be a comma separated list "
-                       "of disk pool names to be used for provisioning.  "
-                       "Defaults to ''."),
              "PROMPT": ("Enter a value"),
              "OPTION_LIST": [""],
              "VALIDATORS": [],
@@ -523,6 +403,7 @@ def initConfig(controller):
              "CONDITION": False},
             ]
     }
+    update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
 
     conf_groups = [
         {"GROUP_NAME": "CINDER",
