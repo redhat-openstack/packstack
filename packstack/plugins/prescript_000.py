@@ -16,11 +16,16 @@
 Plugin responsible for setting OpenStack global options
 """
 
+import os
+import re
+import logging
+import platform
 import glob
 import os
 import uuid
 
 from packstack.installer import basedefs
+from packstack.installer import exceptions
 from packstack.installer import processors
 from packstack.installer import utils
 from packstack.installer import validators
@@ -509,6 +514,245 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+        ],
+
+        "SERVERPREPARE": [
+            {"CMD_OPTION": "use-epel",
+             "PROMPT": "To subscribe each server to EPEL enter \"y\"",
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_USE_EPEL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "additional-repo",
+             "PROMPT": ("Enter a comma separated list of URLs to any "
+                        "additional yum repositories to install"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_REPO",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
+
+        "RHEL": [
+            {"CMD_OPTION": "rh-username",
+             "PROMPT": "To subscribe each server to Red Hat enter a username ",
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_RH_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rhn-satellite-server",
+             "PROMPT": ("To subscribe each server with RHN Satellite enter "
+                        "RHN Satellite server URL"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_URL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
+
+        "RHSM": [
+            {"CMD_OPTION": "rh-password",
+             "PROMPT": ("To subscribe each server to Red Hat enter your "
+                        "password"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_RH_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-enable-optional",
+             "PROMPT": "To enable RHEL optional repos use value \"y\"",
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "y",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_RH_OPTIONAL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-proxy-host",
+             "PROMPT": ("Specify a HTTP proxy to use with Red Hat subscription"
+                        " manager"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_PROXY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
+
+        "RHSM_PROXY": [
+            {"CMD_OPTION": "rh-proxy-port",
+             "PROMPT": ("Specify port of Red Hat subscription manager HTTP "
+                        "proxy"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_PROXY_PORT",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-proxy-user",
+             "PROMPT": ("Specify a username to use with Red Hat subscription "
+                        "manager HTTP proxy"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_PROXY_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-proxy-password",
+             "PROMPT": ("Specify a password to use with Red Hat subscription "
+                        "manager HTTP proxy"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_PROXY_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
+
+        "SATELLITE": [
+            {"CMD_OPTION": "rhn-satellite-username",
+             "PROMPT": ("Enter RHN Satellite username or leave plain if you "
+                        "will use activation key instead"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_SATELLITE_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rhn-satellite-password",
+             "PROMPT": ("Enter RHN Satellite password or leave plain if you "
+                        "will use activation key instead"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rhn-satellite-activation-key",
+             "PROMPT": ("Enter RHN Satellite activation key or leave plain if "
+                        "you used username/password instead"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_AKEY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rhn-satellite-cacert",
+             "PROMPT": "Specify a path or URL to a SSL CA certificate to use",
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_CACERT",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rhn-satellite-profile",
+             "PROMPT": ("If required specify the profile name that should be "
+                        "used as an identifier for the system "
+                        "in RHN Satellite"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PROFILE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rhn-satellite-flags",
+             "PROMPT": ("Enter comma separated list of flags passed "
+                        "to rhnreg_ks"),
+             "OPTION_LIST": ['novirtinfo', 'norhnsd', 'nopackages'],
+             "VALIDATORS": [validators.validate_multi_options],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_FLAGS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rhn-satellite-proxy-host",
+             "PROMPT": "Specify a HTTP proxy to use with RHN Satellite",
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PROXY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
+        ],
+
+        "SATELLITE_PROXY": [
+            {"CMD_OPTION": "rhn-satellite-proxy-username",
+             "PROMPT": ("Specify a username to use with an authenticated "
+                        "HTTP proxy"),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PROXY_USER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rhn-satellite-proxy-password",
+             "PROMPT": ("Specify a password to use with an authenticated "
+                        "HTTP proxy."),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SATELLITE_PROXY_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
         ]
     }
     update_params_usage(basedefs.PACKSTACK_DOC, params)
@@ -519,6 +763,18 @@ def initConfig(controller):
 
     def unsupported_enabled(config):
         return config['CONFIG_UNSUPPORTED'] == 'y'
+
+    def filled_rhsm(config):
+        return bool(config.get('CONFIG_RH_USER'))
+
+    def filled_rhsm_proxy(config):
+        return bool(config.get('CONFIG_RH_PROXY'))
+
+    def filled_satellite(config):
+        return bool(config.get('CONFIG_SATELLITE_URL'))
+
+    def filled_satellite_proxy(config):
+        return bool(config.get('CONFIG_SATELLITE_PROXY'))
 
     groups = [
         {"GROUP_NAME": "GLOBAL",
@@ -540,8 +796,55 @@ def initConfig(controller):
          "PRE_CONDITION": unsupported_enabled,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True}
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "SERVERPREPARE",
+         "DESCRIPTION": "Server Prepare Configs ",
+         "PRE_CONDITION": lambda x: 'yes',
+         "PRE_CONDITION_MATCH": "yes",
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
     ]
+
+    config = controller.CONF
+    if (is_all_in_one(config) and is_rhel()) or not is_all_in_one(config):
+        groups.extend([
+            {"GROUP_NAME": "RHEL",
+             "DESCRIPTION": "RHEL config",
+             "PRE_CONDITION": lambda x: 'yes',
+             "PRE_CONDITION_MATCH": "yes",
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True},
+
+            {"GROUP_NAME": "RHSM",
+             "DESCRIPTION": "RH subscription manager config",
+             "PRE_CONDITION": filled_rhsm,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True},
+
+            {"GROUP_NAME": "RHSM_PROXY",
+             "DESCRIPTION": "RH subscription manager proxy config",
+             "PRE_CONDITION": filled_rhsm_proxy,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True},
+
+            {"GROUP_NAME": "SATELLITE",
+             "DESCRIPTION": "RHN Satellite config",
+             "PRE_CONDITION": filled_satellite,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True},
+
+            {"GROUP_NAME": "SATELLITE_PROXY",
+             "DESCRIPTION": "RHN Satellite proxy config",
+             "PRE_CONDITION": filled_satellite_proxy,
+             "PRE_CONDITION_MATCH": True,
+             "POST_CONDITION": False,
+             "POST_CONDITION_MATCH": True}
+        ])
+
     for group in groups:
         controller.addGroup(group, params[group['GROUP_NAME']])
 
@@ -550,6 +853,8 @@ def initSequences(controller):
     prescript_steps = [
         {'title': 'Setting up ssh keys',
          'functions': [install_keys]},
+        {'title': 'Preparing servers',
+         'functions': [server_prep]},
         {'title': 'Preinstalling Puppet and discovering hosts\' details',
          'functions': [preinstall_and_discover]},
         {'title': 'Adding pre install manifest entries',
@@ -568,8 +873,247 @@ def initSequences(controller):
     controller.addSequence("Running pre install scripts", [], [],
                            prescript_steps)
 
+# ------------------------- helper functions -------------------------
 
+
+def is_rhel():
+    return 'Red Hat Enterprise Linux' in platform.linux_distribution()[0]
+
+
+def detect_os_and_version(host):
+    server = utils.ScriptRunner(host)
+    server.append('python -c "import platform; print platform.linux_distribution(full_distribution_name=0)[0]+\',\'+platform.linux_distribution()[1]"')
+    try:
+        rc, out = server.execute()
+        out = out.split(",")
+        return out
+    except exceptions.ScriptRuntimeError:
+        logging.warn('Could not detect OS release')
+        return ['Unknown', 'Unknown']
+
+
+def run_rhn_reg(host, server_url, username=None, password=None,
+                cacert=None, activation_key=None, profile_name=None,
+                proxy_host=None, proxy_user=None, proxy_pass=None,
+                flags=None):
+    """
+    Registers given host to given RHN Satellite server. To successfully
+    register either activation_key or username/password is required.
+    """
+    logging.debug('Setting RHN Satellite server: %s.' % locals())
+
+    mask = []
+    cmd = ['/usr/sbin/rhnreg_ks']
+    server = utils.ScriptRunner(host)
+
+    # check satellite server url
+    server_url = (server_url.rstrip('/').endswith('/XMLRPC')
+                  and server_url or '%s/XMLRPC' % server_url)
+    cmd.extend(['--serverUrl', server_url])
+
+    if activation_key:
+        cmd.extend(['--activationkey', activation_key])
+    elif username:
+        cmd.extend(['--username', username])
+        if password:
+            cmd.extend(['--password', password])
+            mask.append(password)
+    else:
+        raise exceptions.InstallError('Either RHN Satellite activation '
+                                      'key or username/password must '
+                                      'be provided.')
+
+    if cacert:
+        # use and if required download given certificate
+        location = "/etc/sysconfig/rhn/%s" % os.path.basename(cacert)
+        if not os.path.isfile(location):
+            logging.debug('Downloading cacert from %s.' % server_url)
+            wget_cmd = ('ls %(location)s &> /dev/null && echo -n "" || '
+                        'wget -nd --no-check-certificate --timeout=30 '
+                        '--tries=3 -O "%(location)s" "%(cacert)s"' %
+                        locals())
+            server.append(wget_cmd)
+        cmd.extend(['--sslCACert', location])
+
+    if profile_name:
+        cmd.extend(['--profilename', profile_name])
+    if proxy_host:
+        cmd.extend(['--proxy', proxy_host])
+        if proxy_user:
+            cmd.extend(['--proxyUser', proxy_user])
+            if proxy_pass:
+                cmd.extend(['--proxyPassword', proxy_pass])
+                mask.append(proxy_pass)
+
+    flags = flags or []
+    flags.append('force')
+    for i in flags:
+        cmd.append('--%s' % i)
+
+    server.append(' '.join(cmd))
+    server.append('yum clean metadata')
+    server.execute(mask_list=mask)
+
+
+def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
+                 proxy_port=None, proxy_user=None, proxy_password=None):
+    """
+    Registers given host to Red Hat Repositories via subscription manager.
+    """
+    releasever = detect_os_and_version(host)[1].split('.')[0]
+    server = utils.ScriptRunner(host)
+
+    # configure proxy if it is necessary
+    if proxy_server:
+        cmd = ('subscription-manager config '
+               '--server.proxy_hostname=%(proxy_server)s '
+               '--server.proxy_port=%(proxy_port)s')
+        if proxy_user:
+            cmd += (' --server.proxy_user=%(proxy_user)s '
+                    '--server.proxy_password=%(proxy_password)s')
+        server.append(cmd % locals())
+
+    # register host
+    cmd = ('subscription-manager register --username=\"%s\" '
+           '--password=\"%s\" --autosubscribe || true')
+    server.append(cmd % (username, password.replace('"', '\\"')))
+
+    # subscribe to required channel
+    cmd = ('subscription-manager list --consumed | grep -i openstack || '
+           'subscription-manager subscribe --pool %s')
+    pool = ("$(subscription-manager list --available"
+            " | grep -m1 -A15 'Red Hat Enterprise Linux OpenStack Platform'"
+            " | grep -i 'Pool ID:' | awk '{print $3}')")
+    server.append(cmd % pool)
+
+    if optional:
+        server.append("subscription-manager repos "
+                      "--enable rhel-%s-server-optional-rpms" % releasever)
+    server.append("subscription-manager repos "
+                  "--enable rhel-%s-server-openstack-5.0-rpms" % releasever)
+
+    # mrg channel naming is a big mess
+    if releasever == '7':
+        mrg_prefix = 'rhel-x86_64-server-7'
+    elif releasever == '6':
+        mrg_prefix = 'rhel-6-server'
+    server.append("subscription-manager repos "
+                  "--enable %s-mrg-messaging-2-rpms" % mrg_prefix)
+
+    server.append("yum clean all")
+    server.append("rpm -q --whatprovides yum-utils || "
+                  "yum install -y yum-utils")
+    server.append("yum clean metadata")
+    server.execute(mask_list=[password])
+
+
+def manage_epel(host, config):
+    """
+    Installs and/or enables EPEL repo if it is required or disables it if it
+    is not required.
+    """
+    relevant = ('redhat', 'centos', 'scientific')
+    if detect_os_and_version(host)[0].lower() not in relevant:
+        return
+
+    # yum's $releasever can be non numeric on RHEL, so interpolate here
+    releasever = detect_os_and_version(host)[1].split('.')[0]
+    mirrors = ('https://mirrors.fedoraproject.org/metalink?repo=epel-%s&'
+               'arch=$basearch' % releasever)
+    server = utils.ScriptRunner(host)
+    if config['CONFIG_USE_EPEL'] == 'y':
+        server.append('REPOFILE=$(mktemp)')
+        server.append('cat /etc/yum.conf > $REPOFILE')
+        server.append("echo -e '[packstack-epel]\nname=packstack-epel\n"
+                      "enabled=1\nmirrorlist=%(mirrors)s' >> $REPOFILE"
+                      % locals())
+        server.append('( rpm -q --whatprovides epel-release ||'
+                      ' yum install -y --nogpg -c $REPOFILE epel-release ) '
+                      '|| true')
+        server.append('rm -rf $REPOFILE')
+        try:
+            server.execute()
+        except exceptions.ScriptRuntimeError as ex:
+            msg = 'Failed to set EPEL repo on host %s:\n%s' % (host, ex)
+            raise exceptions.ScriptRuntimeError(msg)
+
+    # if there's an epel repo explicitly enables or disables it
+    # according to: CONFIG_USE_EPEL
+    if config['CONFIG_USE_EPEL'] == 'y':
+        cmd = 'enable'
+        enabled = '(1|True)'
+    else:
+        cmd = 'disable'
+        enabled = '(0|False)'
+
+    server.clear()
+    server.append('rpm -q yum-utils || yum -y install yum-utils')
+    server.append('yum-config-manager --%(cmd)s epel' % locals())
+    rc, out = server.execute()
+
+    # yum-config-manager returns 0 always, but returns current setup
+    # if succeeds
+    match = re.search('enabled\s*\=\s*%(enabled)s' % locals(), out)
+    if match:
+        return
+    msg = 'Failed to set EPEL repo on host %s:\n'
+    if cmd == 'enable':
+        # fail in case user wants to have EPEL enabled
+        msg += ('RPM file seems to be installed, but appropriate repo file is '
+                'probably missing in /etc/yum.repos.d/')
+        raise exceptions.ScriptRuntimeError(msg % host)
+    else:
+        # just warn in case disabling failed which might happen when EPEL repo
+        # is not installed at all
+        msg += 'This is OK in case you don\'t want EPEL installed and enabled.'
+        # TO-DO: fill logger name when logging will be refactored.
+        logger = logging.getLogger()
+        logger.warn(msg % host)
+
+
+def manage_rdo(host, config):
+    """
+    Installs and enables RDO repo on host in case it is installed locally.
+    """
+    try:
+        cmd = "rpm -q rdo-release --qf='%{version}-%{release}.%{arch}\n'"
+        rc, out = utils.execute(cmd, use_shell=True)
+    except exceptions.ExecuteRuntimeError:
+        # RDO repo is not installed, so we don't need to continue
+        return
+    # We are installing RDO. EPEL is a requirement, so enable it, overriding
+    # any configured option
+    config['CONFIG_USE_EPEL'] = 'y'
+
+    match = re.match(r'^(?P<version>\w+)\-(?P<release>\d+\.[\d\w]+)\n', out)
+    version, release = match.group('version'), match.group('release')
+    rdo_url = ("http://rdo.fedorapeople.org/openstack/openstack-%(version)s/"
+               "rdo-release-%(version)s-%(release)s.rpm" % locals())
+
+    server = utils.ScriptRunner(host)
+    server.append("(rpm -q 'rdo-release-%(version)s' ||"
+                  " yum install -y --nogpg %(rdo_url)s) || true"
+                  % locals())
+    try:
+        server.execute()
+    except exceptions.ScriptRuntimeError as ex:
+        msg = 'Failed to set RDO repo on host %s:\n%s' % (host, ex)
+        raise exceptions.ScriptRuntimeError(msg)
+
+    reponame = 'openstack-%s' % version
+    server.clear()
+    server.append('yum-config-manager --enable %(reponame)s' % locals())
+    # yum-config-manager returns 0 always, but returns current setup
+    # if succeeds
+    rc, out = server.execute()
+    match = re.search('enabled\s*=\s*(1|True)', out)
+    if not match:
+        msg = ('Failed to set RDO repo on host %s:\nRPM file seems to be '
+               'installed, but appropriate repo file is probably missing '
+               'in /etc/yum.repos.d/' % host)
+        raise exceptions.ScriptRuntimeError(msg)
 # -------------------------- step functions --------------------------
+
 
 def install_keys_on_host(hostname, sshkeydata):
     server = utils.ScriptRunner(hostname)
@@ -671,6 +1215,80 @@ def preinstall_and_discover(config, messages):
                       % details[hostname]['tmpdir'])
         server.execute()
     config['HOST_DETAILS'] = details
+
+
+def server_prep(config, messages):
+    rh_username = None
+    sat_url = None
+    if is_rhel():
+        rh_username = config.get("CONFIG_RH_USER")
+        rh_password = config.get("CONFIG_RH_PW")
+
+        sat_registered = set()
+
+        sat_url = config["CONFIG_SATELLITE_URL"].strip()
+        if sat_url:
+            flag_list = config["CONFIG_SATELLITE_FLAGS"].split(',')
+            sat_flags = [i.strip() for i in flag_list if i.strip()]
+            sat_proxy_user = config.get("CONFIG_SATELLITE_PROXY_USER", '')
+            sat_proxy_pass = config.get("CONFIG_SATELLITE_PROXY_PW", '')
+            sat_args = {
+                'username': config["CONFIG_SATELLITE_USER"].strip(),
+                'password': config["CONFIG_SATELLITE_PW"].strip(),
+                'cacert': config["CONFIG_SATELLITE_CACERT"].strip(),
+                'activation_key': config["CONFIG_SATELLITE_AKEY"].strip(),
+                'profile_name': config["CONFIG_SATELLITE_PROFILE"].strip(),
+                'proxy_host': config["CONFIG_SATELLITE_PROXY"].strip(),
+                'proxy_user': sat_proxy_user.strip(),
+                'proxy_pass': sat_proxy_pass.strip(),
+                'flags': sat_flags
+            }
+
+    for hostname in filtered_hosts(config):
+        # Subscribe to Red Hat Repositories if configured
+        if rh_username:
+            run_rhsm_reg(hostname, rh_username, rh_password,
+                         optional=(config.get('CONFIG_RH_OPTIONAL') == 'y'),
+                         proxy_server=config.get('CONFIG_RH_PROXY'),
+                         proxy_port=config.get('CONFIG_RH_PROXY_PORT'),
+                         proxy_user=config.get('CONFIG_RH_PROXY_USER'),
+                         proxy_password=config.get('CONFIG_RH_PROXY_PASSWORD'))
+
+        # Subscribe to RHN Satellite if configured
+        if sat_url and hostname not in sat_registered:
+            run_rhn_reg(hostname, sat_url, **sat_args)
+            sat_registered.add(hostname)
+
+        server = utils.ScriptRunner(hostname)
+        server.append('rpm -q --whatprovides yum-utils || '
+                      'yum install -y yum-utils')
+
+        if is_rhel():
+            # Installing rhos-log-collector if it is available from yum.
+            server.append('yum list available rhos-log-collector && '
+                          'yum -y install rhos-log-collector || '
+                          'echo "no rhos-log-collector available"')
+
+        server.execute()
+
+        # enable RDO if it is installed locally
+        manage_rdo(hostname, config)
+        # enable or disable EPEL according to configuration
+        manage_epel(hostname, config)
+
+        # Add yum repositories if configured
+        CONFIG_REPO = config["CONFIG_REPO"].strip()
+        if CONFIG_REPO:
+            for i, repourl in enumerate(CONFIG_REPO.split(',')):
+                reponame = 'packstack_%d' % i
+                server.append('echo "[%(reponame)s]\nname=%(reponame)s\n'
+                              'baseurl=%(repourl)s\nenabled=1\n'
+                              'priority=1\ngpgcheck=0"'
+                              ' > /etc/yum.repos.d/%(reponame)s.repo'
+                              % locals())
+
+        server.append("yum clean metadata")
+        server.execute()
 
 
 def create_manifest(config, messages):
