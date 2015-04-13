@@ -32,7 +32,8 @@ if $keystone_service_name == 'httpd' {
 }
 
 class { '::keystone::roles::admin':
-  email        => 'root@localhost',
+  email        => hiera('CONFIG_KEYSTONE_ADMIN_EMAIL'),
+  admin        => hiera('CONFIG_KEYSTONE_ADMIN_USERNAME'),
   password     => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
   admin_tenant => 'admin',
 }
