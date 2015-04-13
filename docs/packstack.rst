@@ -281,7 +281,7 @@ Keystone Config parameters
 **CONFIG_KEYSTONE_TOKEN_FORMAT**
     Identity service token format (UUID or PKI). The recommended format for new deployments is UUID. ['UUID', 'PKI']
 
-**CONFIG_KEYSTONE_**
+**CONFIG_KEYSTONE_SERVICE_NAME**
     Name of service to use to run the Identity service (keystone or httpd). ['keystone', 'httpd']
 
 **CONFIG_KEYSTONE_IDENTITY_BACKEND**
