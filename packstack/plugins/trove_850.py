@@ -26,6 +26,7 @@ from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import getManifestTemplate
+from packstack.modules.ospluginutils import generate_ssl_cert
 
 # ------------------ Trove Packstack Plugin initialization ------------------
 
@@ -143,6 +144,18 @@ def create_keystone_manifest(config, messages):
 
 
 def create_manifest(config, messages):
+    if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
+        ssl_cert_file = config['CONFIG_TROVE_SSL_CERT'] = (
+            '/etc/pki/tls/certs/ssl_amqp_trove.crt'
+        )
+        ssl_key_file = config['CONFIG_TROVE_SSL_KEY'] = (
+            '/etc/pki/tls/private/ssl_amqp_trove.key'
+        )
+        ssl_host = config['CONFIG_CONTROLLER_HOST']
+        service = 'trove'
+        generate_ssl_cert(config, ssl_host, service, ssl_key_file,
+                          ssl_cert_file)
+
     if (config['CONFIG_TROVE_NOVA_USER'] == 'admin' and
             config['CONFIG_TROVE_NOVA_PW'] == ''):
         config['CONFIG_TROVE_NOVA_PW'] = config['CONFIG_KEYSTONE_ADMIN_PW']

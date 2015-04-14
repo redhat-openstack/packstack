@@ -104,6 +104,43 @@ Global Options
 **CONFIG_USE_SUBNETS**
     Specify 'y' if you want to use subnet addresses (in CIDR format) instead of interface names in following options: CONFIG_NOVA_COMPUTE_PRIVIF, CONFIG_NOVA_NETWORK_PRIVIF, CONFIG_NOVA_NETWORK_PUBIF, CONFIG_NEUTRON_OVS_BRIDGE_IFACES, CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS, CONFIG_NEUTRON_OVS_TUNNEL_IF. This is useful for cases when interface names are not same on all installation hosts.
 
+SSL setup
+---------
+Packstack supports ability to be get CA certificate and use it to sign all certificates used in Openstack deployment. Standard workflow for this would be creating Subordinate CA. If Root CA is given to Packstack it is not safe to use it for anything else. If no CA is provided and CONFIG_SSL_CACERT_SELFSIGN is set to 'y' Packstack will use Selfsigned CA.
+
+**CONFIG_SSL_CERT_DIR**
+    Enter the path to use to store generated SSL certificates in.
+
+**CONFIG_SSL_CACERT_FILE**
+    Specify filepath for CA cert file. If CONFIG_SSL_CACERT_SELFSIGN is set to 'n' it has to be preexisting file.
+
+**CONFIG_SSL_CACERT_KEY_FILE**
+    Specify filepath for CA cert key file. If CONFIG_SSL_CACERT_SELFSIGN is set to 'n' it has to be preexisting file.
+
+**CONFIG_SSL_CACERT_SELFSIGN**
+    Specify 'y' if you want Packstack to pregenerate the CA Certificate.
+
+SSL selfsigned CACert options
+-----------------------------
+
+**CONFIG_SELFSIGN_CACERT_SUBJECT_C**
+    Enter the selfsigned CAcert subject country.
+
+**CONFIG_SELFSIGN_CACERT_SUBJECT_ST**
+    Enter the selfsigned CAcert subject state.
+
+**CONFIG_SELFSIGN_CACERT_SUBJECT_L**
+    Enter the selfsigned CAcert subject location.
+
+**CONFIG_SELFSIGN_CACERT_SUBJECT_O**
+    Enter the selfsigned CAcert subject organization.
+
+**CONFIG_SELFSIGN_CACERT_SUBJECT_OU**
+    Enter the selfsigned CAcert subject organizational unit.
+
+**CONFIG_SELFSIGN_CACERT_SUBJECT_CN**
+    Enter the selfsigned CAcert subject common name.
+
 vCenter Config Parameters
 -------------------------
 
@@ -226,21 +263,6 @@ AMQP Config SSL parameters
 
 **CONFIG_AMQP_NSS_CERTDB_PW**
     Password for the NSS certificate database of the AMQP service.
-
-**CONFIG_AMQP_SSL_PORT**
-    Port on which the AMQP service listens for SSL connections.
-
-**CONFIG_AMQP_SSL_CACERT_FILE**
-    File name of the CAcertificate that the AMQP service will use for verification.
-
-**CONFIG_AMQP_SSL_CERT_FILE**
-    File name of the certificate that the AMQP service will use for verification.
-
-**CONFIG_AMQP_SSL_KEY_FILE**
-    File name of the private key that the AMQP service will use for verification.
-
-**CONFIG_AMQP_SSL_SELF_SIGNED**
-    Specify 'y' to automatically generate a self-signed SSL certificate and key. ['y', 'n']
 
 AMQP Config Athentication parameters
 ------------------------------------
@@ -687,6 +709,12 @@ Nova Options
 **CONFIG_NOVA_COMPUTE_MANAGER**
     Manager that runs the Compute service.
 
+**CONFIG_VNC_SSL_CERT**
+    PEM encoded certificate to be used for ssl on the https server, leave blank if one should be generated, this certificate should not require a passphrase. If CONFIG_HORIZON_SSL is set to 'n' this parameter is ignored.
+
+**CONFIG_VNC_SSL_KEY**
+    SSL keyfile corresponding to the certificate if one was entered. If CONFIG_HORIZON_SSL is set to 'n' this parameter is ignored.
+
 Nova Network Options
 --------------------
 
@@ -816,13 +844,13 @@ OpenStack Horizon Config parameters
 SSL Config parameters
 ---------------------
 
-**CONFIG_SSL_CERT**
+**CONFIG_HORIZON_SSL_CERT**
     PEM-encoded certificate to be used for SSL connections on the https server (the certificate should not require a passphrase). To generate a certificate, leave blank.
 
-**CONFIG_SSL_KEY**
+**CONFIG_HORIZON_SSL_KEY**
     SSL keyfile corresponding to the certificate if one was specified.
 
-**CONFIG_SSL_CACHAIN**
+**CONFIG_HORIZON_SSL_CACHAIN**
     PEM-encoded CA certificates from which the certificate chain of the server certificate can be assembled.
 
 OpenStack Swift Config parameters

@@ -26,6 +26,7 @@ from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import getManifestTemplate
+from packstack.modules.ospluginutils import generate_ssl_cert
 
 # ------------- AMQP Packstack Plugin Initialization --------------
 
@@ -106,68 +107,6 @@ def initConfig(controller):
          "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
-
-        {"CMD_OPTION": "amqp-ssl-port",
-         "PROMPT": "Enter the SSL port for the AMQP service",
-         "OPTION_LIST": [],
-         "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": "5671",
-         "MASK_INPUT": False,
-         "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_AMQP_SSL_PORT",
-         "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
-         "CONDITION": False},
-
-        {"CMD_OPTION": "amqp-ssl-cacert-file",
-         "PROMPT": ("Enter the filename of the SSL CAcertificate for the AMQP"
-                    " service"),
-         "OPTION_LIST": [],
-         "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": "/etc/pki/tls/certs/amqp_selfcert.pem",
-         "MASK_INPUT": False,
-         "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_AMQP_SSL_CACERT_FILE",
-         "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
-         "CONDITION": False},
-
-        {"CMD_OPTION": "amqp-ssl-cert-file",
-         "PROMPT": ("Enter the filename of the SSL certificate for the AMQP "
-                    "service"),
-         "OPTION_LIST": [],
-         "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": "/etc/pki/tls/certs/amqp_selfcert.pem",
-         "MASK_INPUT": False,
-         "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_AMQP_SSL_CERT_FILE",
-         "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
-         "CONDITION": False},
-
-        {"CMD_OPTION": "amqp-ssl-key-file",
-         "PROMPT": "Enter the private key filename",
-         "OPTION_LIST": [],
-         "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": "/etc/pki/tls/private/amqp_selfkey.pem",
-         "MASK_INPUT": False,
-         "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_AMQP_SSL_KEY_FILE",
-         "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
-         "CONDITION": False},
-
-        {"CMD_OPTION": "amqp-ssl-self-signed",
-         "PROMPT": "Generate Self Signed SSL Certificate",
-         "OPTION_LIST": ["y", "n"],
-         "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": "y",
-         "MASK_INPUT": False,
-         "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_AMQP_SSL_SELF_SIGNED",
-         "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
-         "CONDITION": False},
     ]
     update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "AMQPSSL",
@@ -227,25 +166,22 @@ def initSequences(controller):
 def create_manifest(config, messages):
     server = utils.ScriptRunner(config['CONFIG_AMQP_HOST'])
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
-        config['CONFIG_AMQP_ENABLE_SSL'] = True
+        config['CONFIG_AMQP_SSL_ENABLED'] = True
         config['CONFIG_AMQP_PROTOCOL'] = 'ssl'
         config['CONFIG_AMQP_CLIENTS_PORT'] = "5671"
-        if config['CONFIG_AMQP_SSL_SELF_SIGNED'] == 'y':
-            server.append(
-                "openssl req -batch -new -x509 -nodes -keyout %s "
-                "-out %s -days 1095"
-                % (config['CONFIG_AMQP_SSL_KEY_FILE'],
-                   config['CONFIG_AMQP_SSL_CERT_FILE'])
-            )
-            server.execute()
+        amqp_host = config['CONFIG_AMQP_HOST']
+        service = 'AMQP'
+        ssl_key_file = '/etc/pki/tls/private/ssl_amqp.key'
+        ssl_cert_file = '/etc/pki/tls/certs/ssl_amqp.crt'
+        cacert = config['CONFIG_AMQP_SSL_CACERT_FILE'] = (
+            config['CONFIG_SSL_CACERT_FILE']
+        )
+        generate_ssl_cert(config, amqp_host, service, ssl_key_file,
+                          ssl_cert_file)
     else:
         # Set default values
         config['CONFIG_AMQP_CLIENTS_PORT'] = "5672"
-        config['CONFIG_AMQP_SSL_PORT'] = "5671"
-        config['CONFIG_AMQP_SSL_CERT_FILE'] = ''
-        config['CONFIG_AMQP_SSL_KEY_FILE'] = ''
-        config['CONFIG_AMQP_NSS_CERTDB_PW'] = ''
-        config['CONFIG_AMQP_ENABLE_SSL'] = False
+        config['CONFIG_AMQP_SSL_ENABLED'] = False
         config['CONFIG_AMQP_PROTOCOL'] = 'tcp'
 
     if config['CONFIG_AMQP_ENABLE_AUTH'] == 'n':

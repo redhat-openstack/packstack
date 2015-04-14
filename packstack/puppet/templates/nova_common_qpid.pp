@@ -1,9 +1,9 @@
 $private_key = {
-  type => hiera('NOVA_MIGRATION_KEY_TYPE'),
+  'type' => hiera('NOVA_MIGRATION_KEY_TYPE'),
   key  => hiera('NOVA_MIGRATION_KEY_SECRET'),
 }
 $public_key = {
-  type => hiera('NOVA_MIGRATION_KEY_TYPE'),
+  'type' => hiera('NOVA_MIGRATION_KEY_TYPE'),
   key  => hiera('NOVA_MIGRATION_KEY_PUBLIC'),
 }
 

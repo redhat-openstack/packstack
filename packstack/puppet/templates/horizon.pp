@@ -19,6 +19,11 @@ $bind_host = hiera('CONFIG_IP_VERSION') ? {
   'ipv4' => '0.0.0.0',
 }
 
+$horizon_ssl = hiera('CONFIG_HORIZON_SSL') ? {
+  'y' => true,
+  'n' => false,
+}
+
 class {'::horizon':
   secret_key            => hiera('CONFIG_HORIZON_SECRET_KEY'),
   keystone_url          => "http://${keystone_host}:5000/v2.0",
@@ -29,48 +34,18 @@ class {'::horizon':
   compress_offline      => false,
   django_debug          => $is_django_debug,
   file_upload_temp_dir  => '/var/tmp',
-  listen_ssl            => hiera('CONFIG_HORIZON_SSL'),
-  horizon_cert          => '/etc/pki/tls/certs/ssl_ps_server.crt',
-  horizon_key           => '/etc/pki/tls/private/ssl_ps_server.key',
-  horizon_ca            => '/etc/pki/tls/certs/ssl_ps_chain.crt',
+  listen_ssl            => $horizon_ssl,
+  horizon_cert          => hiera('CONFIG_HORIZON_SSL_CERT', undef),
+  horizon_key           => hiera('CONFIG_HORIZON_SSL_KEY', undef),
+  horizon_ca            => hiera('CONFIG_HORIZON_SSL_CACERT', undef),
   neutron_options       => {
     'enable_lb'       => hiera('CONFIG_HORIZON_NEUTRON_LB'),
     'enable_firewall' => hiera('CONFIG_HORIZON_NEUTRON_FW'),
   },
 }
 
-$is_horizon_ssl = hiera('CONFIG_HORIZON_SSL')
-
-if $is_horizon_ssl == true {
-  file {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
-    ensure  => file,
-    content => template('packstack/ssl/generate_ssl_certs.sh.erb'),
-    mode    => '0755',
-  }
-
-  exec {'/etc/pki/tls/certs/ps_generate_ssl_certs.ssh':
-    require => File['/etc/pki/tls/certs/ps_generate_ssl_certs.ssh'],
-    notify  => Service['httpd'],
-    before  => Class['horizon'],
-  } ->
-  exec { 'nova-novncproxy-restart':
-    # ps_generate_ssl_certs.ssh is generating ssl certs for nova-novncproxy
-    # so openstack-nova-novncproxy should be restarted.
-    path      => ['/sbin', '/usr/sbin', '/bin', '/usr/bin'],
-    command   => 'systemctl restart openstack-nova-novncproxy.service',
-    logoutput => 'on_failure',
-  }
-
+if $horizon_ssl {
   apache::listen { '443': }
-
-  # little bit of hatred as we'll have to patch upstream puppet-horizon
-  file_line {'horizon_ssl_wsgi_fix':
-    path    => '/etc/httpd/conf.d/15-horizon_ssl_vhost.conf',
-    match   => 'WSGIProcessGroup.*',
-    line    => '  WSGIProcessGroup horizon-ssl',
-    require => File['15-horizon_ssl_vhost.conf'],
-    notify  => Service['httpd'],
-  }
 }
 
 class { '::memcached':

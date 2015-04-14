@@ -14,7 +14,10 @@
 import os
 import yaml
 
+from OpenSSL import crypto
+from time import time
 from packstack.installer import basedefs
+from packstack.installer import utils
 from packstack.installer.setup_controller import Controller
 
 controller = Controller()
@@ -82,6 +85,73 @@ def generateHieraDataFile():
 def createFirewallResources(hiera_key, default_value='{}'):
     hiera_function = "hiera('%s', %s)" % (hiera_key, default_value)
     return "create_resources(packstack::firewall, %s)\n\n" % hiera_function
+
+
+def generate_ssl_cert(config, host, service, ssl_key_file, ssl_cert_file):
+    """
+    Wrapper on top of openssl
+    """
+    # We have to check whether the certificate already exists
+    cert_dir = os.path.join(config['CONFIG_SSL_CERT_DIR'], 'certs')
+    local_cert_name = host + os.path.basename(ssl_cert_file)
+    local_cert_path = os.path.join(cert_dir, local_cert_name)
+    if not os.path.exists(local_cert_path):
+        ca_file = open(config['CONFIG_SSL_CACERT_FILE'], 'rt').read()
+        ca_key_file = open(config['CONFIG_SSL_CACERT_KEY_FILE'], 'rt').read()
+        ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, ca_key_file)
+        ca = crypto.load_certificate(crypto.FILETYPE_PEM, ca_file)
+
+        k = crypto.PKey()
+        k.generate_key(crypto.TYPE_RSA, 4096)
+        mail = config['CONFIG_SELFSIGN_CACERT_SUBJECT_MAIL']
+        hostinfo = config['HOST_DETAILS'][host]
+        fqdn = hostinfo['fqdn']
+        cert = crypto.X509()
+        subject = cert.get_subject()
+        subject.C = config['CONFIG_SELFSIGN_CACERT_SUBJECT_C']
+        subject.ST = config['CONFIG_SELFSIGN_CACERT_SUBJECT_ST']
+        subject.L = config['CONFIG_SELFSIGN_CACERT_SUBJECT_L']
+        subject.O = config['CONFIG_SELFSIGN_CACERT_SUBJECT_O']
+        subject.OU = config['CONFIG_SELFSIGN_CACERT_SUBJECT_OU']
+        subject.CN = "%s/%s" % (service, fqdn)
+        subject.emailAddress = mail
+
+        cert.add_extensions([
+            crypto.X509Extension(
+                "keyUsage".encode('ascii'),
+                False,
+                "nonRepudiation,digitalSignature,keyEncipherment".encode('ascii')),
+            crypto.X509Extension(
+                "extendedKeyUsage".encode('ascii'),
+                False,
+                "clientAuth,serverAuth".encode('ascii')),
+        ])
+
+        cert.gmtime_adj_notBefore(0)
+        cert.gmtime_adj_notAfter(315360000)
+        cert.set_issuer(ca.get_subject())
+        cert.set_pubkey(k)
+        serial = int(time())
+        cert.set_serial_number(serial)
+        cert.sign(ca_key, 'sha1')
+
+        final_cert = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
+        final_key = crypto.dump_privatekey(crypto.FILETYPE_PEM, k)
+        deliver_ssl_file(ca_file, config['CONFIG_SSL_CACERT_FILE'], host)
+        deliver_ssl_file(final_cert, ssl_cert_file, host)
+        deliver_ssl_file(final_key, ssl_key_file, host)
+
+        with open(local_cert_path, 'w') as f:
+            f.write(final_cert)
+
+
+def deliver_ssl_file(content, path, host):
+    server = utils.ScriptRunner(host)
+    server.append("grep -- '{content}' {path} || "
+                  "echo '{content}' > {path} ".format(
+                      content=content,
+                      path=path))
+    server.execute()
 
 
 def gethostlist(CONF):

@@ -94,6 +94,6 @@ firewall { '001 nagios incoming':
 }
 
 # ensure that we won't stop listening on 443 if horizon has ssl enabled
-if hiera('CONFIG_HORIZON_SSL') {
+if hiera('CONFIG_HORIZON_SSL')  == 'y' {
   apache::listen { '443': }
 }

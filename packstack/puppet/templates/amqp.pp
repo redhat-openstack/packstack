@@ -1,5 +1,5 @@
 $amqp = hiera('CONFIG_AMQP_BACKEND')
-$amqp_enable_ssl = hiera('CONFIG_AMQP_ENABLE_SSL')
+$amqp_enable_ssl = hiera('CONFIG_AMQP_SSL_ENABLED')
 
 case $amqp  {
   'qpid': {
@@ -21,10 +21,9 @@ define enable_rabbitmq {
   }
 
   if $::amqp_enable_ssl {
-
-    $kombu_ssl_ca_certs = hiera('CONFIG_AMQP_SSL_CACERT_FILE')
-    $kombu_ssl_keyfile = hiera('CONFIG_AMQP_SSL_KEY_FILE')
-    $kombu_ssl_certfile = hiera('CONFIG_AMQP_SSL_CERT_FILE')
+    $kombu_ssl_ca_certs = hiera('CONFIG_AMQP_SSL_CACERT_FILE', undef)
+    $kombu_ssl_keyfile = '/etc/pki/tls/private/ssl_amqp.key'
+    $kombu_ssl_certfile = '/etc/pki/tls/certs/ssl_amqp.crt'
 
     $files_to_set_owner = [ $kombu_ssl_keyfile, $kombu_ssl_certfile ]
     file { $files_to_set_owner:
@@ -35,7 +34,8 @@ define enable_rabbitmq {
     }
 
     class { '::rabbitmq':
-      ssl_port                 => hiera('CONFIG_AMQP_SSL_PORT'),
+      port                     => undef,
+      ssl_port                 => hiera('CONFIG_AMQP_CLIENTS_PORT'),
       ssl_only                 => true,
       ssl                      => $::amqp_enable_ssl,
       ssl_cacert               => $kombu_ssl_ca_certs,
@@ -46,7 +46,7 @@ define enable_rabbitmq {
       package_provider         => 'yum',
       admin_enable             => false,
       # FIXME: it's ugly to not to require client certs
-      ssl_fail_if_no_peer_cert => false,
+      ssl_fail_if_no_peer_cert => true,
       config_variables         => {
         'tcp_listen_options' => '[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]',
         'loopback_users'     => '[]',
@@ -100,10 +100,10 @@ define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
       default => 'no',
     },
     clustered               => false,
-      ssl_port              => hiera('CONFIG_AMQP_SSL_PORT'),
-      ssl                   => hiera('CONFIG_AMQP_ENABLE_SSL'),
-      ssl_cert              => hiera('CONFIG_AMQP_SSL_CERT_FILE'),
-      ssl_key               => hiera('CONFIG_AMQP_SSL_KEY_FILE'),
+      ssl_port              => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+      ssl                   => hiera('CONFIG_AMQP_SSL_ENABLED'),
+      ssl_cert              => '/etc/pki/tls/certs/ssl_amqp.crt',
+      ssl_key               => '/etc/pki/tls/private/ssl_amqp.key',
       ssl_database_password => hiera('CONFIG_AMQP_NSS_CERTDB_PW'),
   }
 

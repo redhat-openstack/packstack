@@ -26,6 +26,7 @@ from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
+from packstack.modules.ospluginutils import generate_ssl_cert
 
 # ------------- Manila Packstack Plugin Initialization --------------
 
@@ -490,6 +491,18 @@ def create_keystone_manifest(config, messages):
 def create_manifest(config, messages):
     if config['CONFIG_UNSUPPORTED'] != 'y':
         config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
+
+    if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
+        ssl_host = config['CONFIG_STORAGE_HOST']
+        ssl_cert_file = config['CONFIG_MANILA_SSL_CERT'] = (
+            '/etc/pki/tls/certs/ssl_amqp_manila.crt'
+        )
+        ssl_key_file = config['CONFIG_MANILA_SSL_KEY'] = (
+            '/etc/pki/tls/private/ssl_amqp_manila.key'
+        )
+        service = 'manila'
+        generate_ssl_cert(config, ssl_host, service, ssl_key_file,
+                          ssl_cert_file)
 
     # Change these from text to Boolean values
     boolean_keys = ['CONFIG_MANILA_GENERIC_DRV_HANDLES_SHARE_SERVERS',

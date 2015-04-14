@@ -20,13 +20,15 @@ import os
 import uuid
 
 from packstack.installer import basedefs
-from packstack.installer import validators
 from packstack.installer import exceptions
 from packstack.installer import utils
+from packstack.installer import validators
 
 from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import getManifestTemplate
+from packstack.modules.ospluginutils import generate_ssl_cert
+from packstack.modules.ospluginutils import deliver_ssl_file
 
 # ------------- Horizon Packstack Plugin Initialization --------------
 
@@ -59,9 +61,6 @@ def initConfig(controller):
 
     params = [
         {"CMD_OPTION": "os-ssl-cert",
-         "USAGE": ("PEM encoded certificate to be used for ssl on the https "
-                   "server, leave blank if one should be generated, this "
-                   "certificate should not require a passphrase"),
          "PROMPT": ("Enter the path to a PEM encoded certificate to be used "
                     "on the https server, leave blank if one should be "
                     "generated, this certificate should not require "
@@ -71,14 +70,13 @@ def initConfig(controller):
          "DEFAULT_VALUE": '',
          "MASK_INPUT": False,
          "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_SSL_CERT",
+         "CONF_NAME": "CONFIG_HORIZON_SSL_CERT",
          "USE_DEFAULT": False,
          "NEED_CONFIRM": False,
-         "CONDITION": False},
+         "CONDITION": False,
+         "DEPRECATES": ['CONFIG_SSL_CERT']},
 
         {"CMD_OPTION": "os-ssl-key",
-         "USAGE": ("SSL keyfile corresponding to the certificate if one was "
-                   "entered"),
          "PROMPT": ("Enter the SSL keyfile corresponding to the certificate "
                     "if one was entered"),
          "OPTION_LIST": [],
@@ -86,14 +84,13 @@ def initConfig(controller):
          "DEFAULT_VALUE": "",
          "MASK_INPUT": False,
          "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_SSL_KEY",
+         "CONF_NAME": "CONFIG_HORIZON_SSL_KEY",
          "USE_DEFAULT": False,
          "NEED_CONFIRM": False,
-         "CONDITION": False},
+         "CONDITION": False,
+         "DEPRECATES": ['CONFIG_SSL_KEY']},
 
         {"CMD_OPTION": "os-ssl-cachain",
-         "USAGE": ("PEM encoded CA certificates from which the certificate "
-                   "chain of the server certificate can be assembled."),
          "PROMPT": ("Enter the CA cahin file corresponding to the certificate "
                     "if one was entered"),
          "OPTION_LIST": [],
@@ -101,10 +98,11 @@ def initConfig(controller):
          "DEFAULT_VALUE": "",
          "MASK_INPUT": False,
          "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_SSL_CACHAIN",
+         "CONF_NAME": "CONFIG_HORIZON_SSL_CACERT",
          "USE_DEFAULT": False,
          "NEED_CONFIRM": False,
-         "CONDITION": False},
+         "CONDITION": False,
+         "DEPRECATES": ['CONFIG_SSL_CACHAIN']},
     ]
     update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "OSSSL",
@@ -138,15 +136,14 @@ def create_manifest(config, messages):
     config["CONFIG_HORIZON_PORT"] = 80
     sslmanifestdata = ''
     if config["CONFIG_HORIZON_SSL"] == 'y':
-        config["CONFIG_HORIZON_SSL"] = True
         config["CONFIG_HORIZON_PORT"] = 443
         proto = "https"
 
         # Are we using the users cert/key files
-        if config["CONFIG_SSL_CERT"]:
-            ssl_cert = config["CONFIG_SSL_CERT"]
-            ssl_key = config["CONFIG_SSL_KEY"]
-            ssl_chain = config["CONFIG_SSL_CACHAIN"]
+        if config["CONFIG_HORIZON_SSL_CERT"]:
+            ssl_cert_file = config["CONFIG_HORIZON_SSL_CERT"]
+            ssl_key_file = config["CONFIG_HORIZON_SSL_KEY"]
+            ssl_chain_file = config["CONFIG_HORIZON_SSL_CACERT"]
 
             if not os.path.exists(ssl_cert):
                 raise exceptions.ParamValidationError(
@@ -160,19 +157,32 @@ def create_manifest(config, messages):
                 raise exceptions.ParamValidationError(
                     "The file %s doesn't exist" % ssl_chain)
 
-            resources = config.setdefault('RESOURCES', {})
-            host_resources = resources.setdefault(horizon_host, [])
-            host_resources.append((ssl_cert, 'ssl_ps_server.crt'))
-            host_resources.append((ssl_key, 'ssl_ps_server.key'))
-            host_resources.append((ssl_chain, 'ssl_ps_chain.crt'))
+            final_cert = open(ssl_cert_file, 'rt').read()
+            final_key = open(ssl_key_file, 'rt').read()
+            final_cacert = open(ssl_chain_file, 'rt').read()
+            host = config['CONFIG_CONTROLLER_HOST']
+            deliver_ssl_file(final_cacert, ssl_chain_file, host)
+            deliver_ssl_file(final_cert, ssl_cert_file, host)
+            deliver_ssl_file(final_key, ssl_key_file, host)
+
         else:
+            ssl_cert_file = config["CONFIG_HORIZON_SSL_CERT"] = (
+                '/etc/pki/tls/certs/ssl_dashboard.crt'
+            )
+            ssl_key_file = config["CONFIG_HORIZON_SSL_KEY"] = (
+                '/etc/pki/tls/private/ssl_dashboard.key'
+            )
+            cacert = config['CONFIG_SSL_CACERT_FILE']
+            config["CONFIG_HORIZON_SSL_CACERT"] = cacert
+            ssl_host = config['CONFIG_CONTROLLER_HOST']
+            service = 'dashboard'
+            generate_ssl_cert(config, ssl_host, service, ssl_key_file,
+                              ssl_cert_file)
             messages.append(
                 "%sNOTE%s : A certificate was generated to be used for ssl, "
                 "You should change the ssl certificate configured in "
                 "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
                 % (utils.COLORS['red'], utils.COLORS['nocolor'], horizon_host))
-    else:
-        config["CONFIG_HORIZON_SSL"] = False
 
     config["CONFIG_HORIZON_NEUTRON_LB"] = False
     config["CONFIG_HORIZON_NEUTRON_FW"] = False

@@ -91,7 +91,8 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
         sys.argv = ['packstack', '--debug',
                     '--ssh-public-key=%s' % dummy_public_key,
                     '--install-hosts=127.0.0.1', '--os-swift-install=y',
-                    '--nagios-install=y', '--use-epel=y']
+                    '--nagios-install=y', '--use-epel=y', '--ssl-cacert-selfsign=y',
+                    '--ssl-cert-dir=%s' % os.path.expanduser('~/')]
 
         # There is no puppet logfile to validate, so replace
         # ospluginutils.validate_puppet_logfile with a mock function

@@ -32,6 +32,7 @@ from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import getManifestTemplate
+from packstack.modules.ospluginutils import generate_ssl_cert
 from packstack.modules.ospluginutils import manifestfiles
 
 # ------------- Nova Packstack Plugin Initialization --------------
@@ -128,6 +129,33 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "nova-ssl-cert",
+             "PROMPT": ("Enter the path to a PEM encoded certificate to be used "
+                        "on the https server, leave blank if one should be "
+                        "generated, this certificate should not require "
+                        "a passphrase"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": '',
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_VNC_SSL_CERT",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "nova-ssl-key",
+             "PROMPT": ("Enter the SSL keyfile corresponding to the certificate "
+                        "if one was entered"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_VNC_SSL_KEY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "NOVA_NETWORK": [
@@ -458,6 +486,11 @@ def create_conductor_manifest(config, messages):
 def create_compute_manifest(config, messages):
     global compute_hosts, network_hosts
 
+    if config["CONFIG_HORIZON_SSL"] == 'y':
+        config["CONFIG_VNCPROXY_PROTOCOL"] = "https"
+    else:
+        config["CONFIG_VNCPROXY_PROTOCOL"] = "http"
+
     migrate_protocol = config['CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL']
     if migrate_protocol == 'ssh':
         config['CONFIG_NOVA_COMPUTE_MIGRATE_URL'] = (
@@ -550,6 +583,18 @@ def create_compute_manifest(config, messages):
                 messages.append(str(ex))
 
         if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
+            if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
+                ssl_cert_file = config['CONFIG_CEILOMETER_SSL_CERT'] = (
+                    '/etc/pki/tls/certs/ssl_amqp_ceilometer.crt'
+                )
+                ssl_key_file = config['CONFIG_CEILOMETER_SSL_KEY'] = (
+                    '/etc/pki/tls/private/ssl_amqp_ceilometer.key'
+                )
+                ssl_host = config['CONFIG_CONTROLLER_HOST']
+                service = 'ceilometer'
+                generate_ssl_cert(config, host, service, ssl_key_file,
+                                  ssl_cert_file)
+
             mq_template = get_mq(config, "nova_ceilometer")
             manifestdata += getManifestTemplate(mq_template)
             manifestdata += getManifestTemplate("nova_ceilometer")
@@ -630,6 +675,33 @@ def create_sched_manifest(config, messages):
 
 
 def create_vncproxy_manifest(config, messages):
+    if config["CONFIG_HORIZON_SSL"] == 'y':
+        if config["CONFIG_VNC_SSL_CERT"]:
+            ssl_cert_file = config["CONFIG_VNC_SSL_CERT"]
+            ssl_key_file = config["CONFIG_VNC_SSL_KEY"]
+            if not os.path.exists(ssl_cert):
+                raise exceptions.ParamValidationError(
+                    "The file %s doesn't exist" % ssl_cert_file)
+
+            if not os.path.exists(ssl_key):
+                raise exceptions.ParamValidationError(
+                    "The file %s doesn't exist" % ssl_key_file)
+
+            final_cert = open(ssl_cert_file, 'rt').read()
+            final_key = open(ssl_key_file, 'rt').read()
+            deliver_ssl_file(final_cert, ssl_cert_file, config['CONFIG_CONTROLLER_HOST'])
+            deliver_ssl_file(final_key, ssl_key_file, config['CONFIG_CONTROLLER_HOST'])
+
+        else:
+            config["CONFIG_VNC_SSL_CERT"] = '/etc/pki/tls/certs/ssl_vnc.crt'
+            config["CONFIG_VNC_SSL_KEY"] = '/etc/pki/tls/private/ssl_vnc.key'
+            ssl_key_file = config["CONFIG_VNC_SSL_KEY"]
+            ssl_cert_file = config["CONFIG_VNC_SSL_CERT"]
+            ssl_host = config['CONFIG_CONTROLLER_HOST']
+            service = 'vnc'
+            generate_ssl_cert(config, ssl_host, service, ssl_key_file,
+                              ssl_cert_file)
+
     manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("nova_vncproxy")
     appendManifestFile(manifestfile, manifestdata)
@@ -680,6 +752,20 @@ def create_common_manifest(config, messages):
             else:
                 data += getManifestTemplate("nova_common_nopw")
             appendManifestFile(os.path.split(manifestfile)[1], data)
+
+    if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
+        nova_hosts = compute_hosts
+        nova_hosts |= set([config.get('CONFIG_CONTROLLER_HOST')])
+        ssl_cert_file = config['CONFIG_NOVA_SSL_CERT'] = (
+            '/etc/pki/tls/certs/ssl_amqp_nova.crt'
+        )
+        ssl_key_file = config['CONFIG_NOVA_SSL_KEY'] = (
+            '/etc/pki/tls/private/ssl_amqp_nova.key'
+        )
+        service = 'nova'
+        for host in nova_hosts:
+            generate_ssl_cert(config, host, service,
+                              ssl_key_file, ssl_cert_file)
 
 
 def create_neutron_manifest(config, messages):

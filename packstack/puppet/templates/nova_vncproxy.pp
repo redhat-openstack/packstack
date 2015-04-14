@@ -1,12 +1,8 @@
-if $is_horizon_ssl == undef {
-  $is_horizon_ssl = hiera('CONFIG_HORIZON_SSL')
-}
-
-if $is_horizon_ssl == true {
+if hiera('CONFIG_HORIZON_SSL') == 'y' {
   nova_config {
     'DEFAULT/ssl_only': value => true;
-    'DEFAULT/cert':     value => '/etc/nova/nova.crt';
-    'DEFAULT/key':      value => '/etc/nova/nova.key';
+    'DEFAULT/cert':     value => hiera('CONFIG_VNC_SSL_CERT');
+    'DEFAULT/key':      value => hiera('CONFIG_VNC_SSL_KEY');
   }
 }
 
