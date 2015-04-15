@@ -68,7 +68,10 @@ HIERADATA_FILE_RELATIVE = "hieradata"
 HIERADATA_DIR = os.path.join(VAR_DIR, HIERADATA_FILE_RELATIVE)
 
 PUPPET_DEPENDENCIES = ['puppet', 'hiera', 'openssh-clients', 'tar', 'nc']
-PUPPET_MODULES_PKG = 'openstack-puppet-modules'
+PUPPET_MODULES_PKGS = [
+    'openstack-puppet-modules',
+    'openstack-packstack-puppet'
+]
 
 FILE_INSTALLER_LOG = "setup.log"
 

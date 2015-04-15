@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import netaddr
+
 from ..installer import utils
 
 
@@ -49,3 +51,37 @@ def is_all_in_one(config):
     # with them when checking all-in-one. MariaDB host should however be
     # omitted if we are not installing MariaDB.
     return len(filtered_hosts(config, exclude=False, dbhost=True)) == 1
+
+
+def cidr_to_ifname(cidr, host, config):
+    """
+    Returns appropriate host's interface name from given CIDR subnet. Passed
+    config dict has to contain discovered hosts details.
+    """
+    if not config or not config['HOST_DETAILS'] or '/' not in cidr:
+        raise ValueError(
+            'Cannot translate CIDR to interface, invalid parameters '
+            'were given.'
+        )
+    info = config['HOST_DETAILS'][host]
+
+    result = []
+    for item in cidr.split(','):
+        translated = []
+        for fragment in item.split(':'):
+            try:
+                subnet_a = netaddr.IPNetwork(fragment)
+            except netaddr.AddrFormatError:
+                translated.append(fragment)
+                continue
+
+            for interface in info['interfaces'].split(','):
+                interface = interface.strip()
+                ipaddr = info['ipaddress_{}'.format(interface)]
+                netmask = info['netmask_{}'.format(interface)]
+                subnet_b = netaddr.IPNetwork('{ipaddr}/{netmask}'.format(**locals()))
+                if subnet_a == subnet_b:
+                    translated.append(interface)
+                    break
+        result.append(':'.join(translated))
+    return ','.join(result)

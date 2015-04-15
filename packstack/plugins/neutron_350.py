@@ -23,7 +23,7 @@ from packstack.installer import processors
 from packstack.installer import output_messages
 from packstack.installer.utils import split_hosts
 
-from packstack.modules.common import filtered_hosts
+from packstack.modules import common
 from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
@@ -739,6 +739,10 @@ def create_l2_agent_manifests(config, messages):
                 (host in network_hosts and tunnel_types)
                 or 'vlan' in ovs_type)
         ):
+            if config['CONFIG_USE_SUBNETS'] == 'y':
+                iface_arr = [
+                    common.cidr_to_ifname(i, host, config) for i in iface_arr
+                ]
             config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"] = iface_arr
         manifestdata += getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
@@ -761,7 +765,7 @@ def create_metadata_manifests(config, messages):
 
 def check_nm_status(config, messages):
     hosts_with_nm = []
-    for host in filtered_hosts(config):
+    for host in common.filtered_hosts(config):
         server = utils.ScriptRunner(host)
         server.append("systemctl")
         rc, out = server.execute(can_fail=False)

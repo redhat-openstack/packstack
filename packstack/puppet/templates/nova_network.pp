@@ -35,13 +35,16 @@ if $manager == 'nova.network.manager.VlanManager' {
   $net_num = 1
 }
 
+$nova_network_privif = hiera('CONFIG_NOVA_NETWORK_PRIVIF')
+$nova_network_pubif = hiera('CONFIG_NOVA_NETWORK_PUBIF')
+
 class { '::nova::network':
   enabled           => true,
   network_manager   => $manager,
   num_networks      => $net_num ,
   network_size      => $net_size,
-  private_interface => hiera('CONFIG_NOVA_NETWORK_PRIVIF'),
-  public_interface  => hiera('CONFIG_NOVA_NETWORK_PUBIF'),
+  private_interface => force_interface($nova_network_privif, $use_subnets),
+  public_interface  => force_interface($nova_network_pubif, $use_subnets),
   fixed_range       => hiera('CONFIG_NOVA_NETWORK_FIXEDRANGE'),
   floating_range    => hiera('CONFIG_NOVA_NETWORK_FLOATRANGE'),
   config_overrides  => $overrides,
@@ -50,4 +53,3 @@ class { '::nova::network':
 package { 'dnsmasq':
   ensure => present,
 }
-

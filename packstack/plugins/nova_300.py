@@ -26,13 +26,13 @@ from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer.exceptions import ScriptRuntimeError
 
+from packstack.modules import common
 from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import manifestfiles
-from packstack.modules.ospluginutils import NovaConfig
 
 # ------------- Nova Packstack Plugin Initialization --------------
 
@@ -532,16 +532,19 @@ def create_compute_manifest(config, messages):
             manifestdata += getManifestTemplate("nova_nfs")
         manifestfile = "%s_nova.pp" % host
 
-        nova_config_options = NovaConfig()
         if config['CONFIG_NEUTRON_INSTALL'] != 'y':
             if host not in network_hosts:
-                nova_config_options.addOption(
-                    "DEFAULT/flat_interface",
-                    config['CONFIG_NOVA_COMPUTE_PRIVIF']
+                manifestdata += getManifestTemplate('nova_compute_flat')
+
+            if config['CONFIG_USE_SUBNETS'] == 'y':
+                netface = common.cidr_to_ifname(
+                    config['CONFIG_NOVA_COMPUTE_PRIVIF'], host, config
                 )
-            check_ifcfg(host, config['CONFIG_NOVA_COMPUTE_PRIVIF'])
+            else:
+                netface = config['CONFIG_NOVA_COMPUTE_PRIVIF']
+            check_ifcfg(host, netface)
             try:
-                bring_up_ifcfg(host, config['CONFIG_NOVA_COMPUTE_PRIVIF'])
+                bring_up_ifcfg(host, netface)
             except ScriptRuntimeError as ex:
                 # just warn user to do it by himself
                 messages.append(str(ex))
@@ -564,7 +567,6 @@ def create_compute_manifest(config, messages):
         manifestdata += "\n" + createFirewallResources(
             'FIREWALL_NOVA_COMPUTE_RULES'
             )
-        manifestdata += "\n" + nova_config_options.getManifestEntry()
         manifestdata += "\n" + ssh_hostkeys
         appendManifestFile(manifestfile, manifestdata)
 
@@ -585,9 +587,12 @@ def create_network_manifest(config, messages):
     config['CONFIG_NOVA_NETWORK_MULTIHOST'] = multihost and 'true' or 'false'
     for host in network_hosts:
         for i in ('CONFIG_NOVA_NETWORK_PRIVIF', 'CONFIG_NOVA_NETWORK_PUBIF'):
-            check_ifcfg(host, config[i])
+            netface = config[i]
+            if config['CONFIG_USE_SUBNETS'] == 'y':
+                netface = common.cidr_to_ifname(netface, host, config)
+            check_ifcfg(host, netface)
             try:
-                bring_up_ifcfg(host, config[i])
+                bring_up_ifcfg(host, netface)
             except ScriptRuntimeError as ex:
                 # just warn user to do it by himself
                 messages.append(str(ex))

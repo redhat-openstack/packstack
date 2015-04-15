@@ -24,28 +24,6 @@ PUPPET_TEMPLATE_DIR = os.path.join(PUPPET_DIR, "templates")
 HIERA_DEFAULTS_YAML = os.path.join(basedefs.HIERADATA_DIR, "defaults.yaml")
 
 
-class NovaConfig(object):
-    """
-    Helper class to create puppet manifest entries for nova_config
-    """
-    def __init__(self):
-        self.options = {}
-
-    def addOption(self, n, v):
-        self.options[n] = v
-
-    def getManifestEntry(self):
-        entry = ""
-        if not self.options:
-            return entry
-
-        entry += "nova_config{\n"
-        for k, v in self.options.items():
-            entry += '    "%s": value => "%s";\n' % (k, v)
-        entry += "}"
-        return entry
-
-
 class ManifestFiles(object):
     def __init__(self):
         self.filelist = []

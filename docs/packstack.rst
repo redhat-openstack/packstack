@@ -101,6 +101,9 @@ Global Options
 **CONFIG_UNSUPPORTED**
     Specify 'y' if you want to use unsupported parameters. This should be used only if you know what you are doing. Issues caused by using unsupported options will not be fixed before the next major release. ['y', 'n']
 
+**CONFIG_USE_SUBNETS**
+    Specify 'y' if you want to use subnet addresses (in CIDR format) instead of interface names in following options: CONFIG_NOVA_COMPUTE_PRIVIF, CONFIG_NOVA_NETWORK_PRIVIF, CONFIG_NOVA_NETWORK_PUBIF, CONFIG_NEUTRON_OVS_BRIDGE_IFACES, CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS, CONFIG_NEUTRON_OVS_TUNNEL_IF. This is useful for cases when interface names are not same on all installation hosts.
+
 vCenter Config Parameters
 -------------------------
 

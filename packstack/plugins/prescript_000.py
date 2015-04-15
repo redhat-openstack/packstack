@@ -43,7 +43,7 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 
 def initConfig(controller):
-    default_ssh_key = os.path.join(os.environ["HOME"], ".ssh/*.pub")
+    default_ssh_key = os.path.expanduser('~/.ssh/*.pub')
     default_ssh_key = (glob.glob(default_ssh_key) + [""])[0]
     params = {
         "GLOBAL": [
@@ -434,6 +434,19 @@ def initConfig(controller):
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_UNSUPPORTED",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "use-subnets",
+             "PROMPT": ("Should interface names be automatically recognized "
+                        "based on subnet CIDR"),
+             "OPTION_LIST": ['y', 'n'],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_USE_SUBNETS",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
@@ -884,7 +897,12 @@ def is_rhel():
 
 def detect_os_and_version(host):
     server = utils.ScriptRunner(host)
-    server.append('python -c "import platform; print platform.linux_distribution(full_distribution_name=0)[0]+\',\'+platform.linux_distribution()[1]"')
+    server.append(
+        'python -c "import platform; '
+        'print platform.linux_distribution(full_distribution_name=0)[0]'
+        '+\',\'+'
+        'platform.linux_distribution()[1]"'
+    )
     try:
         rc, out = server.execute()
         out = out.split(",")
@@ -1169,20 +1187,25 @@ def preinstall_and_discover(config, messages):
     """
     config['HOST_LIST'] = list(filtered_hosts(config))
 
-    local = utils.ScriptRunner()
-    local.append('rpm -q --requires %s | egrep -v "^(rpmlib|\/|perl)"'
-                 % basedefs.PUPPET_MODULES_PKG)
-    # this can fail if there are no dependencies other than those
-    # filtered out by the egrep expression.
-    rc, modules_deps = local.execute(can_fail=False)
+    all_deps = ''
+    for pkg in basedefs.PUPPET_MODULES_PKGS:
+        local = utils.ScriptRunner()
+        local.append(
+            'rpm -q --requires %s | egrep -v "^(rpmlib|\/|perl)"' % pkg
+        )
+        # this can fail if there are no dependencies other than those
+        # filtered out by the egrep expression.
+        rc, pkg_deps = local.execute(can_fail=False)
+        errmsg = '%s is not installed' % pkg
+        if errmsg in pkg_deps:
+            # modules package might not be installed if we are running
+            # from source; in this case we assume user knows what (s)he's
+            # doing and we don't install modules dependencies
+            continue
+        all_deps += ' ' + pkg_deps.strip()
 
-    # modules package might not be installed if we are running from source;
-    # in this case we assume user knows what (s)he's doing and we don't
-    # install modules dependencies
-    errmsg = '%s is not installed' % basedefs.PUPPET_MODULES_PKG
     deps = list(basedefs.PUPPET_DEPENDENCIES)
-    if errmsg not in modules_deps:
-        deps.extend([i.strip() for i in modules_deps.split() if i.strip()])
+    deps.extend([i.strip() for i in all_deps.split() if i.strip()])
 
     details = {}
     for hostname in config['HOST_LIST']:

@@ -1,4 +1,10 @@
-$ovs_agent_vxlan_cfg_neut_ovs_tun_if = hiera('CONFIG_NEUTRON_OVS_TUNNEL_IF',undef)
+
+$neutron_ovs_tunnel_if = hiera('CONFIG_NEUTRON_OVS_TUNNEL_IF', undef)
+if $neutron_ovs_tunnel_if {
+  $ovs_agent_vxlan_cfg_neut_ovs_tun_if = force_interface($neutron_ovs_tunnel_if, $use_subnets)
+} else {
+  $ovs_agent_vxlan_cfg_neut_ovs_tun_if = undef
+}
 
 if $ovs_agent_vxlan_cfg_neut_ovs_tun_if != '' {
   $iface = regsubst($ovs_agent_vxlan_cfg_neut_ovs_tun_if, '[\.\-\:]', '_', 'G')
