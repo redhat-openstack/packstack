@@ -156,7 +156,7 @@ def initConfig(controller):
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": 'CONFIG_KEYSTONE_SERVICE_NAME',
-             "USE_DEFAULT": True,
+             "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
