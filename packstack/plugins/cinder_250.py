@@ -220,7 +220,7 @@ def initConfig(controller):
              "CONDITION": False},
             {"CMD_OPTION": "cinder-netapp-storage-protocol",
              "PROMPT": ("Enter a NetApp storage protocol"),
-             "OPTION_LIST": ["iscsi", "nfs"],
+             "OPTION_LIST": ["iscsi", "fc", "nfs"],
              "VALIDATORS": [validators.validate_options],
              "PROCESSORS": [],
              "DEFAULT_VALUE": NETAPP_DEFAULT_STORAGE_PROTOCOL,
@@ -337,6 +337,21 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
+        "CINDERNETAPP7MODEFC": [
+            {"CMD_OPTION": "cinder-netapp-partner-backend-name",
+             "PROMPT": ("Enter a NetApp partner backend name"),
+             "OPTION_LIST": [""],
+             "VALIDATORS": [validators.validate_not_empty],
+             "PROCESSORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_CINDER_NETAPP_PARTNER_BACKEND_NAME",
+             "USE_DEFAULT": True,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
+
         "CINDERNETAPPVSERVER": [
             {"CMD_OPTION": "cinder-netapp-vserver",
              "PROMPT": ("Enter a NetApp Vserver"),
@@ -374,6 +389,18 @@ def initConfig(controller):
              "MASK_INPUT": True,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_CINDER_NETAPP_SA_PASSWORD",
+             "USE_DEFAULT": True,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+            {"CMD_OPTION": "cinder-netapp-eseries-host-type",
+             "PROMPT": ("Enter a host type"),
+             "OPTION_LIST": [""],
+             "VALIDATORS": [validators.validate_not_empty],
+             "PROCESSORS": [],
+             "DEFAULT_VALUE": "linux_dm_mp",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_CINDER_NETAPP_ESERIES_HOST_TYPE",
              "USE_DEFAULT": True,
              "NEED_CONFIRM": False,
              "CONDITION": False},
@@ -465,6 +492,13 @@ def initConfig(controller):
         {"GROUP_NAME": "CINDERNETAPPISCSI7MODE",
          "DESCRIPTION": "Cinder NetApp iSCSI & 7-mode configuration",
          "PRE_CONDITION": check_netapp_7modeiscsi_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "CINDERNETAPP7MODEFC",
+         "DESCRIPTION": "Cinder NetApp 7-mode Fibre Channel configuration",
+         "PRE_CONDITION": check_netapp_7mode_fc_options,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
@@ -563,6 +597,12 @@ def check_netapp_7modeiscsi_options(config):
     return (check_netapp_options(config) and
             config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == 'ontap_7mode' and
             config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == 'iscsi')
+
+
+def check_netapp_7mode_fc_options(config):
+    return (check_netapp_options(config) and
+            config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "ontap_7mode"
+            and config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == "fc")
 
 
 def check_netapp_vserver_options(config):

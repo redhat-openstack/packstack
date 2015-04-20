@@ -477,16 +477,16 @@ Cinder NetApp main configuration
     Hostname (or IP address) for the NetApp storage system or proxy server.
 
 **CONFIG_CINDER_NETAPP_SERVER_PORT**
-    TCP port to use for communication with ONTAPI on the NetApp storage system. Traditionally, port 80 is used for HTTP and port 443 is used for HTTPS; however, this value should be changed if an alternate port has been configured on the NetApp storage system or proxy server.  Defaults to 80.
+    The TCP port to use for communication with the storage system or proxy. If not specified, Data ONTAP drivers will use 80 for HTTP and 443 for HTTPS; E-Series will use 8080 for HTTP and 8443 for HTTPS. Defaults to 80.
 
 **CONFIG_CINDER_NETAPP_STORAGE_FAMILY**
     Storage family type used on the NetApp storage system; valid options are ontap_7mode for using Data ONTAP operating in 7-Mode, ontap_cluster for using clustered Data ONTAP, or E-Series for NetApp E-Series. Defaults to ontap_cluster. ['ontap_7mode', 'ontap_cluster', 'eseries']
 
 **CONFIG_CINDER_NETAPP_TRANSPORT_TYPE**
-    Transport protocol used when communicating with ONTAPI on the NetApp storage system or proxy server. Valid options are http or https.  Defaults to http. ['http', 'https']
+    The transport protocol used when communicating with the NetApp storage system or proxy server. Valid values are http or https. Defaults to 'http'. ['http', 'https']
 
 **CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL**
-    Storage protocol to be used on the data path with the NetApp storage system; valid options are iscsi or nfs. Defaults to nfs. ['iscsi', 'nfs']
+    Storage protocol to be used on the data path with the NetApp storage system; valid options are iscsi, fc, nfs. Defaults to nfs. ['iscsi', 'fc', 'nfs']
 
 Cinder NetApp ONTAP-iSCSI configuration
 ---------------------------------------
@@ -517,16 +517,22 @@ Cinder NetApp iSCSI & 7-mode configuration
 ------------------------------------------
 
 **CONFIG_CINDER_NETAPP_VOLUME_LIST**
-    Restricts provisioning to the specified controller volumes; the value must be a comma-separated list of NetApp controller volume names. This parameter is only utilized when the storage protocol is configured to use iSCSI.  Defaults to ''.
+    This parameter is only utilized when the storage protocol is configured to use iSCSI or FC. This parameter is used to restrict provisioning to the specified controller volumes. Specify the value of this parameter to be a comma separated list of NetApp controller volume names to be used for provisioning. Defaults to ''.
 
 **CONFIG_CINDER_NETAPP_VFILER**
-    vFiler unit on which block storage volumes will be provisioned. This parameter is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode and the storage protocol is iSCSI. Only use this parameter when utilizing the MultiStore feature on the NetApp storage system. Defaults to ''.
+    The vFiler unit on which provisioning of block storage volumes will be done. This parameter is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode Only use this parameter when utilizing the MultiStore feature on the NetApp storage system. Defaults to ''.
+
+Cinder NetApp 7-mode FC configuration
+-------------------------------------
+
+**CONFIG_CINDER_NETAPP_PARTNER_BACKEND_NAME**
+    The name of the config.conf stanza for a Data ONTAP (7-mode) HA partner.  This option is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode, and it is required if the storage protocol selected is FC. Defaults to ''.
 
 Cinder NetApp vServer configuration
 -----------------------------------
 
 **CONFIG_CINDER_NETAPP_VSERVER**
-    Specifies the virtual storage server (Vserver) name on the storage cluster on which provisioning of Block Storage volumes should occur; exports belonging to the Vserver are only used for provisioning in the future. Block Storage volumes on exports not belonging to the Vserver specified by this parameter will continue to function normally. If using the NFS storage protocol, this parameter is only mandatory for storage service catalog support (utilized by Block Storage volume type extra_specs support); otherwise, the parameter is optional.   Defaults to ''.
+    This option specifies the virtual storage server (Vserver) name on the storage cluster on which provisioning of block storage volumes should occur. Defaults to ''.
 
 Cinder NetApp E-Series configuration
 ------------------------------------
@@ -536,6 +542,9 @@ Cinder NetApp E-Series configuration
 
 **CONFIG_CINDER_NETAPP_SA_PASSWORD**
     Password for the NetApp E-Series storage array. Defaults to ''.
+
+**CONFIG_CINDER_NETAPP_ESERIES_HOST_TYPE**
+    This option is used to define how the controllers in the E-Series storage array will work with the particular operating system on the hosts that are connected to it. Defaults to 'linux_dm_mp'
 
 **CONFIG_CINDER_NETAPP_WEBSERVICE_PATH**
     Path to the NetApp E-Series proxy application on a proxy server. The value is combined with the value of the CONFIG_CINDER_NETAPP_TRANSPORT_TYPE, CONFIG_CINDER_NETAPP_HOSTNAME, and CONFIG_CINDER_NETAPP_HOSTNAME options to create the URL used by the driver to connect to the proxy application. Defaults to '/devmgr/v2'.

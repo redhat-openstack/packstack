@@ -39,6 +39,20 @@ if $netapp_storage_family == 'ontap_cluster' {
 
     package { 'iscsi-initiator-utils': ensure => present }
   }
+
+  elsif $netapp_storage_protocol == 'fc' {
+    cinder::backend::netapp { $netapp_backend_name:
+      netapp_login            => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
+      netapp_password         => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
+      netapp_server_hostname  => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
+      netapp_server_port      => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
+      netapp_size_multiplier  => hiera('CONFIG_CINDER_NETAPP_SIZE_MULTIPLIER'),
+      netapp_storage_family   => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
+      netapp_storage_protocol => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
+      netapp_transport_type   => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
+      netapp_vserver          => hiera('CONFIG_CINDER_NETAPP_VSERVER'),
+    }
+  }
 }
 elsif $netapp_storage_family == 'ontap_7mode' {
   if $netapp_storage_protocol == 'nfs' {
@@ -75,20 +89,37 @@ elsif $netapp_storage_family == 'ontap_7mode' {
 
     package { 'iscsi-initiator-utils': ensure => present }
   }
+
+  elsif $netapp_storage_protocol == 'fc' {
+    cinder::backend::netapp { $netapp_backend_name:
+      netapp_login                => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
+      netapp_password             => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
+      netapp_server_hostname      => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
+      netapp_server_port          => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
+      netapp_size_multiplier      => hiera('CONFIG_CINDER_NETAPP_SIZE_MULTIPLIER'),
+      netapp_storage_family       => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
+      netapp_storage_protocol     => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
+      netapp_transport_type       => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
+      netapp_vfiler               => hiera('CONFIG_CINDER_NETAPP_VFILER'),
+      netapp_partner_backend_name => hiera('CONFIG_CINDER_NETAPP_PARTNER_BACKEND_NAME'),
+      netapp_volume_list          => hiera('CONFIG_CINDER_NETAPP_VOLUME_LIST'),
+    }
+  }
 }
 elsif $netapp_storage_family == 'eseries' {
   cinder::backend::netapp { $netapp_backend_name:
-    netapp_login            => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
-    netapp_password         => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
-    netapp_server_hostname  => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
-    netapp_server_port      => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
-    netapp_storage_family   => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
-    netapp_storage_protocol => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
-    netapp_transport_type   => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
-    netapp_controller_ips   => hiera('CONFIG_CINDER_NETAPP_CONTROLLER_IPS'),
-    netapp_sa_password      => hiera('CONFIG_CINDER_NETAPP_SA_PASSWORD'),
-    netapp_storage_pools    => hiera('CONFIG_CINDER_NETAPP_STORAGE_POOLS'),
-    netapp_webservice_path  => hiera('CONFIG_CINDER_NETAPP_WEBSERVICE_PATH'),
+    netapp_login             => hiera('CONFIG_CINDER_NETAPP_LOGIN'),
+    netapp_password          => hiera('CONFIG_CINDER_NETAPP_PASSWORD'),
+    netapp_server_hostname   => hiera('CONFIG_CINDER_NETAPP_HOSTNAME'),
+    netapp_server_port       => hiera('CONFIG_CINDER_NETAPP_SERVER_PORT'),
+    netapp_storage_family    => hiera('CONFIG_CINDER_NETAPP_STORAGE_FAMILY'),
+    netapp_storage_protocol  => hiera('CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'),
+    netapp_transport_type    => hiera('CONFIG_CINDER_NETAPP_TRANSPORT_TYPE'),
+    netapp_controller_ips    => hiera('CONFIG_CINDER_NETAPP_CONTROLLER_IPS'),
+    netapp_sa_password       => hiera('CONFIG_CINDER_NETAPP_SA_PASSWORD'),
+    netapp_storage_pools     => hiera('CONFIG_CINDER_NETAPP_STORAGE_POOLS'),
+    netapp_eseries_host_type => hiera('CONFIG_CINDER_NETAPP_ESERIES_HOST_TYPE'),
+    netapp_webservice_path   => hiera('CONFIG_CINDER_NETAPP_WEBSERVICE_PATH'),
   }
 
   package { 'iscsi-initiator-utils': ensure => present }
