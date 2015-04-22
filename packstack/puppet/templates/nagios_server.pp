@@ -55,12 +55,13 @@ class nagios_configs(){
 
   $nagios_cfg_ks_adm_pw = hiera('CONFIG_KEYSTONE_ADMIN_PW')
   $nagios_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
+  $keystone_admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
 
   file { '/etc/nagios/keystonerc_admin':
     ensure  => file,
     owner   => 'nagios',
     mode    => '0600',
-    content => "export OS_USERNAME=admin
+    content => "export OS_USERNAME=${keystone_admin_username}
 export OS_TENANT_NAME=admin
 export OS_PASSWORD=${nagios_cfg_ks_adm_pw}
 export OS_AUTH_URL=http://${nagios_cfg_ctrl_host}:35357/v2.0/ ",

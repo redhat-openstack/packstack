@@ -4,7 +4,7 @@
   $password                  = hiera('CONFIG_KEYSTONE_DEMO_PW')
   $tenant_name               = 'demo'
   # admin user
-  $admin_username            = 'admin'
+  $admin_username            = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
   $admin_password            = hiera('CONFIG_KEYSTONE_ADMIN_PW')
   $admin_tenant_name         = 'admin'
 
