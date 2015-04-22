@@ -1,6 +1,4 @@
 
-class { '::ssh::server::install': }
-
 Class['swift'] -> Service <| |>
 
 class { '::swift':
