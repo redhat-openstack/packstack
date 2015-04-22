@@ -1,4 +1,10 @@
+$bind_host = hiera('CONFIG_IP_VERSION') ? {
+  'ipv6' => '::0',
+  'ipv4' => '0.0.0.0',
+}
+
 class { '::trove::api':
+  bind_host         => $bind_host,
   enabled           => true,
   keystone_password => hiera('CONFIG_TROVE_KS_PW'),
   auth_host         => hiera('CONFIG_KEYSTONE_HOST_URL'),

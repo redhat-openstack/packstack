@@ -14,7 +14,7 @@ if hiera('CONFIG_MANILA_INSTALL') == 'y' {
 
 $ost_cl_keystone_admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
 $ost_cl_keystone_admin_pw       = hiera('CONFIG_KEYSTONE_ADMIN_PW')
-$ost_cl_ctrl_host               = hiera('CONFIG_CONTROLLER_HOST')
+$ost_cl_ctrl_host               = hiera('CONFIG_KEYSTONE_HOST_URL')
 $ost_cl_keystone_region         = hiera('CONFIG_KEYSTONE_REGION')
 $ost_cl_keystone_demo_pw        = hiera('CONFIG_KEYSTONE_DEMO_PW')
 $rcadmin_content = "export OS_USERNAME=${ost_cl_keystone_admin_username}
