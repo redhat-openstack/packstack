@@ -34,8 +34,8 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 def process_trove_nova_pw(param, param_name, config=None):
     if (param == 'PW_PLACEHOLDER' and
-            config['CONFIG_TROVE_NOVA_USER'] == 'admin'):
-        return config['CONFIG_KEYSTONE_ADMIN_PW']
+            config['CONFIG_TROVE_NOVA_USER'] == 'trove'):
+        return config['CONFIG_TROVE_KS_PW']
     else:
         return param
 
@@ -77,7 +77,7 @@ def initConfig(controller):
          "PROMPT": "Enter the user for Trove to use to connect to Nova",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": "admin",
+         "DEFAULT_VALUE": "trove",
          "MASK_INPUT": False,
          "LOOSE_VALIDATION": False,
          "USE_DEFAULT": True,
@@ -103,7 +103,7 @@ def initConfig(controller):
          "PROMPT": "Enter the password for Trove to use to connect to Nova",
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": "PW_PLACEHOLDER",  # default is admin pass
+         "DEFAULT_VALUE": "PW_PLACEHOLDER",  # default is trove pass
          "PROCESSORS": [process_trove_nova_pw],
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
@@ -146,9 +146,21 @@ def create_keystone_manifest(config, messages):
 
 
 def create_manifest(config, messages):
-    if (config['CONFIG_TROVE_NOVA_USER'] == 'admin' and
+    if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
+        ssl_cert_file = config['CONFIG_TROVE_SSL_CERT'] = (
+            '/etc/pki/tls/certs/ssl_amqp_trove.crt'
+        )
+        ssl_key_file = config['CONFIG_TROVE_SSL_KEY'] = (
+            '/etc/pki/tls/private/ssl_amqp_trove.key'
+        )
+        ssl_host = config['CONFIG_CONTROLLER_HOST']
+        service = 'trove'
+        generate_ssl_cert(config, ssl_host, service, ssl_key_file,
+                          ssl_cert_file)
+
+    if (config['CONFIG_TROVE_NOVA_USER'] == 'trove' and
             config['CONFIG_TROVE_NOVA_PW'] == ''):
-        config['CONFIG_TROVE_NOVA_PW'] = config['CONFIG_KEYSTONE_ADMIN_PW']
+        config['CONFIG_TROVE_NOVA_PW'] = config['CONFIG_TROVE_KS_PW']
 
     manifestfile = "%s_trove.pp" % config["CONFIG_CONTROLLER_HOST"]
     manifestdata = getManifestTemplate(get_mq(config, "trove"))
