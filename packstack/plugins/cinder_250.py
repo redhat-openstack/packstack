@@ -133,8 +133,8 @@ def initConfig(controller):
             {"CMD_OPTION": "cinder-nfs-mounts",
              "PROMPT": ("Enter a single or comma seprated list of NFS exports "
                         "to use with Cinder"),
-             "OPTION_LIST": ["^([\d]{1,3}\.){3}[\d]{1,3}:/.*"],
-             "VALIDATORS": [validators.validate_multi_regexp],
+             "OPTION_LIST": [""],
+             "VALIDATORS": [validators.validate_multi_export],
              "PROCESSORS": [],
              "DEFAULT_VALUE": "",
              "MASK_INPUT": False,

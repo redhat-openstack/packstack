@@ -31,7 +31,8 @@ __all__ = ('ParamValidationError', 'validate_integer', 'validate_float',
            'validate_options', 'validate_multi_options', 'validate_ip',
            'validate_multi_ip', 'validate_file', 'validate_ping',
            'validate_multi_ping', 'validate_ssh', 'validate_multi_ssh',
-           'validate_sshkey', 'validate_ldap_url', 'validate_ldap_dn')
+           'validate_sshkey', 'validate_ldap_url', 'validate_ldap_dn',
+           'validate_export', 'validate_multi_export')
 
 
 def validate_integer(param, options=None):
@@ -328,3 +329,39 @@ def validate_ldap_dn(param, options=None):
         msg = ('The given string [%s] is not a valid LDAP DN: %s' %
                (param, de))
         raise ParamValidationError(msg)
+
+
+def validate_export(param, options=None):
+    """
+    Raises ParamValidationError if the nfs export is not valid.
+    """
+    msg = ('The nfs export [%s] is not a valid export - use squares around ipv6 addresses -.' %
+           param)
+    try:
+        [ip, export] = param.split(':/')
+    except ValueError:
+        raise ParamValidationError(msg)
+    get_squares = re.search(r'\[([^]]+)\]', ip)
+    ip_to_test = ip
+    if get_squares:
+        # this should be a valid ipv6 address.
+        ip_to_test = get_squares.group(1)
+        if not utils.network.is_ipv6(ip_to_test):
+            raise ParamValidationError(msg)
+    else:
+        # this should be an ipv4. Cannot have ipv6 without square braquet
+        # notation here, as the mount will fail.
+        if not utils.network.is_ipv4(ip):
+            raise ParamValidationError(msg)
+    validate_ip(ip_to_test, options)
+    if not export:
+        raise ParamValidationError(msg)
+
+
+def validate_multi_export(param, options=None):
+    """
+    Raises ParamValidationError if comma separated nfs export given
+    in param is not valid
+    """
+    for export in param.split(","):
+        validate_export(export)
