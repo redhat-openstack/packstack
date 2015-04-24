@@ -567,29 +567,50 @@ Manila Config parameters
 Manila NetApp configuration
 ---------------------------
 
-**CONFIG_MANILA_NETAPP_NAS_TRANSPORT_TYPE**
-    Transport protocol used when communicating with ONTAPI on the NetApp storage system or proxy server. Valid options are http or https.  Defaults to http. ['http', 'https']
+**CONFIG_MANILA_NETAPP_DRV_HANDLES_SHARE_SERVERS**
+    Denotes whether the driver should handle the responsibility of managing share servers. This must be set to false if the driver is to operate without managing share servers. Defaults to 'false' ['true', 'false']
 
-**CONFIG_MANILA_NETAPP_NAS_LOGIN**
-    Administrative user account name used to access the NetApp storage system or proxy server.  ['']
+**CONFIG_MANILA_NETAPP_TRANSPORT_TYPE**
+    The transport protocol used when communicating with the storage system or proxy server. Valid values are 'http' and 'https'. Defaults to 'https'. ['https', 'http']
 
-**CONFIG_MANILA_NETAPP_NAS_PASSWORD**
-    Password for the NetApp administrative user account specified in the CONFIG_MANILA_NETAPP_NAS_LOGIN parameter. ['']
+**CONFIG_MANILA_NETAPP_LOGIN**
+    Administrative user account name used to access the NetApp storage system.  Defaults to ''.
 
-**CONFIG_MANILA_NETAPP_NAS_SERVER_HOSTNAME**
-    Hostname (or IP address) for the NetApp storage system or proxy server.
+**CONFIG_MANILA_NETAPP_PASSWORD**
+    Password for the NetApp administrative user account specified in the CONFIG_MANILA_NETAPP_LOGIN parameter. Defaults to ''.
+
+**CONFIG_MANILA_NETAPP_SERVER_HOSTNAME**
+    Hostname (or IP address) for the NetApp storage system or proxy server. Defaults to ''.
+
+**CONFIG_MANILA_NETAPP_STORAGE_FAMILY**
+    The storage family type used on the storage system; valid values are ontap_cluster for clustered Data ONTAP. Defaults to 'ontap_cluster'. ['ontap_cluster']
+
+**CONFIG_MANILA_NETAPP_SERVER_PORT**
+    The TCP port to use for communication with the storage system or proxy server. If not specified, Data ONTAP drivers will use 80 for HTTP and 443 for HTTPS. Defaults to '443'.
 
 **CONFIG_MANILA_NETAPP_AGGREGATE_NAME_SEARCH_PATTERN**
-    Pattern for searching available aggregates for NetApp provisioning.
+    Pattern for searching available aggregates for NetApp provisioning. Defaults to '(.*)'.
+
+Manila NetApp Multi-SVM configuration
+-------------------------------------
 
 **CONFIG_MANILA_NETAPP_ROOT_VOLUME_AGGREGATE**
-    Name of aggregate on which to create the NetApp root volume.
+    Name of aggregate on which to create the NetApp root volume. This option only applies when the option CONFIG_MANILA_NETAPP_DRV_HANDLES_SHARE_SERVERS is set to True.
 
 **CONFIG_MANILA_NETAPP_ROOT_VOLUME_NAME**
-    NetApp root volume name.
+    NetApp root volume name. Defaults to 'root'.
+
+Manila NetApp Single-SVM configuration
+--------------------------------------
+
+**CONFIG_MANILA_NETAPP_VSERVER**
+    This option specifies the storage virtual machine (previously called a Vserver) name on the storage cluster on which provisioning of shared file systems should occur. This option only applies when the option driver_handles_share_servers is set to False. Defaults to ''.
 
 Manila generic driver configuration
 -----------------------------------
+
+**CONFIG_MANILA_GENERIC_DRV_HANDLES_SHARE_SERVERS**
+    Denotes whether the driver should handle the responsibility of managing share servers. This must be set to false if the driver is to operate without managing share servers. Defaults to 'true'. ['true', 'false']
 
 **CONFIG_MANILA_GENERIC_VOLUME_NAME_TEMPLATE**
     Volume name template for Manila service. Defaults to 'manila-share-%s'.
@@ -598,7 +619,7 @@ Manila generic driver configuration
     Share mount path for Manila service. Defaults to '/shares'.
 
 **CONFIG_MANILA_SERVICE_IMAGE_LOCATION**
-    Location of disk image for Manila service instance.
+    Location of disk image for Manila service instance. Defaults to 'https://www.dropbox.com/s/vi5oeh10q1qkckh/ubuntu_1204_nfs_cifs.qcow2'.
 
 **CONFIG_MANILA_SERVICE_INSTANCE_USER**
     User in Manila service instance.

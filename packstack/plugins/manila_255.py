@@ -27,7 +27,7 @@ from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 
-# ------------- Manila  Packstack Plugin Initialization --------------
+# ------------- Manila Packstack Plugin Initialization --------------
 
 PLUGIN_NAME = "OS-Manila"
 PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
@@ -76,51 +76,89 @@ def initConfig(controller):
         ],
 
         "MANILANETAPP": [
-            {"CMD_OPTION": "manila-netapp-nas-transport-type",
-             "PROMPT": ("Enter a NetApp transport type"),
-             "OPTION_LIST": ["http", "https"],
+            {"CMD_OPTION": "manila-netapp-driver-handles-share-servers",
+             "PROMPT": ("Enter whether the driver handles share servers"),
+             "OPTION_LIST": ["true", "false"],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "http",
+             "DEFAULT_VALUE": "false",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_MANILA_NETAPP_NAS_TRANSPORT_TYPE",
+             "CONF_NAME": "CONFIG_MANILA_NETAPP_DRV_HANDLES_SHARE_SERVERS",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "manila-netapp-nas-login",
+            {"CMD_OPTION": "manila-netapp-transport-type",
+             "PROMPT": ("Enter a NetApp transport type"),
+             "OPTION_LIST": ["http", "https"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "https",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETAPP_TRANSPORT_TYPE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "manila-netapp-login",
              "PROMPT": ("Enter a NetApp login"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "admin",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_MANILA_NETAPP_NAS_LOGIN",
+             "CONF_NAME": "CONFIG_MANILA_NETAPP_LOGIN",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "manila-netapp-nas-password",
+            {"CMD_OPTION": "manila-netapp-password",
              "PROMPT": ("Enter a NetApp password"),
              "OPTION_LIST": [""],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "",
              "MASK_INPUT": True,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_MANILA_NETAPP_NAS_PASSWORD",
+             "CONF_NAME": "CONFIG_MANILA_NETAPP_PASSWORD",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": True,
              "CONDITION": False},
 
-            {"CMD_OPTION": "manila-netapp-nas-server-hostname",
+            {"CMD_OPTION": "manila-netapp-server-hostname",
              "PROMPT": ("Enter a NetApp hostname"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
-             "PROCESSORS": [processors.process_add_quotes_around_values],
+             "PROCESSORS": [],
              "DEFAULT_VALUE": "",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_MANILA_NETAPP_NAS_SERVER_HOSTNAME",
+             "CONF_NAME": "CONFIG_MANILA_NETAPP_SERVER_HOSTNAME",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "manila-netapp-storage-family",
+             "PROMPT": ("Enter a NetApp storage family"),
+             "OPTION_LIST": ['ontap_cluster'],
+             "VALIDATORS": [validators.validate_options],
+             "PROCESSORS": [],
+             "DEFAULT_VALUE": "ontap_cluster",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETAPP_STORAGE_FAMILY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "manila-netapp-server-port",
+             "PROMPT": ("Enter a NetApp server port"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "PROCESSORS": [],
+             "DEFAULT_VALUE": "443",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETAPP_SERVER_PORT",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
@@ -136,7 +174,9 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+        ],
 
+        "MANILANETAPPMULTISVM": [
             {"CMD_OPTION": "manila-netapp-root-volume-aggregate",
              "PROMPT": ("Enter a NetApp root volume aggregate"),
              "OPTION_LIST": [],
@@ -150,7 +190,7 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "manila-netapp-root-volume-name",
-             "PROMPT": ("Enter a NetApp root volume name"),
+             "PROMPT": ("Enter a NetApp root volume name."),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "root",
@@ -162,7 +202,38 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
+        "MANILANETAPPSINGLESVM": [
+            {"CMD_OPTION": "manila-netapp-vserver",
+             "PROMPT": ("Enter a NetApp Vserver"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "PROCESSORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_NETAPP_VSERVER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
+
         "MANILAGENERIC": [
+            {"CMD_OPTION": "manila-generic-driver-handles-share-servers",
+             "USAGE": ("Denotes whether the driver should handle the "
+                       "responsibility of managing share servers. This must be "
+                       "set to false if the driver is to operate without "
+                       "managing share servers."),
+             "PROMPT": ("Enter whether the driver handles share servers"),
+             "OPTION_LIST": ["true", "false"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "true",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GENERIC_DRV_HANDLES_SHARE_SERVERS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "manila-generic-volume-name-template",
              "PROMPT": ("Enter a volume name template"),
              "OPTION_LIST": [],
@@ -241,6 +312,20 @@ def initConfig(controller):
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
+        {"GROUP_NAME": "MANILANETAPPMULTISVM",
+         "DESCRIPTION": "Manila NetApp multi-SVM configuration",
+         "PRE_CONDITION": check_netapp_options_multi_svm,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "MANILANETAPPSINGLESVM",
+         "DESCRIPTION": "Manila NetApp single-SVM configuration",
+         "PRE_CONDITION": check_netapp_options_single_svm,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
         {"GROUP_NAME": "MANILAGENERIC",
          "DESCRIPTION": "Manila generic driver configuration",
          "PRE_CONDITION": check_generic_options,
@@ -275,13 +360,25 @@ def initSequences(controller):
 # ------------------------- helper functions -------------------------
 
 def check_netapp_options(config):
-    return (config.get('CONFIG_MANILA_INSTALL', 'n') == 'y' and
-            config.get('CONFIG_MANILA_BACKEND', 'generic') == 'netapp')
+    return (config['CONFIG_MANILA_INSTALL'] == 'y' and
+            'netapp' in config['CONFIG_MANILA_BACKEND'])
+
+
+def check_netapp_options_multi_svm(config):
+    key_name = 'CONFIG_MANILA_NETAPP_DRV_HANDLES_SHARE_SERVERS'
+    return (check_netapp_options(config) and
+            config[key_name] == "true")
+
+
+def check_netapp_options_single_svm(config):
+    key_name = 'CONFIG_MANILA_NETAPP_DRV_HANDLES_SHARE_SERVERS'
+    return (check_netapp_options(config) and
+            config[key_name] == "false")
 
 
 def check_generic_options(config):
-    return (config.get('CONFIG_MANILA_INSTALL', 'n') == 'y' and
-            config.get('CONFIG_MANILA_BACKEND', 'generic') == 'generic')
+    return (config['CONFIG_MANILA_INSTALL'] == 'y' and
+            'generic' in config['CONFIG_MANILA_BACKEND'])
 
 
 # -------------------------- step functions --------------------------
@@ -298,6 +395,16 @@ def create_keystone_manifest(config, messages):
 def create_manifest(config, messages):
     if config['CONFIG_UNSUPPORTED'] != 'y':
         config['CONFIG_STORAGE_HOST'] = config['CONFIG_CONTROLLER_HOST']
+
+    # Change these from text to Boolean values
+    boolean_keys = ['CONFIG_MANILA_GENERIC_DRV_HANDLES_SHARE_SERVERS',
+                    'CONFIG_MANILA_NETAPP_DRV_HANDLES_SHARE_SERVERS']
+    for key in [k for k in boolean_keys if k in config]:
+        if config[key].lower() == "true":
+            config[key] = True
+
+        elif config[key].lower() == "false":
+            config[key] = False
 
     manifestdata = getManifestTemplate(get_mq(config, "manila"))
     manifestfile = "%s_manila.pp" % config['CONFIG_STORAGE_HOST']
