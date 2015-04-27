@@ -19,11 +19,6 @@ class { '::manila::api':
   keystone_auth_host => hiera('CONFIG_KEYSTONE_HOST_URL'),
 }
 
-class { '::manila::network::neutron':
-  neutron_admin_password    => hiera('CONFIG_NEUTRON_KS_PW'),
-  neutron_admin_tenant_name => 'services',
-}
-
 class { '::manila::scheduler':
 }
 

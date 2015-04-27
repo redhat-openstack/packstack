@@ -12,3 +12,5 @@ manila::backend::netapp{ 'netapp':
   netapp_root_volume_aggregate         => hiera('CONFIG_MANILA_NETAPP_ROOT_VOLUME_AGGREGATE', undef),
   netapp_root_volume_name              => hiera('CONFIG_MANILA_NETAPP_ROOT_VOLUME_NAME', undef),
 }
+
+packstack::manila::network{ 'netapp': }
