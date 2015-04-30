@@ -1,7 +1,5 @@
 include ::packstack::apache_common
 
-$keystone_host = hiera('CONFIG_KEYSTONE_HOST_URL')
-
 $horizon_packages = ['python-memcached', 'python-netaddr']
 
 package { $horizon_packages:
@@ -26,7 +24,7 @@ $horizon_ssl = hiera('CONFIG_HORIZON_SSL') ? {
 
 class {'::horizon':
   secret_key            => hiera('CONFIG_HORIZON_SECRET_KEY'),
-  keystone_url          => "http://${keystone_host}:5000/v2.0",
+  keystone_url          => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   keystone_default_role => '_member_',
   server_aliases        => [hiera('CONFIG_CONTROLLER_HOST'), $::fqdn, 'localhost'],
   allowed_hosts         => '*',

@@ -1,4 +1,3 @@
-
 $nova_neutron_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
 class { '::nova::network::neutron':
@@ -6,7 +5,7 @@ class { '::nova::network::neutron':
   neutron_auth_strategy     => 'keystone',
   neutron_url               => "http://${nova_neutron_cfg_ctrl_host}:9696",
   neutron_admin_tenant_name => 'services',
-  neutron_admin_auth_url    => "http://${nova_neutron_cfg_ctrl_host}:35357/v2.0",
+  neutron_admin_auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   neutron_region_name       => hiera('CONFIG_KEYSTONE_REGION'),
 }
 

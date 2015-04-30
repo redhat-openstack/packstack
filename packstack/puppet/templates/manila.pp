@@ -16,7 +16,7 @@ class { '::manila::api':
   keystone_password  => hiera('CONFIG_MANILA_KS_PW'),
   keystone_tenant    => 'services',
   keystone_user      => 'manila',
-  keystone_auth_host => hiera('CONFIG_KEYSTONE_HOST_URL'),
+  keystone_auth_uri  => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
 }
 
 class { '::manila::scheduler':

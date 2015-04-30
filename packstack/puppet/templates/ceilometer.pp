@@ -34,10 +34,8 @@ class { '::ceilometer::collector': }
 
 class { '::ceilometer::agent::notification': }
 
-$config_controller_host = hiera('CONFIG_KEYSTONE_HOST_URL')
-
 class { '::ceilometer::agent::auth':
-  auth_url      => "http://${config_controller_host}:35357/v2.0",
+  auth_url      => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   auth_password => hiera('CONFIG_CEILOMETER_KS_PW'),
 }
 
@@ -56,7 +54,8 @@ $bind_host = hiera('CONFIG_IP_VERSION') ? {
   'ipv4' => '0.0.0.0',
 }
 class { '::ceilometer::api':
-  host              => $bind_host,
-  keystone_host     => hiera('CONFIG_KEYSTONE_HOST_URL'),
-  keystone_password => hiera('CONFIG_CEILOMETER_KS_PW'),
+  host                  => $bind_host,
+  keystone_auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  keystone_identity_uri => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+  keystone_password     => hiera('CONFIG_CEILOMETER_KS_PW'),
 }

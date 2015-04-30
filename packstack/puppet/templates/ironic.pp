@@ -3,7 +3,7 @@ ironic_config {
 }
 
 class { '::ironic::api':
-  auth_host      => hiera('CONFIG_KEYSTONE_HOST_URL'),
+  auth_uri       => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   admin_password => hiera('CONFIG_IRONIC_KS_PW'),
 }
 

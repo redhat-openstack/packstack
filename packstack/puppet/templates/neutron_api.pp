@@ -1,7 +1,8 @@
 class { '::neutron::server':
   database_connection => $neutron_sql_connection,
   auth_password       => $neutron_user_password,
-  auth_host           => hiera('CONFIG_KEYSTONE_HOST_URL'),
+  auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   enabled             => true,
 }
 

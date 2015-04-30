@@ -70,6 +70,7 @@ class { '::swift::proxy::authtoken':
   admin_tenant_name => 'services',
   admin_password    => hiera('CONFIG_SWIFT_KS_PW'),
   # assume that the controller host is the swift api server
-  auth_host         => hiera('CONFIG_STORAGE_HOST_URL'),
+  auth_uri          => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  identity_uri      => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
 }
 

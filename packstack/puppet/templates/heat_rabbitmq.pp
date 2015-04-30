@@ -1,4 +1,3 @@
-$heat_rabbitmq_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 $heat_rabbitmq_cfg_heat_db_pw = hiera('CONFIG_HEAT_DB_PW')
 $heat_rabbitmq_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
 
@@ -17,10 +16,10 @@ if $kombu_ssl_keyfile {
 }
 
 class { '::heat':
-  keystone_host       => $heat_rabbitmq_cfg_ctrl_host,
   keystone_password   => hiera('CONFIG_HEAT_KS_PW'),
-  auth_uri            => "http://${heat_rabbitmq_cfg_ctrl_host}:35357/v2.0",
-  keystone_ec2_uri    => "http://${heat_rabbitmq_cfg_ctrl_host}:35357/v2.0",
+  auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+  keystone_ec2_uri    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   rpc_backend         => 'heat.openstack.common.rpc.impl_kombu',
   rabbit_host         => hiera('CONFIG_AMQP_HOST_URL'),
   rabbit_port         => hiera('CONFIG_AMQP_CLIENTS_PORT'),

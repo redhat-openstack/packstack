@@ -16,7 +16,8 @@ class { '::cinder::api':
   keystone_password  => hiera('CONFIG_CINDER_KS_PW'),
   keystone_tenant    => 'services',
   keystone_user      => 'cinder',
-  keystone_auth_host => hiera('CONFIG_KEYSTONE_HOST_URL'),
+  auth_uri           => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  identity_uri       => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
 }
 
 class { '::cinder::scheduler': }
@@ -25,14 +26,12 @@ class { '::cinder::volume': }
 
 class { '::cinder::client': }
 
-$cinder_config_controller_host = hiera('CONFIG_KEYSTONE_HOST_URL')
-
 # Cinder::Type requires keystone credentials
 Cinder::Type {
   os_password    => hiera('CONFIG_CINDER_KS_PW'),
   os_tenant_name => 'services',
   os_username    => 'cinder',
-  os_auth_url    => "http://${cinder_config_controller_host}:5000/v2.0/",
+  os_auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
 }
 
 class { '::cinder::backends':

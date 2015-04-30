@@ -14,13 +14,13 @@ if hiera('CONFIG_MANILA_INSTALL') == 'y' {
 
 $ost_cl_keystone_admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
 $ost_cl_keystone_admin_pw       = hiera('CONFIG_KEYSTONE_ADMIN_PW')
-$ost_cl_ctrl_host               = hiera('CONFIG_KEYSTONE_HOST_URL')
+$ost_cl_ctrl_keystone_url       = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
 $ost_cl_keystone_region         = hiera('CONFIG_KEYSTONE_REGION')
 $ost_cl_keystone_demo_pw        = hiera('CONFIG_KEYSTONE_DEMO_PW')
 $rcadmin_content = "export OS_USERNAME=${ost_cl_keystone_admin_username}
 export OS_TENANT_NAME=admin
 export OS_PASSWORD=${ost_cl_keystone_admin_pw}
-export OS_AUTH_URL=http://${ost_cl_ctrl_host}:5000/v2.0/
+export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
 export OS_REGION_NAME=${ost_cl_keystone_region}
 export PS1='[\\u@\\h \\W(keystone_admin)]\\$ '
 "
@@ -38,7 +38,7 @@ if hiera('CONFIG_PROVISION_DEMO') == 'y' {
     content => "export OS_USERNAME=demo
 export OS_TENANT_NAME=demo
 export OS_PASSWORD=${ost_cl_keystone_demo_pw}
-export OS_AUTH_URL=http://${ost_cl_ctrl_host}:5000/v2.0/
+export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
 export PS1='[\\u@\\h \\W(keystone_demo)]\\$ '
 ",
   }
