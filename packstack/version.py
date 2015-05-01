@@ -48,6 +48,7 @@ def vr_from_git():
         tag, snap_tag, git_hash = description.split('-')
     else:
         # no tag has been found
+        tag = '.'.join(VERSION)
         rc, git_hash = execute(
             'git log -n1 --pretty=format:%h',
             workdir=proj_dir,
@@ -61,11 +62,9 @@ def vr_from_git():
             use_shell=True,
             log=False
         )
-    return '{0}.dev{1}.{2}'.format(
-        '.'.join(VERSION),
-        snap_tag.strip(),
-        git_hash.strip(),
-    )
+
+    tag, snap_tag, git_hash = tag.strip(), snap_tag.strip(), git_hash.strip()
+    return '{tag}.dev{snap_tag}.{git_hash}'.format(**locals())
 
 
 def vr_from_setuptools():
