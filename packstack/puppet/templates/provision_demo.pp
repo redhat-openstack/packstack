@@ -19,7 +19,6 @@
   $setup_ovs_bridge          = hiera('CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
   $public_bridge_name        = hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE')
   $provision_neutron_avail   = hiera('PROVISION_NEUTRON_AVAILABLE')
-  $ip_version                = hiera('CONFIG_IP_VERSION')
 
   ## Users
 
@@ -43,9 +42,7 @@
   }
 
   ## Neutron
-  # IPv6 support is not yet available for public network in packstack.  It can
-  # be done manually.  Here we just ensure that we don't fail.
-  if $provision_neutron_avail and $ip_version != 'ipv6' {
+  if $provision_neutron_avail {
     $neutron_deps = [Neutron_network[$public_network_name]]
 
     neutron_network { $public_network_name:
@@ -91,7 +88,7 @@
     }
   }
 
-if $setup_ovs_bridge and $ip_version != 'ipv6' {
+if $setup_ovs_bridge {
   firewall { '000 nat':
     chain    => 'POSTROUTING',
     jump     => 'MASQUERADE',
