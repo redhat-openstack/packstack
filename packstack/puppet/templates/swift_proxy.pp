@@ -19,7 +19,8 @@ class { '::memcached':
 }
 
 class { '::swift::proxy':
-  proxy_local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
+  # swift seems to require ipv6 address without brackets
+  proxy_local_net_ip => hiera('CONFIG_STORAGE_HOST'),
   pipeline           => [
     'catch_errors',
     'bulk',

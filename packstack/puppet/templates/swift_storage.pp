@@ -1,7 +1,8 @@
 
 # install all swift storage servers together
 class { '::swift::storage::all':
-  storage_local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
+  # looks like ipv6 address without brackets is required here
+  storage_local_net_ip => hiera('CONFIG_STORAGE_HOST'),
   allow_versions       => true,
   require              => Class['swift'],
 }
