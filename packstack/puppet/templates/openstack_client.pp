@@ -17,13 +17,34 @@ $ost_cl_keystone_admin_pw       = hiera('CONFIG_KEYSTONE_ADMIN_PW')
 $ost_cl_ctrl_keystone_url       = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
 $ost_cl_keystone_region         = hiera('CONFIG_KEYSTONE_REGION')
 $ost_cl_keystone_demo_pw        = hiera('CONFIG_KEYSTONE_DEMO_PW')
-$rcadmin_content = "export OS_USERNAME=${ost_cl_keystone_admin_username}
-export OS_TENANT_NAME=admin
+
+$config_keystone_api_version = hiera('CONFIG_KEYSTONE_API_VERSION')
+if $config_keystone_api_version =~ /^v(\d+)\.(\d+).*$/ {
+  # we need to force integer here
+  $int_api_version = 0 + $1
+}
+
+$rcadmin_common_content = "unset OS_SERVICE_TOKEN
+export OS_USERNAME=${ost_cl_keystone_admin_username}
 export OS_PASSWORD=${ost_cl_keystone_admin_pw}
 export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
-export OS_REGION_NAME=${ost_cl_keystone_region}
 export PS1='[\\u@\\h \\W(keystone_admin)]\\$ '
 "
+
+if $int_api_version < 3 {
+  $rcadmin_content = "${rcadmin_common_content}
+export OS_TENANT_NAME=admin
+export OS_REGION_NAME=${ost_cl_keystone_region}
+"
+}
+else {
+    $rcadmin_content = "${rcadmin_common_content}
+export OS_PROJECT_NAME=admin
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_IDENTITY_API_VERSION=${int_api_version}
+"
+}
 
 file { "${::home_dir}/keystonerc_admin":
   ensure  => file,
@@ -32,15 +53,31 @@ file { "${::home_dir}/keystonerc_admin":
 }
 
 if hiera('CONFIG_PROVISION_DEMO') == 'y' {
+  $demo_common_content = "unset OS_SERVICE_TOKEN
+export OS_USERNAME=demo
+export OS_PASSWORD=${ost_cl_keystone_demo_pw}
+export PS1='[\\u@\\h \\W(keystone_demo)]\\$
+export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
+"
+
+  if $int_api_version < 3 {
+    $demo_content = "${demo_common_content}
+export OS_TENANT_NAME=demo
+export OS_IDENTITY_API_VERSION=hiera('CONFIG_KEYSTONE_API_VERSION')
+"
+  } else {
+    $demo_content = "${demo_common_content}
+export OS_PROJECT_NAME=demo
+export OS_USER_DOMAIN_NAME=Default
+export OS_PROJECT_DOMAIN_NAME=Default
+export OS_IDENTITY_API_VERSION=${int_api_version}
+"
+  }
+
   file { "${::home_dir}/keystonerc_demo":
     ensure  => file,
     mode    => '0600',
-    content => "export OS_USERNAME=demo
-export OS_TENANT_NAME=demo
-export OS_PASSWORD=${ost_cl_keystone_demo_pw}
-export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
-export PS1='[\\u@\\h \\W(keystone_demo)]\\$ '
-",
+    content => $demo_content,
   }
 }
 
