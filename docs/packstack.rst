@@ -590,7 +590,7 @@ Manila Config parameters
     Password to use for the OpenStack File Share service (manila) to authenticate with the Identity service.
 
 **CONFIG_MANILA_BACKEND**
-    Backend for the OpenStack File Share service (manila); valid options are: generic or netapp. ['generic', 'netapp']
+    Backend for the OpenStack File Share service (manila); valid options are: generic, netapp, glusternative, or glusternfs. ['generic', 'netapp', 'glusternative', 'glusternfs']
 
 Manila NetApp configuration
 ---------------------------
@@ -1057,6 +1057,35 @@ If we need a answer file to tailor it and then debug:
 packstack --gen-answer-file=ans.txt
 packstack -d --answer-file=ans.txt
 
+Glusterfs Native (FUSE) configuration info
+------------------------------------------
+
+**CONFIG_MANILA_GLUSTERFS_SERVERS**
+    List of GlusterFS servers that can be used to create shares. Each GlusterFS server should be of the form [remoteuser@]<volserver>, and they are assumed to belong to distinct Gluster clusters.
+
+**CONFIG_MANILA_GLUSTERFS_NATIVE_PATH_TO_PRIVATE_KEY**
+    Path of Manila host's private SSH key file.
+
+**CONFIG_MANILA_GLUSTERFS_VOLUME_PATTERN**
+    Regular expression template used to filter GlusterFS volumes for share creation. The regex template can optionally (ie. with support of the GlusterFS backend) contain the #{size} parameter which matches an integer (sequence of digits) in which case the value shall be intepreted as size of the volume in GB. Examples: "manila-share-volume-\d+$", "manila-share-volume-#{size}G-\d+$"; with matching volume names, respectively: "manila-share-volume-12", "manila-share-volume-3G-13". In latter example, the number that matches "#{size}", that is, 3, is an indication that the size of volume is 3G.
+
+GlusterNFS configuration info
+-----------------------------
+
+**CONFIG_MANILA_GLUSTERFS_TARGET**
+    Specifies the GlusterFS volume to be mounted on the Manila host. For e.g: [remoteuser@]<volserver>:/<volid>
+
+**CONFIG_MANILA_GLUSTERFS_MOUNT_POINT_BASE**
+    Base directory containing mount points for Gluster volumes.
+
+**CONFIG_MANILA_GLUSTERFS_NFS_SERVER_TYPE**
+    Type of NFS server that mediate access to the Gluster volumes (Gluster or Ganesha).
+
+**CONFIG_MANILA_GLUSTERFS_PATH_TO_PRIVATE_KEY**
+    Path of Manila host's private SSH key file.
+
+**CONFIG_MANILA_GLUSTERFS_GANESHA_SERVER_IP**
+    Remote Ganesha server node's IP address.
 
 SOURCE
 ======
