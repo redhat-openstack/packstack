@@ -65,7 +65,8 @@ def initConfig(controller):
 
             {"CMD_OPTION": "manila-backend",
              "PROMPT": "Enter the Manila backend to be configured",
-             "OPTION_LIST": ["generic", "netapp"],
+             "OPTION_LIST": ["generic", "netapp", "glusternative",
+                             "glusternfs"],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "generic",
              "MASK_INPUT": False,
@@ -372,6 +373,106 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
         ],
+
+        "MANILAGLUSTERNATIVE": [
+            {"CMD_OPTION": "glusterfs-servers",
+             "PROMPT": ("Enter GlusterFS servers"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GLUSTERFS_SERVERS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "glusterfs-native-path-to-private_key",
+             "PROMPT": ("Enter path to the GlusterFS private key"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GLUSTERFS_NATIVE_PATH_TO_PRIVATE_KEY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "glusterfs-volume-pattern",
+             "PROMPT": ("Enter volume pattern for GlusterFS"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GLUSTERFS_VOLUME_PATTERN",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
+
+        "MANILAGLUSTERNFS": [
+            {"CMD_OPTION": "glusterfs-target",
+             "PROMPT": ("Enter GlusterFS target"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GLUSTERFS_TARGET",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "glusterfs-mount-point-base",
+             "PROMPT": ("Enter a mount point for GlusterFS mount"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GLUSTERFS_MOUNT_POINT_BASE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "glusterfs-nfs-server-type",
+             "PROMPT": ("Enter NFS server type (gluster/ganesha)"),
+             "OPTION_LIST": ['gluster', 'ganesha'],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "gluster",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GLUSTERFS_NFS_SERVER_TYPE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "glusterfs-path-to-private-key",
+             "PROMPT": ("Enter path to GlusterFS server private key"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GLUSTERFS_PATH_TO_PRIVATE_KEY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "glusterfs-ganesha-server-ip",
+             "PROMPT": ("Enter ip address of GlusterFS ganesha server"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_MANILA_GLUSTERFS_GANESHA_SERVER_IP",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
     }
     update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
     conf_groups = [
@@ -420,6 +521,20 @@ def initConfig(controller):
         {"GROUP_NAME": "MANILANETWORKSTANDALONE",
          "DESCRIPTION": "Manila standalone network configuration",
          "PRE_CONDITION": check_network_standalone_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "MANILAGLUSTERNATIVE",
+         "DESCRIPTION": "Manila GlusterFS native configuration",
+         "PRE_CONDITION": check_glusternative_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "MANILAGLUSTERNFS",
+         "DESCRIPTION": "Manila GlusterNFS configuration",
+         "PRE_CONDITION": check_glusternfs_options,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
@@ -475,6 +590,16 @@ def check_generic_options(config):
 def check_network_standalone_options(config):
     return (config['CONFIG_MANILA_INSTALL'] == 'y' and
             config['CONFIG_MANILA_NETWORK_TYPE'] == 'standalone')
+
+
+def check_glusternative_options(config):
+    return (config['CONFIG_MANILA_INSTALL'] == 'y' and
+            'glusternative' in config['CONFIG_MANILA_BACKEND'])
+
+
+def check_glusternfs_options(config):
+    return (config['CONFIG_MANILA_INSTALL'] == 'y' and
+            'glusternfs' in config['CONFIG_MANILA_BACKEND'])
 
 
 # -------------------------- step functions --------------------------
