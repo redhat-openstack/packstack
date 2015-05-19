@@ -1,10 +1,9 @@
 $mongodb_host = hiera('CONFIG_MONGODB_HOST')
-$use_epel = hiera('CONFIG_USE_EPEL')
 
 # The MongoDB config files differ between versions
 if (($::operatingsystem == 'fedora' and versioncmp($::operatingsystemrelease, '22') >= 0)
     or
-    ($::operatingsystem != 'fedora' and versioncmp($::operatingsystemrelease, '7.0') >= 0 and $use_epel == 'y')
+    ($::operatingsystem != 'fedora' and versioncmp($::operatingsystemrelease, '7.0') >= 0)
    ){
   $config_file = '/etc/mongod.conf'
 } else {
