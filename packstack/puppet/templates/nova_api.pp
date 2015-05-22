@@ -12,7 +12,7 @@ class { '::nova::api':
   auth_uri                             => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   identity_uri                         => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   admin_password                       => hiera('CONFIG_NOVA_KS_PW'),
-  neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED'),
+  neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
 }
 
 Package<| title == 'nova-common' |> -> Class['nova::api']

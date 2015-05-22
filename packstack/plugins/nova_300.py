@@ -442,10 +442,10 @@ def create_api_manifest(config, messages):
     # This is a hack around us needing to generate the neutron metadata
     # password, but the nova puppet plugin uses the existence of that
     # password to determine whether or not to configure neutron metadata
-    # proxy support. So the nova_api.pp template needs unquoted 'undef'
+    # proxy support. So the nova_api.pp template needs to be set to None
     # to disable metadata support if neutron is not being installed.
     if config['CONFIG_NEUTRON_INSTALL'] != 'y':
-        config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = 'undef'
+        config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = None
     else:
         config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = "%s" % config['CONFIG_NEUTRON_METADATA_PW']
     manifestfile = "%s_api_nova.pp" % config['CONFIG_CONTROLLER_HOST']
