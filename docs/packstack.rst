@@ -137,6 +137,9 @@ Server Prepare Configs
 **CONFIG_REPO**
     Comma-separated list of URLs for any additional yum repositories, to use for installation.
 
+**CONFIG_ENABLE_RDO_TESTING**
+   Specify 'y' to enable the RDO testing repository. ['y', 'n']
+
 RHEL config
 -----------
 

@@ -552,7 +552,19 @@ def initConfig(controller):
              "CONF_NAME": "CONFIG_REPO",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False}
+             "CONDITION": False},
+
+            {"CMD_OPTION": "enable-rdo-testing",
+             "PROMPT": "To enable rdo testing enter \"y\"",
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_ENABLE_RDO_TESTING",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "RHEL": [
@@ -1123,6 +1135,11 @@ def manage_rdo(host, config):
     reponame = 'openstack-%s' % version
     server.clear()
     server.append('yum-config-manager --enable %(reponame)s' % locals())
+
+    if config['CONFIG_ENABLE_RDO_TESTING'] == 'y':
+        server.append('yum-config-manager --disable %(reponame)s' % locals())
+        server.append('yum-config-manager --enable %(reponame)s-testing' % locals())
+
     # yum-config-manager returns 0 always, but returns current setup
     # if succeeds
     rc, out = server.execute()
