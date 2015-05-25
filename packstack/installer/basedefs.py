@@ -67,6 +67,18 @@ PUPPET_MANIFEST_DIR = os.path.join(VAR_DIR, PUPPET_MANIFEST_RELATIVE)
 HIERADATA_FILE_RELATIVE = "hieradata"
 HIERADATA_DIR = os.path.join(VAR_DIR, HIERADATA_FILE_RELATIVE)
 
+LATEST_LOG_DIR = '%s/latest' % PACKSTACK_VAR_DIR
+if os.path.exists(LATEST_LOG_DIR):
+    try:
+        os.unlink(LATEST_LOG_DIR)
+    except OSError:
+        print ('Unable to delete symbol link for log dir %s.' % LATEST_LOG_DIR)
+
+try:
+    os.symlink(DIR_LOG, LATEST_LOG_DIR)
+except OSError:
+    print ('Unable to create symbol link for log dir %s.' % LATEST_LOG_DIR)
+
 PUPPET_DEPENDENCIES = ['puppet', 'hiera', 'openssh-clients', 'tar', 'nc']
 PUPPET_MODULES_PKGS = [
     'openstack-puppet-modules',
