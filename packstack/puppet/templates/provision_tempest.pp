@@ -34,7 +34,7 @@ if $provision_tempest_user != '' {
   $fixed_range               = '10.0.0.0/24'
   $router_name               = 'router1'
   $setup_ovs_bridge          = hiera('CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
-  $public_bridge_name        = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
+  $public_bridge_name        = hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE')
 
   ## Tempest
   $configure_tempest         = hiera('CONFIG_PROVISION_TEMPEST')
