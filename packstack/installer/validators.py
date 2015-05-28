@@ -207,8 +207,10 @@ def validate_writeable_directory(param, options=None):
         return
 
     options = options or []
-    if not ((os.path.isdir(param) and os.access(param, os.W_OK)) or
-            os.access(os.path.join(param, os.pardir), os.W_OK)):
+    path = os.path.expanduser(param)
+    if not ((os.path.isdir(path) and os.access(path, os.W_OK)) or
+            os.access(
+            os.path.normpath(os.path.join(path, os.pardir)), os.W_OK)):
         logging.debug('validate_writeable_directory(%s, options=%s) failed.' %
                       (param, options))
         msg = 'Given directory does not exist or is not writeable: %s'

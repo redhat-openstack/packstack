@@ -74,7 +74,7 @@ class ValidatorsTestCase(PackstackTestCaseMixin, TestCase):
     def test_validate_file(self):
         """Test packstack.installer.validators.validate_file."""
         dname = os.path.join(self.tempdir, '.test_validate_file')
-        bad_name = os.path.join(self.tempdir, '.me_no_exists')
+        bad_name = os.path.join(self.tempdir, '.me_no/exists')
         os.mkdir(dname)
         validate_writeable_directory(dname)
         self.assertRaises(ParamValidationError, validate_writeable_directory, bad_name)

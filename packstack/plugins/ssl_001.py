@@ -212,9 +212,16 @@ def create_self_signed_cert(config, messages):
     OpenSSL wrapper to create selfsigned CA.
     """
 
+    # for now hardcoded place for landing CACert file on servers
+    config['CONFIG_SSL_CACERT'] = '/etc/pki/tls/certs/packstack_cacert.crt'
+
     if (config['CONFIG_AMQP_ENABLE_SSL'] != 'y' and
        config["CONFIG_HORIZON_SSL"] != 'y'):
         return
+
+    config['CONFIG_SSL_CERT_DIR'] = os.path.expanduser(
+        config['CONFIG_SSL_CERT_DIR']
+    )
 
     if not os.path.isdir(config['CONFIG_SSL_CERT_DIR']):
         os.mkdir(config['CONFIG_SSL_CERT_DIR'])

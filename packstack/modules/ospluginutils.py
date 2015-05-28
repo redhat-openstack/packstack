@@ -137,7 +137,7 @@ def generate_ssl_cert(config, host, service, ssl_key_file, ssl_cert_file):
 
         final_cert = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
         final_key = crypto.dump_privatekey(crypto.FILETYPE_PEM, k)
-        deliver_ssl_file(ca_file, config['CONFIG_SSL_CACERT_FILE'], host)
+        deliver_ssl_file(ca_file, config['CONFIG_SSL_CACERT'], host)
         deliver_ssl_file(final_cert, ssl_cert_file, host)
         deliver_ssl_file(final_key, ssl_key_file, host)
 

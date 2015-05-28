@@ -172,7 +172,7 @@ def create_manifest(config, messages):
             ssl_key_file = config["CONFIG_HORIZON_SSL_KEY"] = (
                 '/etc/pki/tls/private/ssl_dashboard.key'
             )
-            cacert = config['CONFIG_SSL_CACERT_FILE']
+            cacert = config['CONFIG_SSL_CACERT']
             config["CONFIG_HORIZON_SSL_CACERT"] = cacert
             ssl_host = config['CONFIG_CONTROLLER_HOST']
             service = 'dashboard'

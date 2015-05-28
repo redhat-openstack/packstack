@@ -174,7 +174,7 @@ def create_manifest(config, messages):
         ssl_key_file = '/etc/pki/tls/private/ssl_amqp.key'
         ssl_cert_file = '/etc/pki/tls/certs/ssl_amqp.crt'
         cacert = config['CONFIG_AMQP_SSL_CACERT_FILE'] = (
-            config['CONFIG_SSL_CACERT_FILE']
+            config['CONFIG_SSL_CACERT']
         )
         generate_ssl_cert(config, amqp_host, service, ssl_key_file,
                           ssl_cert_file)
