@@ -136,7 +136,7 @@ def initConfig(controller):
              "PROMPT": "Enter the Keystone service name.",
              "OPTION_LIST": ['keystone', 'httpd'],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "httpd",
+             "DEFAULT_VALUE": "keystone",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": 'CONFIG_KEYSTONE_SERVICE_NAME',
