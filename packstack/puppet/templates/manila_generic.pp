@@ -7,13 +7,21 @@ manila::backend::generic{ 'generic':
   share_mount_path             => hiera('CONFIG_MANILA_GENERIC_SHARE_MOUNT_PATH'),
 }
 
-manila::service_instance{ 'generic':
-  service_image_location    => hiera('CONFIG_MANILA_SERVICE_IMAGE_LOCATION'),
-  service_instance_user     => hiera('CONFIG_MANILA_SERVICE_INSTANCE_USER'),
-  service_instance_password => hiera('CONFIG_MANILA_SERVICE_INSTANCE_PASSWORD'),
+packstack::manila::network{ 'generic': }
+
+if ($::manila_network_type == 'neutron'){
+  $service_instance_network_helper_type = 'neutron'
+}
+elsif ($::manila_network_type == 'nova-network'){
+  $service_instance_network_helper_type = 'nova'
 }
 
-packstack::manila::network{ 'generic': }
+manila::service_instance{ 'generic':
+  service_image_location               => hiera('CONFIG_MANILA_SERVICE_IMAGE_LOCATION'),
+  service_instance_user                => hiera('CONFIG_MANILA_SERVICE_INSTANCE_USER'),
+  service_instance_password            => hiera('CONFIG_MANILA_SERVICE_INSTANCE_PASSWORD'),
+  service_instance_network_helper_type => $service_instance_network_helper_type,
+}
 
 class { '::manila::compute::nova':
   nova_admin_password    => hiera('CONFIG_NOVA_KS_PW'),
