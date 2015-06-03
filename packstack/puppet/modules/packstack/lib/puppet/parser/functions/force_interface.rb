@@ -1,5 +1,5 @@
 
-require 'ipaddress'
+require 'ipaddr'
 
 # Returns value
 module Puppet::Parser::Functions
@@ -26,13 +26,12 @@ module Puppet::Parser::Functions
         translated = []
         val.split(':').each do |fragment|
           if fragment.include?('/') # this is CIDR, so translate it
-            cidr = IPAddress fragment
+            cidr = IPAddr.new fragment
             lookupvar('interfaces').split(',').each do |interface|
               interface.strip!
               ifaddr = lookupvar("ipaddress_#{interface}")
-              ifmask = lookupvar("netmask_#{interface}")
-              ifcidr = IPAddress "#{ifaddr}/#{ifmask}"
-              if cidr.network == ifcidr.network
+              ifcidr = IPAddr.new ifaddr
+              if cidr.include?(ifcidr)
                 translated.push(interface)
               end
             end
