@@ -57,6 +57,7 @@ def initConfig(controller):
          "OPTION_LIST": [],
          "VALIDATORS": [validators.validate_not_empty],
          "DEFAULT_VALUE": uuid.uuid4().hex[:16],
+         "PROCESSORS": [processors.process_string_nofloat],
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_HEAT_AUTH_ENC_KEY",

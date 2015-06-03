@@ -121,3 +121,17 @@ def process_password(param, param_name, config=None):
             else:
                 param = process_password.pw_dict[param_name]
     return param
+
+
+def process_string_nofloat(param, param_name, config=None):
+    """
+    Process a string, making sure it is *not* convertible into a float
+    If it is, change it into a random 16 char string, and check again
+    """
+    while True:
+        try:
+            float(param)
+        except ValueError:
+            return param
+        else:
+            param = uuid.uuid4().hex[:16]
