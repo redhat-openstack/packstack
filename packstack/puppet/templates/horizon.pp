@@ -1,5 +1,3 @@
-include ::packstack::apache_common
-
 $horizon_packages = ['python-memcached', 'python-netaddr']
 
 package { $horizon_packages:
@@ -20,6 +18,10 @@ $bind_host = hiera('CONFIG_IP_VERSION') ? {
 $horizon_ssl = hiera('CONFIG_HORIZON_SSL') ? {
   'y' => true,
   'n' => false,
+}
+
+class { '::apache':
+  purge_configs => false,
 }
 
 class {'::horizon':
@@ -44,6 +46,11 @@ class {'::horizon':
 
 if $horizon_ssl {
   apache::listen { '443': }
+}
+
+if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
+  apache::listen { '5000': }
+  apache::listen { '35357': }
 }
 
 # hack for memcached, for now we bind to localhost on ipv6

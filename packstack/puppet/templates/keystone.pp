@@ -30,10 +30,16 @@ class { '::keystone':
 }
 
 if $keystone_service_name == 'httpd' {
-  include ::packstack::apache_common
+  class { '::apache':
+    purge_configs => false,
+  }
 
   class { '::keystone::wsgi::apache':
     ssl => $keystone_use_ssl,
+  }
+
+  if hiera('CONFIG_HORIZON_SSL') == 'y' {
+    apache::listen { '443': }
   }
 }
 
