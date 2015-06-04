@@ -337,7 +337,7 @@ Keystone LDAP Identity Backend Config parameters
     Base suffix for the Identity service LDAP backend.
 
 **CONFIG_KEYSTONE_LDAP_QUERY_SCOPE**
-    Query scope for the Identity service LDAP backend (base, one, sub). ['base', 'one', 'sub']
+    Query scope for the Identity service LDAP backend. Use 'one' for onelevel/singleLevel or 'sub' for subtree/wholeSubtree ('base' is not actually used by the Identity service and is therefore deprecated). ['base', 'one', 'sub']
 
 **CONFIG_KEYSTONE_LDAP_PAGE_SIZE**
     Query page size for the Identity service LDAP backend.
@@ -364,13 +364,13 @@ Keystone LDAP Identity Backend Config parameters
     User-enabled attribute for the Identity service LDAP backend.
 
 **CONFIG_KEYSTONE_LDAP_USER_ENABLED_MASK**
-    Bit mask applied to user-enabled attribute for the Identity service LDAP backend.
+    Bit mask integer applied to user-enabled attribute for the Identity service LDAP backend. Indicate the bit that the enabled value is stored in if the LDAP server represents "enabled" as a bit on an integer rather than a boolean. A value of "0" indicates the mask is not used (default). If this is not set to "0", the typical value is "2", typically used when "CONFIG_KEYSTONE_LDAP_USER_ENABLED_ATTRIBUTE = userAccountControl".
 
 **CONFIG_KEYSTONE_LDAP_USER_ENABLED_DEFAULT**
-    Value of enabled attribute which indicates user is enabled for the Identity service LDAP backend.
+    Value of enabled attribute which indicates user is enabled for the Identity service LDAP backend. This should match an appropriate integer value if the LDAP server uses non-boolean (bitmask) values to indicate whether a user is enabled or disabled. If this is not set as 'y', the typical value is "512". This is typically used when "CONFIG_KEYSTONE_LDAP_USER_ENABLED_ATTRIBUTE = userAccountControl".
 
 **CONFIG_KEYSTONE_LDAP_USER_ENABLED_INVERT**
-    Specify 'y' if users are disabled (not enabled) in the Identity service LDAP backend. ['n', 'y']
+    Specify 'y' if users are disabled (not enabled) in the Identity service LDAP backend (inverts boolean-enalbed values).  Some LDAP servers use a boolean lock attribute where "y" means an account is disabled. Setting this to 'y' allows these lock attributes to be used. This setting will have no effect if "CONFIG_KEYSTONE_LDAP_USER_ENABLED_MASK" is in use. ['n', 'y']
 
 **CONFIG_KEYSTONE_LDAP_USER_ATTRIBUTE_IGNORE**
     Comma-separated list of attributes stripped from LDAP user entry upon update.
