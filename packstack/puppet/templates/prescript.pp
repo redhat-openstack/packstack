@@ -1,9 +1,5 @@
 include ::firewall
 
-if $::ipaddress == hiera('CONFIG_CONTROLLER_HOST') {
-  include ::apache
-}
-
 # We don't have openstack-selinux package for Fedora
 if $::operatingsystem != 'Fedora' {
   package{ 'openstack-selinux':
