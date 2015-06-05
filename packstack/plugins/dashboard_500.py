@@ -49,6 +49,18 @@ def initConfig(controller):
          "USE_DEFAULT": False,
          "NEED_CONFIRM": False,
          "CONDITION": False},
+
+        {"CMD_OPTION": "os-horizon-secretkey",
+         "PROMPT": "Horizon Secret Encryption Key",
+         "OPTION_LIST": [],
+         "VALIDATORS": [validators.validate_not_empty],
+         "DEFAULT_VALUE": uuid.uuid4().hex,
+         "MASK_INPUT": True,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME": "CONFIG_HORIZON_SECRET_KEY",
+         "USE_DEFAULT": True,
+         "NEED_CONFIRM": False,
+         "CONDITION": False},
     ]
     update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "OSHORIZON",
@@ -128,7 +140,6 @@ def initSequences(controller):
 # -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
-    config["CONFIG_HORIZON_SECRET_KEY"] = uuid.uuid4().hex
     horizon_host = config['CONFIG_CONTROLLER_HOST']
     manifestfile = "%s_horizon.pp" % horizon_host
 

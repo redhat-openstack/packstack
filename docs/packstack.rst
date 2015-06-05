@@ -841,6 +841,9 @@ OpenStack Horizon Config parameters
 **CONFIG_HORIZON_SSL**
     Specify 'y' to set up Horizon communication over https. ['y', 'n']
 
+**CONFIG_HORIZON_SECRET_KEY**
+    Secret key to use for Horizon Secret Encryption Key.
+
 SSL Config parameters
 ---------------------
 
