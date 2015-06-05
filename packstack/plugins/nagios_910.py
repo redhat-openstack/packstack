@@ -71,119 +71,26 @@ def initSequences(controller):
     controller.addSequence("Installing Nagios", [], [], nagiossteps)
 
 
-# ------------------------- helper functions -------------------------
-
-def _serviceentry(**kwargs):
-    s = 'define service {\n'
-    for key in sorted(kwargs.keys()):
-        s += "\t%s\t%s\n" % (key, kwargs[key])
-    s += "\t}\n"
-    return s
-
-
-def _copy_script(**kwargs):
-    # TODO : Replace all these shell templates with with python
-    return ('file{"/usr/lib64/nagios/plugins/%(name)s":'
-            'mode => 755, owner => "nagios", '
-            'seltype => "nagios_unconfined_plugin_exec_t", '
-            'content => template("packstack/%(name)s.erb"),}\n'
-            'nagios_command {"%(name)s": '
-            'command_line => "/usr/lib64/nagios/plugins/%(name)s",}\n'
-            % kwargs)
-
-
-def nagios_host(hostname, **kwargs):
-    out = ("nagios_host { '%s': " % hostname)
-    for key, value in kwargs.items():
-        out = "%s, %s => '%s'" % (out, key, value)
-    return "%s}\n" % out
-
-
 # -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
-    manifest_entries = ''
-    # I should be adding service entries with nagios_service
-    # but it appears to be broken http://projects.puppetlabs.com/issues/3420
-    service_entries = ''
-    for hostname in filtered_hosts(config):
-        manifest_entries += nagios_host(hostname, address=hostname,
-                                        use='linux-server')
-
-        service_entries += _serviceentry(
-            name='load5-%s' % hostname,
-            service_description='5 minute load average',
-            host_name=hostname,
-            check_command="check_nrpe!load5",
-            use="generic-service",
-            normal_check_interval='5'
-        )
-
-        service_entries += _serviceentry(
-            name='df_var-%s' % hostname,
-            service_description='Percent disk space used on /var',
-            host_name=hostname,
-            check_command="check_nrpe!df_var",
-            use="generic-service"
-        )
-
-    manifest_entries += _copy_script(name="keystone-user-list")
-    service_entries += _serviceentry(
-        name='keystone-user-list',
-        service_description='number of keystone users',
-        host_name=config['CONFIG_CONTROLLER_HOST'],
-        check_command="keystone-user-list",
-        use="generic-service",
-        normal_check_interval='5'
-    )
+    config['CONFIG_NAGIOS_NODES'] = list(filtered_hosts(config))
+    openstack_services = []
+    openstack_services.append('keystone-user-list')
 
     if config['CONFIG_GLANCE_INSTALL'] == 'y':
-        manifest_entries += _copy_script(name="glance-index")
-        service_entries += _serviceentry(
-            name='glance-index',
-            service_description='number of glance images',
-            host_name=config['CONFIG_CONTROLLER_HOST'],
-            check_command="glance-index", use="generic-service",
-            normal_check_interval='5'
-        )
+        openstack_services.append('glance-index')
 
     if config['CONFIG_NOVA_INSTALL'] == 'y':
-        manifest_entries += _copy_script(name="nova-list")
-        service_entries += _serviceentry(
-            name='nova-list',
-            service_description='number of nova vm instances',
-            host_name=config['CONFIG_CONTROLLER_HOST'],
-            check_command="nova-list", use="generic-service",
-            normal_check_interval='5'
-        )
+        openstack_services.append('nova-list')
 
     if config['CONFIG_CINDER_INSTALL'] == 'y':
-        manifest_entries += _copy_script(name="cinder-list")
-        service_entries += _serviceentry(
-            name='cinder-list',
-            service_description='number of cinder volumes',
-            host_name=config['CONFIG_CONTROLLER_HOST'],
-            check_command="cinder-list", use="generic-service",
-            normal_check_interval='5'
-        )
+        openstack_services.append('cinder-list')
 
     if config['CONFIG_SWIFT_INSTALL'] == 'y':
-        manifest_entries += _copy_script(name="swift-list")
-        service_entries += _serviceentry(
-            name='swift-list',
-            service_description='number of swift containers',
-            host_name=config['CONFIG_CONTROLLER_HOST'],
-            check_command="swift-list", use="generic-service",
-            normal_check_interval='5'
-        )
+        openstack_services.append('swift-list')
 
-    manifest_entries += ("file { '/etc/nagios/nagios_service.cfg': \n"
-                         "ensure => present, mode => 644,\n"
-                         "owner => 'nagios', group => 'nagios',\n"
-                         "before => Service['nagios'],\n"
-                         "content => '%s'}" % service_entries)
-
-    config['CONFIG_NAGIOS_MANIFEST_CONFIG'] = manifest_entries
+    config['CONFIG_NAGIOS_SERVICES'] = openstack_services
 
     manifestfile = "%s_nagios.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("nagios_server")

@@ -12,7 +12,7 @@ exec { 'nagios-plugins-ping':
 }
 
 class nagios_configs(){
-  file { ['/etc/nagios/nagios_command.cfg', '/etc/nagios/nagios_host.cfg']:
+  file { ['/etc/nagios/nagios_command.cfg', '/etc/nagios/nagios_host.cfg', '/etc/nagios/nagios_service.cfg']:
     ensure => file,
     mode   => '0644',
     owner  => 'nagios',
@@ -41,16 +41,6 @@ class nagios_configs(){
     line => 'cfg_file=/etc/nagios/nagios_service.cfg',
   }
 
-  nagios_command { 'check_nrpe':
-    command_line => '/usr/lib64/nagios/plugins/check_nrpe -H $HOSTADDRESS$ -c $ARG1$',
-  }
-
-  $cfg_nagios_pw = hiera('CONFIG_NAGIOS_PW')
-
-  exec { 'nagiospasswd':
-    command => "/usr/bin/htpasswd -b /etc/nagios/passwd nagiosadmin ${cfg_nagios_pw}",
-  }
-
   $nagios_cfg_ks_adm_pw = hiera('CONFIG_KEYSTONE_ADMIN_PW')
   $nagios_cfg_keystone_url = hiera('CONFIG_KEYSTONE_ADMIN_URL')
   $keystone_admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
@@ -65,17 +55,29 @@ export OS_PASSWORD=${nagios_cfg_ks_adm_pw}
 export OS_AUTH_URL=${nagios_cfg_keystone_url}",
   }
 
-  %(CONFIG_NAGIOS_MANIFEST_CONFIG)s
+  class { 'packstack::nagios_config_wrapper':
+    nagios_hosts              => hiera('CONFIG_NAGIOS_NODES'),
+    nagios_openstack_services => hiera('CONFIG_NAGIOS_SERVICES'),
+    controller_host           => hiera('CONFIG_CONTROLLER_HOST'),
+    require                   => Package['nagios'],
+    notify                    => Service['nagios'],
+  }
 }
 
 class { '::nagios_configs':
   notify => [ Service['nagios'], Service['httpd']],
 }
 
-include ::concat::setup
-
 class { '::apache':
   purge_configs => false,
+}
+
+$cfg_nagios_pw = hiera('CONFIG_NAGIOS_PW')
+
+exec { 'nagiospasswd':
+  command => "/usr/bin/htpasswd -b /etc/nagios/passwd nagiosadmin ${cfg_nagios_pw}",
+  require => Package['nagios'],
+  before  => Service['nagios'],
 }
 
 class { '::apache::mod::php': }
