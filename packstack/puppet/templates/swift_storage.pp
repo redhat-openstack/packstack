@@ -12,7 +12,7 @@ if (!defined(File['/srv/node'])) {
     ensure  => directory,
     owner   => 'swift',
     group   => 'swift',
-    require => Package['openstack-swift'],
+    require => Package['swift'],
   }
 }
 

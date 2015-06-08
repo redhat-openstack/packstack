@@ -6,10 +6,11 @@ package{ 'python-cinderclient':
 # Install the private key to be used for live migration.  This needs to be
 # configured into libvirt/live_migration_uri in nova.conf.
 file { '/etc/nova/ssh':
-  ensure => directory,
-  owner  => root,
-  group  => root,
-  mode   => '0700',
+  ensure  => directory,
+  owner   => root,
+  group   => root,
+  mode    => '0700',
+  require => Package['nova-common'],
 }
 
 file { '/etc/nova/ssh/nova_migration_key':
