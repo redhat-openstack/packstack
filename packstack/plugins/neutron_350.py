@@ -616,7 +616,19 @@ def create_manifests(config, messages):
                 fw_details = dict()
                 key = "neutron_tunnel_%s_%s" % (host, n_host)
                 fw_details.setdefault(key, {})
-                fw_details[key]['host'] = "%s" % n_host
+                if config['CONFIG_NEUTRON_OVS_TUNNEL_IF']:
+                    iface = config['CONFIG_NEUTRON_OVS_TUNNEL_IF']
+                    ifip = ("ipaddress_%s" % iface)
+                    server = utils.ScriptRunner(n_host)
+                    server.append("facter %s" % ifip)
+                    rv, src_host = server.execute()
+                    if not src_host:
+                        raise KeyError('Couldn\'t detect ipaddress of '
+                                       'interface %s on node %s' %
+                                       (iface, n_host))
+                else:
+                    src_host = n_host
+                fw_details[key]['host'] = "%s" % src_host
                 fw_details[key]['service_name'] = "neutron tunnel port"
                 fw_details[key]['chain'] = "INPUT"
                 if use_openvswitch_vxlan(config):
