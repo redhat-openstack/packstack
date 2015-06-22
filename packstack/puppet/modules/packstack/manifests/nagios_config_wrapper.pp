@@ -32,7 +32,7 @@ define packstack_nagios_generic_services {
 
 define packstack_nagios_services {
   file { "/usr/lib64/nagios/plugins/${name}":
-    mode    => 755,
+    mode    => '0755',
     owner   => 'nagios',
     seltype => 'nagios_unconfined_plugin_exec_t',
     content => template("packstack/${name}.erb"),
