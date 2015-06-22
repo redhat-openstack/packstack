@@ -104,7 +104,7 @@ define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
       ssl                   => hiera('CONFIG_AMQP_SSL_ENABLED'),
       ssl_cert              => '/etc/pki/tls/certs/ssl_amqp.crt',
       ssl_key               => '/etc/pki/tls/private/ssl_amqp.key',
-      ssl_database_password => hiera('CONFIG_AMQP_NSS_CERTDB_PW'),
+      ssl_database_password => hiera('CONFIG_AMQP_NSS_CERTDB_PW', undef),
   }
 
   if $enable_auth == 'y' {
