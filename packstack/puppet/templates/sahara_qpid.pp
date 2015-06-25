@@ -3,5 +3,5 @@ class { '::sahara::notify::qpid':
   qpid_port     => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   qpid_protocol => hiera('CONFIG_AMQP_PROTOCOL'),
   qpid_username => hiera('CONFIG_AMQP_AUTH_USER'),
-  qpid_password => hiera('CONFIG_AMQP_PASSWORD'),
+  qpid_password => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
 }
