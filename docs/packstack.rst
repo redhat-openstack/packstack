@@ -33,58 +33,58 @@ Global Options
     Default password to be used everywhere (overridden by passwords set for individual services or users).
 
 **CONFIG_MARIADB_INSTALL**
-    Specify 'y' to install MariaDB. ['y', 'n']
+    Specify 'y' to install MariaDB.
 
 **CONFIG_GLANCE_INSTALL**
-    Specify 'y' to install OpenStack Image Service (glance). ['y', 'n']
+    Specify 'y' to install OpenStack Image Service (glance).
 
 **CONFIG_CINDER_INSTALL**
-    Specify 'y' to install OpenStack Block Storage (cinder). ['y', 'n']
+    Specify 'y' to install OpenStack Block Storage (cinder).
 
 **CONFIG_MANILA_INSTALL**
-    Specify 'y' to install OpenStack Shared File System (manila). ['y', 'n']
+    Specify 'y' to install OpenStack Shared File System (manila).
 
 **CONFIG_NOVA_INSTALL**
-    Specify 'y' to install OpenStack Compute (nova). ['y', 'n']
+    Specify 'y' to install OpenStack Compute (nova).
 
 **CONFIG_NEUTRON_INSTALL**
-    Specify 'y' to install OpenStack Networking (neutron); otherwise, Compute Networking (nova) will be used. ['y', 'n']
+    Specify 'y' to install OpenStack Networking (neutron); otherwise, Compute Networking (nova) will be used.
 
 **CONFIG_HORIZON_INSTALL**
-    Specify 'y' to install OpenStack Dashboard (horizon). ['y', 'n']
+    Specify 'y' to install OpenStack Dashboard (horizon).
 
 **CONFIG_SWIFT_INSTALL**
-    Specify 'y' to install OpenStack Object Storage (swift). ['y', 'n']
+    Specify 'y' to install OpenStack Object Storage (swift).
 
 **CONFIG_CEILOMETER_INSTALL**
-    Specify 'y' to install OpenStack Metering (ceilometer). ['y', 'n']
+    Specify 'y' to install OpenStack Metering (ceilometer).
 
 **CONFIG_HEAT_INSTALL**
-    Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
+    Specify 'y' to install OpenStack Orchestration (heat).
 
 **CONFIG_SAHARA_INSTALL**
-    Specify 'y' to install OpenStack Data Processing (sahara). ['y', 'n']
+    Specify 'y' to install OpenStack Data Processing (sahara).
 
 **CONFIG_TROVE_INSTALL**
-    Specify 'y' to install OpenStack Database (trove) ['y', 'n']
+    Specify 'y' to install OpenStack Database (trove).
 
 **CONFIG_IRONIC_INSTALL**
-    Specify 'y' to install OpenStack Bare Metal Provisioning (ironic). ['y', 'n']
+    Specify 'y' to install OpenStack Bare Metal Provisioning (ironic).
 
 **CONFIG_CLIENT_INSTALL**
-    Specify 'y' to install the OpenStack Client packages (command-line tools). An admin "rc" file will also be installed. ['y', 'n']
+    Specify 'y' to install the OpenStack Client packages (command-line tools). An admin "rc" file will also be installed.
 
 **CONFIG_NTP_SERVERS**
     Comma-separated list of NTP servers. Leave plain if Packstack should not install ntpd on instances.
 
 **CONFIG_NAGIOS_INSTALL**
-    Specify 'y' to install Nagios to monitor OpenStack hosts. Nagios provides additional tools for monitoring the OpenStack environment. ['y', 'n']
+    Specify 'y' to install Nagios to monitor OpenStack hosts. Nagios provides additional tools for monitoring the OpenStack environment.
 
 **EXCLUDE_SERVERS**
     Comma-separated list of servers to be excluded from the installation. This is helpful if you are running Packstack a second time with the same answer file and do not want Packstack to overwrite these server's configurations. Leave empty if you do not need to exclude any servers.
 
 **CONFIG_DEBUG_MODE**
-    Specify 'y' if you want to run OpenStack services in debug mode; otherwise, specify 'n'. ['y', 'n']
+    Specify 'y' if you want to run OpenStack services in debug mode; otherwise, specify 'n'.
 
 **CONFIG_CONTROLLER_HOST**
     IP address of the server on which to install OpenStack services specific to the controller role (for example, API servers or dashboard).
@@ -96,10 +96,10 @@ Global Options
     List of IP addresses of the server on which to install the network service such as Compute networking (nova network) or OpenStack Networking (neutron).
 
 **CONFIG_VMWARE_BACKEND**
-    Specify 'y' if you want to use VMware vCenter as hypervisor and storage; otherwise, specify 'n'. ['y', 'n']
+    Specify 'y' if you want to use VMware vCenter as hypervisor and storage; otherwise, specify 'n'.
 
 **CONFIG_UNSUPPORTED**
-    Specify 'y' if you want to use unsupported parameters. This should be used only if you know what you are doing. Issues caused by using unsupported options will not be fixed before the next major release. ['y', 'n']
+    Specify 'y' if you want to use unsupported parameters. This should be used only if you know what you are doing. Issues caused by using unsupported options will not be fixed before the next major release.
 
 **CONFIG_USE_SUBNETS**
     Specify 'y' if you want to use subnet addresses (in CIDR format) instead of interface names in following options: CONFIG_NOVA_COMPUTE_PRIVIF, CONFIG_NOVA_NETWORK_PRIVIF, CONFIG_NOVA_NETWORK_PUBIF, CONFIG_NEUTRON_OVS_BRIDGE_IFACES, CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS, CONFIG_NEUTRON_OVS_TUNNEL_IF. This is useful for cases when interface names are not same on all installation hosts.
@@ -169,13 +169,13 @@ Server Prepare Configs
 -----------------------
 
 **CONFIG_USE_EPEL**
-   Specify 'y' to enable the EPEL repository (Extra Packages for Enterprise Linux). ['y', 'n']
+   Specify 'y' to enable the EPEL repository (Extra Packages for Enterprise Linux).
 
 **CONFIG_REPO**
     Comma-separated list of URLs for any additional yum repositories, to use for installation.
 
 **CONFIG_ENABLE_RDO_TESTING**
-   Specify 'y' to enable the RDO testing repository. ['y', 'n']
+   Specify 'y' to enable the RDO testing repository.
 
 RHEL config
 -----------
@@ -193,7 +193,7 @@ RH subscription manager config
     To subscribe each server with Red Hat Subscription Manager, include this with CONFIG_RH_USER.
 
 **CONFIG_RH_OPTIONAL**
-    Specify 'y' to enable RHEL optional repositories. ['y', 'n']
+    Specify 'y' to enable RHEL optional repositories.
 
 **CONFIG_RH_PROXY**
     HTTP proxy to use with Red Hat Subscription Manager.
@@ -229,7 +229,7 @@ RHN Satellite config
     Profile name that should be used as an identifier for the system in RHN Satellite (if required).
 
 **CONFIG_SATELLITE_FLAGS**
-    Comma-separated list of flags passed to the rhnreg_ks command. Valid flags are: novirtinfo, norhnsd, nopackages ['novirtinfo', 'norhnsd', 'nopackages']
+    Comma-separated list of flags passed to the rhnreg_ks command (novirtinfo, norhnsd, nopackages).
 
 **CONFIG_SATELLITE_PROXY**
     HTTP proxy to use when connecting to the RHN Satellite server (if required).
@@ -247,16 +247,16 @@ AMQP Config parameters
 ----------------------
 
 **CONFIG_AMQP_BACKEND**
-    Service to be used as the AMQP broker. Allowed values are: qpid, rabbitmq ['qpid', 'rabbitmq']
+    Service to be used as the AMQP broker (qpid, rabbitmq).
 
 **CONFIG_AMQP_HOST**
     IP address of the server on which to install the AMQP service.
 
 **CONFIG_AMQP_ENABLE_SSL**
-    Specify 'y' to enable SSL for the AMQP service. ['y', 'n']
+    Specify 'y' to enable SSL for the AMQP service.
 
 **CONFIG_AMQP_ENABLE_AUTH**
-    Specify 'y' to enable authentication for the AMQP service. ['y', 'n']
+    Specify 'y' to enable authentication for the AMQP service.
 
 AMQP Config SSL parameters
 --------------------------
@@ -298,28 +298,28 @@ Keystone Config parameters
     Token to use for the Identity service API.
 
 **CONFIG_KEYSTONE_ADMIN_USERNAME**
-    User name for the Identity service 'admin' user.  Defaults to 'admin'.
+    User name for the Identity service 'admin' user.  Defaults to: 'admin'.
 
 **CONFIG_KEYSTONE_ADMIN_PW**
     Password to use for the Identity service 'admin' user.
 
 **CONFIG_KEYSTONE_ADMIN_EMAIL**
-    Email address for the Identity service 'admin' user.  Defaults to 'root@localhost'.
+    Email address for the Identity service 'admin' user.  Defaults to: 'root@localhost'.
 
 **CONFIG_KEYSTONE_DEMO_PW**
     Password to use for the Identity service 'demo' user.
 
 **CONFIG_KEYSTONE_API_VERSION**
-    Identity service API version string. ['v2.0', 'v3']
+    Identity service API version string (v2.0, v3).
 
 **CONFIG_KEYSTONE_TOKEN_FORMAT**
-    Identity service token format (UUID or PKI). The recommended format for new deployments is UUID. ['UUID', 'PKI']
+    Identity service token format (UUID or PKI). The recommended format for new deployments is UUID.
 
 **CONFIG_KEYSTONE_SERVICE_NAME**
-    Name of service to use to run the Identity service (keystone or httpd). ['keystone', 'httpd']
+    Name of service to use to run the Identity service (keystone, httpd).
 
 **CONFIG_KEYSTONE_IDENTITY_BACKEND**
-    Type of Identity service backend (sql or ldap). ['sql', 'ldap']
+    Type of Identity service backend (sql, ldap).
 
 Keystone LDAP Identity Backend Config parameters
 ------------------------------------------------
@@ -337,7 +337,7 @@ Keystone LDAP Identity Backend Config parameters
     Base suffix for the Identity service LDAP backend.
 
 **CONFIG_KEYSTONE_LDAP_QUERY_SCOPE**
-    Query scope for the Identity service LDAP backend. Use 'one' for onelevel/singleLevel or 'sub' for subtree/wholeSubtree ('base' is not actually used by the Identity service and is therefore deprecated). ['base', 'one', 'sub']
+    Query scope for the Identity service LDAP backend. Use 'one' for onelevel/singleLevel or 'sub' for subtree/wholeSubtree ('base' is not actually used by the Identity service and is therefore deprecated) (base, one, sub)
 
 **CONFIG_KEYSTONE_LDAP_PAGE_SIZE**
     Query page size for the Identity service LDAP backend.
@@ -370,7 +370,7 @@ Keystone LDAP Identity Backend Config parameters
     Value of enabled attribute which indicates user is enabled for the Identity service LDAP backend. This should match an appropriate integer value if the LDAP server uses non-boolean (bitmask) values to indicate whether a user is enabled or disabled. If this is not set as 'y', the typical value is "512". This is typically used when "CONFIG_KEYSTONE_LDAP_USER_ENABLED_ATTRIBUTE = userAccountControl".
 
 **CONFIG_KEYSTONE_LDAP_USER_ENABLED_INVERT**
-    Specify 'y' if users are disabled (not enabled) in the Identity service LDAP backend (inverts boolean-enalbed values).  Some LDAP servers use a boolean lock attribute where "y" means an account is disabled. Setting this to 'y' allows these lock attributes to be used. This setting will have no effect if "CONFIG_KEYSTONE_LDAP_USER_ENABLED_MASK" is in use. ['n', 'y']
+    Specify 'y' if users are disabled (not enabled) in the Identity service LDAP backend (inverts boolean-enalbed values).  Some LDAP servers use a boolean lock attribute where "y" means an account is disabled. Setting this to 'y' allows these lock attributes to be used. This setting will have no effect if "CONFIG_KEYSTONE_LDAP_USER_ENABLED_MASK" is in use (n, y).
 
 **CONFIG_KEYSTONE_LDAP_USER_ATTRIBUTE_IGNORE**
     Comma-separated list of attributes stripped from LDAP user entry upon update.
@@ -379,13 +379,13 @@ Keystone LDAP Identity Backend Config parameters
     Identity service LDAP attribute mapped to default_project_id for users.
 
 **CONFIG_KEYSTONE_LDAP_USER_ALLOW_CREATE**
-    Specify 'y' if you want to be able to create Identity service users through the Identity service interface; specify 'n' if you will create directly in the LDAP backend. ['n', 'y']
+    Specify 'y' if you want to be able to create Identity service users through the Identity service interface; specify 'n' if you will create directly in the LDAP backend (n, y).
 
 **CONFIG_KEYSTONE_LDAP_USER_ALLOW_UPDATE**
-    Specify 'y' if you want to be able to update Identity service users through the Identity service interface; specify 'n' if you will update directly in the LDAP backend. ['n', 'y']
+    Specify 'y' if you want to be able to update Identity service users through the Identity service interface; specify 'n' if you will update directly in the LDAP backend (n, y).
 
 **CONFIG_KEYSTONE_LDAP_USER_ALLOW_DELETE**
-    Specify 'y' if you want to be able to delete Identity service users through the Identity service interface; specify 'n' if you will delete directly in the LDAP backend. ['n', 'y']
+    Specify 'y' if you want to be able to delete Identity service users through the Identity service interface; specify 'n' if you will delete directly in the LDAP backend (n, y).
 
 **CONFIG_KEYSTONE_LDAP_USER_PASS_ATTRIBUTE**
     Identity service LDAP attribute mapped to password.
@@ -421,19 +421,19 @@ Keystone LDAP Identity Backend Config parameters
     Comma-separated list of attributes stripped from LDAP group entry upon update.
 
 **CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_CREATE**
-    Specify 'y' if you want to be able to create Identity service groups through the Identity service interface; specify 'n' if you will create directly in the LDAP backend. ['n', 'y']
+    Specify 'y' if you want to be able to create Identity service groups through the Identity service interface; specify 'n' if you will create directly in the LDAP backend (n, y).
 
 **CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_UPDATE**
-    Specify 'y' if you want to be able to update Identity service groups through the Identity service interface; specify 'n' if you will update directly in the LDAP backend. ['n', 'y']
+    Specify 'y' if you want to be able to update Identity service groups through the Identity service interface; specify 'n' if you will update directly in the LDAP backend (n, y).
 
 **CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_DELETE**
-    Specify 'y' if you want to be able to delete Identity service groups through the Identity service interface; specify 'n' if you will delete directly in the LDAP backend. ['n', 'y']
+    Specify 'y' if you want to be able to delete Identity service groups through the Identity service interface; specify 'n' if you will delete directly in the LDAP backend (n, y).
 
 **CONFIG_KEYSTONE_LDAP_GROUP_ADDITIONAL_ATTRIBUTE_MAPPING**
     List of additional LDAP attributes used for mapping additional attribute mappings for groups. The attribute=mapping format is <ldap_attr>:<group_attr>, where ldap_attr is the attribute in the LDAP entry and group_attr is the Identity API attribute.
 
 **CONFIG_KEYSTONE_LDAP_USE_TLS**
-    Specify 'y' if the Identity service LDAP backend should use TLS. ['n', 'y']
+    Specify 'y' if the Identity service LDAP backend should use TLS (n, y).
 
 **CONFIG_KEYSTONE_LDAP_TLS_CACERTDIR**
     CA certificate directory for Identity service LDAP backend (if TLS is used).
@@ -442,7 +442,7 @@ Keystone LDAP Identity Backend Config parameters
      CA certificate file for Identity service LDAP backend (if TLS is used).
 
 **CONFIG_KEYSTONE_LDAP_TLS_REQ_CERT**
-    Certificate-checking strictness level for Identity service LDAP backend; valid options are: never, allow, demand. ['never', 'allow', 'demand']
+    Certificate-checking strictness level for Identity service LDAP backend (never, allow, demand).
 
 Glance Config parameters
 ------------------------
@@ -472,7 +472,7 @@ Cinder volume create Config parameters
 --------------------------------------
 
 **CONFIG_CINDER_VOLUMES_CREATE**
-    Specify 'y' to create the Block Storage volumes group. That is, Packstack creates a raw disk image in /var/lib/cinder, and mounts it using a loopback device. This should only be used for testing on a proof-of-concept installation of the Block Storage service (a file-backed volume group is not suitable for production usage). ['y', 'n']
+    Specify 'y' to create the Block Storage volumes group. That is, Packstack creates a raw disk image in /var/lib/cinder, and mounts it using a loopback device. This should only be used for testing on a proof-of-concept installation of the Block Storage service (a file-backed volume group is not suitable for production usage) (y, n).
 
 Cinder volume size Config parameters
 ------------------------------------
@@ -505,80 +505,80 @@ Cinder NetApp main configuration
     Hostname (or IP address) for the NetApp storage system or proxy server.
 
 **CONFIG_CINDER_NETAPP_SERVER_PORT**
-    The TCP port to use for communication with the storage system or proxy. If not specified, Data ONTAP drivers will use 80 for HTTP and 443 for HTTPS; E-Series will use 8080 for HTTP and 8443 for HTTPS. Defaults to 80.
+    The TCP port to use for communication with the storage system or proxy. If not specified, Data ONTAP drivers will use 80 for HTTP and 443 for HTTPS; E-Series will use 8080 for HTTP and 8443 for HTTPS. Defaults to: 80.
 
 **CONFIG_CINDER_NETAPP_STORAGE_FAMILY**
-    Storage family type used on the NetApp storage system; valid options are ontap_7mode for using Data ONTAP operating in 7-Mode, ontap_cluster for using clustered Data ONTAP, or E-Series for NetApp E-Series. Defaults to ontap_cluster. ['ontap_7mode', 'ontap_cluster', 'eseries']
+    Storage family type used on the NetApp storage system; valid options are ontap_7mode for using Data ONTAP operating in 7-Mode, ontap_cluster for using clustered Data ONTAP, or E-Series for NetApp E-Series. Defaults to: ontap_cluster. ['ontap_7mode', 'ontap_cluster', 'eseries']
 
 **CONFIG_CINDER_NETAPP_TRANSPORT_TYPE**
-    The transport protocol used when communicating with the NetApp storage system or proxy server. Valid values are http or https. Defaults to 'http'. ['http', 'https']
+    The transport protocol used when communicating with the NetApp storage system or proxy server. Valid values are http or https. Defaults to: 'http' ('http', 'https').
 
 **CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL**
-    Storage protocol to be used on the data path with the NetApp storage system; valid options are iscsi, fc, nfs. Defaults to nfs. ['iscsi', 'fc', 'nfs']
+    Storage protocol to be used on the data path with the NetApp storage system; valid options are iscsi, fc, nfs. Defaults to: nfs (iscsi, fc, nfs).
 
 Cinder NetApp ONTAP-iSCSI configuration
 ---------------------------------------
 
 **CONFIG_CINDER_NETAPP_SIZE_MULTIPLIER**
-    Quantity to be multiplied by the requested volume size to ensure enough space is available on the virtual storage server (Vserver) to fulfill the volume creation request.  Defaults to 1.0.
+    Quantity to be multiplied by the requested volume size to ensure enough space is available on the virtual storage server (Vserver) to fulfill the volume creation request.  Defaults to: 1.0.
 
 Cinder NetApp NFS configuration
 -------------------------------
 
 **CONFIG_CINDER_NETAPP_EXPIRY_THRES_MINUTES**
-    Time period (in minutes) that is allowed to elapse after the image is last accessed, before it is deleted from the NFS image cache. When a cache-cleaning cycle begins, images in the cache that have not been accessed in the last M minutes, where M is the value of this parameter, are deleted from the cache to create free space on the NFS share. Defaults to 720.
+    Time period (in minutes) that is allowed to elapse after the image is last accessed, before it is deleted from the NFS image cache. When a cache-cleaning cycle begins, images in the cache that have not been accessed in the last M minutes, where M is the value of this parameter, are deleted from the cache to create free space on the NFS share. Defaults to: 720.
 
 **CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_START**
-    If the percentage of available space for an NFS share has dropped below the value specified by this parameter, the NFS image cache is cleaned.  Defaults to 20.
+    If the percentage of available space for an NFS share has dropped below the value specified by this parameter, the NFS image cache is cleaned.  Defaults to: 20.
 
 **CONFIG_CINDER_NETAPP_THRES_AVL_SIZE_PERC_STOP**
-    When the percentage of available space on an NFS share has reached the percentage specified by this parameter, the driver stops clearing files from the NFS image cache that have not been accessed in the last M minutes, where M is the value of the CONFIG_CINDER_NETAPP_EXPIRY_THRES_MINUTES parameter. Defaults to 60.
+    When the percentage of available space on an NFS share has reached the percentage specified by this parameter, the driver stops clearing files from the NFS image cache that have not been accessed in the last M minutes, where M is the value of the CONFIG_CINDER_NETAPP_EXPIRY_THRES_MINUTES parameter. Defaults to: 60.
 
 **CONFIG_CINDER_NETAPP_NFS_SHARES**
-    Single or comma-separated list of NetApp NFS shares for Block Storage to use.  Format: ip-address:/export-name. Defaults to ''.
+    Single or comma-separated list of NetApp NFS shares for Block Storage to use.  Format: ip-address:/export-name. Defaults to: ''.
 
 **CONFIG_CINDER_NETAPP_NFS_SHARES_CONFIG**
-    File with the list of available NFS shares.   Defaults to '/etc/cinder/shares.conf'.
+    File with the list of available NFS shares.   Defaults to: '/etc/cinder/shares.conf'.
 
 
 Cinder NetApp iSCSI & 7-mode configuration
 ------------------------------------------
 
 **CONFIG_CINDER_NETAPP_VOLUME_LIST**
-    This parameter is only utilized when the storage protocol is configured to use iSCSI or FC. This parameter is used to restrict provisioning to the specified controller volumes. Specify the value of this parameter to be a comma separated list of NetApp controller volume names to be used for provisioning. Defaults to ''.
+    This parameter is only utilized when the storage protocol is configured to use iSCSI or FC. This parameter is used to restrict provisioning to the specified controller volumes. Specify the value of this parameter to be a comma separated list of NetApp controller volume names to be used for provisioning. Defaults to: ''.
 
 **CONFIG_CINDER_NETAPP_VFILER**
-    The vFiler unit on which provisioning of block storage volumes will be done. This parameter is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode Only use this parameter when utilizing the MultiStore feature on the NetApp storage system. Defaults to ''.
+    The vFiler unit on which provisioning of block storage volumes will be done. This parameter is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode Only use this parameter when utilizing the MultiStore feature on the NetApp storage system. Defaults to: ''.
 
 Cinder NetApp 7-mode FC configuration
 -------------------------------------
 
 **CONFIG_CINDER_NETAPP_PARTNER_BACKEND_NAME**
-    The name of the config.conf stanza for a Data ONTAP (7-mode) HA partner.  This option is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode, and it is required if the storage protocol selected is FC. Defaults to ''.
+    The name of the config.conf stanza for a Data ONTAP (7-mode) HA partner.  This option is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode, and it is required if the storage protocol selected is FC. Defaults to: ''.
 
 Cinder NetApp vServer configuration
 -----------------------------------
 
 **CONFIG_CINDER_NETAPP_VSERVER**
-    This option specifies the virtual storage server (Vserver) name on the storage cluster on which provisioning of block storage volumes should occur. Defaults to ''.
+    This option specifies the virtual storage server (Vserver) name on the storage cluster on which provisioning of block storage volumes should occur. Defaults to: ''.
 
 Cinder NetApp E-Series configuration
 ------------------------------------
 
 **CONFIG_CINDER_NETAPP_CONTROLLER_IPS**
-    Restricts provisioning to the specified controllers. Value must be a comma-separated list of controller hostnames or IP addresses to be used for provisioning. This option is only utilized when the storage family is configured to use E-Series. Defaults to ''.
+    Restricts provisioning to the specified controllers. Value must be a comma-separated list of controller hostnames or IP addresses to be used for provisioning. This option is only utilized when the storage family is configured to use E-Series. Defaults to: ''.
 
 **CONFIG_CINDER_NETAPP_SA_PASSWORD**
-    Password for the NetApp E-Series storage array. Defaults to ''.
+    Password for the NetApp E-Series storage array. Defaults to: ''.
 
 **CONFIG_CINDER_NETAPP_ESERIES_HOST_TYPE**
-    This option is used to define how the controllers in the E-Series storage array will work with the particular operating system on the hosts that are connected to it. Defaults to 'linux_dm_mp'
+    This option is used to define how the controllers in the E-Series storage array will work with the particular operating system on the hosts that are connected to it. Defaults to: 'linux_dm_mp'
 
 **CONFIG_CINDER_NETAPP_WEBSERVICE_PATH**
-    Path to the NetApp E-Series proxy application on a proxy server. The value is combined with the value of the CONFIG_CINDER_NETAPP_TRANSPORT_TYPE, CONFIG_CINDER_NETAPP_HOSTNAME, and CONFIG_CINDER_NETAPP_HOSTNAME options to create the URL used by the driver to connect to the proxy application. Defaults to '/devmgr/v2'.
+    Path to the NetApp E-Series proxy application on a proxy server. The value is combined with the value of the CONFIG_CINDER_NETAPP_TRANSPORT_TYPE, CONFIG_CINDER_NETAPP_HOSTNAME, and CONFIG_CINDER_NETAPP_HOSTNAME options to create the URL used by the driver to connect to the proxy application. Defaults to: '/devmgr/v2'.
 
 **CONFIG_CINDER_NETAPP_STORAGE_POOLS**
-    Restricts provisioning to the specified storage pools. Only dynamic disk pools are currently supported. The value must be a comma-separated list of disk pool names to be used for provisioning. Defaults to ''.
+    Restricts provisioning to the specified storage pools. Only dynamic disk pools are currently supported. The value must be a comma-separated list of disk pool names to be used for provisioning. Defaults to: ''.
 
 Manila Config parameters
 ------------------------
@@ -590,34 +590,34 @@ Manila Config parameters
     Password to use for the OpenStack File Share service (manila) to authenticate with the Identity service.
 
 **CONFIG_MANILA_BACKEND**
-    Backend for the OpenStack File Share service (manila); valid options are: generic or netapp. ['generic', 'netapp']
+    Backend for the OpenStack File Share service (manila); valid options are: generic or netapp (generic, netapp).
 
 Manila NetApp configuration
 ---------------------------
 
 **CONFIG_MANILA_NETAPP_DRV_HANDLES_SHARE_SERVERS**
-    Denotes whether the driver should handle the responsibility of managing share servers. This must be set to false if the driver is to operate without managing share servers. Defaults to 'false' ['true', 'false']
+    Denotes whether the driver should handle the responsibility of managing share servers. This must be set to false if the driver is to operate without managing share servers. Defaults to: 'false' (true, false).
 
 **CONFIG_MANILA_NETAPP_TRANSPORT_TYPE**
-    The transport protocol used when communicating with the storage system or proxy server. Valid values are 'http' and 'https'. Defaults to 'https'. ['https', 'http']
+    The transport protocol used when communicating with the storage system or proxy server. Valid values are 'http' and 'https'. Defaults to: 'https' (https, http).
 
 **CONFIG_MANILA_NETAPP_LOGIN**
-    Administrative user account name used to access the NetApp storage system.  Defaults to ''.
+    Administrative user account name used to access the NetApp storage system.  Defaults to: ''.
 
 **CONFIG_MANILA_NETAPP_PASSWORD**
-    Password for the NetApp administrative user account specified in the CONFIG_MANILA_NETAPP_LOGIN parameter. Defaults to ''.
+    Password for the NetApp administrative user account specified in the CONFIG_MANILA_NETAPP_LOGIN parameter. Defaults to: ''.
 
 **CONFIG_MANILA_NETAPP_SERVER_HOSTNAME**
-    Hostname (or IP address) for the NetApp storage system or proxy server. Defaults to ''.
+    Hostname (or IP address) for the NetApp storage system or proxy server. Defaults to: ''.
 
 **CONFIG_MANILA_NETAPP_STORAGE_FAMILY**
-    The storage family type used on the storage system; valid values are ontap_cluster for clustered Data ONTAP. Defaults to 'ontap_cluster'. ['ontap_cluster']
+    The storage family type used on the storage system; valid values are ontap_cluster for clustered Data ONTAP. Defaults to: 'ontap_cluster'.
 
 **CONFIG_MANILA_NETAPP_SERVER_PORT**
-    The TCP port to use for communication with the storage system or proxy server. If not specified, Data ONTAP drivers will use 80 for HTTP and 443 for HTTPS. Defaults to '443'.
+    The TCP port to use for communication with the storage system or proxy server. If not specified, Data ONTAP drivers will use 80 for HTTP and 443 for HTTPS. Defaults to: '443'.
 
 **CONFIG_MANILA_NETAPP_AGGREGATE_NAME_SEARCH_PATTERN**
-    Pattern for searching available aggregates for NetApp provisioning. Defaults to '(.*)'.
+    Pattern for searching available aggregates for NetApp provisioning. Defaults to: '(.*)'.
 
 Manila NetApp Multi-SVM configuration
 -------------------------------------
@@ -626,28 +626,28 @@ Manila NetApp Multi-SVM configuration
     Name of aggregate on which to create the NetApp root volume. This option only applies when the option CONFIG_MANILA_NETAPP_DRV_HANDLES_SHARE_SERVERS is set to True.
 
 **CONFIG_MANILA_NETAPP_ROOT_VOLUME_NAME**
-    NetApp root volume name. Defaults to 'root'.
+    NetApp root volume name. Defaults to: 'root'.
 
 Manila NetApp Single-SVM configuration
 --------------------------------------
 
 **CONFIG_MANILA_NETAPP_VSERVER**
-    This option specifies the storage virtual machine (previously called a Vserver) name on the storage cluster on which provisioning of shared file systems should occur. This option only applies when the option driver_handles_share_servers is set to False. Defaults to ''.
+    This option specifies the storage virtual machine (previously called a Vserver) name on the storage cluster on which provisioning of shared file systems should occur. This option only applies when the option driver_handles_share_servers is set to False. Defaults to: ''.
 
 Manila generic driver configuration
 -----------------------------------
 
 **CONFIG_MANILA_GENERIC_DRV_HANDLES_SHARE_SERVERS**
-    Denotes whether the driver should handle the responsibility of managing share servers. This must be set to false if the driver is to operate without managing share servers. Defaults to 'true'. ['true', 'false']
+    Denotes whether the driver should handle the responsibility of managing share servers. This must be set to false if the driver is to operate without managing share servers. Defaults to: 'true'. ['true', 'false']
 
 **CONFIG_MANILA_GENERIC_VOLUME_NAME_TEMPLATE**
-    Volume name template for Manila service. Defaults to 'manila-share-%s'.
+    Volume name template for Manila service. Defaults to: 'manila-share-%s'.
 
 **CONFIG_MANILA_GENERIC_SHARE_MOUNT_PATH**
-    Share mount path for Manila service. Defaults to '/shares'.
+    Share mount path for Manila service. Defaults to: '/shares'.
 
 **CONFIG_MANILA_SERVICE_IMAGE_LOCATION**
-    Location of disk image for Manila service instance. Defaults to 'https://www.dropbox.com/s/vi5oeh10q1qkckh/ubuntu_1204_nfs_cifs.qcow2'.
+    Location of disk image for Manila service instance. Defaults to: 'https://www.dropbox.com/s/vi5oeh10q1qkckh/ubuntu_1204_nfs_cifs.qcow2'.
 
 **CONFIG_MANILA_SERVICE_INSTANCE_USER**
     User in Manila service instance.
@@ -659,25 +659,25 @@ Manila Network configuration
 ----------------------------
 
 **CONFIG_MANILA_NETWORK_TYPE**
-    Type of networking that the backend will use. A more detailed description of each option is available in the Manila docs. Defaults to 'neutron'. ['neutron', 'nova-network', 'standalone']
+    Type of networking that the backend will use. A more detailed description of each option is available in the Manila docs. Defaults to: 'neutron'. ['neutron', 'nova-network', 'standalone']
 
 Manila Standalone network configuration
 ---------------------------------------
 
 **CONFIG_MANILA_NETWORK_STANDALONE_GATEWAY**
-    Gateway IPv4 address that should be used. Required. Defaults to ''.
+    Gateway IPv4 address that should be used. Required. Defaults to: ''.
 
 **CONFIG_MANILA_NETWORK_STANDALONE_NETMASK**
-    Network mask that will be used. Can be either decimal like '24' or binary like '255.255.255.0'. Required. Defaults to ''.
+    Network mask that will be used. Can be either decimal like '24' or binary like '255.255.255.0'. Required. Defaults to: ''.
 
 **CONFIG_MANILA_NETWORK_STANDALONE_SEG_ID**
-    Set it if network has segmentation (VLAN, VXLAN, etc). It will be assigned to share-network and share drivers will be able to use this for network interfaces within provisioned share servers. Optional. Example: 1001. Defaults to ''.
+    Set it if network has segmentation (VLAN, VXLAN, etc). It will be assigned to share-network and share drivers will be able to use this for network interfaces within provisioned share servers. Optional. Example: 1001. Defaults to: ''.
 
 **CONFIG_MANILA_NETWORK_STANDALONE_IP_RANGE**
-    Can be IP address, range of IP addresses or list of addresses or ranges. Contains addresses from IP network that are allowed to be used. If empty, then will be assumed that all host addresses from network can be used. Optional. Examples: 10.0.0.10 or 10.0.0.10-10.0.0.20 or 10.0.0.10-10.0.0.20,10.0.0.30-10.0.0.40,10.0.0.50. Defaults to ''.
+    Can be IP address, range of IP addresses or list of addresses or ranges. Contains addresses from IP network that are allowed to be used. If empty, then will be assumed that all host addresses from network can be used. Optional. Examples: 10.0.0.10 or 10.0.0.10-10.0.0.20 or 10.0.0.10-10.0.0.20,10.0.0.30-10.0.0.40,10.0.0.50. Defaults to: ''.
 
 **CONFIG_MANILA_NETWORK_STANDALONE_IP_VERSION**
-    IP version of network. Optional. Defaults to '4'. ['4', '6']
+    IP version of network. Optional. Defaults to: 4 (4, 6).
 
 Ironic Options
 --------------
@@ -704,7 +704,7 @@ Nova Options
     Overcommitment ratio for virtual to physical RAM. Specify 1.0 to disable RAM overcommitment.
 
 **CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL**
-    Protocol used for instance migration. Valid options are: tcp and ssh. Note that by default, the Compute user is created with the /sbin/nologin shell so that the SSH protocol will not work. To make the SSH protocol work, you must configure the Compute user on compute hosts manually. ['tcp', 'ssh']
+    Protocol used for instance migration. Valid options are: tcp and ssh. Note that by default, the Compute user is created with the /sbin/nologin shell so that the SSH protocol will not work. To make the SSH protocol work, you must configure the Compute user on compute hosts manually (tcp, ssh).
 
 **CONFIG_NOVA_COMPUTE_MANAGER**
     Manager that runs the Compute service.
@@ -737,7 +737,7 @@ Nova Network Options
     IP Range for floating IP addresses. ['^[\\:\\.\\da-fA-f]+(\\/\\d+){0,1}$']
 
 **CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP**
-    Specify 'y' to automatically assign a floating IP to new instances. ['y', 'n']
+    Specify 'y' to automatically assign a floating IP to new instances. (y, n)
 
 Nova Network VLAN Options
 -------------------------
@@ -767,25 +767,25 @@ Neutron config
     Password for the OpenStack Networking metadata agent.
 
 **CONFIG_LBAAS_INSTALL**
-    Specify 'y' to install OpenStack Networking's Load-Balancing-as-a-Service (LBaaS). ['y', 'n']
+    Specify 'y' to install OpenStack Networking's Load-Balancing-as-a-Service (LBaaS) (y, n).
 
 **CONFIG_NEUTRON_METERING_AGENT_INSTALL**
-    Specify 'y' to install OpenStack Networking's L3 Metering agent ['y', 'n']
+    Specify 'y' to install OpenStack Networking's L3 Metering agent (y, n).
 
 **CONFIG_NEUTRON_FWAAS**
-     Specify 'y' to configure OpenStack Networking's Firewall-as-a-Service (FWaaS). ['y', 'n']
+     Specify 'y' to configure OpenStack Networking's Firewall-as-a-Service (FWaaS) (y, n)
 
 Neutron ML2 plugin config
 -------------------------
 
 **CONFIG_NEUTRON_ML2_TYPE_DRIVERS**
-    Comma-separated list of network-type driver entry points to be loaded from the neutron.ml2.type_drivers namespace. ['local', 'flat', 'vlan', 'gre', 'vxlan']
+    Comma-separated list of network-type driver entry points to be loaded from the neutron.ml2.type_drivers namespace (local, flat, vlan, gre, vxlan).
 
 **CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES**
-    Comma-separated, ordered list of network types to allocate as tenant networks. The 'local' value is only useful for single-box testing and provides no connectivity between hosts. ['local', 'vlan', 'gre', 'vxlan']
+    Comma-separated, ordered list of network types to allocate as tenant networks. The 'local' value is only useful for single-box testing and provides no connectivity between hosts (local, vlan, gre, vxlan).
 
 **CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS**
-    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'linuxbridge', 'openvswitch', 'hyperv', 'ncs', 'arista', 'cisco_nexus', 'mlnx', 'l2population']
+    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace (logger, test, linuxbridge, openvswitch, hyperv, ncs, arista, cisco_nexus, mlnx, l2population).
 
 **CONFIG_NEUTRON_ML2_FLAT_NETWORKS**
     Comma-separated list of physical_network names with which flat networks can be created. Use * to allow flat networks with arbitrary physical_network names.
@@ -803,7 +803,7 @@ Neutron ML2 plugin config
     Comma-separated list of <vni_min>:<vni_max> tuples enumerating ranges of VXLAN VNI IDs that are available for tenant network allocation. Minimum value is 0 and maximum value is 16777215.
 
 **CONFIG_NEUTRON_L2_AGENT**
-    Name of the L2 agent to be used with OpenStack Networking. ['linuxbridge', 'openvswitch']
+    Name of the L2 agent to be used with OpenStack Networking (linuxbridge, openvswitch).
 
 Neutron LB agent config
 -----------------------
@@ -839,7 +839,7 @@ OpenStack Horizon Config parameters
 -----------------------------------
 
 **CONFIG_HORIZON_SSL**
-    Specify 'y' to set up Horizon communication over https. ['y', 'n']
+    Specify 'y' to set up Horizon communication over https (y, n).
 
 **CONFIG_HORIZON_SECRET_KEY**
     Secret key to use for Horizon Secret Encryption Key.
@@ -872,7 +872,7 @@ OpenStack Swift Config parameters
     Number of Object Storage storage replicas; this number MUST be no larger than the number of configured storage zones.
 
 **CONFIG_SWIFT_STORAGE_FSTYPE**
-    File system type for storage nodes. ['xfs', 'ext4']
+    File system type for storage nodes (xfs, ext4).
 
 **CONFIG_SWIFT_HASH**
     Custom seed number to use for swift_hash_path_suffix in /etc/swift/swift.conf. If you do not provide a value, a seed number is automatically generated.
@@ -893,10 +893,10 @@ Heat Config parameters
     Password to use for the Orchestration service to authenticate with the Identity service.
 
 **CONFIG_HEAT_CLOUDWATCH_INSTALL**
-    Specify 'y' to install the Orchestration CloudWatch API. ['y', 'n']
+    Specify 'y' to install the Orchestration CloudWatch API (y, n).
 
 **CONFIG_HEAT_CFN_INSTALL**
-    Specify 'y' to install the Orchestration CloudFormation API. ['y', 'n']
+    Specify 'y' to install the Orchestration CloudFormation API (y, n).
 
 **CONFIG_HEAT_DOMAIN**
     Name of the Identity domain for Orchestration.
@@ -911,10 +911,10 @@ Provisioning demo config
 ------------------------
 
 **CONFIG_PROVISION_DEMO**
-    Specify 'y' to provision for demo usage and testing. ['y', 'n']
+    Specify 'y' to provision for demo usage and testing (y, n).
 
 **CONFIG_PROVISION_TEMPEST**
-    Specify 'y' to configure the OpenStack Integration Test Suite (tempest) for testing. The test suite requires OpenStack Networking to be installed. ['y', 'n']
+    Specify 'y' to configure the OpenStack Integration Test Suite (tempest) for testing. The test suite requires OpenStack Networking to be installed (y, n).
 
 Provisioning demo config
 ------------------------
@@ -956,7 +956,7 @@ Provisioning all-in-one ovs bridge config
 -----------------------------------------
 
 **CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE**
-    Specify 'y' to configure the Open vSwitch external bridge for an all-in-one deployment (the L3 external bridge acts as the gateway for virtual machines). ['y', 'n']
+    Specify 'y' to configure the Open vSwitch external bridge for an all-in-one deployment (the L3 external bridge acts as the gateway for virtual machines) (y, n).
 
 Ceilometer Config parameters
 ----------------------------
@@ -968,7 +968,7 @@ Ceilometer Config parameters
     Password to use for Telemetry to authenticate with the Identity service.
 
 **CONFIG_CEILOMETER_COORDINATION_BACKEND**
-    Backend driver for Telemetry's group membership coordination. ['redis', 'none']
+    Backend driver for Telemetry's group membership coordination (redis, none).
 
 MONGODB Config parameters
 -------------------------
@@ -986,7 +986,7 @@ Redis Config parameters
     Port on which the Redis server(s) listens.
 
 **CONFIG_REDIS_HA**
-    Specify 'y' to have Redis try to use HA. ['y', 'n']
+    Specify 'y' to have Redis try to use HA (y, n).
 
 **CONFIG_REDIS_SLAVE_HOSTS**
     Hosts on which to install Redis slaves.
@@ -1004,7 +1004,7 @@ Redis Config parameters
     Quorum value for Redis sentinel servers.
 
 **CONFIG_REDIS_MASTER_NAME**
-    Name of the master server watched by the Redis sentinel. ['[a-z]+']
+    Name of the master server watched by the Redis sentinel (eg. master).
 
 Sahara Config parameters
 ------------------------
