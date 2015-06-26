@@ -882,7 +882,7 @@ def initSequences(controller):
          'functions': [install_keys]},
         {'title': 'Preparing servers',
          'functions': [server_prep]},
-        {'title': 'Preinstalling Puppet and discovering hosts\' details',
+        {'title': 'Pre installing Puppet and discovering hosts\' details',
          'functions': [preinstall_and_discover]},
         {'title': 'Adding pre install manifest entries',
          'functions': [create_manifest]},
