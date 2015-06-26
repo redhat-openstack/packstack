@@ -426,7 +426,7 @@ def initConfig(controller):
             {"CMD_OPTION": "unsupported",
              "PROMPT": (
                  "Enable this on your own risk. Do you want to use "
-                 "insupported parameters"
+                 "unsupported parameters"
              ),
              "OPTION_LIST": ["y", "n"],
              "DEFAULT_VALUE": "n",
