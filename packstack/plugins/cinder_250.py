@@ -505,7 +505,7 @@ def initConfig(controller):
          "POST_CONDITION_MATCH": True},
 
         {"GROUP_NAME": "CINDERNETAPPVSERVER",
-         "DESCRIPTION": "Cinder NetApp vServer configuration",
+         "DESCRIPTION": "Cinder NetApp Vserver configuration",
          "PRE_CONDITION": check_netapp_vserver_options,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,

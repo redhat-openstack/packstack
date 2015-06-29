@@ -556,7 +556,7 @@ Cinder NetApp 7-mode FC configuration
 **CONFIG_CINDER_NETAPP_PARTNER_BACKEND_NAME**
     The name of the config.conf stanza for a Data ONTAP (7-mode) HA partner.  This option is only used by the driver when connecting to an instance with a storage family of Data ONTAP operating in 7-Mode, and it is required if the storage protocol selected is FC. Defaults to: ''.
 
-Cinder NetApp vServer configuration
+Cinder NetApp Vserver configuration
 -----------------------------------
 
 **CONFIG_CINDER_NETAPP_VSERVER**
