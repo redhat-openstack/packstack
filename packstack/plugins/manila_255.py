@@ -535,4 +535,4 @@ def create_manifest(config, messages):
     config['FIREWALL_MANILA_API_RULES'] = fw_details
     manifestdata += createFirewallResources('FIREWALL_MANILA_API_RULES')
 
-    appendManifestFile(manifestfile, manifestdata)
+    appendManifestFile(manifestfile, manifestdata, marker='manila')
