@@ -103,7 +103,7 @@ def initConfig(controller):
          "DEPRECATES": ['CONFIG_SSL_KEY']},
 
         {"CMD_OPTION": "os-ssl-cachain",
-         "PROMPT": ("Enter the CA cahin file corresponding to the certificate "
+         "PROMPT": ("Enter the CA chain file corresponding to the certificate "
                     "if one was entered"),
          "OPTION_LIST": [],
          "VALIDATORS": [],

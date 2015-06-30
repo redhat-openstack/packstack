@@ -106,7 +106,7 @@ Global Options
 
 SSL setup
 ---------
-Packstack supports ability to be get CA certificate and use it to sign all certificates used in Openstack deployment. Standard workflow for this would be creating Subordinate CA. If Root CA is given to Packstack it is not safe to use it for anything else. If no CA is provided and CONFIG_SSL_CACERT_SELFSIGN is set to 'y' Packstack will use Selfsigned CA.
+Packstack supports ability to be get CA certificate and use it to sign all certificates used in OpenStack deployment. Standard workflow for this would be creating Subordinate CA. If Root CA is given to Packstack it is not safe to use it for anything else. If no CA is provided and CONFIG_SSL_CACERT_SELFSIGN is set to 'y' Packstack will use Selfsigned CA.
 
 **CONFIG_SSL_CERT_DIR**
     Enter the path to use to store generated SSL certificates in.

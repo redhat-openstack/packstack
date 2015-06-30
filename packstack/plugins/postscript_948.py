@@ -55,7 +55,7 @@ def create_manifest(config, messages):
         manifestdata = getManifestTemplate("postscript")
         appendManifestFile(manifestfile, manifestdata, 'postscript')
         # TO-DO: remove this temporary fix for nova-network/neutron
-        #        undeterministic behavior
+        #        nondeterministic behavior
         provision = (
             config.get("CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE") not in
             set(['false', 'n', None])

@@ -431,7 +431,7 @@ def gather_host_keys(config, messages):
 
 
 def create_api_manifest(config, messages):
-    # Since this step is running first, let's create necesary variables here
+    # Since this step is running first, let's create necessary variables here
     # and make them global
     global compute_hosts, network_hosts
     com_var = config.get("CONFIG_COMPUTE_HOSTS", "")
