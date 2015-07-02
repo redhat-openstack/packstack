@@ -31,7 +31,6 @@ class {'::horizon':
   server_aliases        => [hiera('CONFIG_CONTROLLER_HOST'), $::fqdn, 'localhost'],
   allowed_hosts         => '*',
   hypervisor_options    => {'can_set_mount_point' => false, },
-  compress_offline      => false,
   django_debug          => $is_django_debug,
   file_upload_temp_dir  => '/var/tmp',
   listen_ssl            => $horizon_ssl,
