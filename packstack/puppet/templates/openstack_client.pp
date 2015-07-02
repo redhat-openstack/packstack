@@ -19,9 +19,11 @@ $ost_cl_keystone_region         = hiera('CONFIG_KEYSTONE_REGION')
 $ost_cl_keystone_demo_pw        = hiera('CONFIG_KEYSTONE_DEMO_PW')
 
 $config_keystone_api_version = hiera('CONFIG_KEYSTONE_API_VERSION')
-if $config_keystone_api_version =~ /^v(\d+)\.(\d+).*$/ {
+if $config_keystone_api_version =~ /^v(\d+).*$/ {
   # we need to force integer here
   $int_api_version = 0 + $1
+} else {
+  fail("${config_keystone_api_version} is an incorrect Keystone API Version!")
 }
 
 $rcadmin_common_content = "unset OS_SERVICE_TOKEN
@@ -56,14 +58,14 @@ if hiera('CONFIG_PROVISION_DEMO') == 'y' {
   $demo_common_content = "unset OS_SERVICE_TOKEN
 export OS_USERNAME=demo
 export OS_PASSWORD=${ost_cl_keystone_demo_pw}
-export PS1='[\\u@\\h \\W(keystone_demo)]\\$
+export PS1='[\\u@\\h \\W(keystone_demo)]\\$ '
 export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
 "
 
   if $int_api_version < 3 {
     $demo_content = "${demo_common_content}
 export OS_TENANT_NAME=demo
-export OS_IDENTITY_API_VERSION=hiera('CONFIG_KEYSTONE_API_VERSION')
+export OS_IDENTITY_API_VERSION=${int_api_version}
 "
   } else {
     $demo_content = "${demo_common_content}
