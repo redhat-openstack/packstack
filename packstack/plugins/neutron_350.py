@@ -620,12 +620,15 @@ def create_manifests(config, messages):
                     iface = config['CONFIG_NEUTRON_OVS_TUNNEL_IF']
                     ifip = ("ipaddress_%s" % iface)
                     server = utils.ScriptRunner(n_host)
+                    server.append("yum -y install facter > /dev/null 2>&1")
                     server.append("facter %s" % ifip)
                     rv, src_host = server.execute()
                     if not src_host:
                         raise KeyError('Couldn\'t detect ipaddress of '
                                        'interface %s on node %s' %
                                        (iface, n_host))
+                    # Make sure we only get one line of output
+                    src_host = src_host.splitlines()[0]
                 else:
                     src_host = n_host
                 fw_details[key]['host'] = "%s" % src_host
