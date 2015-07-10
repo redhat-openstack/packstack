@@ -65,7 +65,7 @@ export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
   if $int_api_version < 3 {
     $demo_content = "${demo_common_content}
 export OS_TENANT_NAME=demo
-export OS_IDENTITY_API_VERSION=${int_api_version}
+export OS_IDENTITY_API_VERSION=${int_api_version}.0
 "
   } else {
     $demo_content = "${demo_common_content}
