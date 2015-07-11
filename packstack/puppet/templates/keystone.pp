@@ -120,13 +120,11 @@ if hiera('CONFIG_KEYSTONE_IDENTITY_BACKEND') == 'ldap' {
 }
 
 # Run token flush every minute (without output so we won't spam admins)
-cron { 'token-flush':
-  ensure  => 'present',
-  command => '/usr/bin/keystone-manage token_flush >/dev/null 2>&1',
+# Logs are available in /var/log/keystone/keystone-tokenflush.log
+class { '::keystone::cron::token_flush':
   minute  => '*/1',
-  user    => 'keystone',
-  require => [User['keystone'], Group['keystone']],
-} ->
+  require => [Service['crond'], User['keystone'], Group['keystone']]
+}
 service { 'crond':
   ensure => 'running',
   enable => true,
