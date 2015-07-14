@@ -414,6 +414,10 @@ def initSequences(controller):
     q_hosts = api_hosts | network_hosts | compute_hosts
 
     neutron_steps = [
+        {'title': 'Adding Neutron FWaaS Agent manifest entries',
+         'functions': [create_fwaas_manifests]},
+        {'title': 'Adding Neutron LBaaS Agent manifest entries',
+         'functions': [create_lbaas_manifests]},
         {'title': 'Adding Neutron API manifest entries',
          'functions': [create_manifests]},
         {'title': 'Adding Neutron Keystone manifest entries',
@@ -424,10 +428,6 @@ def initSequences(controller):
          'functions': [create_l2_agent_manifests]},
         {'title': 'Adding Neutron DHCP Agent manifest entries',
          'functions': [create_dhcp_manifests]},
-        {'title': 'Adding Neutron FWaaS Agent manifest entries',
-         'functions': [create_fwaas_manifests]},
-        {'title': 'Adding Neutron LBaaS Agent manifest entries',
-         'functions': [create_lbaas_manifests]},
         {'title': 'Adding Neutron Metering Agent manifest entries',
          'functions': [create_metering_agent_manifests]},
         {'title': 'Adding Neutron Metadata Agent manifest entries',
