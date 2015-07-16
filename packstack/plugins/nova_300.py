@@ -31,6 +31,7 @@ from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
+from packstack.modules.ospluginutils import deliver_ssl_file
 from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import generate_ssl_cert
 from packstack.modules.ospluginutils import manifestfiles
@@ -679,11 +680,11 @@ def create_vncproxy_manifest(config, messages):
         if config["CONFIG_VNC_SSL_CERT"]:
             ssl_cert_file = config["CONFIG_VNC_SSL_CERT"]
             ssl_key_file = config["CONFIG_VNC_SSL_KEY"]
-            if not os.path.exists(ssl_cert):
+            if not os.path.exists(ssl_cert_file):
                 raise exceptions.ParamValidationError(
                     "The file %s doesn't exist" % ssl_cert_file)
 
-            if not os.path.exists(ssl_key):
+            if not os.path.exists(ssl_key_file):
                 raise exceptions.ParamValidationError(
                     "The file %s doesn't exist" % ssl_key_file)
 
