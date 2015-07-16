@@ -266,8 +266,14 @@ Keystone Config parameters
 **CONFIG_KEYSTONE_ADMIN_TOKEN**
     The token to use for the Keystone service api
 
+**CONFIG_KEYSTONE_ADMIN_USERNAME**
+    User name for the Identity service 'admin' user.  Defaults to 'admin'.
+
 **CONFIG_KEYSTONE_ADMIN_PW**
     The password to use for the Keystone admin user
+
+**CONFIG_KEYSTONE_ADMIN_EMAIL**
+    Email address for the Identity service 'admin' user.  Defaults to 'root@localhost'.
 
 **CONFIG_KEYSTONE_DEMO_PW**
     The password to use for the Keystone demo user
