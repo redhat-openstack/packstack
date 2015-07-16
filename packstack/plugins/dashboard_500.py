@@ -156,17 +156,17 @@ def create_manifest(config, messages):
             ssl_key_file = config["CONFIG_HORIZON_SSL_KEY"]
             ssl_chain_file = config["CONFIG_HORIZON_SSL_CACERT"]
 
-            if not os.path.exists(ssl_cert):
+            if not os.path.exists(ssl_cert_file):
                 raise exceptions.ParamValidationError(
-                    "The file %s doesn't exist" % ssl_cert)
+                    "The file %s doesn't exist" % ssl_cert_file)
 
-            if not os.path.exists(ssl_key):
+            if not os.path.exists(ssl_key_file):
                 raise exceptions.ParamValidationError(
-                    "The file %s doesn't exist" % ssl_key)
+                    "The file %s doesn't exist" % ssl_key_file)
 
-            if not os.path.exists(ssl_chain):
+            if not os.path.exists(ssl_chain_file):
                 raise exceptions.ParamValidationError(
-                    "The file %s doesn't exist" % ssl_chain)
+                    "The file %s doesn't exist" % ssl_chain_file)
 
             final_cert = open(ssl_cert_file, 'rt').read()
             final_key = open(ssl_key_file, 'rt').read()
