@@ -689,7 +689,7 @@ def create_fwaas_manifests(config, messages):
     if not config['CONFIG_NEUTRON_FWAAS'] == 'y':
         return
 
-    for host in network_hosts | api_hosts:
+    for host in network_hosts:
         manifestdata = getManifestTemplate("neutron_fwaas")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + "\n")
@@ -701,7 +701,7 @@ def create_lbaas_manifests(config, messages):
     if not config['CONFIG_LBAAS_INSTALL'] == 'y':
         return
 
-    for host in network_hosts | api_hosts:
+    for host in network_hosts:
         config['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = get_if_driver(config)
         manifestdata = getManifestTemplate("neutron_lbaas")
         manifestfile = "%s_neutron.pp" % (host,)
