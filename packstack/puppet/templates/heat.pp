@@ -2,6 +2,7 @@
 class { 'heat::api': }
 
 $heat_cfg_ctrl_host = hiera('CONFIG_CONTROLLER_HOST')
+$keystone_admin = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
 
 class { 'heat::engine':
   heat_metadata_server_url      => "http://${heat_cfg_ctrl_host}:8000",
@@ -11,7 +12,7 @@ class { 'heat::engine':
   configure_delegated_roles     => false,
 }
 
-keystone_user_role { 'admin@admin':
+keystone_user_role { "${keystone_admin}@admin":
   ensure  => present,
   roles   => ['admin', '_member_', 'heat_stack_owner'],
   require => Class['heat::engine'],
@@ -19,7 +20,7 @@ keystone_user_role { 'admin@admin':
 
 class { 'heat::keystone::domain':
   auth_url          => "http://${heat_cfg_ctrl_host}:35357/v2.0",
-  keystone_admin    => 'admin',
+  keystone_admin    => $keystone_admin,
   keystone_password => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
   keystone_tenant   => 'admin',
   domain_name       => hiera('CONFIG_HEAT_DOMAIN'),
