@@ -79,7 +79,6 @@ def wait_for_puppet(currently_running, messages):
     while currently_running:
         for hostname, finished_logfile in currently_running:
             log_file = os.path.splitext(os.path.basename(finished_logfile))[0]
-            space_len = basedefs.SPACE_LEN - len(log_file)
             if len(log_file) > log_len:
                 log_len = len(log_file)
             if hasattr(sys.stdout, "isatty") and sys.stdout.isatty():
