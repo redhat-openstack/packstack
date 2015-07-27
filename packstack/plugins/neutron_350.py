@@ -550,24 +550,16 @@ def create_manifests(config, messages):
 
     service_plugins = []
     if config['CONFIG_LBAAS_INSTALL'] == 'y':
-        service_plugins.append(
-            'neutron.services.loadbalancer.plugin.LoadBalancerPlugin'
-        )
+        service_plugins.append('lbaas')
 
     # ML2 uses the L3 Router service plugin to implement l3 agent
-    service_plugins.append(
-        'neutron.services.l3_router.l3_router_plugin.L3RouterPlugin'
-    )
+    service_plugins.append('router')
 
     if config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
-        service_plugins.append(
-            'neutron.services.metering.metering_plugin.MeteringPlugin'
-        )
+        service_plugins.append('metering')
 
     if config['CONFIG_NEUTRON_FWAAS'] == 'y':
-        service_plugins.append(
-            'neutron.services.firewall.fwaas_plugin.FirewallPlugin'
-        )
+        service_plugins.append('firewall')
 
     config['SERVICE_PLUGINS'] = (service_plugins if service_plugins
                                  else 'undef')
