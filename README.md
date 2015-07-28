@@ -130,12 +130,12 @@ entirely straightforward:
 
 Then we get **Packstack**, and perform a similar dance:
 
+    $ yum install -y python-crypto python-devel libffi-devel openssl-devel gcc-c++
     $ git clone https://github.com/stackforge/packstack
     $ cd packstack
     $ python setup.py develop
     $ cd /usr/share/openstack-puppet/modules
     $ ln -sv /root/packstack/packstack/puppet/modules/packstack
-    $ ln -sv /root/packstack/packstack/puppet/modules/remote
 
 And we're done.  Changes to the contents of **Packstack** and
 **openstack-puppet-modules** repositories are picked up by the **Packstack**
