@@ -1,27 +1,10 @@
 
-if hiera_array('SERVICE_PLUGINS') != undef {
-  $service_sync_db = true
-}
-else {
-  $service_sync_db = false
-}
-
-
 class { '::neutron::server':
   database_connection => $neutron_sql_connection,
   auth_password       => $neutron_user_password,
   auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-  sync_db             => $service_sync_db,
+  sync_db             => true,
   enabled             => true,
-}
-
-exec { 'neutron-db-manage upgrade':
-  command   => 'neutron-db-manage --config-file /etc/neutron/neutron.conf --config-file /etc/neutron/plugin.ini upgrade head',
-  path      => '/usr/bin',
-  user      => 'neutron',
-  logoutput => 'on_failure',
-  before    => Service['neutron-server'],
-  require   => [Neutron_config['database/connection'], Neutron_config['DEFAULT/core_plugin']],
 }
 
