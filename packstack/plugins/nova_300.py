@@ -164,8 +164,8 @@ def initConfig(controller):
              "PROMPT": ("Enter the Private interface for Flat DHCP on the Nova"
                         " compute servers"),
              "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": secondary_netif,
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": '',
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_NOVA_COMPUTE_PRIVIF",
@@ -201,8 +201,8 @@ def initConfig(controller):
              "PROMPT": ("Enter the Private interface for network manager on "
                         "the Nova network server"),
              "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": secondary_netif,
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": '',
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_NOVA_NETWORK_PRIVIF",
@@ -402,6 +402,36 @@ def bring_up_ifcfg(host, device):
             raise ScriptRuntimeError(msg)
 
 
+def dummy_interface(host):
+    """Creates dummy interface on given hosts.
+
+    Returns interface name.
+    """
+    # Only single dummy interface will be created, hence the name is hardcoded
+    ifname = 'dummy'
+    script = (
+        'DEVICE={0}\n'
+        'BOOTPROTO=none\n'
+        'ONBOOT=yes\n'
+        'TYPE=Ethernet\n'
+        'NM_CONTROLLED=no\n'.format(ifname)
+    )
+    server = utils.ScriptRunner(host)
+    server.append(
+        'ip link show {ifname} || ('
+        'modprobe dummy && '
+        'ip link set name {ifname} dev dummy0 && '
+        'ip link set dev dummy address 06:66:DE:AF:66:60'
+        ')'.format(**locals())
+    )
+    server.append(
+        'cat > /etc/sysconfig/network-scripts/ifcfg-{ifname} '
+        '<<EOF\n{script}EOF'.format(**locals())
+    )
+    server.execute()
+    return ifname
+
+
 # ------------------------ Step Functions -------------------------
 
 def create_ssh_keys(config, messages):
@@ -570,12 +600,15 @@ def create_compute_manifest(config, messages):
             if host not in network_hosts:
                 manifestdata += getManifestTemplate('nova_compute_flat')
 
+            key = 'CONFIG_NOVA_COMPUTE_PRIVIF'
+            if not config[key].strip():
+                config[key] = dummy_interface(host)
             if config['CONFIG_USE_SUBNETS'] == 'y':
                 netface = common.cidr_to_ifname(
-                    config['CONFIG_NOVA_COMPUTE_PRIVIF'], host, config
+                    config[key], host, config
                 )
             else:
-                netface = config['CONFIG_NOVA_COMPUTE_PRIVIF']
+                netface = config[key]
             check_ifcfg(host, netface)
             try:
                 bring_up_ifcfg(host, netface)
@@ -633,6 +666,8 @@ def create_network_manifest(config, messages):
     config['CONFIG_NOVA_NETWORK_MULTIHOST'] = multihost and 'true' or 'false'
     for host in network_hosts:
         for i in ('CONFIG_NOVA_NETWORK_PRIVIF', 'CONFIG_NOVA_NETWORK_PUBIF'):
+            if not config[i].strip():
+                config[i] = dummy_interface(host)
             netface = config[i]
             if config['CONFIG_USE_SUBNETS'] == 'y':
                 netface = common.cidr_to_ifname(netface, host, config)

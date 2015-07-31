@@ -748,9 +748,9 @@ def single_step_aio_install(options, logFile):
     if not options.novanetwork_pubif:
         options.novanetwork_pubif = utils.device_from_ip(options.install_hosts)
     if not options.novacompute_privif:
-        options.novacompute_privif = "lo"
+        options.novacompute_privif = ''
     if not options.novanetwork_privif:
-        options.novanetwork_privif = "lo"
+        options.novanetwork_privif = ''
 
     # If we are doing an all-in-one install, do demo provisioning
     # unless specifically told not to
