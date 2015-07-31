@@ -48,6 +48,8 @@ class { '::nova::network':
   fixed_range       => hiera('CONFIG_NOVA_NETWORK_FIXEDRANGE'),
   floating_range    => hiera('CONFIG_NOVA_NETWORK_FLOATRANGE'),
   config_overrides  => $overrides,
+  allowed_start     => hiera('CONFIG_NOVA_NETWORK_ALLOWED_START_IP'),
+  allowed_end       => hiera('CONFIG_NOVA_NETWORK_ALLOWED_END_IP'),
 }
 
 package { 'dnsmasq':
