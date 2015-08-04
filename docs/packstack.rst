@@ -465,6 +465,9 @@ Cinder Config parameters
 **CONFIG_CINDER_DB_PW**
     Password to use for the Block Storage service (cinder) to access the database.
 
+**CONFIG_CINDER_DB_PURGE_ENABLE**
+    Enter y if cron job for removing soft deleted DB rows should be created.
+
 **CONFIG_CINDER_KS_PW**
     Password to use for the Block Storage service to authenticate with the Identity service.
 
