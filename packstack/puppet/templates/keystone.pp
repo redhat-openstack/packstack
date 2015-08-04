@@ -119,13 +119,16 @@ if hiera('CONFIG_KEYSTONE_IDENTITY_BACKEND') == 'ldap' {
   }
 }
 
-# Run token flush every minute (without output so we won't spam admins)
-# Logs are available in /var/log/keystone/keystone-tokenflush.log
-class { '::keystone::cron::token_flush':
-  minute  => '*/1',
-  require => [Service['crond'], User['keystone'], Group['keystone']]
-}
-service { 'crond':
-  ensure => 'running',
-  enable => true,
-}
+$db_purge = hiera('CONFIG_KEYSTONE_DB_PURGE_ENABLE')
+if $db_purge {
+  # Run token flush every minute (without output so we won't spam admins)
+  class { '::keystone::cron::token_flush':
+    minute      => '*/1',
+    destination => '/dev/null',
+    require     => [Service['crond'], User['keystone'], Group['keystone']]
+  }
+  service { 'crond':
+    ensure => 'running',
+    enable => true,
+  }
+ }
