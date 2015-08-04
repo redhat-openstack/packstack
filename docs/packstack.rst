@@ -700,6 +700,9 @@ Nova Options
 **CONFIG_NOVA_DB_PW**
     Password to use for the Compute service (nova) to access the database.
 
+**CONFIG_NOVA_DB_PURGE_ENABLE**
+    Enter y if cron job for removing soft deleted DB rows should be created.
+
 **CONFIG_NOVA_KS_PW**
     Password to use for the Compute service to authenticate with the Identity service.
 

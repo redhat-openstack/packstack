@@ -52,6 +52,22 @@ def initConfig(controller):
 
     nova_params = {
         "NOVA": [
+            {"CMD_OPTION": 'nova-db-purge-enable',
+             "PROMPT": (
+                 "Enter y if cron job for removing soft deleted DB rows "
+                 "should be created"
+             ),
+             "OPTION_LIST": ['y', 'n'],
+             "VALIDATORS": [validators.validate_not_empty],
+             "PROCESSORS": [processors.process_bool],
+             "DEFAULT_VALUE": 'y',
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": 'CONFIG_NOVA_DB_PURGE_ENABLE',
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
+
             {"CMD_OPTION": "nova-db-passwd",
              "PROMPT": "Enter the password for the Nova DB access",
              "OPTION_LIST": [],

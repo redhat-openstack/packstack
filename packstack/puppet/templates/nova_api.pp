@@ -17,3 +17,10 @@ class { '::nova::api':
 
 Package<| title == 'nova-common' |> -> Class['nova::api']
 
+$db_purge = hiera('CONFIG_NOVA_DB_PURGE_ENABLE')
+if $db_purge {
+  class { '::nova::cron::archive_deleted_rows':
+    hour        => '*/12',
+    destination => '/dev/null',
+  }
+}
