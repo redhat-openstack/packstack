@@ -23,7 +23,8 @@ from .exceptions import ParamProcessingError
 
 
 __all__ = ('ParamProcessingError', 'process_cidr', 'process_host',
-           'process_ssh_key')
+           'process_ssh_key', 'process_add_quotes_around_values',
+           'process_password', 'process_string_nofloat', 'process_bool')
 
 
 def process_cidr(param, param_name, config=None):
@@ -135,3 +136,19 @@ def process_string_nofloat(param, param_name, config=None):
             return param
         else:
             param = uuid.uuid4().hex[:16]
+
+
+def process_bool(param, param_name, config=None):
+    """Converts param to appropriate boolean representation.
+
+    Retunrs True if answer == y|yes|true, False if answer == n|no|false.
+    """
+    if param.lower() in ('y', 'yes', 'true'):
+        return True
+    elif param.lower() in ('n', 'no', 'false'):
+        return False
+
+
+# Define silent processors
+for proc_func in (process_bool, process_add_quotes_around_values):
+    proc_func.silent = True

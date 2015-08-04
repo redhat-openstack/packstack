@@ -295,12 +295,13 @@ def process_param_value(param, value):
     _value = value
     proclist = param.PROCESSORS or []
     for proc_func in proclist:
+        is_silent = getattr(proc_func, 'silent', False)
         logging.debug("Processing value of parameter "
                       "%s." % param.CONF_NAME)
         try:
             new_value = proc_func(_value, param.CONF_NAME, controller.CONF)
             if new_value != _value:
-                if param.MASK_INPUT is False:
+                if param.MASK_INPUT is False and not is_silent:
                     msg = output_messages.INFO_CHANGED_VALUE
                     print(msg % (_value, new_value))
                 _value = new_value
