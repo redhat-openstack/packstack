@@ -248,20 +248,6 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-allowed-range",
-             "USAGE": "Reserve an IP Address Range for Instances",
-             "PROMPT": ("Reserve IP Adress Range for Instances"),
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_ALLOWED_RANGE",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
         ],
 
         "NOVA_NETWORK_VLAN": [
@@ -301,35 +287,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
         ],
-
-        "NOVA_NETWORK_ALLOWED_IP_RANGE": [
-            {"CMD_OPTION": "nova-network-allowed-start-ip",
-             "USAGE": "First IP of the range of allowed addresses",
-             "PROMPT": ("Start IP"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_ip],
-             "DEFAULT_VALUE": "",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_ALLOWED_START_IP",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "nova-network-allowed-end-ip",
-             "USAGE": "Last IP of the range of allowed addresses",
-             "PROMPT": ("End IP"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_ip],
-             "DEFAULT_VALUE": "",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_ALLOWED_END_IP",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
-
     }
     update_params_usage(basedefs.PACKSTACK_DOC, nova_params)
 
@@ -342,11 +299,6 @@ def initConfig(controller):
         return (config['CONFIG_NOVA_INSTALL'] == 'y' and
                 config['CONFIG_NEUTRON_INSTALL'] != 'y' and
                 config['CONFIG_NOVA_NETWORK_MANAGER'] == manager)
-
-    def use_nova_network_ip_range(config):
-        return (config['CONFIG_NOVA_INSTALL'] == 'y' and
-                config['CONFIG_NEUTRON_INSTALL'] != 'y' and
-                config['CONFIG_NOVA_NETWORK_ALLOWED_RANGE'] == 'y')
 
     nova_groups = [
         {"GROUP_NAME": "NOVA",
@@ -369,14 +321,6 @@ def initConfig(controller):
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
-
-        {"GROUP_NAME": "NOVA_NETWORK_ALLOWED_IP_RANGE",
-         "DESCRIPTION": "Nova Network Allowed IP Range ",
-         "PRE_CONDITION": use_nova_network_ip_range,
-         "PRE_CONDITION_MATCH": True,
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
     ]
     for group in nova_groups:
         params = nova_params[group["GROUP_NAME"]]
