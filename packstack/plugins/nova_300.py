@@ -21,10 +21,10 @@ import platform
 import socket
 
 from packstack.installer import basedefs
+from packstack.installer import exceptions
 from packstack.installer import processors
 from packstack.installer import utils
 from packstack.installer import validators
-from packstack.installer.exceptions import ScriptRuntimeError
 
 from packstack.modules import common
 from packstack.modules.documentation import update_params_usage
@@ -389,17 +389,17 @@ def bring_up_ifcfg(host, device):
     server.append('ip link show up | grep "%s"' % device)
     try:
         server.execute()
-    except ScriptRuntimeError:
+    except exceptions.ScriptRuntimeError:
         server.clear()
         cmd = 'ip link set dev %s up'
         server.append(cmd % device)
         try:
             server.execute()
-        except ScriptRuntimeError:
+        except exceptions.ScriptRuntimeError:
             msg = ('Failed to bring up network interface %s on host %s.'
                    ' Interface should be up so OpenStack can work'
                    ' properly.' % (device, host))
-            raise ScriptRuntimeError(msg)
+            raise exceptions.ScriptRuntimeError(msg)
 
 
 def dummy_interface(host):
@@ -612,7 +612,7 @@ def create_compute_manifest(config, messages):
             check_ifcfg(host, netface)
             try:
                 bring_up_ifcfg(host, netface)
-            except ScriptRuntimeError as ex:
+            except exceptions.ScriptRuntimeError as ex:
                 # just warn user to do it by himself
                 messages.append(str(ex))
 
@@ -674,7 +674,7 @@ def create_network_manifest(config, messages):
             check_ifcfg(host, netface)
             try:
                 bring_up_ifcfg(host, netface)
-            except ScriptRuntimeError as ex:
+            except exceptions.ScriptRuntimeError as ex:
                 # just warn user to do it by himself
                 messages.append(str(ex))
 
