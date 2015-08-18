@@ -247,7 +247,7 @@ def initConfig(controller):
                         "mechanism driver entrypoints"),
              "OPTION_LIST": ["logger", "test", "linuxbridge", "openvswitch",
                              "hyperv", "ncs", "arista", "cisco_nexus",
-                             "mlnx", "l2population"],
+                             "mlnx", "l2population", "sriovnicswitch"],
              "VALIDATORS": [validators.validate_multi_options],
              "DEFAULT_VALUE": "openvswitch",
              "MASK_INPUT": False,
@@ -335,6 +335,44 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+            {"CMD_OPTION": "os-neutron-ml2-supported-pci-vendor-devs",
+             "CONF_NAME": "CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS",
+             "PROMPT": ("Enter a comma separated list of supported PCI "
+                        "vendor devices, defined by vendor_id:product_id "
+                        "according to the PCI ID Repository."),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": ['15b3:1004', '8086:10ca'],
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-ml2-sriov-agent-required",
+             "CONF_NAME": "CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED",
+             "PROMPT": ("Set to y if the sriov agent is required"),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-ml2-sriov-interface-mappings",
+             "PROMPT": ("Enter a comma separated list of interface mappings "
+                        "for the Neutron ML2 sriov agent"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_ML2_SRIOV_INTERFACE_MAPPINGS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
     }
     update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
@@ -397,6 +435,12 @@ def initSequences(controller):
             config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += 'openvswitch'
         config['CONFIG_NEUTRON_ML2_FLAT_NETWORKS'] = 'physnet1'
 
+    if use_ml2_with_sriovnicswitch(config):
+        if ('openvswitch' not in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
+                and 'linuxbridge' not in
+                config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']):
+            config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += ', openvswitch'
+
     plugin_db = 'neutron'
     plugin_path = 'neutron.plugins.ml2.plugin.Ml2Plugin'
     # values modification
@@ -425,6 +469,11 @@ def initSequences(controller):
         compute_hosts = split_hosts(config['CONFIG_COMPUTE_HOSTS'])
     q_hosts = api_hosts | network_hosts | compute_hosts
 
+    if config['CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED'] == 'y':
+        config['CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED'] = True
+    else:
+        config['CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED'] = False
+
     neutron_steps = [
         {'title': 'Adding Neutron VPNaaS Agent manifest entries',
          'functions': [create_vpnaas_manifests]},
@@ -446,6 +495,8 @@ def initSequences(controller):
          'functions': [create_metering_agent_manifests]},
         {'title': 'Adding Neutron Metadata Agent manifest entries',
          'functions': [create_metadata_manifests]},
+        {'title': 'Adding Neutron SR-IOV Switch Agent manifest entries',
+         'functions': [create_sriovnicswitch_manifests]},
         {'title': 'Checking if NetworkManager is enabled and running',
          'functions': [check_nm_status]},
     ]
@@ -484,6 +535,14 @@ def use_openvswitch_gre(config):
         'gre' in config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES']
     )
     return ml2_vxlan
+
+
+def use_ml2_with_sriovnicswitch(config):
+    ml2_sriovnic = (
+        use_ml2_with_ovs(config) and
+        'sriovnicswitch' in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
+    )
+    return ml2_sriovnic
 
 
 def get_if_driver(config):
@@ -801,6 +860,18 @@ def create_l2_agent_manifests(config, messages):
         # network hosts.
         manifestdata = getManifestTemplate('neutron_bridge_module')
         appendManifestFile(manifestfile, manifestdata + '\n')
+
+
+def create_sriovnicswitch_manifests(config, messages):
+    global compute_hosts
+
+    if not use_ml2_with_sriovnicswitch(config):
+        return
+
+    for host in compute_hosts:
+        manifestdata = getManifestTemplate("neutron_sriov")
+        manifestfile = "%s_neutron.pp" % (host,)
+        appendManifestFile(manifestfile, manifestdata + "\n")
 
 
 def create_metadata_manifests(config, messages):

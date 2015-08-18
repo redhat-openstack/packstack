@@ -718,6 +718,14 @@ Nova Options
 **CONFIG_NOVA_COMPUTE_MANAGER**
     Manager that runs the Compute service.
 
+**CONFIG_NOVA_PCI_ALIAS**
+    Enter the PCI passthrough array of hash in JSON style for controller eg.
+    [{"vendor_id":"1234", "product_id":"5678", "name":"default"}, {...}]
+
+**CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST**
+    Enter the PCI passthrough whitelist array of hash in JSON style for controller eg.
+    [{"vendor_id":"1234", "product_id":"5678", "name':"default"}, {...}]
+
 **CONFIG_VNC_SSL_CERT**
     PEM encoded certificate to be used for ssl on the https server, leave blank if one should be generated, this certificate should not require a passphrase. If CONFIG_HORIZON_SSL is set to 'n' this parameter is ignored.
 
@@ -797,7 +805,7 @@ Neutron ML2 plugin config
     Comma-separated, ordered list of network types to allocate as tenant networks. The 'local' value is only useful for single-box testing and provides no connectivity between hosts. ['local', 'vlan', 'gre', 'vxlan']
 
 **CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS**
-    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'linuxbridge', 'openvswitch', 'hyperv', 'ncs', 'arista', 'cisco_nexus', 'mlnx', 'l2population']
+    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'linuxbridge', 'openvswitch', 'hyperv', 'ncs', 'arista', 'cisco_nexus', 'mlnx', 'l2population', 'sriovnicswitch']
 
 **CONFIG_NEUTRON_ML2_FLAT_NETWORKS**
     Comma-separated list of physical_network names with which flat networks can be created. Use * to allow flat networks with arbitrary physical_network names.
@@ -811,8 +819,18 @@ Neutron ML2 plugin config
 **CONFIG_NEUTRON_ML2_VXLAN_GROUP**
     Comma-separated list of addresses for VXLAN multicast group. If left empty, disables VXLAN from sending allocate broadcast traffic (disables multicast VXLAN mode). Should be a Multicast IP (v4 or v6) address.
 
+**CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS**
+    Comma separated list of supported PCI vendor devices defined by vendor_id:product_id according to the PCI ID Repository.
+
 **CONFIG_NEUTRON_ML2_VNI_RANGES**
     Comma-separated list of <vni_min>:<vni_max> tuples enumerating ranges of VXLAN VNI IDs that are available for tenant network allocation. Minimum value is 0 and maximum value is 16777215.
+
+**CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED**
+    Specify 'y' if the sriov agent is required
+
+**CONFIG_NEUTRON_ML2_SRIOV_INTERFACE_MAPPINGS**
+    Comma-separated list of interface mappings for the OpenStack Networking ML2 SRIOV agent. Each tuple in the list must be in the format <physical_network>:<net_interface>. Example: physnet1:eth1,physnet2:eth2,physnet3:eth3.
+
 
 **CONFIG_NEUTRON_L2_AGENT**
     Name of the L2 agent to be used with OpenStack Networking. ['linuxbridge', 'openvswitch']
