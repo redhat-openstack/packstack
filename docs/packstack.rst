@@ -673,7 +673,7 @@ Neutron OVS agent config
     A comma separated list of bridge mappings for the Neutron openvswitch plugin (eg. physnet1:br-eth1,physnet2:br-eth2,physnet3:br-eth3)
 
 **CONFIG_NEUTRON_OVS_BRIDGE_IFACES**
-    A comma separated list of colon-separated OVS bridge:interface pairs. The interface will be added to the associated bridge.
+    Comma-separated list of colon-separated Open vSwitch <bridge>:<interface> pairs. The interface will be added to the associated bridge. If you desire the bridge to be persistent a value must be added to this directive, also CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS must be set in order to create the proper port. This can be achieved from the command line by issuing the following command: packstack --allinone --os-neutron-ovs-bridge-mappings=ext-net:br-ex --os-neutron-ovs-bridge-interfaces=br-ex:eth0
 
 Neutron OVS agent config for tunnels
 ------------------------------------

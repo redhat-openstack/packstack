@@ -60,8 +60,3 @@ def create_manifest(config, messages):
             config.get("CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE") not in
             set(['false', 'n', None])
         )
-        if config.get('CONFIG_NEUTRON_INSTALL', 'n') == 'y' and provision:
-            fmted = config['CONFIG_NEUTRON_L3_EXT_BRIDGE'].replace('-', '_')
-            config['EXT_BRIDGE_VAR'] = fmted
-            manifestdata = getManifestTemplate("persist_ovs_bridge")
-            appendManifestFile(manifestfile, manifestdata, 'postscript')
