@@ -775,6 +775,9 @@ Neutron config
 **CONFIG_NEUTRON_FWAAS**
      Specify 'y' to configure OpenStack Networking's Firewall-as-a-Service (FWaaS). ['y', 'n']
 
+**CONFIG_NEUTRON_VPNAAS**
+     Specify 'y' to configure OpenStack Networking's VPN-as-a-Service (VPNaaS). ['y', 'n']
+
 Neutron ML2 plugin config
 -------------------------
 
