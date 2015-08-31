@@ -617,6 +617,8 @@ def create_common_manifest(config, messages):
     network_multi = len(network_hosts) > 1
     dbacces_hosts = set([config.get('CONFIG_CONTROLLER_HOST')])
     dbacces_hosts |= network_hosts
+    if 'CONFIG_NOVA_NETWORK_DEFAULTFLOATINGPOOL' not in config:
+        config['CONFIG_NOVA_NETWORK_DEFAULTFLOATINGPOOL'] = 'public'
 
     for manifestfile, marker in manifestfiles.getFiles():
         if manifestfile.endswith("_nova.pp"):
