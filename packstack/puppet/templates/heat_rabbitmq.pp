@@ -10,7 +10,7 @@ if $kombu_ssl_keyfile {
   file { $files_to_set_owner:
     owner   => 'heat',
     group   => 'heat',
-    require => Package['openstack-heat-common'],
+    require => Package['heat-common'],
   }
   File[$files_to_set_owner] ~> Service<||>
 }
