@@ -568,8 +568,6 @@ def create_manifests(config, messages):
                 cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s_%s"
                                 % (host, n_host))
                 fw_details = dict()
-                key = "neutron_tunnel_%s_%s" % (host, n_host)
-                fw_details.setdefault(key, {})
                 if config['CONFIG_NEUTRON_OVS_TUNNEL_IF']:
                     if config['CONFIG_USE_SUBNETS'] == 'y':
                         iface = common.cidr_to_ifname(
@@ -586,6 +584,8 @@ def create_manifests(config, messages):
                                        (iface, n_host))
                 else:
                     src_host = n_host
+                key = "neutron_tunnel_%s_%s" % (host, src_host)
+                fw_details.setdefault(key, {})
                 fw_details[key]['host'] = "%s" % src_host
                 fw_details[key]['service_name'] = "neutron tunnel port"
                 fw_details[key]['chain'] = "INPUT"
