@@ -10,5 +10,6 @@ file { '/etc/neutron/dnsmasq-neutron.conf':
   owner   => 'root',
   group   => 'neutron',
   mode    => '0640',
+  require => Class['::neutron'],
 }
 
