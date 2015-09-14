@@ -8,7 +8,7 @@ if $kombu_ssl_keyfile {
     owner   => 'manila',
     group   => 'manila',
     # manila user on RH/Fedora is provided by python-manila
-    require => Package['openstack-manila'],
+    require => Package['manila'],
   }
   File[$files_to_set_owner] ~> Service<||>
 }

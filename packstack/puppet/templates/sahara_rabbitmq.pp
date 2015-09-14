@@ -7,7 +7,7 @@ if $kombu_ssl_keyfile {
   file { $files_to_set_owner:
     owner   => 'sahara',
     group   => 'sahara',
-    require => Package['openstack-sahara'],
+    require => Package['sahara-common'],
   }
   File[$files_to_set_owner] ~> Service<||>
 }
