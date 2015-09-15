@@ -2,10 +2,6 @@ manila_config {
   'DEFAULT/glance_host': value => hiera('CONFIG_STORAGE_HOST_URL');
 }
 
-package { 'python-keystone':
-  notify => Class['manila::api'],
-}
-
 $bind_host = hiera('CONFIG_IP_VERSION') ? {
   'ipv6' => '::0',
   'ipv4' => '0.0.0.0',
