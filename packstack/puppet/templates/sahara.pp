@@ -16,3 +16,9 @@ class { '::sahara':
   use_neutron         => ($sahara_cfg_config_neutron_install == 'y'),
   service_host        => hiera('CONFIG_SAHARA_HOST'),
 }
+
+class { '::sahara::service::api': }
+
+class { '::sahara::service::engine': }
+
+
