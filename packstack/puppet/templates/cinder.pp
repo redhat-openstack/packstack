@@ -33,3 +33,12 @@ Cinder::Type {
 class { '::cinder::backends':
   enabled_backends => hiera_array('CONFIG_CINDER_BACKEND'),
 }
+
+$db_purge = hiera('CONFIG_CINDER_DB_PURGE_ENABLE')
+if $db_purge {
+  class { '::cinder::cron::db_purge':
+    hour        => '*/24',
+    destination => '/dev/null',
+    age         => 1
+  }
+}
