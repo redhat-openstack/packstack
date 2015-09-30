@@ -16,8 +16,6 @@
   $private_subnet_name       = 'private_subnet'
   $fixed_range               = '10.0.0.0/24'
   $router_name               = 'router1'
-  $setup_ovs_bridge          = hiera('CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
-  $public_bridge_name        = hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE')
   $provision_neutron_avail   = hiera('PROVISION_NEUTRON_AVAILABLE')
 
   ## Users
@@ -79,36 +77,4 @@
     neutron_router_interface { "${router_name}:${private_subnet_name}":
       ensure => present,
     }
-
-    if $setup_ovs_bridge {
-      neutron_l3_ovs_bridge { $public_bridge_name:
-        ensure      => present,
-        subnet_name => $public_subnet_name,
-      }
-    }
   }
-
-if $setup_ovs_bridge {
-  firewall { '000 nat':
-    chain    => 'POSTROUTING',
-    jump     => 'MASQUERADE',
-    source   => hiera('CONFIG_PROVISION_DEMO_FLOATRANGE'),
-    outiface => $::gateway_device,
-    table    => 'nat',
-    proto    => 'all',
-  }
-
-  firewall { '000 forward out':
-    chain    => 'FORWARD',
-    action   => 'accept',
-    outiface => $public_bridge_name,
-    proto    => 'all',
-  }
-
-  firewall { '000 forward in':
-    chain   => 'FORWARD',
-    action  => 'accept',
-    iniface => $public_bridge_name,
-    proto   => 'all',
-  }
-}

@@ -753,12 +753,6 @@ def single_step_aio_install(options, logFile):
     if not options.novanetwork_privif:
         options.novanetwork_privif = ''
 
-    # If we are doing an all-in-one install, do demo provisioning
-    # unless specifically told not to
-    if (options.os_neutron_install != "n" and
-            not options.provision_all_in_one_ovs_bridge):
-        options.provision_all_in_one_ovs_bridge = "y"
-
     single_step_install(options, logFile)
 
 

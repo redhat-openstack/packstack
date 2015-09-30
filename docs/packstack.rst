@@ -964,7 +964,7 @@ Provisioning tempest config
 Provisioning all-in-one ovs bridge config
 -----------------------------------------
 
-**CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE**
+**CONFIG_PROVISION_OVS_BRIDGE**
     Specify 'y' to configure the Open vSwitch external bridge for an all-in-one deployment (the L3 external bridge acts as the gateway for virtual machines). ['y', 'n']
 
 Ceilometer Config parameters

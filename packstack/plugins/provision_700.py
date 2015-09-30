@@ -204,18 +204,19 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
-        "PROVISION_ALL_IN_ONE_OVS_BRIDGE": [
-            {"CMD_OPTION": "provision-all-in-one-ovs-bridge",
+        "PROVISION_OVS_BRIDGE": [
+            {"CMD_OPTION": "provision-ovs-bridge",
              "PROMPT": "Would you like to configure the external ovs bridge",
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
+             "DEFAULT_VALUE": "y",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE",
+             "CONF_NAME": "CONFIG_PROVISION_OVS_BRIDGE",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE']},
         ],
     }
     update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
@@ -251,7 +252,7 @@ def initConfig(controller):
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-        {"GROUP_NAME": "PROVISION_ALL_IN_ONE_OVS_BRIDGE",
+        {"GROUP_NAME": "PROVISION_OVS_BRIDGE",
          "DESCRIPTION": "Provisioning all-in-one ovs bridge config",
          "PRE_CONDITION": allow_all_in_one_ovs_bridge,
          "PRE_CONDITION_MATCH": True,
@@ -269,7 +270,7 @@ def initConfig(controller):
         controller.getParamByName(x)
         for x in ['CONFIG_PROVISION_TEMPEST_REPO_URI',
                   'CONFIG_PROVISION_TEMPEST_REPO_REVISION',
-                  'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE']
+                  'CONFIG_PROVISION_OVS_BRIDGE']
     ]
     for param in params:
         value = controller.CONF.get(param.CONF_NAME, param.DEFAULT_VALUE)
@@ -296,13 +297,20 @@ def initSequences(controller):
             {'title': 'Adding Provisioning Tempest manifest entries',
              'functions': [create_tempest_manifest]}
         )
+
+    if (config['CONFIG_PROVISION_TEMPEST'] == "y" or
+            config['CONFIG_PROVISION_DEMO'] == "y"):
+        provision_steps.append(
+            {'title': 'Adding Provisioning Demo bridge manifest entries',
+             'functions': [create_bridge_manifest]}
+        )
     provision_steps.append(
         {'title': 'Adding Provisioning Glance manifest entries',
-         'functions': [create_storage_manifest]}
+         'functions': [create_storage_manifest]},
     )
 
     marshall_conf_bool(config, 'CONFIG_PROVISION_TEMPEST')
-    marshall_conf_bool(config, 'CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
+    marshall_conf_bool(config, 'CONFIG_PROVISION_OVS_BRIDGE')
 
     controller.addSequence("Provisioning for Demo and Testing Usage",
                            [], [], provision_steps)
@@ -351,6 +359,14 @@ def create_storage_manifest(config, messages):
         manifest_file = '%s_provision_glance' % config['CONFIG_STORAGE_HOST']
         manifest_data = getManifestTemplate(template)
         appendManifestFile(manifest_file, manifest_data)
+
+
+def create_bridge_manifest(config, messages):
+    using_neutron(config)
+    for host in utils.split_hosts(config['CONFIG_NETWORK_HOSTS']):
+        manifest_file = '{}_provision_demo_bridge.pp'.format(host)
+        manifest_data = getManifestTemplate("provision_demo_bridge")
+        appendManifestFile(manifest_file, manifest_data, 'demo_bridge')
 
 
 def create_tempest_manifest(config, messages):

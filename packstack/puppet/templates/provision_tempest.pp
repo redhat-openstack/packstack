@@ -33,8 +33,6 @@ if $provision_tempest_user != '' {
   $private_subnet_name       = 'private_subnet'
   $fixed_range               = '10.0.0.0/24'
   $router_name               = 'router1'
-  $setup_ovs_bridge          = hiera('CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE')
-  $public_bridge_name        = hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE')
 
   ## Tempest
   $configure_tempest         = hiera('CONFIG_PROVISION_TEMPEST')
@@ -149,13 +147,6 @@ if $provision_tempest_user != '' {
     neutron_router_interface { "${router_name}:${private_subnet_name}":
       ensure => present,
     }
-
-    if $setup_ovs_bridge {
-      neutron_l3_ovs_bridge { $public_bridge_name:
-        ensure      => present,
-        subnet_name => $public_subnet_name,
-      }
-    }
   }
 
   ## Tempest
@@ -191,31 +182,6 @@ if $provision_tempest_user != '' {
       nova_available            => $nova_available,
       swift_available           => $swift_available,
       require                   => $tempest_requires,
-    }
-  }
-
-  if hiera('CONFIG_PROVISION_ALL_IN_ONE_OVS_BRIDGE') {
-    firewall { '000 nat':
-      chain    => 'POSTROUTING',
-      jump     => 'MASQUERADE',
-      source   => hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE'),
-      outiface => $::gateway_device,
-      table    => 'nat',
-      proto    => 'all',
-    }
-
-    firewall { '000 forward out':
-      chain    => 'FORWARD',
-      action   => 'accept',
-      outiface => hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE'),
-      proto    => 'all',
-    }
-
-    firewall { '000 forward in':
-      chain   => 'FORWARD',
-      action  => 'accept',
-      iniface => hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE'),
-      proto   => 'all',
     }
   }
 } else {
