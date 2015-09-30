@@ -5,6 +5,13 @@ $bind_host = hiera('CONFIG_IP_VERSION') ? {
   'ipv4' => '0.0.0.0',
 }
 
+$config_use_neutron = hiera('CONFIG_NEUTRON_INSTALL')
+if $config_use_neutron == 'y' {
+    $default_floating_pool = 'public'
+} else {
+    $default_floating_pool = 'nova'
+}
+
 class { '::nova::api':
   api_bind_address                     => $bind_host,
   metadata_listen                      => $bind_host,
@@ -13,6 +20,7 @@ class { '::nova::api':
   identity_uri                         => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   admin_password                       => hiera('CONFIG_NOVA_KS_PW'),
   neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
+  default_floating_pool                => $default_floating_pool,
 }
 
 Package<| title == 'nova-common' |> -> Class['nova::api']
