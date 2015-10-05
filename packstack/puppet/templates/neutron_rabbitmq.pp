@@ -1,6 +1,7 @@
 $bind_host = hiera('CONFIG_IP_VERSION') ? {
-  'ipv6' => '::0',
-  'ipv4' => '0.0.0.0',
+  'ipv6'  => '::0',
+  default => '0.0.0.0',
+  # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 
 $kombu_ssl_ca_certs = hiera('CONFIG_AMQP_SSL_CACERT_FILE', undef)

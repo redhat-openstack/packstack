@@ -7,8 +7,9 @@ $keystone_admin_url = hiera('CONFIG_KEYSTONE_ADMIN_URL')
 $keystone_api_version = hiera('CONFIG_KEYSTONE_API_VERSION')
 $keystone_versioned_admin_url = "${keystone_admin_url}/${keystone_api_version}"
 $bind_host = hiera('CONFIG_IP_VERSION') ? {
-  'ipv6' => '::0',
-  'ipv4' => '0.0.0.0',
+  'ipv6'  => '::0',
+  default => '0.0.0.0',
+  # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 
 if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'keystone' {

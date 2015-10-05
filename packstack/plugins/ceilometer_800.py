@@ -79,7 +79,7 @@ def initConfig(controller):
 
         "MONGODB": [
             {"CMD_OPTION": "mongodb-host",
-             "PROMPT": "Enter the IP address of the MongoDB server",
+             "PROMPT": "Enter the host for the MongoDB server",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_ssh],
              "DEFAULT_VALUE": utils.get_localhost_ip(),
@@ -92,7 +92,7 @@ def initConfig(controller):
         ],
         "REDIS": [
             {"CMD_OPTION": "redis-master-host",
-             "PROMPT": "Enter the IP address of the redis master server",
+             "PROMPT": "Enter the host for the Redis master server",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_ssh],
              "DEFAULT_VALUE": utils.get_localhost_ip(),
@@ -126,7 +126,7 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-slaves",
-             "PROMPT": "Enter the IP addresses of the redis slave servers",
+             "PROMPT": "Enter the host for the redis slave servers",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_multi_ssh],
              "DEFAULT_VALUE": "",
@@ -137,7 +137,7 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
             {"CMD_OPTION": "redis-sentinels",
-             "PROMPT": "Enter the IP addresses of the redis sentinel servers",
+             "PROMPT": "Enter the host for the redis sentinel servers",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_multi_ssh],
              "DEFAULT_VALUE": "",

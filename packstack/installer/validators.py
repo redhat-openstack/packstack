@@ -254,10 +254,9 @@ def touch_port(host, port):
     key = "%s:%d" % (host, port)
     if key in _tested_ports:
         return
-    s = socket.socket(validate_ip(host), socket.SOCK_STREAM)
-    s.connect((host, port))
-    s.shutdown(socket.SHUT_RDWR)
-    s.close()
+    sock = socket.create_connection((host, port))
+    sock.shutdown(socket.SHUT_RDWR)
+    sock.close()
     _tested_ports.append(key)
 
 

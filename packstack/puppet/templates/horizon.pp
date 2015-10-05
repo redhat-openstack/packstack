@@ -11,8 +11,9 @@ $is_django_debug = hiera('CONFIG_DEBUG_MODE') ? {
 }
 
 $bind_host = hiera('CONFIG_IP_VERSION') ? {
-  'ipv6' => '::0',
-  'ipv4' => '0.0.0.0',
+  'ipv6'  => '::0',
+  default => '0.0.0.0',
+  # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 
 $horizon_ssl = hiera('CONFIG_HORIZON_SSL') ? {
@@ -55,8 +56,9 @@ if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
 # hack for memcached, for now we bind to localhost on ipv6
 # https://bugzilla.redhat.com/show_bug.cgi?id=1210658
 $memcached_bind_host = hiera('CONFIG_IP_VERSION') ? {
-  'ipv6' => 'localhost6',
-  'ipv4' => '0.0.0.0',
+  'ipv6'  => 'localhost6',
+  default => '0.0.0.0',
+  # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 
 class { '::memcached':
