@@ -638,6 +638,10 @@ def _main(options, configFile=None, logFile=None):
         path = _getanswerfilepath()
         if path:
             generateAnswerFile(path)
+    # If an answer file was provided, some options may have been overriden
+    # Overwrite answer file with updated options
+    else:
+        generateAnswerFile(options.answer_file)
 
     # Update masked_value_list with user input values
     _updateMaskedValueSet()
