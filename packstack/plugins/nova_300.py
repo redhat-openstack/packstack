@@ -452,10 +452,11 @@ def dummy_interface(host):
 
 def create_ssh_keys(config, messages):
     migration_key = os.path.join(basedefs.VAR_DIR, 'nova_migration_key')
-    # Generate key
-    local = utils.ScriptRunner()
-    local.append('ssh-keygen -t rsa -b 2048 -f "%s" -N ""' % migration_key)
-    local.execute()
+    # Generate key if it does not exist
+    if not os.path.exists(migration_key):
+        local = utils.ScriptRunner()
+        local.append('ssh-keygen -t rsa -b 2048 -f "%s" -N ""' % migration_key)
+        local.execute()
 
     with open(migration_key) as fp:
         secret = fp.read().strip()
