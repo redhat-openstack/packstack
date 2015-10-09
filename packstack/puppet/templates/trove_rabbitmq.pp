@@ -18,7 +18,7 @@ if $kombu_ssl_keyfile {
 
 
 class { '::trove':
-  rpc_backend                  => 'trove.openstack.common.rpc.impl_kombu',
+  rpc_backend                  => 'rabbit',
   rabbit_host                  => hiera('CONFIG_AMQP_HOST_URL'),
   rabbit_use_ssl               => hiera('CONFIG_AMQP_SSL_ENABLED'),
   rabbit_port                  => hiera('CONFIG_AMQP_CLIENTS_PORT'),

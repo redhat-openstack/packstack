@@ -6,7 +6,7 @@ class { '::heat':
   auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   keystone_ec2_uri    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-  rpc_backend         => 'heat.openstack.common.rpc.impl_qpid',
+  rpc_backend         => 'qpid',
   qpid_hostname       => hiera('CONFIG_AMQP_HOST_URL'),
   qpid_username       => hiera('CONFIG_AMQP_AUTH_USER'),
   qpid_password       => hiera('CONFIG_AMQP_AUTH_PASSWORD'),

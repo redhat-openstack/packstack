@@ -14,7 +14,7 @@ class { '::nova':
   qpid_hostname      => hiera('CONFIG_AMQP_HOST_URL'),
   qpid_username      => hiera('CONFIG_AMQP_AUTH_USER'),
   qpid_password      => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  rpc_backend        => 'nova.openstack.common.rpc.impl_qpid',
+  rpc_backend        => 'qpid',
   qpid_port          => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   qpid_protocol      => hiera('CONFIG_AMQP_PROTOCOL'),
   verbose            => true,

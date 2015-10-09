@@ -20,7 +20,7 @@ class { '::heat':
   auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   keystone_ec2_uri    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-  rpc_backend         => 'heat.openstack.common.rpc.impl_kombu',
+  rpc_backend         => 'rabbit',
   rabbit_host         => hiera('CONFIG_AMQP_HOST_URL'),
   rabbit_port         => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   rabbit_use_ssl      => hiera('CONFIG_AMQP_SSL_ENABLED'),
