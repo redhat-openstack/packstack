@@ -1,5 +1,6 @@
 
 require 'resolv'
+require 'ipaddr'
 
 
 module Puppet::Parser::Functions
@@ -10,6 +11,10 @@ module Puppet::Parser::Functions
         "force_ip(): Wrong number of arguments given (#{args.size} for 1)"
       )
     end
-    Resolv.getaddress args[0]
+    if (!!IPAddr.new(args[0]) rescue false)
+      args[0]
+    else
+      Resolv.getaddress args[0]
+    end
   end
 end

@@ -102,7 +102,7 @@ def is_ipv6(host):
         )
     host = host.strip()
     try:
-        return netaddr.IPAddress(host).version == 6
+        return netaddr.IPAddress(host.strip('[]')).version == 6
     except netaddr.core.AddrFormatError:
         # Most probably a hostname
         return False
@@ -122,7 +122,7 @@ def is_ipv4(host):
 
 
 def force_ip(host, allow_localhost=False):
-    if not is_ipv6(host) or not is_ipv4(host):
+    if not(is_ipv6(host) or is_ipv4(host)):
         host = host2ip(host, allow_localhost=allow_localhost)
     return host
 
