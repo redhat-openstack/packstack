@@ -93,6 +93,11 @@ def create_keystone_manifest(config, messages):
         config['CONFIG_SAHARA_HOST'] = config['CONFIG_CONTROLLER_HOST']
     manifestfile = "%s_keystone.pp" % config['CONFIG_SAHARA_HOST']
     manifestdata = getManifestTemplate("keystone_sahara")
+
+    config['CONFIG_SAHARA_URL'] = "http://%s:8386/v1.1/%%(tenant_id)s" % (
+        config['CONFIG_KEYSTONE_HOST_URL'],
+    )
+
     appendManifestFile(manifestfile, manifestdata)
 
 
