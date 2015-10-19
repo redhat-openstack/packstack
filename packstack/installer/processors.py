@@ -124,6 +124,12 @@ def process_password(param, param_name, config=None):
     return param
 
 
+def process_heat(param, param_name, config=None):
+    if config["CONFIG_SAHARA_INSTALL"] == 'y':
+        param = 'y'
+    return param
+
+
 def process_string_nofloat(param, param_name, config=None):
     """
     Process a string, making sure it is *not* convertible into a float
@@ -147,7 +153,6 @@ def process_bool(param, param_name, config=None):
         return True
     elif param.lower() in ('n', 'no', 'false'):
         return False
-
 
 # Define silent processors
 for proc_func in (process_bool, process_add_quotes_around_values):

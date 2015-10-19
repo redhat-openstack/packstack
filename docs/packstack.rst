@@ -63,7 +63,7 @@ Global Options
     Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
 
 **CONFIG_SAHARA_INSTALL**
-    Specify 'y' to install OpenStack Data Processing (sahara). ['y', 'n']
+    Specify 'y' to install OpenStack Data Processing (sahara). In case of sahara installation packstack also installs heat.['y', 'n']
 
 **CONFIG_TROVE_INSTALL**
     Specify 'y' to install OpenStack Database (trove) ['y', 'n']

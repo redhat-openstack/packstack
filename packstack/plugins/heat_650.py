@@ -140,6 +140,7 @@ def initConfig(controller):
          "CONDITION": False},
     ]
     update_params_usage(basedefs.PACKSTACK_DOC, parameters, sectioned=False)
+
     group = {"GROUP_NAME": "Heat",
              "DESCRIPTION": "Heat Config parameters",
              "PRE_CONDITION": "CONFIG_HEAT_INSTALL",
