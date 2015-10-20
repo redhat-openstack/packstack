@@ -291,6 +291,9 @@ Keystone Config parameters
 **CONFIG_KEYSTONE_DB_PW**
     Password to use for the Identity service (keystone) to access the database.
 
+**CONFIG_KEYSTONE_DB_PURGE_ENABLE**
+    Enter y if cron job for removing soft deleted DB rows should be created.
+
 **CONFIG_KEYSTONE_REGION**
     Default region name to use when creating tenants in the Identity service.
 

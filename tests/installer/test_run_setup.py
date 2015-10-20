@@ -25,6 +25,7 @@ from packstack.modules import ospluginutils
 from packstack.modules import puppet
 from packstack.installer import basedefs
 from packstack.installer import run_setup
+from packstack.installer import validators
 
 from ..test_base import FakePopen
 from ..test_base import PackstackTestCaseMixin
@@ -37,6 +38,16 @@ def makefile(path, content):
 
 
 class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
+
+    def setUp(self):
+        super(CommandLineTestCase, self).setUp()
+        self._old_validate_ssh = validators.validate_ssh
+        validators.validate_ssh = lambda param, options=None: None
+
+    def tearDown(self):
+        super(CommandLineTestCase, self).tearDown()
+        validators.validate_ssh = self._old_validate_ssh
+
     def test_running_install_hosts(self):
         """
         Test packstack.installer.run_setup.main
