@@ -58,6 +58,22 @@ def initConfig(controller):
              "NEED_CONFIRM": True,
              "CONDITION": False},
 
+            {"CMD_OPTION": 'cinder-db-purge-enable',
+             "PROMPT": (
+                 "Enter y if cron job for removing soft deleted DB rows "
+                 "should be created"
+             ),
+             "OPTION_LIST": ['y', 'n'],
+             "VALIDATORS": [validators.validate_not_empty],
+             "PROCESSORS": [processors.process_bool],
+             "DEFAULT_VALUE": 'y',
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": 'CONFIG_CINDER_DB_PURGE_ENABLE',
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
+
             {"CMD_OPTION": "cinder-ks-passwd",
              "PROMPT": "Enter the password for the Cinder Keystone access",
              "OPTION_LIST": [],
