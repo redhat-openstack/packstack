@@ -857,10 +857,10 @@ SSL Config parameters
 ---------------------
 
 **CONFIG_HORIZON_SSL_CERT**
-    PEM-encoded certificate to be used for SSL connections on the https server (the certificate should not require a passphrase). To generate a certificate, leave blank.
+    PEM-encoded certificate to be used for SSL connections on the https server. To generate a certificate, leave blank.
 
 **CONFIG_HORIZON_SSL_KEY**
-    SSL keyfile corresponding to the certificate if one was specified.
+    SSL keyfile corresponding to the certificate if one was specified. The certificate should not require a passphrase.
 
 **CONFIG_HORIZON_SSL_CACHAIN**
     PEM-encoded CA certificates from which the certificate chain of the server certificate can be assembled.
