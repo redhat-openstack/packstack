@@ -83,3 +83,4 @@ class { '::swift::proxy::authtoken':
   identity_uri      => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
 }
 
+class { '::swift::objectexpirer': }
