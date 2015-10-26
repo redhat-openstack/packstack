@@ -18,7 +18,7 @@ import pkg_resources
 from .installer.utils import execute
 
 
-VERSION = ['2015', '2']
+VERSION = ['7', '0', '0']
 OS_RELEASE = 'Liberty'
 RESERVE_STR = None
 
