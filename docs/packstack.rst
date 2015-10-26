@@ -700,10 +700,10 @@ SSL Config parameters
 ---------------------
 
 **CONFIG_SSL_CERT**
-    PEM encoded certificate to be used for ssl on the https server, leave blank if one should be generated, this certificate should not require a passphrase
+    PEM encoded certificate to be used for ssl on the https server, leave blank if one should be generated.
 
 **CONFIG_SSL_KEY**
-    SSL keyfile corresponding to the certificate if one was entered
+    SSL keyfile corresponding to the certificate if one was entered. The certificate should not require a passphrase.
 
 **CONFIG_SSL_CACHAIN**
     PEM encoded CA certificates from which the certificate chain of the server certificate can be assembled.
