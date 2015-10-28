@@ -108,8 +108,7 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-cinder-install",
              "PROMPT": (
-                 "Should Packstack install OpenStack Block Storage "
-                 "(Cinder) service"
+                 "Should Packstack install OpenStack Block Storage (Cinder)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -124,7 +123,7 @@ def initConfig(controller):
             {"CMD_OPTION": "os-manila-install",
              "PROMPT": (
                  "Should Packstack install OpenStack Shared File System "
-                 "(Manila) service"
+                 "(Manila)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -138,7 +137,7 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-nova-install",
              "PROMPT": (
-                 "Should Packstack install OpenStack Compute (Nova) service"
+                 "Should Packstack install OpenStack Compute (Nova)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
@@ -152,8 +151,7 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-neutron-install",
              "PROMPT": (
-                 "Should Packstack install OpenStack Networking (Neutron) "
-                 "service"
+                 "Should Packstack install OpenStack Networking (Neutron)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
