@@ -2,10 +2,9 @@ $keystone_use_ssl = false
 $keystone_cfg_ks_db_pw = hiera('CONFIG_KEYSTONE_DB_PW')
 $keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
 $keystone_token_provider_str = downcase(hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'))
-$keystone_url = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
+$keystone_url = regsubst(regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
 $keystone_admin_url = hiera('CONFIG_KEYSTONE_ADMIN_URL')
-$keystone_api_version = hiera('CONFIG_KEYSTONE_API_VERSION')
-$keystone_versioned_admin_url = "${keystone_admin_url}/${keystone_api_version}"
+
 $bind_host = hiera('CONFIG_IP_VERSION') ? {
   'ipv6'  => '::0',
   default => '0.0.0.0',
@@ -18,6 +17,20 @@ if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'keystone' {
   $keystone_service_name = 'httpd'
 }
 
+class { '::keystone::client': }
+
+if hiera('CONFIG_KEYSTONE_DB_PURGE_ENABLE',false) {
+  class { '::keystone::cron::token_flush':
+    minute      => '*/1',
+    require     => [Service['crond'], User['keystone'], Group['keystone']],
+    destination => '/dev/null',
+  }
+  service { 'crond':
+    ensure => 'running',
+    enable => true,
+  }
+}
+
 class { '::keystone':
   admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
   database_connection => "mysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
@@ -28,6 +41,7 @@ class { '::keystone':
   enable_ssl          => $keystone_use_ssl,
   public_bind_host    => $bind_host,
   admin_bind_host     => $bind_host,
+  default_domain      => 'Default',
 }
 
 if $keystone_service_name == 'httpd' {
@@ -51,15 +65,14 @@ class { '::keystone::roles::admin':
   admin_tenant => 'admin',
 }
 
-keystone::resource::service_identity { 'keystone':
-  public_url          => $keystone_url,
-  internal_url        => $keystone_url,
-  admin_url           => $keystone_versioned_admin_url,
-  region              => hiera('CONFIG_KEYSTONE_REGION'),
-  service_type        => 'identity',
-  service_description => 'OpenStack Identity Service',
-  configure_user      => false,
-  configure_user_role => false,
+class { '::keystone::endpoint':
+  default_domain => 'Default',
+  public_url     => $keystone_url,
+  internal_url   => $keystone_url,
+  admin_url      => $keystone_admin_url,
+  region         => hiera('CONFIG_KEYSTONE_REGION'),
+  # so far enforce v2 as default endpoint
+  version        => 'v2.0',
 }
 
 # default assignment driver is SQL
@@ -119,17 +132,3 @@ if hiera('CONFIG_KEYSTONE_IDENTITY_BACKEND') == 'ldap' {
     assignment_driver                  => $assignment_driver,
   }
 }
-
-$db_purge = hiera('CONFIG_KEYSTONE_DB_PURGE_ENABLE')
-if $db_purge {
-  # Run token flush every minute (without output so we won't spam admins)
-  class { '::keystone::cron::token_flush':
-    minute      => '*/1',
-    destination => '/dev/null',
-    require     => [Service['crond'], User['keystone'], Group['keystone']]
-  }
-  service { 'crond':
-    ensure => 'running',
-    enable => true,
-  }
- }
