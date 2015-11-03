@@ -65,7 +65,15 @@ file { 'chrony_conf':
 }
 
 exec { 'stop-chronyd':
-  command => '/usr/bin/systemctl stop chronyd.service',
+  path    => '/bin:/usr/bin:/sbin:/usr/sbin',
+  command => 'systemctl stop chronyd.service',
+  onlyif  => 'systemctl status chronyd.service'
+}
+
+# for cases where ntpd is running instead of default chronyd
+service { 'ntpd':
+  ensure => stopped,
+  enable => false,
 }
 
 exec { 'ntpdate':
@@ -85,5 +93,6 @@ Package['chrony'] ->
 Package['ntpdate'] ->
 File['chrony_conf'] ->
 Exec['stop-chronyd'] ->
+Service['ntpd'] ->
 Exec['ntpdate'] ->
 Service['chronyd']
