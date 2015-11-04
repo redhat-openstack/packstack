@@ -13,9 +13,17 @@ if $ovs_agent_vxlan_cfg_neut_ovs_tun_if != '' {
   $localip = $cfg_neutron_ovs_host
 }
 
+if $create_bridges {
+  $bridge_uplinks  = hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_IFACES')
+  $bridge_mappings = hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS')
+} else {
+  $bridge_uplinks  = []
+  $bridge_mappings = []
+}
+
 class { '::neutron::agents::ml2::ovs':
-  bridge_uplinks   => hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_IFACES'),
-  bridge_mappings  => hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'),
+  bridge_uplinks   => $bridge_uplinks,
+  bridge_mappings  => $bridge_mappings,
   enable_tunneling => hiera('CONFIG_NEUTRON_OVS_TUNNELING'),
   tunnel_types     => hiera_array('CONFIG_NEUTRON_OVS_TUNNEL_TYPES'),
   local_ip         => $localip,
