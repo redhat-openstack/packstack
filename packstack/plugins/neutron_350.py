@@ -757,7 +757,7 @@ def create_l2_agent_manifests(config, messages):
         config['CONFIG_NEUTRON_USE_L2POPULATION'] = False
 
     if agent == "openvswitch":
-        ovs_type = 'CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'
+        ovs_type = 'CONFIG_NEUTRON_ML2_TYPE_DRIVERS'
         ovs_type = config.get(ovs_type, 'local')
         tunnel = use_openvswitch_vxlan(config) or use_openvswitch_gre(config)
         config["CONFIG_NEUTRON_OVS_TUNNELING"] = tunnel
