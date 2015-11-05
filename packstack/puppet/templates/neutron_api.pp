@@ -14,3 +14,9 @@ exec { 'neutron-db-manage upgrade':
   require   => [Neutron_config['database/connection'], Neutron_config['DEFAULT/core_plugin']],
 }
 
+file { '/etc/neutron/api-paste.ini':
+  ensure  => file,
+  mode    => '0640',
+}
+
+Class['::neutron::server'] -> File['/etc/neutron/api-paste.ini']
