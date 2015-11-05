@@ -8,3 +8,10 @@ class { '::neutron::server':
   enabled             => true,
 }
 
+file { '/etc/neutron/api-paste.ini':
+  ensure  => file,
+  mode    => '0640',
+}
+
+Class['::neutron::server'] -> File['/etc/neutron/api-paste.ini']
+
