@@ -153,8 +153,9 @@ vCenter Config Parameters
 **CONFIG_VCENTER_PASSWORD**
     Password for VMware vCenter server authentication.
 
-**CONFIG_VCENTER_CLUSTER_NAME**
-    Name of the VMware vCenter cluster.
+**CONFIG_VCENTER_CLUSTER_NAMES**
+    Comma separated list of names of the VMware vCenter clusters.
+    Note: if multiple clusters are specified each one is mapped to one compute, otherwise all computes are mapped to same cluster.
 
 Global unsupported options
 --------------------------
