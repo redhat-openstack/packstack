@@ -568,16 +568,23 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "vcenter-cluster",
-             "USAGE": "The name of the vCenter cluster",
-             "PROMPT": "Enter the name of the vCenter datastore",
+            {"CMD_OPTION": "vcenter-clusters",
+             "USAGE": ("Comma separated list of names of the VMware vCenter "
+                       "clusters. Note: if multiple clusters are specified "
+                       "each one is mapped to one compute, otherwise all "
+                       "computes are mapped to same cluster."),
+
+             "PROMPT": "Enter a comma separated list of vCenter datastores",
              "DEFAULT_VALUE": "",
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_VCENTER_CLUSTER_NAME",
+             "CONF_NAME": "CONFIG_VCENTER_CLUSTER_NAMES",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_VCENTER_CLUSTER_NAME']},
         ],
 
         "UNSUPPORTED": [
