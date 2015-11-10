@@ -867,15 +867,15 @@ def initConfig(controller):
 
 def initSequences(controller):
     prescript_steps = [
-        {'title': 'Discovering ip protocol version',
+        {'title': 'Discovering IP protocol version',
          'functions': [choose_ip_version]},
-        {'title': 'Setting up ssh keys',
+        {'title': 'Setting up SSH keys',
          'functions': [install_keys]},
         {'title': 'Preparing servers',
          'functions': [server_prep]},
-        {'title': 'Pre installing Puppet and discovering hosts\' details',
+        {'title': 'Pre-installing Puppet and discovering hosts\' details',
          'functions': [preinstall_and_discover]},
-        {'title': 'Adding pre install manifest entries',
+        {'title': 'Adding pre-install manifest entries',
          'functions': [create_manifest]},
     ]
 
@@ -888,7 +888,7 @@ def initSequences(controller):
                                    'skipped. Please note that unsynchronized '
                                    'time on server instances might be problem '
                                    'for some OpenStack components.')
-    controller.addSequence("Running pre install scripts", [], [],
+    controller.addSequence("Running pre-install scripts", [], [],
                            prescript_steps)
 
 # ------------------------- helper functions -------------------------
