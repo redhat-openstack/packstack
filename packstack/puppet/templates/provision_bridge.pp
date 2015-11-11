@@ -1,7 +1,14 @@
+$provision_neutron_br    = str2bool(hiera('CONFIG_NEUTRON_INSTALL'))
+$setup_ovs_bridge        = str2bool(hiera('CONFIG_PROVISION_OVS_BRIDGE'))
+$public_bridge_name      = hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE', 'br-ex')
+$provision_tempest_br    = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
+$provision_demo_br       = str2bool(hiera('CONFIG_PROVISION_DEMO'))
 
-$setup_ovs_bridge        = hiera('CONFIG_PROVISION_OVS_BRIDGE')
-$provision_neutron_avail = hiera('PROVISION_NEUTRON_AVAILABLE')
-$public_bridge_name      = hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE')
+if $provision_demo_br {
+  $floating_range_br = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
+} elsif $provision_tempest_br {
+  $floating_range_br = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
+}
 
 neutron_config {
   'keystone_authtoken/identity_uri':      value => hiera('CONFIG_KEYSTONE_ADMIN_URL');
@@ -11,7 +18,7 @@ neutron_config {
   'keystone_authtoken/admin_password':    value => hiera('CONFIG_NEUTRON_KS_PW');
 }
 
-if $provision_neutron_avail and $setup_ovs_bridge {
+if $provision_neutron_br and $setup_ovs_bridge {
   Neutron_config<||> -> Neutron_l3_ovs_bridge['demo_bridge']
   neutron_l3_ovs_bridge { 'demo_bridge':
     name        => $public_bridge_name,
@@ -22,7 +29,7 @@ if $provision_neutron_avail and $setup_ovs_bridge {
   firewall { '000 nat':
     chain    => 'POSTROUTING',
     jump     => 'MASQUERADE',
-    source   => hiera('CONFIG_PROVISION_DEMO_FLOATRANGE'),
+    source   => $floating_range_br,
     outiface => $::gateway_device,
     table    => 'nat',
     proto    => 'all',
