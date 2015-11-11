@@ -18,9 +18,6 @@ Plugin responsible for post-installation configuration
 
 from packstack.installer import utils
 
-from packstack.modules.common import filtered_hosts
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import getManifestTemplate
 
 # ------------- Postscript Packstack Plugin Initialization --------------
 
@@ -39,18 +36,22 @@ def initConfig(controller):
 
 
 def initSequences(controller):
-    postscript_steps = [
-        {'title': 'Adding post install manifest entries',
-         'functions': [create_manifest]}
-    ]
+    config = controller.CONF
+    postscript_steps = []
+    if (config['CONFIG_PROVISION_TEMPEST'] == "y" and
+            config['CONFIG_RUN_TEMPEST'] == "y"):
+        postscript_steps.append(
+            {'title': 'Running Tempest',
+             'functions': [run_tempest]}
+        )
     controller.addSequence("Running post install scripts", [], [],
                            postscript_steps)
 
 
 # -------------------------- step functions --------------------------
 
-def create_manifest(config, messages):
-    for hostname in filtered_hosts(config):
-        manifestfile = "%s_postscript.pp" % hostname
-        manifestdata = getManifestTemplate("postscript")
-        appendManifestFile(manifestfile, manifestdata, 'postscript')
+def run_tempest(config, messages):
+    print("Running Tempest on %s" % config['CONFIG_TEMPEST_HOST'])
+    server = utils.ScriptRunner(config['CONFIG_TEMPEST_HOST'])
+    server.append('/var/lib/tempest/run_tempest.sh -V -s')
+    server.execute()

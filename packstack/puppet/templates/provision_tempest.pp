@@ -67,6 +67,11 @@ $heat_available       = str2bool(hiera('CONFIG_HEAT_INSTALL'))
 $swift_available      = str2bool(hiera('CONFIG_SWIFT_INSTALL'))
 $configure_tempest    = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
 
+# on standalone install we depend on this package
+package {'python-openstackclient':
+  before => Class['::tempest'],
+}
+
 class { '::tempest':
   admin_username            => $admin_username,
   admin_password            => $admin_password,
