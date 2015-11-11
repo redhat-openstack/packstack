@@ -109,7 +109,7 @@ def initConfig(controller):
              "PROMPT": ("Should Packstack install Neutron L3 Metering agent"),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
+             "DEFAULT_VALUE": "y",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_NEUTRON_METERING_AGENT_INSTALL",
