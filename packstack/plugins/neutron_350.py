@@ -128,6 +128,18 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-vpnaas-install",
+             "PROMPT": "Would you like to configure neutron VPNaaS?",
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_VPNAAS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "NEUTRON_LB_AGENT": [
@@ -414,6 +426,8 @@ def initSequences(controller):
     q_hosts = api_hosts | network_hosts | compute_hosts
 
     neutron_steps = [
+        {'title': 'Adding Neutron VPNaaS Agent manifest entries',
+         'functions': [create_vpnaas_manifests]},
         {'title': 'Adding Neutron FWaaS Agent manifest entries',
          'functions': [create_fwaas_manifests]},
         {'title': 'Adding Neutron LBaaS Agent manifest entries',
@@ -505,6 +519,9 @@ def create_manifests(config, messages):
 
     if config['CONFIG_NEUTRON_FWAAS'] == 'y':
         service_plugins.append('firewall')
+
+    if config['CONFIG_NEUTRON_VPNAAS'] == 'y':
+        service_plugins.append('vpnaas')
 
     config['SERVICE_PLUGINS'] = (service_plugins if service_plugins
                                  else 'undef')
@@ -683,6 +700,18 @@ def create_fwaas_manifests(config, messages):
 
     for host in network_hosts:
         manifestdata = getManifestTemplate("neutron_fwaas")
+        manifestfile = "%s_neutron.pp" % (host,)
+        appendManifestFile(manifestfile, manifestdata + "\n")
+
+
+def create_vpnaas_manifests(config, messages):
+    global network_hosts
+
+    if config['CONFIG_NEUTRON_VPNAAS'] != 'y':
+        return
+
+    for host in network_hosts:
+        manifestdata = getManifestTemplate("neutron_vpnaas")
         manifestfile = "%s_neutron.pp" % (host,)
         appendManifestFile(manifestfile, manifestdata + "\n")
 
