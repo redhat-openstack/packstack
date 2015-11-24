@@ -25,6 +25,8 @@ controller = Controller()
 PUPPET_DIR = os.path.join(basedefs.DIR_PROJECT_DIR, "puppet")
 PUPPET_TEMPLATE_DIR = os.path.join(PUPPET_DIR, "templates")
 HIERA_DEFAULTS_YAML = os.path.join(basedefs.HIERADATA_DIR, "defaults.yaml")
+# For compatibility with hiera >= 3.0
+HIERA_COMMON_YAML = os.path.join(basedefs.HIERADATA_DIR, "common.yaml")
 
 
 class ManifestFiles(object):
@@ -80,6 +82,7 @@ def generateHieraDataFile():
         outfile.write(yaml.dump(controller.CONF,
                                 explicit_start=True,
                                 default_flow_style=False))
+    os.symlink(HIERA_DEFAULTS_YAML, HIERA_COMMON_YAML)
 
 
 def createFirewallResources(hiera_key, default_value='{}'):
