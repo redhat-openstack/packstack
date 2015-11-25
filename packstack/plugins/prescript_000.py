@@ -1092,9 +1092,6 @@ def manage_rdo(host, config):
     except exceptions.ExecuteRuntimeError:
         # RDO repo is not installed, so we don't need to continue
         return
-    # We are installing RDO. EPEL is a requirement, so enable it, overriding
-    # any configured option
-    config['CONFIG_USE_EPEL'] = 'y'
 
     match = re.match(r'^(?P<version>\w+)\-(?P<release>\d+\.[\d\w]+)\n', out)
     version, release = match.group('version'), match.group('release')
