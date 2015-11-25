@@ -61,7 +61,7 @@ def initConfig(controller):
          "MASK_INPUT": True,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_HEAT_AUTH_ENC_KEY",
-         "USE_DEFAULT": True,
+         "USE_DEFAULT": False,
          "NEED_CONFIRM": True,
          "CONDITION": False},
 
