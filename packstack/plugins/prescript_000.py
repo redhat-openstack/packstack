@@ -568,6 +568,21 @@ def initConfig(controller):
              "CONF_NAME": "CONFIG_SATELLITE_URL",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-sat6-server",
+             "PROMPT": ("Specify a Satellite 6 Server to register to. If not"
+                        " specified, Packstack will register the system to"
+                        " the Red Hat server. When this option is specified,"
+                        " you also need to set the Satellite 6 organization"
+                        " and an activation key."),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_SAT6_SERVER",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
              "CONDITION": False}
         ],
 
@@ -604,6 +619,30 @@ def initConfig(controller):
              "MASK_INPUT": True,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_RH_PROXY",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-sat6-org",
+             "PROMPT": ("Specify a Satellite 6 Server organization to use when"
+                        " registering the system."),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_SAT6_ORG",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "rh-sat6-key",
+             "PROMPT": ("Specify a Satellite 6 Server activation key to use"
+                        " when registering the system."),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_RH_SAT6_KEY",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False}
@@ -769,7 +808,8 @@ def initConfig(controller):
         return config['CONFIG_UNSUPPORTED'] == 'y'
 
     def filled_rhsm(config):
-        return bool(config.get('CONFIG_RH_USER'))
+        return bool(config.get('CONFIG_RH_USER') or
+                    config.get('CONFIG_RH_SAT6_SERVER'))
 
     def filled_rhsm_proxy(config):
         return bool(config.get('CONFIG_RH_PROXY'))
@@ -967,7 +1007,8 @@ def run_rhn_reg(host, server_url, username=None, password=None,
 
 
 def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
-                 proxy_port=None, proxy_user=None, proxy_password=None):
+                 proxy_port=None, proxy_user=None, proxy_password=None,
+                 sat6_server=None, sat6_org=None, sat6_key=None):
     """
     Registers given host to Red Hat Repositories via subscription manager.
     """
@@ -984,32 +1025,34 @@ def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
                     '--server.proxy_password=%(proxy_password)s')
         server.append(cmd % locals())
 
-    # register host
-    cmd = ('subscription-manager register --username=\"%s\" '
-           '--password=\"%s\" --autosubscribe || true')
-    server.append(cmd % (username, password.replace('"', '\\"')))
+    if sat6_server:
+        # Register to Satellite 6 host
+        cmd = ('curl -k -O'
+               ' https://%s/pub/katello-ca-consumer-latest.noarch.rpm && '
+               ' yum -y install katello-ca-consumer-latest.noarch.rpm &&'
+               ' rm -f katello-ca-consumer-latest.noarch.rpm')
+        server.append(cmd % sat6_server)
+        cmd = ('subscription-manager register --org %s --activationkey %s')
+        server.append(cmd % (sat6_org, sat6_key))
+    else:
+        # Register to Hosted RHSM
+        cmd = ('subscription-manager register --username=\"%s\" '
+               '--password=\"%s\" --autosubscribe || true')
+        server.append(cmd % (username, password.replace('"', '\\"')))
 
-    # subscribe to required channel
-    cmd = ('subscription-manager list --consumed | grep -i openstack || '
-           'subscription-manager subscribe --pool %s')
-    pool = ("$(subscription-manager list --available"
-            " | grep -m1 -A15 'Red Hat Enterprise Linux OpenStack Platform'"
-            " | grep -i 'Pool ID:' | awk '{print $3}')")
-    server.append(cmd % pool)
+        # subscribe to required channel
+        cmd = ('subscription-manager list --consumed | grep -i openstack || '
+               'subscription-manager subscribe --pool %s')
+        pool = ("$(subscription-manager list --available"
+                " | grep -m1 -A15 'Red Hat Enterprise Linux OpenStack Platform'"
+                " | grep -i 'Pool ID:' | awk '{print $3}')")
+        server.append(cmd % pool)
 
     if optional:
         server.append("subscription-manager repos "
                       "--enable rhel-%s-server-optional-rpms" % releasever)
     server.append("subscription-manager repos "
-                  "--enable rhel-%s-server-openstack-5.0-rpms" % releasever)
-
-    # mrg channel naming is a big mess
-    if releasever == '7':
-        mrg_prefix = 'rhel-x86_64-server-7'
-    elif releasever == '6':
-        mrg_prefix = 'rhel-6-server'
-    server.append("subscription-manager repos "
-                  "--enable %s-mrg-messaging-2-rpms" % mrg_prefix)
+                  "--enable rhel-%s-server-openstack-7.0-rpms" % releasever)
 
     server.append("yum clean all")
     server.append("rpm -q --whatprovides yum-utils || "
@@ -1265,9 +1308,11 @@ def preinstall_and_discover(config, messages):
 def server_prep(config, messages):
     rh_username = None
     sat_url = None
+    sat6_server = None
     if is_rhel():
         rh_username = config.get("CONFIG_RH_USER")
         rh_password = config.get("CONFIG_RH_PW")
+        sat6_server = config.get("CONFIG_RH_SAT6_SERVER")
 
         sat_registered = set()
 
@@ -1291,13 +1336,16 @@ def server_prep(config, messages):
 
     for hostname in filtered_hosts(config):
         # Subscribe to Red Hat Repositories if configured
-        if rh_username:
+        if rh_username or sat6_server:
             run_rhsm_reg(hostname, rh_username, rh_password,
                          optional=(config.get('CONFIG_RH_OPTIONAL') == 'y'),
                          proxy_server=config.get('CONFIG_RH_PROXY'),
                          proxy_port=config.get('CONFIG_RH_PROXY_PORT'),
                          proxy_user=config.get('CONFIG_RH_PROXY_USER'),
-                         proxy_password=config.get('CONFIG_RH_PROXY_PASSWORD'))
+                         proxy_password=config.get('CONFIG_RH_PROXY_PASSWORD'),
+                         sat6_server=config.get('CONFIG_RH_SAT6_SERVER'),
+                         sat6_org=config.get('CONFIG_RH_SAT6_ORG'),
+                         sat6_key=config.get('CONFIG_RH_SAT6_KEY'))
 
         # Subscribe to RHN Satellite if configured
         if sat_url and hostname not in sat_registered:
