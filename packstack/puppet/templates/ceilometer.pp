@@ -22,6 +22,8 @@ if $config_ceilometer_coordination_backend == 'redis' {
   } else {
     $coordination_url = "redis://${redis_host}:${redis_port}"
   }
+
+  package { 'python-redis': ensure => present }
 } else {
   $coordination_url = ''
 }
