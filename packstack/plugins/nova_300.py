@@ -173,6 +173,35 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "nova-pci-alias",
+             "PROMPT": ("Enter the PCI passthrough array of hash in JSON style for controller eg. "
+                        "[{'vendor_id':'1234', 'product_id':'5678', "
+                        "'name':'default'}, {...}] "),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NOVA_PCI_ALIAS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "nova-pci-passthrough-whitelist",
+             "PROMPT": ("Enter the PCI passthrough whitelist as array of hash in JSON style for "
+                        "controller eg. "
+                        "[{'vendor_id':'1234', 'product_id':'5678', "
+                        "'name':'default'}, {...}]"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "NOVA_NETWORK": [
