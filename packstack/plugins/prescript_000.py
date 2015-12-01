@@ -205,6 +205,20 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "os-aodh-install",
+             "PROMPT": (
+                 "Should Packstack install OpenStack Telemetry Alarming (Aodh)"
+             ),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "y",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_AODH_INSTALL",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "os-sahara-install",
              "PROMPT": (
                  "Should Packstack install OpenStack Clustering (Sahara)."

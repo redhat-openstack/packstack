@@ -60,6 +60,10 @@ if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
   apache::listen { '35357': }
 }
 
+if hiera('CONFIG_AODH_INSTALL') == 'y' {
+  apache::listen { '8042': }
+}
+
 # hack for memcached, for now we bind to localhost on ipv6
 # https://bugzilla.redhat.com/show_bug.cgi?id=1210658
 $memcached_bind_host = hiera('CONFIG_IP_VERSION') ? {

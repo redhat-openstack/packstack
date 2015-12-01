@@ -140,15 +140,15 @@ def run_cleanup(config, messages):
 
 
 def copy_puppet_modules(config, messages):
-    os_modules = ' '.join(('apache', 'ceilometer', 'certmonger', 'cinder',
-                           'concat', 'firewall', 'glance', 'galera', 'heat',
-                           'horizon', 'inifile', 'ironic', 'keystone',
+    os_modules = ' '.join(('aodh', 'apache', 'ceilometer', 'certmonger',
+                           'cinder', 'concat', 'firewall', 'glance', 'galera',
+                           'heat', 'horizon', 'inifile', 'ironic', 'keystone',
                            'manila', 'memcached', 'mongodb', 'mysql',
                            'neutron', 'nova', 'nssdb', 'openstack',
-                           'packstack', 'qpid', 'rabbitmq', 'redis', 'remote',
-                           'rsync', 'sahara', 'ssh', 'stdlib', 'swift',
-                           'sysctl', 'tempest', 'trove', 'vcsrepo', 'vlan',
-                           'vswitch', 'xinetd', 'openstacklib'))
+                           'openstacklib', 'packstack', 'qpid', 'rabbitmq',
+                           'redis', 'remote', 'rsync', 'sahara', 'ssh',
+                           'stdlib', 'swift', 'sysctl', 'tempest', 'trove',
+                           'vcsrepo', 'vlan', 'vswitch', 'xinetd', ))
 
     # write puppet manifest to disk
     manifestfiles.writeManifests()
