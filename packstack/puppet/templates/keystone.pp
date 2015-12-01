@@ -65,6 +65,11 @@ class { '::keystone::roles::admin':
   admin_tenant => 'admin',
 }
 
+# Ensure the default _member_ role is present
+keystone_role { '_member_':
+  ensure => present,
+}
+
 class { '::keystone::endpoint':
   default_domain => 'Default',
   public_url     => $keystone_url,

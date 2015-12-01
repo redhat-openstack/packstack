@@ -68,7 +68,6 @@ if $provision_tempest_user != '' {
   keystone_user { $username:
     ensure   => present,
     enabled  => true,
-    tenant   => $tenant_name,
     password => $password,
   }
 
@@ -76,6 +75,11 @@ if $provision_tempest_user != '' {
     keystone_user_role { "${username}@${tenant_name}":
       ensure => present,
       roles  => ['_member_', 'heat_stack_owner'],
+    }
+  } else {
+    keystone_user_role { "${username}@${tenant_name}":
+      ensure => present,
+      roles  => ['_member_'],
     }
   }
 
