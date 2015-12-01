@@ -33,7 +33,7 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 DEMO_IMAGE_NAME = 'cirros'
 DEMO_IMAGE_URL = (
-    'http://download.cirros-cloud.net/0.3.3/cirros-0.3.3-x86_64-disk.img'
+    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img'
 )
 DEMO_IMAGE_SSH_USER = 'cirros'
 DEMO_IMAGE_FORMAT = 'qcow2'
