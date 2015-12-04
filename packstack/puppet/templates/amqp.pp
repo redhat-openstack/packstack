@@ -68,6 +68,14 @@ define enable_rabbitmq {
   }
 
   Package['erlang'] -> Class['rabbitmq']
+
+  File <| path == '/etc/rabbitmq/rabbitmq.config' |> {
+    ensure  => present,
+    owner   => 'rabbitmq',
+    group   => 'rabbitmq',
+    mode    => 0640,
+  }
+
 }
 
 define enable_qpid($enable_ssl = 'n', $enable_auth = 'n') {
