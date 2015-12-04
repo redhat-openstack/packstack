@@ -44,6 +44,13 @@ class {'::horizon':
   },
 }
 
+File <| path == $::horizon::params::config_file |> {
+  ensure  => present,
+  owner   => 'root',
+  group   => $::horizon::params::apache_group,
+  mode    => 0640,
+}
+
 if $horizon_ssl {
   apache::listen { '443': }
 }
