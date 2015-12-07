@@ -147,5 +147,9 @@ def create_manifest(config, messages):
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_GLANCE_RULES'] = fw_details
 
+    # Set the backend
+    manifestdata += getManifestTemplate(
+        'glance_%s.pp' % config['CONFIG_GLANCE_BACKEND'])
+
     manifestdata += createFirewallResources('FIREWALL_GLANCE_RULES')
     appendManifestFile(manifestfile, manifestdata)
