@@ -983,8 +983,8 @@ Provisioning tempest config
 **CONFIG_PROVISION_TEMPEST_REPO_REVISION**
     Revision (branch) of the Integration Test Suite git repository.
 
-**CONFIG_TEMPEST_HOST**
-    Host to deploy Tempest on. On multinode installs defaults to first host in CONFIG_NETWORK_HOSTS.
+**CONFIG_RUN_TEMPEST**
+    Specify 'y' to run Tempest smoke test as last step of installation.
 
 Provisioning all-in-one ovs bridge config
 -----------------------------------------

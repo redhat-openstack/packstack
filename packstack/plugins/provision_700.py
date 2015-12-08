@@ -21,7 +21,6 @@ from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
 
-from packstack.modules.common import is_all_in_one
 from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import getManifestTemplate
@@ -41,8 +40,12 @@ DEMO_IMAGE_FORMAT = 'qcow2'
 
 def initConfig(controller):
 
-    def process_provision(param, process_args=None):
-        return param if is_all_in_one(controller.CONF) else 'n'
+    def process_tempest(param, param_name, config=None):
+        if param == "":
+            # In case of multinode installs by default we deploy
+            # Tempest on network node
+            return config['CONFIG_NETWORK_HOSTS'].split(',')[0]
+        return param
 
     conf_params = {
         "PROVISION_INIT": [
@@ -143,7 +146,8 @@ def initConfig(controller):
              "PROMPT": "Enter the host where to deploy Tempest",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_ssh],
-             "DEFAULT_VALUE": utils.get_localhost_ip(),
+             "DEFAULT_VALUE": "",
+             "PROCESSORS": [process_tempest],
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_TEMPEST_HOST",
@@ -211,6 +215,18 @@ def initConfig(controller):
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_PROVISION_TEMPEST_REPO_REVISION",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "run-tempest",
+             "PROMPT": ("Do you wish to run "),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_RUN_TEMPEST",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
@@ -330,7 +346,7 @@ def create_bridge_manifest(config, messages):
     for host in utils.split_hosts(config['CONFIG_NETWORK_HOSTS']):
         manifest_file = '{}_provision_bridge.pp'.format(host)
         manifest_data = getManifestTemplate("provision_bridge")
-        appendManifestFile(manifest_file, manifest_data, 'provision')
+        appendManifestFile(manifest_file, manifest_data, 'bridge')
 
 
 def create_storage_manifest(config, messages):
