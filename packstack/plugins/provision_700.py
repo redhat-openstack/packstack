@@ -139,6 +139,18 @@ def initConfig(controller):
         ],
 
         "PROVISION_TEMPEST": [
+            {"CMD_OPTION": "tempest-host",
+             "PROMPT": "Enter the host where to deploy Tempest",
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_ssh],
+             "DEFAULT_VALUE": utils.get_localhost_ip(),
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_TEMPEST_HOST",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "provision-tempest-user",
              "PROMPT": ("Enter the name of the Tempest Provisioning user "
                         "(if blank, Tempest will be configured in a "
@@ -284,94 +296,53 @@ def initSequences(controller):
             config['CONFIG_PROVISION_TEMPEST'] != "y"):
         return
 
-    provision_steps = []
-
-    if config['CONFIG_PROVISION_DEMO'] == "y":
-        provision_steps.append(
-            {'title': 'Adding Provisioning Demo manifest entries',
-             'functions': [create_demo_manifest]}
-        )
-
-    if config['CONFIG_PROVISION_TEMPEST'] == "y":
-        provision_steps.append(
-            {'title': 'Adding Provisioning Tempest manifest entries',
-             'functions': [create_tempest_manifest]}
-        )
-
+    provision_steps = [
+        {'title': 'Adding Provisioning manifest entries',
+         'functions': [create_provision_manifest]},
+        {'title': 'Adding Provisioning Glance manifest entries',
+         'functions': [create_storage_manifest]},
+    ]
     if (config['CONFIG_PROVISION_TEMPEST'] == "y" or
             config['CONFIG_PROVISION_DEMO'] == "y"):
         provision_steps.append(
             {'title': 'Adding Provisioning Demo bridge manifest entries',
              'functions': [create_bridge_manifest]}
         )
-    provision_steps.append(
-        {'title': 'Adding Provisioning Glance manifest entries',
-         'functions': [create_storage_manifest]},
-    )
-
-    marshall_conf_bool(config, 'CONFIG_PROVISION_TEMPEST')
-    marshall_conf_bool(config, 'CONFIG_PROVISION_OVS_BRIDGE')
+    if config['CONFIG_PROVISION_TEMPEST'] == "y":
+        provision_steps.append(
+            {'title': 'Adding Provisioning Tempest manifest entries',
+             'functions': [create_tempest_manifest]}
+        )
 
     controller.addSequence("Provisioning for Demo and Testing Usage",
                            [], [], provision_steps)
 
 
-# ------------------------- helper functions -------------------------
-
-def marshall_conf_bool(conf, key):
-    if conf[key] == 'y':
-        conf[key] = True
-    else:
-        conf[key] = False
-
-
-def using_neutron(config):
-    # Using the neutron or nova api servers as the provisioning target
-    # will suffice for the all-in-one case.
-    if config['CONFIG_NEUTRON_INSTALL'] != "y":
-        # The provisioning template requires the name of the external
-        # bridge but the value will be missing if neutron isn't
-        # configured to be installed.
-        config['CONFIG_NEUTRON_L3_EXT_BRIDGE'] = 'br-ex'
-
-    # Set template-specific parameter to configure whether neutron is
-    # available.  The value needs to be true/false rather than the y/n.
-    # provided by CONFIG_NEUTRON_INSTALL.
-    config['PROVISION_NEUTRON_AVAILABLE'] = config['CONFIG_NEUTRON_INSTALL']
-    marshall_conf_bool(config, 'PROVISION_NEUTRON_AVAILABLE')
-
-
 # -------------------------- step functions --------------------------
 
-def create_demo_manifest(config, messages):
-    using_neutron(config)
-    manifest_file = '%s_provision_demo.pp' % config['CONFIG_CONTROLLER_HOST']
-    manifest_data = getManifestTemplate("provision_demo")
-    appendManifestFile(manifest_file, manifest_data)
+def create_provision_manifest(config, messages):
+    manifest_file = '%s_provision.pp' % config['CONFIG_CONTROLLER_HOST']
+    manifest_data = getManifestTemplate("provision")
+    appendManifestFile(manifest_file, manifest_data, 'provision')
+
+
+def create_bridge_manifest(config, messages):
+    for host in utils.split_hosts(config['CONFIG_NETWORK_HOSTS']):
+        manifest_file = '{}_provision_bridge.pp'.format(host)
+        manifest_data = getManifestTemplate("provision_bridge")
+        appendManifestFile(manifest_file, manifest_data, 'provision')
 
 
 def create_storage_manifest(config, messages):
     if config['CONFIG_GLANCE_INSTALL'] == 'y':
-        if config['CONFIG_PROVISION_TEMPEST']:
-            template = "provision_tempest_glance"
-        else:
-            template = "provision_demo_glance"
+        template = "provision_glance"
         manifest_file = '%s_provision_glance' % config['CONFIG_STORAGE_HOST']
         manifest_data = getManifestTemplate(template)
-        appendManifestFile(manifest_file, manifest_data)
-
-
-def create_bridge_manifest(config, messages):
-    using_neutron(config)
-    for host in utils.split_hosts(config['CONFIG_NETWORK_HOSTS']):
-        manifest_file = '{}_provision_demo_bridge.pp'.format(host)
-        manifest_data = getManifestTemplate("provision_demo_bridge")
-        appendManifestFile(manifest_file, manifest_data, 'demo_bridge')
+        appendManifestFile(manifest_file, manifest_data, 'provision')
 
 
 def create_tempest_manifest(config, messages):
-    using_neutron(config)
     manifest_file = ('%s_provision_tempest.pp' %
-                     config['CONFIG_CONTROLLER_HOST'])
+                     config['CONFIG_TEMPEST_HOST'])
     manifest_data = getManifestTemplate("provision_tempest")
-    appendManifestFile(manifest_file, manifest_data)
+    appendManifestFile(manifest_file, manifest_data, 'tempest')

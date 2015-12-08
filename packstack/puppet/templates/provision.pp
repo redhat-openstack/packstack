@@ -1,37 +1,48 @@
-  ## Keystone
-  # non admin user
-  $username                  = 'demo'
-  $password                  = hiera('CONFIG_KEYSTONE_DEMO_PW')
-  $tenant_name               = 'demo'
-  # admin user
-  $admin_username            = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
-  $admin_password            = hiera('CONFIG_KEYSTONE_ADMIN_PW')
-  $admin_tenant_name         = 'admin'
+$provision_demo            = str2bool(hiera('CONFIG_PROVISION_DEMO'))
+$provision_tempest         = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
+$provision_neutron         = str2bool(hiera('CONFIG_NEUTRON_INSTALL'))
+$heat_available            = str2bool(hiera('CONFIG_HEAT_INSTALL'))
+
+if $provision_demo {
+  $username             = 'demo'
+  $password             = hiera('CONFIG_KEYSTONE_DEMO_PW')
+  $tenant_name          = 'demo'
+  $floating_range       = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
+} elsif $provision_tempest {
+  $username             = hiera('CONFIG_PROVISION_TEMPEST_USER')
+  $password             = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
+  $tenant_name          = 'tempest'
+  $floating_range       = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
+  if (empty($tempest_user) or empty($tempest_password)) {
+    fail("Both CONFIG_PROVISION_TEMPEST_USER and
+    CONFIG_PROVISION_TEMPEST_USER_PW need to be configured.")
+  }
+}
+
+if $provision_demo or $provision_tempest {
+  $admin_tenant_name    = 'admin'
 
   ## Neutron
-  $public_network_name       = 'public'
-  $public_subnet_name        = 'public_subnet'
-  $floating_range            = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
-  $private_network_name      = 'private'
-  $private_subnet_name       = 'private_subnet'
-  $fixed_range               = '10.0.0.0/24'
-  $router_name               = 'router1'
-  $provision_neutron_avail   = hiera('PROVISION_NEUTRON_AVAILABLE')
-
-  ## Users
+  $public_network_name  = 'public'
+  $public_subnet_name   = 'public_subnet'
+  $private_network_name = 'private'
+  $private_subnet_name  = 'private_subnet'
+  $fixed_range          = '10.0.0.0/24'
+  $router_name          = 'router1'
 
   keystone_tenant { $tenant_name:
     ensure      => present,
     enabled     => true,
     description => 'default tenant',
   }
+
   keystone_user { $username:
     ensure   => present,
     enabled  => true,
     password => $password,
   }
 
-  if hiera('CONFIG_HEAT_INSTALL') == 'y' {
+  if $heat_available {
     keystone_user_role { "${username}@${tenant_name}":
       ensure => present,
       roles  => ['_member_', 'heat_stack_owner'],
@@ -44,7 +55,7 @@
   }
 
   ## Neutron
-  if $provision_neutron_avail {
+  if $provision_neutron {
     $neutron_deps = [Neutron_network[$public_network_name]]
 
     neutron_network { $public_network_name:
@@ -82,3 +93,4 @@
       ensure => present,
     }
   }
+}
