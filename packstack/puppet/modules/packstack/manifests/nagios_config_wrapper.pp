@@ -37,21 +37,25 @@ define packstack_nagios_services {
     seltype => 'nagios_unconfined_plugin_exec_t',
     content => template("packstack/${name}.erb"),
   }
+
   nagios_command { $name:
     command_line => "/usr/lib64/nagios/plugins/${name}",
     owner        => 'nagios',
     group        => 'nagios',
     mode         => '0644',
   }
+
   nagios_service { $name:
-    host_name             => $packstack::nagios_configs::controller_host,
+    host_name             => $packstack::nagios_config_wrapper::controller_host,
     normal_check_interval => '5',
     check_command         => $name,
     use                   => 'generic-service',
+    service_description   => "$name service",
     owner                 => 'nagios',
     group                 => 'nagios',
     mode                  => '0644',
-  }
+ }
+
 }
 
 class packstack::nagios_config_wrapper (
