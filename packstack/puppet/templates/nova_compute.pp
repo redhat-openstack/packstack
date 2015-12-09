@@ -41,6 +41,7 @@ class { '::nova::compute':
   vncproxy_protocol             => hiera('CONFIG_VNCPROXY_PROTOCOL'),
   vncserver_proxyclient_address => $vncproxy_server,
   compute_manager               => hiera('CONFIG_NOVA_COMPUTE_MANAGER'),
+  pci_passthrough               => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST'),
 }
 
 # Tune the host with a virtual hosts profile
