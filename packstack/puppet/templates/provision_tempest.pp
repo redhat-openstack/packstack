@@ -40,7 +40,8 @@ $resize_available          = true
 
 $change_password_available = undef
 $allow_tenant_isolation    = true
-$log_file                  = 'tempest.log'
+$dir_log                   = hiera('DIR_LOG')
+$log_file                  = "${dir_log}/tempest.log"
 $use_stderr                = false
 $debug                     = true
 $public_router_id          = undef

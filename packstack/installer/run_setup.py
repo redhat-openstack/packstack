@@ -968,6 +968,7 @@ def main():
 
         controller.CONF['DEFAULT_EXEC_TIMEOUT'] = options.timeout
         controller.CONF['DRY_RUN'] = options.dry_run
+        controller.CONF['DIR_LOG'] = basedefs.DIR_LOG
 
         # If --gen-answer-file was supplied, do not run main
         if options.gen_answer_file:
