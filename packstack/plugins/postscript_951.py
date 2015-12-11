@@ -17,6 +17,7 @@ Plugin responsible for post-installation configuration
 """
 
 from packstack.installer import utils
+from packstack.installer import basedefs
 
 
 # ------------- Postscript Packstack Plugin Initialization --------------
@@ -51,8 +52,9 @@ def initSequences(controller):
 # -------------------------- step functions --------------------------
 
 def run_tempest(config, messages):
+    logfile = basedefs.DIR_LOG + "/run_tempest.log"
     print("Running Tempest on %s" % config['CONFIG_TEMPEST_HOST'])
     server = utils.ScriptRunner(config['CONFIG_TEMPEST_HOST'])
-    server.append('/var/lib/tempest/run_tempest.sh -V %s'
-                  % config['CONFIG_RUN_TEMPEST_TESTS'])
+    server.append('/var/lib/tempest/run_tempest.sh -V %s > %s'
+                  % (config['CONFIG_RUN_TEMPEST_TESTS'], logfile))
     server.execute()
