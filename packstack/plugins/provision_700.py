@@ -220,7 +220,7 @@ def initConfig(controller):
              "CONDITION": False},
 
             {"CMD_OPTION": "run-tempest",
-             "PROMPT": ("Do you wish to run "),
+             "PROMPT": ("Do you wish to run tempest?"),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "n",
@@ -230,6 +230,19 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "run-tempest-tests",
+             "PROMPT": ("What tempest tests should run ?"
+                        " (If blank, Tempest will run smoke tests)"),
+             "OPTION_LIST": [],
+             "VALIDATORS": False,
+             "DEFAULT_VALUE": "smoke",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_RUN_TEMPEST_TESTS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False}
         ],
 
         "PROVISION_OVS_BRIDGE": [

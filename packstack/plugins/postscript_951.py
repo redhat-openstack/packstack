@@ -53,5 +53,6 @@ def initSequences(controller):
 def run_tempest(config, messages):
     print("Running Tempest on %s" % config['CONFIG_TEMPEST_HOST'])
     server = utils.ScriptRunner(config['CONFIG_TEMPEST_HOST'])
-    server.append('/var/lib/tempest/run_tempest.sh -V -s')
+    server.append('/var/lib/tempest/run_tempest.sh -V %s'
+                  % config['CONFIG_RUN_TEMPEST_TESTS'])
     server.execute()

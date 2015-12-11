@@ -986,6 +986,9 @@ Provisioning tempest config
 **CONFIG_RUN_TEMPEST**
     Specify 'y' to run Tempest smoke test as last step of installation.
 
+**CONFIG_RUN_TEMPEST_TESTS**
+    Test suites to run, example: "smoke dashboard TelemetryAlarming". Optional, defaults to "smoke".
+
 Provisioning all-in-one ovs bridge config
 -----------------------------------------
 
