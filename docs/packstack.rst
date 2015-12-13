@@ -857,6 +857,9 @@ Neutron OVS agent config for tunnels
 **CONFIG_NEUTRON_OVS_TUNNEL_IF**
     Interface for the Open vSwitch tunnel. Packstack overrides the IP address used for tunnels on this hypervisor to the IP found on the specified interface (for example, eth1).
 
+**CONFIG_NEUTRON_OVS_TUNNEL_SUBNETS**
+    Comma-separated list of subnets (for example, 192.168.10.0/24,192.168.11.0/24) used for sending tunneling packets. This is used to configure IP filtering to accept tunneling packets from these subnets instead of specific IP addresses of peer nodes. This is useful when you add existing nodes to EXCLUDE_SERVERS because, in this case, packstack cannot modify the IP filtering of the existing nodes.
+
 Neutron OVS agent config for VXLAN
 ----------------------------------
 
