@@ -5,7 +5,7 @@ $sahara_cfg_config_neutron_install = hiera('CONFIG_NEUTRON_INSTALL')
 
 class { '::sahara':
   database_connection =>
-    "mysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
+    "mysql+pymysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
   admin_user          => 'sahara',

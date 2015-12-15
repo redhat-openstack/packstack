@@ -28,7 +28,7 @@ class { '::heat':
   rabbit_password     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
-  database_connection => "mysql://heat:${heat_rabbitmq_cfg_heat_db_pw}@${heat_rabbitmq_cfg_mariadb_host}/heat",
+  database_connection => "mysql+pymysql://heat:${heat_rabbitmq_cfg_heat_db_pw}@${heat_rabbitmq_cfg_mariadb_host}/heat",
   kombu_ssl_ca_certs  => $kombu_ssl_ca_certs,
   kombu_ssl_keyfile   => $kombu_ssl_keyfile,
   kombu_ssl_certfile  => $kombu_ssl_certfile,

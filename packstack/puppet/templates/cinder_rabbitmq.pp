@@ -21,7 +21,7 @@ class { '::cinder':
   rabbit_use_ssl      => hiera('CONFIG_AMQP_SSL_ENABLED'),
   rabbit_userid       => hiera('CONFIG_AMQP_AUTH_USER'),
   rabbit_password     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  database_connection => "mysql://cinder:${cinder_rab_cfg_cinder_db_pw}@${cinder_rab_cfg_mariadb_host}/cinder",
+  database_connection => "mysql+pymysql://cinder:${cinder_rab_cfg_cinder_db_pw}@${cinder_rab_cfg_mariadb_host}/cinder",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
   kombu_ssl_ca_certs  => $kombu_ssl_ca_certs,

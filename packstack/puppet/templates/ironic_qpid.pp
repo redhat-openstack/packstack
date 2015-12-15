@@ -8,7 +8,7 @@ class { '::ironic':
   qpid_protocol       => hiera('CONFIG_AMQP_PROTOCOL'),
   qpid_username       => hiera('CONFIG_AMQP_AUTH_USER'),
   qpid_password       => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  database_connection => "mysql://ironic:${ironic_qpid_cfg_ironic_db_pw}@${ironic_qpid_cfg_mariadb_host}/ironic",
+  database_connection => "mysql+pymysql://ironic:${ironic_qpid_cfg_ironic_db_pw}@${ironic_qpid_cfg_mariadb_host}/ironic",
   debug               => true,
   verbose             => true,
 }

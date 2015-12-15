@@ -9,7 +9,7 @@ class { '::trove':
   qpid_protocol                => hiera('CONFIG_AMQP_PROTOCOL'),
   qpid_username                => hiera('CONFIG_AMQP_AUTH_USER'),
   qpid_password                => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  database_connection          => "mysql://trove:${trove_qpid_cfg_trove_db_pw}@${trove_qpid_cfg_mariadb_host}/trove",
+  database_connection          => "mysql+pymysql://trove:${trove_qpid_cfg_trove_db_pw}@${trove_qpid_cfg_mariadb_host}/trove",
   nova_proxy_admin_user        => hiera('CONFIG_TROVE_NOVA_USER'),
   nova_proxy_admin_tenant_name => hiera('CONFIG_TROVE_NOVA_TENANT'),
   nova_proxy_admin_pass        => hiera('CONFIG_TROVE_NOVA_PW'),
