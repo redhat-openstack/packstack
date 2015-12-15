@@ -14,5 +14,5 @@ class { '::heat':
   qpid_protocol       => hiera('CONFIG_AMQP_PROTOCOL'),
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
-  database_connection => "mysql://heat:${heat_qpid_cfg_heat_db_pw}@${heat_qpid_cfg_mariadb_host}/heat",
+  database_connection => "mysql+pymysql://heat:${heat_qpid_cfg_heat_db_pw}@${heat_qpid_cfg_mariadb_host}/heat",
 }

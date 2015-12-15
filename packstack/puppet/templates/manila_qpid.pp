@@ -9,7 +9,7 @@ class { '::manila':
   qpid_protocol  => hiera('CONFIG_AMQP_PROTOCOL'),
   qpid_username  => hiera('CONFIG_AMQP_AUTH_USER'),
   qpid_password  => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  sql_connection => "mysql://manila:${db_pw}@${mariadb_host}/manila",
+  sql_connection => "mysql+pymysql://manila:${db_pw}@${mariadb_host}/manila",
   verbose        => true,
   debug          => hiera(CONFIG_DEBUG_MODE),
 }
