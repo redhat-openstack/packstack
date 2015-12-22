@@ -260,7 +260,7 @@ AMQP Config parameters
 ----------------------
 
 **CONFIG_AMQP_BACKEND**
-    Service to be used as the AMQP broker. Allowed values are: qpid, rabbitmq ['qpid', 'rabbitmq']
+    Service to be used as the AMQP broker. Allowed values are: rabbitmq ['rabbitmq']
 
 **CONFIG_AMQP_HOST**
     IP address of the server on which to install the AMQP service.
