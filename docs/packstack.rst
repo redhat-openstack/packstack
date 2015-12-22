@@ -187,6 +187,9 @@ RHEL config
 **CONFIG_SATELLITE_URL**
     To subscribe each server to receive updates from a Satellite server, provide the URL of the Satellite server. You must also provide a user name (CONFIG_SATELLITE_USERNAME) and password (CONFIG_SATELLITE_PASSWORD) or an access key (CONFIG_SATELLITE_AKEY) for authentication.
 
+**CONFIG_RH_SAT6_SERVER**
+    Specify a Satellite 6 Server to register to. If not specified, Packstack will register the system to the Red Hat server. When this option is specified, you also need to set the Satellite 6 organization (CONFIG_RH_SAT6_ORG) and an activation key (CONFIG_RH_SAT6_KEY).
+
 RH subscription manager config
 ------------------------------
 
@@ -198,6 +201,12 @@ RH subscription manager config
 
 **CONFIG_RH_PROXY**
     HTTP proxy to use with Red Hat Subscription Manager.
+
+**CONFIG_RH_SAT6_ORG**
+    Specify a Satellite 6 Server organization to use when registering the system.
+
+**CONFIG_RH_SAT6_KEY**
+    Specify a Satellite 6 Server activation key to use when registering the system.
 
 RH subscription manager proxy config
 ------------------------------------
