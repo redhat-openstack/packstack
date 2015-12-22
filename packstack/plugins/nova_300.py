@@ -545,6 +545,25 @@ def create_compute_manifest(config, messages):
     config['SSH_KEYS'] = ssh_keys_details
     ssh_hostkeys += getManifestTemplate("sshkey")
 
+    if config['CONFIG_VMWARE_BACKEND'] == 'y':
+        vcenters = [i.strip() for i in
+                    config['CONFIG_VCENTER_CLUSTER_NAMES'].split(',')
+                    if i.strip()]
+        if not vcenters:
+            raise exceptions.ParamValidationError(
+                "Please specify at least one VMware vCenter cluster in"
+                " CONFIG_VCENTER_CLUSTER_NAMES"
+            )
+        if len(vcenters) != len(compute_hosts):
+            if len(vcenters) > 1:
+                raise exceptions.ParamValidationError(
+                    "Number of vmware clusters %s is not same"
+                    " as number of nova computes %s", (vcenters, compute_hosts)
+                )
+            else:
+                vcenters = len(compute_hosts) * [vcenters[0]]
+        vmware_clusters = dict(zip(compute_hosts, vcenters))
+
     for host in compute_hosts:
         if config['CONFIG_IRONIC_INSTALL'] == 'y':
             cm = 'ironic.nova.compute.manager.ClusteredComputeManager'
@@ -567,6 +586,8 @@ def create_compute_manifest(config, messages):
         manifestdata += createFirewallResources(cf_fw_qemu_mig_key)
 
         if config['CONFIG_VMWARE_BACKEND'] == 'y':
+            manifestdata += ("\n$nova_vcenter_cluster_name = '%s'\n" %
+                             vmware_clusters[host])
             manifestdata += getManifestTemplate("nova_compute_vmware.pp")
         elif config['CONFIG_IRONIC_INSTALL'] == 'y':
             manifestdata += getManifestTemplate("nova_compute_ironic.pp")
