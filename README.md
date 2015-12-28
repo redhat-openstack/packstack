@@ -17,7 +17,7 @@ options have yet to be added.
 ## Installation of packstack:
 
     $ yum install -y git
-    $ git clone git://github.com/stackforge/packstack.git
+    $ git clone git://github.com/openstack/packstack.git
     $ cd packstack && sudo python setup.py install
 
 ## Installation of openstack-puppet-modules (REQUIRED if running packstack from source):
@@ -131,7 +131,7 @@ entirely straightforward:
 Then we get **Packstack**, and perform a similar dance:
 
     $ yum install -y python-crypto python-devel libffi-devel openssl-devel gcc-c++
-    $ git clone https://github.com/stackforge/packstack
+    $ git clone https://github.com/openstack/packstack
     $ cd packstack
     $ python setup.py develop
     $ cd /usr/share/openstack-puppet/modules

@@ -98,7 +98,7 @@ setup(
     description=("A utility to install OpenStack"),
     license="ASL 2.0",
     keywords="openstack",
-    url="https://github.com/stackforge/packstack",
+    url="https://github.com/openstack/packstack",
     packages=find_packages('.') + ['docs'],
     package_data={'docs': ['docs/packstack.rst']},
     include_package_data=True,
