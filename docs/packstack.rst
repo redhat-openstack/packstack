@@ -1135,5 +1135,5 @@ GlusterNFS configuration info
 
 SOURCE
 ======
-* `packstack      https://github.com/stackforge/packstack`
+* `packstack      https://github.com/openstack/packstack`
 * `puppet modules https://github.com/puppetlabs and https://github.com/packstack`
