@@ -22,7 +22,7 @@ class { '::manila':
   rabbit_use_ssl  => hiera('CONFIG_AMQP_SSL_ENABLED'),
   rabbit_userid   => hiera('CONFIG_AMQP_AUTH_USER'),
   rabbit_password => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  sql_connection  => "mysql://manila:${db_pw}@${mariadb_host}/manila",
+  sql_connection  => "mysql+pymysql://manila:${db_pw}@${mariadb_host}/manila",
   verbose         => true,
   debug           => hiera('CONFIG_DEBUG_MODE'),
 }

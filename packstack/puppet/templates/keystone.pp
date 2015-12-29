@@ -33,7 +33,7 @@ if hiera('CONFIG_KEYSTONE_DB_PURGE_ENABLE',false) {
 
 class { '::keystone':
   admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
-  database_connection => "mysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
+  database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
   token_provider      => "keystone.token.providers.${keystone_token_provider_str}.Provider",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),

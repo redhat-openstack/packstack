@@ -22,7 +22,7 @@ class { '::ironic':
   rabbit_use_ssl      => hiera('CONFIG_AMQP_SSL_ENABLED'),
   rabbit_userid       => hiera('CONFIG_AMQP_AUTH_USER'),
   rabbit_password     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  database_connection => "mysql://ironic:${ironic_rabbitmq_cfg_ironic_db_pw}@${ironic_rabbitmq_cfg_mariadb_host}/ironic",
+  database_connection => "mysql+pymysql://ironic:${ironic_rabbitmq_cfg_ironic_db_pw}@${ironic_rabbitmq_cfg_mariadb_host}/ironic",
   debug               => true,
   verbose             => true,
   kombu_ssl_ca_certs  => $kombu_ssl_ca_certs,
