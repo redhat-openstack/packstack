@@ -939,7 +939,7 @@ def detect_os_and_version(host):
         out = out.split(",")
         return out
     except exceptions.ScriptRuntimeError:
-        logging.warn('Could not detect OS release')
+        logging.warning('Could not detect OS release')
         return ['Unknown', 'Unknown']
 
 
@@ -1122,7 +1122,7 @@ def manage_epel(host, config):
         msg += 'This is OK in case you don\'t want EPEL installed and enabled.'
         # TO-DO: fill logger name when logging will be refactored.
         logger = logging.getLogger()
-        logger.warn(msg % host)
+        logger.warning(msg % host)
 
 
 def manage_rdo(host, config):

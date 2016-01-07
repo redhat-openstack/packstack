@@ -81,7 +81,7 @@ def host2ip(hostname, allow_localhost=False):
                 raise NameError("Host %s is not routable, please fix"
                                 "your /etc/hosts", host)
             if len(routable) > 1:
-                logging.warn("Multiple IPs for host detected!")
+                logging.warning("Multiple IPs for host detected!")
             ip = routable[0]
 
         _host_cache[key] = ip
