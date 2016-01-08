@@ -74,7 +74,7 @@ class FakePopen(object):
         if args in self.cmd_registry:
             this = self.cmd_registry[args]
         else:
-            LOG.warn('call to unregistered command: %s', cmd)
+            LOG.warning('call to unregistered command: %s', cmd)
             this = {'stdout': '', 'stderr': '', 'returncode': 0}
 
         self.stdout = this['stdout']
@@ -89,7 +89,7 @@ class FakePopen(object):
             if input in self.script_registry:
                 this = self.script_registry[input]
             else:
-                LOG.warn('call to unregistered script: %s', input)
+                LOG.warning('call to unregistered script: %s', input)
                 this = {'stdout': '', 'stderr': '', 'returncode': 0}
             self.stdout = this['stdout']
             self.stderr = this['stderr']
