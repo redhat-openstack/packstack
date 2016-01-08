@@ -32,7 +32,7 @@ class ProcessorsTestCase(PackstackTestCaseMixin, TestCase):
         """Test packstack.installer.processors.process_ssh_key."""
         path = process_ssh_key(os.path.join(self.tempdir, 'id_rsa'), 'SSH_KEY')
         # test if key was created
-        self.assertEqual(True, bool(path))
+        self.assertTrue(bool(path))
         # test if key exists
         # XXX: process_ssh_key does not create ssh key during test run
         #      ... not sure why, nevertheless it works in normal run
