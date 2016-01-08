@@ -62,6 +62,7 @@ $horizon_available    = str2bool(hiera('CONFIG_HORIZON_INSTALL'))
 $nova_available       = str2bool(hiera('CONFIG_NOVA_INSTALL'))
 $neutron_available    = str2bool(hiera('CONFIG_NEUTRON_INSTALL'))
 $ceilometer_available = str2bool(hiera('CONFIG_CEILOMETER_INSTALL'))
+$aodh_available       = str2bool(hiera('CONFIG_AODH_INSTALL'))
 $trove_available      = str2bool(hiera('CONFIG_TROVE_INSTALL'))
 $sahara_available     = str2bool(hiera('CONFIG_SAHARA_INSTALL'))
 $heat_available       = str2bool(hiera('CONFIG_HEAT_INSTALL'))
@@ -103,6 +104,7 @@ class { '::tempest':
   nova_available            => $nova_available,
   neutron_available         => $neutron_available,
   ceilometer_available      => $ceilometer_available,
+  aodh_available            => $aodh_available,
   trove_available           => $trove_available,
   sahara_available          => $sahara_available,
   heat_available            => $heat_available,

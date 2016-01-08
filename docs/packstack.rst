@@ -59,6 +59,9 @@ Global Options
 **CONFIG_CEILOMETER_INSTALL**
     Specify 'y' to install OpenStack Metering (ceilometer). ['y', 'n']
 
+**CONFIG_AODH_INSTALL**
+    Specify 'y' to install OpenStack Telemetry Alarming (Aodh). Note Aodh requires Ceilometer to be installed as well. ['y', 'n']
+
 **CONFIG_HEAT_INSTALL**
     Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
 
@@ -1051,6 +1054,12 @@ Redis Config parameters
 
 **CONFIG_REDIS_MASTER_NAME**
     Name of the master server watched by the Redis sentinel. ['[a-z]+']
+
+Aodh Config parameters
+----------------------
+
+**CONFIG_AODH_KS_PW**
+    Password to use for Telemetry Alarming to authenticate with the Identity service.
 
 Sahara Config parameters
 ------------------------

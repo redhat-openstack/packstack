@@ -103,3 +103,7 @@ if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
   apache::listen { '5000': }
   apache::listen { '35357': }
 }
+
+if hiera('CONFIG_AODH_INSTALL') == 'y' {
+  apache::listen { '8042': }
+}

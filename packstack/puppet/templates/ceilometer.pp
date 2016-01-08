@@ -44,12 +44,6 @@ class { '::ceilometer::agent::central':
   coordination_url => $coordination_url,
 }
 
-class { '::ceilometer::alarm::notifier':}
-
-class { '::ceilometer::alarm::evaluator':
-  coordination_url => $coordination_url,
-}
-
 $bind_host = hiera('CONFIG_IP_VERSION') ? {
   'ipv6'  => '::0',
   default => '0.0.0.0',
