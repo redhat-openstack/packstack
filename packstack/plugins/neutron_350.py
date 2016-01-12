@@ -198,6 +198,19 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-ovs-tunnel-subnets",
+             "PROMPT": ("Enter comma separated list of subnets used for "
+                        "tunneling to make them allowed by IP filtering."),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVS_TUNNEL_SUBNETS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "NEUTRON_OVS_AGENT_VXLAN": [
@@ -561,6 +574,23 @@ def get_values(val):
     return [x.strip() for x in val.split(',')] if val else []
 
 
+def tunnel_fw_details(config, host, src):
+    key = "neutron_tunnel_%s_%s" % (host, src)
+    fw_details = dict()
+    fw_details.setdefault(key, {})
+    fw_details[key]['host'] = "%s" % src
+    fw_details[key]['service_name'] = "neutron tunnel port"
+    fw_details[key]['chain'] = "INPUT"
+    if use_openvswitch_vxlan(config):
+        fw_details[key]['proto'] = 'udp'
+        tun_port = ("%s" % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'])
+    else:
+        fw_details[key]['proto'] = 'gre'
+        tun_port = None
+    fw_details[key]['ports'] = tun_port
+    return fw_details
+
+
 # -------------------------- step functions --------------------------
 
 def create_manifests(config, messages):
@@ -640,41 +670,40 @@ def create_manifests(config, messages):
                 msg = output_messages.WARN_IPV6_OVS
                 messages.append(utils.color_text(msg % host, 'red'))
 
-            for n_host in network_hosts | compute_hosts:
-                cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s_%s"
-                                % (host, n_host))
-                fw_details = dict()
-                if config['CONFIG_NEUTRON_OVS_TUNNEL_IF']:
-                    if config['CONFIG_USE_SUBNETS'] == 'y':
-                        iface = common.cidr_to_ifname(
-                            config['CONFIG_NEUTRON_OVS_TUNNEL_IF'],
-                            n_host, config)
+            if (config['CONFIG_NEUTRON_OVS_TUNNEL_SUBNETS']):
+                tunnel_subnets = map(
+                    str.strip,
+                    config['CONFIG_NEUTRON_OVS_TUNNEL_SUBNETS'].split(',')
+                )
+                for subnet in tunnel_subnets:
+                    cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s_%s"
+                                    % (host, subnet))
+                    config[cf_fw_nt_key] = tunnel_fw_details(config,
+                                                             host, subnet)
+                    manifest_data += createFirewallResources(cf_fw_nt_key)
+            else:
+                for n_host in network_hosts | compute_hosts:
+                    cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s_%s"
+                                    % (host, n_host))
+                    if config['CONFIG_NEUTRON_OVS_TUNNEL_IF']:
+                        if config['CONFIG_USE_SUBNETS'] == 'y':
+                            iface = common.cidr_to_ifname(
+                                config['CONFIG_NEUTRON_OVS_TUNNEL_IF'],
+                                n_host, config)
+                        else:
+                            iface = config['CONFIG_NEUTRON_OVS_TUNNEL_IF']
+                        ifip = ("ipaddress_%s" % iface)
+                        try:
+                            src_host = config['HOST_DETAILS'][n_host][ifip]
+                        except KeyError:
+                            raise KeyError('Couldn\'t detect ipaddress of '
+                                           'interface %s on node %s' %
+                                           (iface, n_host))
                     else:
-                        iface = config['CONFIG_NEUTRON_OVS_TUNNEL_IF']
-                    ifip = ("ipaddress_%s" % iface)
-                    try:
-                        src_host = config['HOST_DETAILS'][n_host][ifip]
-                    except KeyError:
-                        raise KeyError('Couldn\'t detect ipaddress of '
-                                       'interface %s on node %s' %
-                                       (iface, n_host))
-                else:
-                    src_host = n_host
-                key = "neutron_tunnel_%s_%s" % (host, src_host)
-                fw_details.setdefault(key, {})
-                fw_details[key]['host'] = "%s" % src_host
-                fw_details[key]['service_name'] = "neutron tunnel port"
-                fw_details[key]['chain'] = "INPUT"
-                if use_openvswitch_vxlan(config):
-                    fw_details[key]['proto'] = 'udp'
-                    tun_port = ("%s"
-                                % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'])
-                else:
-                    fw_details[key]['proto'] = 'gre'
-                    tun_port = None
-                fw_details[key]['ports'] = tun_port
-                config[cf_fw_nt_key] = fw_details
-                manifest_data += createFirewallResources(cf_fw_nt_key)
+                        src_host = n_host
+                    config[cf_fw_nt_key] = tunnel_fw_details(config,
+                                                             host, src_host)
+                    manifest_data += createFirewallResources(cf_fw_nt_key)
 
             appendManifestFile(manifest_file, manifest_data, 'neutron')
 
