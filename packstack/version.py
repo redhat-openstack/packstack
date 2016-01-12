@@ -18,8 +18,8 @@ import pkg_resources
 from .installer.utils import execute
 
 
-VERSION = ['7', '0', '0']
-OS_RELEASE = 'Liberty'
+VERSION = ['8', '0', '0']
+OS_RELEASE = 'Mitaka'
 RESERVE_STR = None
 
 
