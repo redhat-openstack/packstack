@@ -6,6 +6,12 @@ if $create_cinder_volume == 'y' {
       loopback_device => '/dev/loop2',
       volume_path     => '/var/lib/cinder',
       volume_name     => 'cinder-volumes',
+    } ->
+
+    file {'/var/lib/cinder':
+      ensure  => directory,
+      mode    => "0600",
+      recurse => true,
     }
 
     # Add loop device on boot
