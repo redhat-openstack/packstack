@@ -23,6 +23,11 @@ class { '::cinder::volume': }
 
 class { '::cinder::client': }
 
+$cinder_keystone_admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
+$cinder_keystone_admin_password = hiera('CONFIG_KEYSTONE_ADMIN_PW')
+$cinder_keystone_auth_url = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
+$cinder_keystone_api = hiera('CONFIG_KEYSTONE_API_VERSION')
+
 # Cinder::Type requires keystone credentials
 Cinder::Type {
   os_password    => hiera('CONFIG_CINDER_KS_PW'),
