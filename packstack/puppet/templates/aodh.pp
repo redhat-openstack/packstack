@@ -37,6 +37,10 @@ class { '::apache':
 class { '::aodh::wsgi::apache':
   ssl => false,
 }
+if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
+  apache::listen { '5000': }
+  apache::listen { '35357': }
+}
 class { '::aodh::auth':
   auth_password => hiera('CONFIG_AODH_KS_PW'),
 }
