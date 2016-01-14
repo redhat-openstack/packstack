@@ -38,7 +38,7 @@ def initConfig(controller):
     params = [
         {"CMD_OPTION": "amqp-backend",
          "PROMPT": "Set the AMQP service backend",
-         "OPTION_LIST": ["qpid", "rabbitmq"],
+         "OPTION_LIST": ["rabbitmq"],
          "VALIDATORS": [validators.validate_options],
          "DEFAULT_VALUE": "rabbitmq",
          "MASK_INPUT": False,
