@@ -1,14 +1,7 @@
 
-$auto_assign_floating_ip = hiera('CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP')
-
-nova_config {
-  'DEFAULT/auto_assign_floating_ip': value => $auto_assign_floating_ip;
-}
-
 $multihost = hiera('CONFIG_NOVA_NETWORK_MULTIHOST')
 if $multihost {
   nova_config {
-    'DEFAULT/multi_host':      value => true;
     'DEFAULT/send_arp_for_ha': value => true;
   }
 }
@@ -39,15 +32,17 @@ $nova_network_privif = hiera('CONFIG_NOVA_NETWORK_PRIVIF')
 $nova_network_pubif = hiera('CONFIG_NOVA_NETWORK_PUBIF')
 
 class { '::nova::network':
-  enabled           => true,
-  network_manager   => $manager,
-  num_networks      => $net_num ,
-  network_size      => $net_size,
-  private_interface => force_interface($nova_network_privif, $use_subnets),
-  public_interface  => force_interface($nova_network_pubif, $use_subnets),
-  fixed_range       => hiera('CONFIG_NOVA_NETWORK_FIXEDRANGE'),
-  floating_range    => hiera('CONFIG_NOVA_NETWORK_FLOATRANGE'),
-  config_overrides  => $overrides,
+  enabled                 => true,
+  network_manager         => $manager,
+  num_networks            => $net_num ,
+  network_size            => $net_size,
+  private_interface       => force_interface($nova_network_privif, $use_subnets),
+  public_interface        => force_interface($nova_network_pubif, $use_subnets),
+  fixed_range             => hiera('CONFIG_NOVA_NETWORK_FIXEDRANGE'),
+  floating_range          => hiera('CONFIG_NOVA_NETWORK_FLOATRANGE'),
+  config_overrides        => $overrides,
+  auto_assign_floating_ip => hiera('CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'),
+  multi_host              => $multihost
 }
 
 package { 'dnsmasq':
