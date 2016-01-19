@@ -67,14 +67,14 @@ else {
 
 file_line { 'snapshot_autoextend_threshold':
   path    => '/etc/lvm/lvm.conf',
-  match   => '^ *snapshot_autoextend_threshold +=.*',
+  match   => '^\s*snapshot_autoextend_threshold +=.*',
   line    => '   snapshot_autoextend_threshold = 80',
   require => Package['lvm2'],
 }
 
 file_line { 'snapshot_autoextend_percent':
   path    => '/etc/lvm/lvm.conf',
-  match   => '^ *snapshot_autoextend_percent +=.*',
+  match   => '^\s*snapshot_autoextend_percent +=.*',
   line    => '   snapshot_autoextend_percent = 20',
   require => Package['lvm2'],
 }
