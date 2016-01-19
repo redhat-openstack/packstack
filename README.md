@@ -174,3 +174,50 @@ need to go inside those directories to run puppet-lint !
     $ export GEM_HOME=vendor
     $ bundle install
     $ bundle exec rake lint
+
+## Packstack integration tests
+
+Packstack is integration tested in the OpenStack gate and provides the means to
+reproduce these tests on your environment if you wish.
+
+This is the current matrix of available tests:
+
+|     -      | scenario001 | scenario002 |
+|:----------:|:-----------:|:-----------:|
+| keystone   |      X      |       X     |
+| glance     |      X      |       X     |
+| nova       |      X      |       X     |
+| neutron    |      X      |       X     |
+| cinder     |      X      |             |
+| ceilometer |      X      |             |
+| aodh       |      X      |             |
+| heat       |             |       X     |
+| swift      |             |       X     |
+| sahara     |             |       X     |
+| trove      |             |       X     |
+| horizon    |             |       X     |
+| manila     |      X      |             |
+| nagios     |      X      |             |
+
+To run these tests:
+
+    export SCENARIO="scenario001"
+    ./run_tests.sh
+
+run_tests.sh will take care of installing the required dependencies,
+configure packstack to run according to the above matrix and run the complete
+installation process. If the installation is successful, tempest will also
+run smoke tests.
+
+By default, run_tests.sh will set up delorean (RDO Trunk) repositories.
+There are two ways of overriding default repositories:
+
+    export DELOREAN="http://someotherdomain.tld/delorean.repo"
+    export DELOREAN_DEPS="http://someotherdomain.tld/delorean-deps.repo"
+    ./run_tests.sh
+
+You can also choose to disable repository management entirely:
+
+    <setup your own custom repositories here>
+    export MANAGE_REPOS="false"
+    ./run_tests.sh
