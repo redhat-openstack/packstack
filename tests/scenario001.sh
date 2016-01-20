@@ -16,7 +16,8 @@ echo -e "Generating packstack config for:
 - aodh
 - trove
 - manila
-- nagios"
+- nagios
+- tempest (regex: 'smoke TelemetryAlarming')"
 echo "tempest will run if packstack's installation completes successfully."
 echo
 
