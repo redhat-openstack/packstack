@@ -8,6 +8,29 @@ class { '::neutron::server':
   enabled             => true,
 }
 
+# TODO: FIXME: remove this hack after upstream resolves https://bugs.launchpad.net/puppet-neutron/+bug/1474961
+if hiera('CONFIG_NEUTRON_VPNAAS') == 'y' {
+  ensure_resource( 'package', 'neutron-vpnaas-agent', {
+    name   => 'openstack-neutron-vpnaas',
+    tag    => ['openstack', 'neutron-package'],
+  })
+  Package['neutron-vpnaas-agent'] ~> Service<| tag == 'neutron-service' |>
+}
+if hiera('CONFIG_NEUTRON_FWAAS') == 'y' {
+    ensure_resource( 'package', 'neutron-fwaas', {
+      'name'   => 'openstack-neutron-fwaas',
+      'tag'    => 'openstack'
+    })
+  Package['neutron-fwaas'] ~> Service<| tag == 'neutron-service' |>
+}
+if hiera('CONFIG_LBAAS_INSTALL') == 'y' {
+  ensure_resource( 'package', 'neutron-lbaas-agent', {
+    name   => 'openstack-neutron-lbaas',
+    tag    => ['openstack', 'neutron-package'],
+  })
+  Package['neutron-lbaas-agent'] ~> Service<| tag == 'neutron-service' |>
+}
+
 file { '/etc/neutron/api-paste.ini':
   ensure  => file,
   mode    => '0640',
