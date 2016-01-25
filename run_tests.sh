@@ -61,6 +61,8 @@ $SUDO python setup.py install_puppet_modules
 result=$?
 
 # Generate subunit
+pushd /var/lib/tempest
 /var/lib/tempest/.venv/bin/testr last --subunit > /var/tmp/packstack/latest/testrepository.subunit
+popd
 
 exit $result
