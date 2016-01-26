@@ -17,7 +17,7 @@ SCENARIO=${SCENARIO:-scenario001}
 
 # We could want to override the default repositories
 MANAGE_REPOS=${MANAGE_REPOS:-true}
-DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7/current/delorean.repo}
+DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7/current-passed-ci/delorean.repo}
 DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7/delorean-deps.repo}
 
 if [ $(id -u) != 0 ]; then
