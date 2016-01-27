@@ -75,7 +75,10 @@ if os.path.exists(LATEST_LOG_DIR):
         print ('Unable to delete symbol link for log dir %s.' % LATEST_LOG_DIR)
 
 try:
-    os.symlink(DIR_LOG, LATEST_LOG_DIR)
+    # Extract folder name at /var/tmp/packstack/<VAR_DIR> and do a relative
+    # symlink to /var/tmp/packstack/latest
+    os.symlink(os.path.basename(VAR_DIR),
+               os.path.join(PACKSTACK_VAR_DIR, 'latest'))
 except OSError:
     print ('Unable to create symbol link for log dir %s.' % LATEST_LOG_DIR)
 
