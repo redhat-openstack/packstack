@@ -60,17 +60,23 @@ $SUDO python setup.py install
 $SUDO python setup.py install_puppet_modules
 
 # Generate configuration from selected scenario and run it
-./tests/${SCENARIO}.sh
+source ./tests/${SCENARIO}.sh
 result=$?
 
 # Generate subunit
-pushd /var/lib/tempest
-/var/lib/tempest/.venv/bin/testr last --subunit > /var/tmp/packstack/latest/testrepository.subunit
-popd
+if [ -d /var/lib/tempest ]; then
+  pushd /var/lib/tempest
+  /var/lib/tempest/.venv/bin/testr last --subunit > /var/tmp/packstack/latest/testrepository.subunit || true
+  popd
+fi
 
 if [ "${COPY_LOGS}" = true ]; then
     source ./tools/copy-logs.sh
     recover_default_logs
+fi
+
+if [ "${FAILURE}" = true ]; then
+    exit 1
 fi
 
 exit $result

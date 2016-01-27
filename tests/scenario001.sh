@@ -33,4 +33,4 @@ packstack --allinone \
           --gen-answer-file=${PACKSTACK_CONFIG_FILE}
 sed -i -re "s,(.*_PASSWORD|.*_PW)=.*,\1=packstack," ${PACKSTACK_CONFIG_FILE}
 
-$SUDO packstack --answer-file=${PACKSTACK_CONFIG_FILE}
+$SUDO packstack --answer-file=${PACKSTACK_CONFIG_FILE} || export FAILURE="true"
