@@ -10,25 +10,24 @@ $bind_address = hiera('CONFIG_IP_VERSION') ? {
   # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 
-# hack around galera packaging issue, they are duplicating
-# bind-address config option in galera.cnf
-class { '::galera::server':
-  wsrep_bind_address    => $bind_address,
-  manage_service        => false,
-  wsrep_provider        => 'none',
-  create_mysql_resource => false,
-}
+$mysql_root_password = hiera('CONFIG_MARIADB_PW')
 
 class { '::mysql::server':
   package_name     => 'mariadb-galera-server',
   restart          => true,
-  root_password    => hiera('CONFIG_MARIADB_PW'),
+  root_password    => $mysql_root_password,
   require          => Package['mariadb-server'],
   override_options => {
-    'mysqld' => { bind_address           => $bind_address,
-                  default_storage_engine => 'InnoDB',
-                  max_connections        => '1024',
-                  open_files_limit       => '-1',
+    'mysqld' => {
+      'bind_address'           => $bind_address,
+      'default_storage_engine' => 'InnoDB',
+      'max_connections'        => '1024',
+      'open_files_limit'       => '-1',
+      # galera options
+      'wsrep_provider'         => 'none',
+      'wsrep_cluster_name'     => 'galera_cluster',
+      'wsrep_sst_method'       => 'rsync',
+      'wsrep_sst_auth'         => "root:${mysql_root_password}",
     },
   },
 }
