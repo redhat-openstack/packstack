@@ -20,6 +20,9 @@ MANAGE_REPOS=${MANAGE_REPOS:-true}
 DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7/current-passed-ci/delorean.repo}
 DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7/delorean-deps.repo}
 
+# If logs should be retrieved automatically
+COPY_LOGS=${COPY_LOGS:-true}
+
 if [ $(id -u) != 0 ]; then
     # preserve environment so we can have ZUUL_* params
     SUDO='sudo -E'
@@ -64,5 +67,10 @@ result=$?
 pushd /var/lib/tempest
 /var/lib/tempest/.venv/bin/testr last --subunit > /var/tmp/packstack/latest/testrepository.subunit
 popd
+
+if [ "${COPY_LOGS}" = true ]; then
+    source ./tools/copy-logs.sh
+    recover_default_logs
+fi
 
 exit $result
