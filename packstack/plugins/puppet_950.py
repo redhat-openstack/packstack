@@ -141,10 +141,10 @@ def run_cleanup(config, messages):
 
 def copy_puppet_modules(config, messages):
     os_modules = ' '.join(('aodh', 'apache', 'ceilometer', 'certmonger',
-                           'cinder', 'concat', 'firewall', 'glance',
-                           'heat', 'horizon', 'inifile', 'ironic', 'keystone',
-                           'manila', 'memcached', 'mongodb', 'mysql',
-                           'neutron', 'nova', 'nssdb', 'openstack',
+                           'cinder', 'concat', 'firewall', 'glance', 'galera',
+                           'gnocchi', 'heat', 'horizon', 'inifile', 'ironic',
+                           'keystone', 'manila', 'memcached', 'mongodb',
+                           'mysql', 'neutron', 'nova', 'nssdb', 'openstack',
                            'openstacklib', 'packstack', 'rabbitmq',
                            'redis', 'remote', 'rsync', 'sahara', 'ssh',
                            'stdlib', 'swift', 'sysctl', 'tempest', 'trove',
