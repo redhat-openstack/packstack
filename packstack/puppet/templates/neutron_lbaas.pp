@@ -4,3 +4,7 @@ class { '::neutron::agents::lbaas':
   user_group       => 'haproxy',
   debug            => hiera('CONFIG_DEBUG_MODE'),
 }
+
+class {'::neutron::services::lbaas':
+  service_providers => 'LOADBALANCER:Haproxy:neutron_lbaas.services.loadbalancer.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver:default',
+}
