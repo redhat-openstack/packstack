@@ -24,7 +24,7 @@ class { '::trove':
   rabbit_port                  => hiera('CONFIG_AMQP_CLIENTS_PORT'),
   rabbit_userid                => hiera('CONFIG_AMQP_AUTH_USER'),
   rabbit_password              => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  database_connection          => "mysql://trove:${trove_rabmq_cfg_trove_db_pw}@${trove_rabmq_cfg_mariadb_host}/trove",
+  database_connection          => "mysql+pymysql://trove:${trove_rabmq_cfg_trove_db_pw}@${trove_rabmq_cfg_mariadb_host}/trove",
   nova_proxy_admin_user        => hiera('CONFIG_TROVE_NOVA_USER'),
   nova_proxy_admin_tenant_name => hiera('CONFIG_TROVE_NOVA_TENANT'),
   nova_proxy_admin_pass        => hiera('CONFIG_TROVE_NOVA_PW'),

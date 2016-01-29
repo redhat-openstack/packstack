@@ -24,7 +24,7 @@ class { '::glance::api':
   keystone_user       => 'glance',
   keystone_password   => hiera('CONFIG_GLANCE_KS_PW'),
   pipeline            => 'keystone',
-  database_connection => "mysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
+  database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
   os_region_name      => hiera('CONFIG_KEYSTONE_REGION'),
@@ -37,7 +37,7 @@ class { '::glance::registry':
   keystone_tenant     => 'services',
   keystone_user       => 'glance',
   keystone_password   => hiera('CONFIG_GLANCE_KS_PW'),
-  database_connection => "mysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
+  database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
 }
