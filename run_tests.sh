@@ -13,6 +13,8 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+export PATH=$PATH:/usr/local/sbin:/usr/sbin
+
 SCENARIO=${SCENARIO:-scenario001}
 
 # We could want to override the default repositories
@@ -24,9 +26,23 @@ DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7/delorean-deps
 COPY_LOGS=${COPY_LOGS:-true}
 
 if [ $(id -u) != 0 ]; then
-    # preserve environment so we can have ZUUL_* params
-    SUDO='sudo -E'
+    SUDO='sudo'
+
+    # Packstack will connect as root to localhost, set-up the keypair and sshd
+    ssh-keygen -t rsa -C "packstack-integration-test" -N "" -f ~/.ssh/id_rsa
+
+    $SUDO mkdir -p /root/.ssh
+    cat ~/.ssh/id_rsa.pub | $SUDO tee -a /root/.ssh/authorized_keys
+    $SUDO chmod 0600 /root/.ssh/authorized_keys
+    $SUDO sed -i 's/^PermitRootLogin no/PermitRootLogin without-password/g' /etc/ssh/sshd_config
+    $SUDO service sshd restart
 fi
+
+# Bump ulimit to avoid too many open file errors
+echo "${USER} soft nofile 65536" | $SUDO tee -a /etc/security/limits.conf
+echo "${USER} hard nofile 65536" | $SUDO tee -a /etc/security/limits.conf
+echo "root soft nofile 65536" | $SUDO tee -a /etc/security/limits.conf
+echo "root hard nofile 65536" | $SUDO tee -a /etc/security/limits.conf
 
 # Setup repositories
 if [ "${MANAGE_REPOS}" = true ]; then
@@ -35,7 +51,9 @@ if [ "${MANAGE_REPOS}" = true ]; then
 fi
 
 # Install dependencies
-$SUDO yum -y install yum-plugin-priorities \
+$SUDO yum -y install puppet \
+                     yum-plugin-priorities \
+                     iproute \
                      dstat \
                      python-setuptools \
                      openssl-devel \
@@ -45,14 +63,48 @@ $SUDO yum -y install yum-plugin-priorities \
                      libxslt-devel \
                      ruby-devel \
                      openstack-selinux \
+                     policycoreutils \
                      "@Development Tools"
+
+# TO-DO: Packstack should handle Hiera and Puppet configuration, so that it works
+# no matter the environment
+$SUDO su -c 'cat > /etc/puppet/puppet.conf <<EOF
+[main]
+    logdir = /var/log/puppet
+    rundir = /var/run/puppet
+    ssldir = $vardir/ssl
+    hiera_config = /etc/puppet/hiera.yaml
+
+[agent]
+    classfile = $vardir/classes.txt
+    localconfig = $vardir/localconfig
+EOF'
+$SUDO su -c 'cat > /etc/puppet/hiera.yaml <<EOF
+---
+:backends:
+  - yaml
+:yaml:
+  :datadir: /placeholder
+:hierarchy:
+  - common
+  - defaults
+  - "%{clientcert}"
+  - "%{environment}"
+  - global
+EOF'
+
+# To make sure wrong config files are not used
+if [ -d /home/jenkins/.puppet ]; then
+  $SUDO rm -f /home/jenkins/.puppet
+fi
+$SUDO puppet config set hiera_config /etc/puppet/hiera.yaml
 
 # Setup dstat for resource usage tracing
 if type "dstat" 2>/dev/null; then
   $SUDO dstat -tcmndrylpg \
               --top-cpu-adv \
               --top-io-adv \
-              --nocolor | $SUDO tee --append /var/log/dstat.log > /dev/null &
+              --nocolor | $SUDO tee -a /var/log/dstat.log > /dev/null &
 fi
 
 # Setup packstack
@@ -63,11 +115,12 @@ $SUDO python setup.py install_puppet_modules
 source ./tests/${SCENARIO}.sh
 result=$?
 
-# Generate subunit
+# Print output and generate subunit if results exist
 if [ -d /var/lib/tempest ]; then
-  pushd /var/lib/tempest
-  /var/lib/tempest/.venv/bin/testr last --subunit > /var/tmp/packstack/latest/testrepository.subunit || true
-  popd
+    pushd /var/lib/tempest
+    $SUDO /var/lib/tempest/.venv/bin/testr last || true
+    $SUDO bash -c "/var/lib/tempest/.venv/bin/testr last --subunit > /var/tmp/packstack/latest/testrepository.subunit" || true
+    popd
 fi
 
 if [ "${COPY_LOGS}" = true ]; then

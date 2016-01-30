@@ -24,9 +24,9 @@ controller = Controller()
 
 PUPPET_DIR = os.path.join(basedefs.DIR_PROJECT_DIR, "puppet")
 PUPPET_TEMPLATE_DIR = os.path.join(PUPPET_DIR, "templates")
-HIERA_DEFAULTS_YAML = os.path.join(basedefs.HIERADATA_DIR, "defaults.yaml")
-# For compatibility with hiera >= 3.0
 HIERA_COMMON_YAML = os.path.join(basedefs.HIERADATA_DIR, "common.yaml")
+# For compatibility with hiera < 3.0
+HIERA_DEFAULTS_YAML = os.path.join(basedefs.HIERADATA_DIR, "defaults.yaml")
 
 
 class ManifestFiles(object):
@@ -90,11 +90,11 @@ def prependManifestFile(manifest_name, data, marker=''):
 
 def generateHieraDataFile():
     os.mkdir(basedefs.HIERADATA_DIR, 0o700)
-    with open(HIERA_DEFAULTS_YAML, 'w') as outfile:
+    with open(HIERA_COMMON_YAML, 'w') as outfile:
         outfile.write(yaml.dump(controller.CONF,
                                 explicit_start=True,
                                 default_flow_style=False))
-    os.symlink(HIERA_DEFAULTS_YAML, HIERA_COMMON_YAML)
+    os.symlink(os.path.basename(HIERA_COMMON_YAML), HIERA_DEFAULTS_YAML)
 
 
 def createFirewallResources(hiera_key, default_value='{}'):

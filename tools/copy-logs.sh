@@ -1,4 +1,4 @@
-#!/bin/bash -xe
+#!/bin/bash
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+export PATH=$PATH:/usr/local/sbin:/usr/sbin
+
 # This script attempts to recover as much generic diagnostic logs as it can
 LOGROOT=${WORKSPACE:-/tmp}
 LOGDIR="${LOGROOT}/logs"
@@ -23,7 +25,7 @@ GIT_URL="http://git.openstack.org/cgit"
 PROJECTS_URL="${GIT_URL}/openstack/governance/plain/reference/projects.yaml"
 
 if [ $(id -u) != 0 ]; then
-    SUDO='sudo -E'
+    SUDO='sudo'
 fi
 $SUDO mkdir -p "${DIAG_LOGDIR}"
 $SUDO mkdir -p "${CONF_LOGDIR}"
@@ -49,16 +51,17 @@ function get_diag_commands {
         'yum repolist -v'
         'rpm -qa'
         'journalctl --no-pager'
+        'ulimit -n'
     )
 
     echo "Installing required RPM packages..."
-    yum -y install coreutils curl file iproute lsof net-tools psmisc
+    $SUDO yum -y install coreutils curl file lsof net-tools psmisc
 
     echo "Running diagnostic commands..."
     for ((i = 0; i < ${#commands[@]}; i++)); do
         # filenames have underscores instead of spaces or slashes
         filename="$(echo "${commands[$i]}" |sed -e "s%[ \/]%_%g").txt"
-        $SUDO ${commands[$i]} 2>&1 > ${DIAG_LOGDIR}/${filename}
+        $SUDO "${commands[$i]}" 2>&1 | $SUDO tee -a ${DIAG_LOGDIR}/${filename}
     done
 }
 
@@ -94,6 +97,11 @@ function get_config_and_logs {
         '/etc/httpd'
         '/var/log/httpd'
         '/var/tmp/packstack'
+        '/var/log/audit'
+        '/var/log/secure'
+        '/var/log/messages'
+        '/etc/puppet/puppet.conf'
+        '/etc/puppet/hiera.yaml'
     )
 
     # Add discovered project directories from official governance
@@ -121,20 +129,21 @@ function get_config_and_logs {
 
 function ensure_log_properties {
     echo "Making sure directories and files have the right properties..."
+    FIND="${SUDO} find ${LOGDIR} ! -path '*.git/*'"
+    # Ensure files are readable by everyone
+    $FIND -type d -execdir $SUDO chmod 755 '{}' \;
+    $FIND -type f -execdir $SUDO chmod 644 '{}' \;
+
     # Ensure files are in .txt when possible (web mime type)
-    for file in $(find ${LOGDIR} -type f ! -name "*.txt"); do
+    for file in $($FIND -type f ! -name "*.txt"); do
         if [[ "$(file --mime-type ${file} |cut -f2 -d :)" =~ text ]]; then
             $SUDO mv ${file} ${file}.txt
         fi
     done
 
-    # Ensure files are readable by everyone
-    $SUDO find $LOGDIR -type d -execdir $SUDO chmod 755 '{}' \;
-    $SUDO find $LOGDIR -type f -execdir $SUDO chmod 644 '{}' \;
-
     echo "Compressing all text files..."
     # Compress all files
-    $SUDO find $LOGDIR -iname '*.txt' -execdir gzip -9 {} \+
+    $FIND -iname '*.txt' -execdir gzip -9 {} \+
 
     echo "Compressed log and configuration can be found in ${LOGDIR}."
 }
