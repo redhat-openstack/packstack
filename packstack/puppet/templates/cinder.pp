@@ -17,6 +17,11 @@ class { '::cinder::api':
   identity_uri       => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
 }
 
+# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
+cinder_config {
+  'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
+}
+
 class { '::cinder::scheduler': }
 
 class { '::cinder::volume': }

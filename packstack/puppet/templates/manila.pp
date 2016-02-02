@@ -14,6 +14,16 @@ class { '::manila::api':
   keystone_tenant    => 'services',
   keystone_user      => 'manila',
   keystone_auth_uri  => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+ }
+
+# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
+manila_config {
+  'keystone_authtoken/identity_uri':      value => hiera('CONFIG_KEYSTONE_ADMIN_URL');
+  'keystone_authtoken/auth_uri':          value => hiera('CONFIG_KEYSTONE_PUBLIC_URL');
+  'keystone_authtoken/auth_version':      value => hiera('CONFIG_KEYSTONE_API_VERSION');
+  'keystone_authtoken/admin_tenant_name': value => 'services';
+  'keystone_authtoken/admin_user':        value => 'manila';
+  'keystone_authtoken/admin_password':    value => hiera('CONFIG_MANILA_KS_PW'), secret => true;
 }
 
 class { '::manila::scheduler':
