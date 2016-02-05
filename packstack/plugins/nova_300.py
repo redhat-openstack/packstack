@@ -30,6 +30,7 @@ from packstack.modules import common
 from packstack.modules.documentation import update_params_usage
 from packstack.modules.shortcuts import get_mq
 from packstack.modules.ospluginutils import appendManifestFile
+from packstack.modules.ospluginutils import prependManifestFile
 from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import deliver_ssl_file
 from packstack.modules.ospluginutils import getManifestTemplate
@@ -812,6 +813,7 @@ def create_vncproxy_manifest(config, messages):
 
 def create_common_manifest(config, messages):
     global compute_hosts, network_hosts
+
     network_type = (config['CONFIG_NEUTRON_INSTALL'] == "y" and
                     'neutron' or 'nova')
     network_multi = len(network_hosts) > 1
@@ -854,7 +856,9 @@ def create_common_manifest(config, messages):
                 data += getManifestTemplate("nova_common_pw")
             else:
                 data += getManifestTemplate("nova_common_nopw")
-            appendManifestFile(os.path.split(manifestfile)[1], data)
+            # We need to have class nova before class nova::api, so prepend
+            # instead of append
+            prependManifestFile(os.path.split(manifestfile)[1], data)
 
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         nova_hosts = compute_hosts
