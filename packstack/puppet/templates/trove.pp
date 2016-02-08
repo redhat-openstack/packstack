@@ -8,7 +8,8 @@ class { '::trove::api':
   bind_host         => $bind_host,
   enabled           => true,
   keystone_password => hiera('CONFIG_TROVE_KS_PW'),
-  auth_url          => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  auth_uri          => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  identity_uri      => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   cert_file         => false,
   key_file          => false,
   ca_file           => false,
@@ -28,7 +29,9 @@ class { '::trove::taskmanager':
   debug    => hiera('CONFIG_DEBUG_MODE'),
 }
 
-# TO-DO: Remove this as soon as bz#1298245 is resolved.
 trove_config {
+  # TO-DO: Remove this as soon as bz#1298245 is resolved.
   'DEFAULT/api_paste_config':  value => '/usr/share/trove/trove-dist-paste.ini';
+  # TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
+  'keystone_authtoken/auth_version' : value => hiera('CONFIG_KEYSTONE_API_VERSION');
 }
