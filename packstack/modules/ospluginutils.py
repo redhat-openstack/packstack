@@ -45,6 +45,14 @@ class ManifestFiles(object):
 
         self.filelist.append((filename, marker))
 
+    def prependFile(self, filename, marker, data=''):
+        self.data[filename] = data + '\n' + self.data.get(filename, '')
+        for f, p in self.filelist:
+            if f == filename:
+                return
+
+        self.filelist.append((filename, marker))
+
     def getFiles(self):
         return [f for f in self.filelist]
 
@@ -74,6 +82,10 @@ def getManifestTemplate(template_name):
 
 def appendManifestFile(manifest_name, data, marker=''):
     manifestfiles.addFile(manifest_name, marker, data)
+
+
+def prependManifestFile(manifest_name, data, marker=''):
+    manifestfiles.prependFile(manifest_name, marker, data)
 
 
 def generateHieraDataFile():
