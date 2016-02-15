@@ -30,5 +30,5 @@ class { '::trove::taskmanager':
 
 # TO-DO: Remove this as soon as bz#1298245 is resolved.
 trove_config {
-  'DEFAULT/api_paste_config':  value => '/usr/share/trove/trove-dist-paste.ini';
+  'DEFAULT/api_paste_config':  value => '/etc/trove/api-paste.ini';
 }
