@@ -14,6 +14,7 @@ echo -e "Generating packstack config for:
 - cinder (lvm+iscsi)
 - ceilometer
 - aodh
+- gnocchi
 - trove
 - manila
 - nagios

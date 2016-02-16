@@ -107,3 +107,7 @@ if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
 if hiera('CONFIG_AODH_INSTALL') == 'y' {
   apache::listen { '8042': }
 }
+
+if hiera('CONFIG_GNOCCHI_INSTALL') == 'y' {
+  apache::listen { '8041': }
+}

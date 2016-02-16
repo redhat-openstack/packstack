@@ -23,6 +23,7 @@ echo
 packstack --allinone \
           --os-aodh-install=n \
           --os-ceilometer-install=n \
+          --os-gnocchi-install=n \
           --os-cinder-install=n \
           --nagios-install=n \
           --glance-backend=swift \

@@ -62,6 +62,9 @@ Global Options
 **CONFIG_AODH_INSTALL**
     Specify 'y' to install OpenStack Telemetry Alarming (Aodh). Note Aodh requires Ceilometer to be installed as well. ['y', 'n']
 
+**CONFIG_GNOCCHI_INSTALL**
+    Specify 'y' to install OpenStack Metering as a Service (gnocchi). ['y', 'n']
+
 **CONFIG_HEAT_INSTALL**
     Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
 
@@ -1063,6 +1066,17 @@ Aodh Config parameters
 
 **CONFIG_AODH_KS_PW**
     Password to use for Telemetry Alarming to authenticate with the Identity service.
+
+
+Gnocchi Config parameters
+-------------------------
+
+**CONFIG_GNOCCHI_DB_PW**
+    Password to use for Gnocchi to access the database.
+
+**CONFIG_GNOCCHI_KS_PW**
+    Password to use for Gnocchi to authenticate with the Identity service.
+
 
 Sahara Config parameters
 ------------------------
