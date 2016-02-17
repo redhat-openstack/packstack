@@ -87,6 +87,17 @@ def initConfig(controller):
              "USE_DEFAULT": True,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CONF_NAME": "CONFIG_CEILOMETER_METERING_BACKEND",
+             "CMD_OPTION": "ceilometer-metering-backend",
+             "PROMPT": "Enter the metering backend to use",
+             "OPTION_LIST": ['database', 'gnocchi'],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": 'database',
+             "MASK_INPUT": False,
+             "USE_DEFAULT": True,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "MONGODB": [
