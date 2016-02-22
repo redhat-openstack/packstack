@@ -28,7 +28,7 @@ MODULES_DIR = os.environ.get('PACKSTACK_PUPPETDIR',
                              '/usr/share/openstack-puppet/modules')
 MODULES_REPO = ('https://github.com/redhat-openstack/'
                 'openstack-puppet-modules.git')
-MODULES_BRANCH = 'f23-patches'
+MODULES_BRANCH = 'stable/kilo'
 
 
 class InstallModulesCommand(Command):
