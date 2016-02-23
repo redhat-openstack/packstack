@@ -9,12 +9,14 @@ $bind_host = hiera('CONFIG_IP_VERSION') ? {
 }
 
 class { '::cinder::api':
-  bind_host          => $bind_host,
-  keystone_password  => hiera('CONFIG_CINDER_KS_PW'),
-  keystone_tenant    => 'services',
-  keystone_user      => 'cinder',
-  auth_uri           => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-  identity_uri       => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+  bind_host               => $bind_host,
+  keystone_password       => hiera('CONFIG_CINDER_KS_PW'),
+  keystone_tenant         => 'services',
+  keystone_user           => 'cinder',
+  auth_uri                => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  identity_uri            => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+  nova_catalog_info       => 'compute:nova:publicURL',
+  nova_catalog_admin_info => 'compute:nova:adminURL'
 }
 
 # TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
