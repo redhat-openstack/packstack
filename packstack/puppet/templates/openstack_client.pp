@@ -1,7 +1,4 @@
 
-$clientdeps = ['python-iso8601']
-package { $clientdeps: }
-
 $clientlibs = ['python-novaclient',
   'python-glanceclient', 'python-swiftclient',
   'python-cinderclient', 'python-openstackclient']
