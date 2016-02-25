@@ -787,8 +787,9 @@ def create_manifest(config, messages):
     else:
         config['CONFIG_KEYSTONE_HOST_URL'] = config['CONFIG_CONTROLLER_HOST']
 
-    config['CONFIG_KEYSTONE_PUBLIC_URL'] = "http://%s:5000" % (
+    config['CONFIG_KEYSTONE_PUBLIC_URL'] = "http://%s:5000/%s" % (
         config['CONFIG_KEYSTONE_HOST_URL'],
+        config['CONFIG_KEYSTONE_API_VERSION']
     )
     config['CONFIG_KEYSTONE_ADMIN_URL'] = "http://%s:35357" % (
         config['CONFIG_KEYSTONE_HOST_URL']

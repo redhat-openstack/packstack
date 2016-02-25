@@ -19,11 +19,6 @@ class { '::cinder::api':
   nova_catalog_admin_info => 'compute:nova:adminURL'
 }
 
-# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
-cinder_config {
-  'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
-}
-
 class { '::cinder::scheduler': }
 
 class { '::cinder::volume': }
