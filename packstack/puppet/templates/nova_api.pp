@@ -25,11 +25,6 @@ class { '::nova::api':
   pci_alias                            => hiera('CONFIG_NOVA_PCI_ALIAS'),
 }
 
-# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
-nova_config {
-  'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
-}
-
 Package<| title == 'nova-common' |> -> Class['nova::api']
 
 $db_purge = hiera('CONFIG_NOVA_DB_PURGE_ENABLE')

@@ -30,11 +30,6 @@ class { '::glance::api':
   os_region_name      => hiera('CONFIG_KEYSTONE_REGION'),
 }
 
-# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
-glance_api_config {
-  'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
-}
-
 class { '::glance::registry':
   auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
@@ -45,9 +40,4 @@ class { '::glance::registry':
   database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
-}
-
-# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
-glance_registry_config {
-  'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
 }

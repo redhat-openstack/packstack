@@ -33,8 +33,3 @@ class { '::heat':
   kombu_ssl_keyfile   => $kombu_ssl_keyfile,
   kombu_ssl_certfile  => $kombu_ssl_certfile,
 }
-
-# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
-heat_config {
-  'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
-}

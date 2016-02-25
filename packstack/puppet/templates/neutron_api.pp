@@ -8,14 +8,6 @@ class { '::neutron::server':
   enabled             => true,
 }
 
-# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
-neutron_config {
-  'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
-}
-neutron_api_config {
-  'filter:authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
-}
-
 # TODO: FIXME: remove this hack after upstream resolves https://bugs.launchpad.net/puppet-neutron/+bug/1474961
 if hiera('CONFIG_NEUTRON_VPNAAS') == 'y' {
   ensure_resource( 'package', 'neutron-vpnaas-agent', {
@@ -45,3 +37,4 @@ file { '/etc/neutron/api-paste.ini':
 }
 
 Class['::neutron::server'] -> File['/etc/neutron/api-paste.ini']
+

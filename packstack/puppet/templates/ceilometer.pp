@@ -57,8 +57,3 @@ class { '::ceilometer::api':
   keystone_identity_uri => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   keystone_password     => hiera('CONFIG_CEILOMETER_KS_PW'),
 }
-
-# TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
-ceilometer_config {
-  'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
-}
