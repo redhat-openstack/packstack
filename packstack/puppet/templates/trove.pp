@@ -14,6 +14,7 @@ class { '::trove::api':
   ca_file           => false,
   verbose           => true,
   debug             => hiera('CONFIG_DEBUG_MODE'),
+  workers           => $service_workers
 }
 
 class { '::trove::conductor':

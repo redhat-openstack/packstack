@@ -79,6 +79,20 @@ def initConfig(controller):
              "NEED_CONFIRM": True,
              "CONDITION": False},
 
+            {"CMD_OPTION": "service-workers",
+             "PROMPT": (
+                 "Enter the amount of service workers/threads to use for each "
+                 "service. Leave blank to use the default."
+             ),
+             "OPTION_LIST": [],
+             "DEFAULT_VALUE": '%{::processorcount}',
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_SERVICE_WORKERS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
+
             {"CMD_OPTION": "mariadb-install",
              "PROMPT": "Should Packstack install MariaDB",
              "OPTION_LIST": ["y", "n"],

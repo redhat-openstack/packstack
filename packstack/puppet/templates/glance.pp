@@ -28,6 +28,7 @@ class { '::glance::api':
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
   os_region_name      => hiera('CONFIG_KEYSTONE_REGION'),
+  workers             => $service_workers
 }
 
 class { '::glance::registry':
@@ -40,4 +41,5 @@ class { '::glance::registry':
   database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
+  workers             => $service_workers
 }

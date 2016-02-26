@@ -41,6 +41,7 @@ class { '::swift::proxy':
     'proxy-server',
   ],
   account_autocreate => true,
+  workers => $service_workers
 }
 
 # configure all of the middlewares

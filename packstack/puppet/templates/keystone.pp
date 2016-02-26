@@ -50,7 +50,8 @@ if $keystone_service_name == 'httpd' {
   }
 
   class { '::keystone::wsgi::apache':
-    ssl => $keystone_use_ssl,
+    workers => $service_workers,
+    ssl     => $keystone_use_ssl
   }
 
   if hiera('CONFIG_HORIZON_SSL') == 'y' {

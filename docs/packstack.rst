@@ -32,6 +32,9 @@ Global Options
 **CONFIG_DEFAULT_PASSWORD**
     Default password to be used everywhere (overridden by passwords set for individual services or users).
 
+**CONFIG_SERVICE_WORKERS**
+    The amount of service workers/threads to use for each service. Useful to tweak when you have memory constraints. Defaults to the amount of cores on the system.
+
 **CONFIG_MARIADB_INSTALL**
     Specify 'y' to install MariaDB. ['y', 'n']
 

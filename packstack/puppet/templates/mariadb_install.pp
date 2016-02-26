@@ -1,4 +1,6 @@
 
+$max_connections = $service_workers * 128
+
 # Package mariadb-server conflicts with mariadb-galera-server
 package { 'mariadb-server':
   ensure => absent,
@@ -21,7 +23,7 @@ class { '::mysql::server':
     'mysqld' => {
       'bind_address'           => $bind_address,
       'default_storage_engine' => 'InnoDB',
-      'max_connections'        => '1024',
+      'max_connections'        => $max_connections,
       'open_files_limit'       => '-1',
       # galera options
       'wsrep_provider'         => 'none',

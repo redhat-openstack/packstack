@@ -56,4 +56,5 @@ class { '::ceilometer::api':
   keystone_auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   keystone_identity_uri => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   keystone_password     => hiera('CONFIG_CEILOMETER_KS_PW'),
+  api_workers           => $service_workers
 }

@@ -23,7 +23,9 @@ class { '::nova::api':
   neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
   default_floating_pool                => $default_floating_pool,
   pci_alias                            => hiera('CONFIG_NOVA_PCI_ALIAS'),
-  sync_db_api                          => true
+  sync_db_api                          => true,
+  osapi_compute_workers                => $service_workers,
+  metadata_workers                     => $service_workers
 }
 
 Package<| title == 'nova-common' |> -> Class['nova::api']

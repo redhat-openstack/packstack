@@ -1,3 +1,5 @@
 
-class { '::heat::api_cloudwatch': }
+class { '::heat::api_cloudwatch':
+  workers => $service_workers
+}
 
