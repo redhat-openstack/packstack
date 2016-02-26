@@ -5,13 +5,14 @@ fi
 
 echo -e "Generating packstack config for:
 - keystone
-- glance (swift backend)
+- glance (file backend)
 - nova
 - neutron (ovs+vxlan)
-- swift
-- sahara
-- trove
-- tempest (regex: 'smoke dashboard')"
+- ceilometer
+- aodh
+- gnocchi
+- heat
+- tempest (regex: 'smoke TelemetryAlarming')"
 echo "tempest will run if packstack's installation completes successfully."
 echo
 
@@ -19,16 +20,11 @@ $SUDO packstack --allinone \
           --debug \
           --service-workers=2 \
           --default-password="packstack" \
-          --os-aodh-install=n \
-          --os-ceilometer-install=n \
-          --os-gnocchi-install=n \
-          --os-cinder-install=n \
+          --os-swift-install=n \
           --os-horizon-install=n \
-          --nagios-install=n \
-          --glance-backend=swift \
-          --os-sahara-install=y \
-          --os-trove-install=y \
+          --glance-backend=file \
+          --os-heat-install=y \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \
-          --run-tempest-tests="smoke" || export FAILURE=true
+          --run-tempest-tests="smoke TelemetryAlarming" || export FAILURE=true

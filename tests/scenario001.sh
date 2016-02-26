@@ -9,24 +9,23 @@ echo -e "Generating packstack config for:
 - nova
 - neutron (ovs+vxlan)
 - cinder (lvm+iscsi)
-- ceilometer
-- aodh
-- gnocchi
-- trove
 - manila
 - nagios
-- tempest (regex: 'smoke TelemetryAlarming')"
+- tempest (regex: 'smoke')"
 echo "tempest will run if packstack's installation completes successfully."
 echo
 
 $SUDO packstack --allinone \
           --debug \
+          --service-workers=2 \
           --default-password="packstack" \
+          --os-aodh-install=n \
+          --os-ceilometer-install=n \
+          --os-gnocchi-install=n \
           --os-swift-install=n \
-          --os-horizon-install=n \
           --os-manila-install=y \
-          --glance-backend=swift \
+          --glance-backend=file \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \
-          --run-tempest-tests="smoke TelemetryAlarming" || export FAILURE=true
+          --run-tempest-tests="smoke dashboard" || export FAILURE=true
