@@ -38,7 +38,6 @@ class {'::horizon':
   horizon_cert          => hiera('CONFIG_HORIZON_SSL_CERT', undef),
   horizon_key           => hiera('CONFIG_HORIZON_SSL_KEY', undef),
   horizon_ca            => hiera('CONFIG_HORIZON_SSL_CACERT', undef),
-  help_url              => 'https://www.rdoproject.org/Docs',
   neutron_options       => {
     'enable_lb'       => hiera('CONFIG_HORIZON_NEUTRON_LB'),
     'enable_firewall' => hiera('CONFIG_HORIZON_NEUTRON_FW'),
