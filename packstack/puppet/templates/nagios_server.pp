@@ -104,6 +104,10 @@ if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
   apache::listen { '35357': }
 }
 
+if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+  apache::listen { '8777': }
+}
+
 if hiera('CONFIG_AODH_INSTALL') == 'y' {
   apache::listen { '8042': }
 }
