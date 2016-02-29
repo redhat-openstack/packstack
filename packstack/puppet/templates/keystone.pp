@@ -22,7 +22,7 @@ class { '::keystone::client': }
 if hiera('CONFIG_KEYSTONE_DB_PURGE_ENABLE',false) {
   class { '::keystone::cron::token_flush':
     minute      => '*/1',
-    require     => [Service['crond'], User['keystone'], Group['keystone']],
+    require     => Service['crond'],
     destination => '/dev/null',
   }
   service { 'crond':
