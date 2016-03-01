@@ -182,22 +182,23 @@ reproduce these tests on your environment if you wish.
 
 This is the current matrix of available tests:
 
-|     -      | scenario001 | scenario002 |
-|:----------:|:-----------:|:-----------:|
-| keystone   |      X      |       X     |
-| glance     |      X      |       X     |
-| nova       |      X      |       X     |
-| neutron    |      X      |       X     |
-| cinder     |      X      |             |
-| ceilometer |      X      |             |
-| aodh       |      X      |             |
-| heat       |             |       X     |
-| swift      |             |       X     |
-| sahara     |             |       X     |
-| trove      |             |       X     |
-| horizon    |             |       X     |
-| manila     |      X      |             |
-| nagios     |      X      |             |
+|     -      | scenario001 | scenario002 | scenario003 |
+|:----------:|:-----------:|:-----------:|:------------:
+| keystone   |      X      |      X      |      X      |
+| glance     |    file     |    swift    |     file    |
+| nova       |      X      |      X      |      X      |
+| neutron    |      X      |      X      |      X      |
+| cinder     |      X      |             |             |
+| ceilometer |             |             |      X      |
+| aodh       |             |             |      X      |
+| gnocchi    |             |             |      X      |
+| heat       |             |             |      X      |
+| swift      |             |      X      |             |
+| sahara     |             |      X      |             |
+| trove      |             |      X      |             |
+| horizon    |      X      |             |             |
+| manila     |      X      |             |             |
+| nagios     |      X      |             |             |
 
 To run these tests:
 
