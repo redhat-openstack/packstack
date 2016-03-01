@@ -118,8 +118,8 @@ result=$?
 # Print output and generate subunit if results exist
 if [ -d /var/lib/tempest ]; then
     pushd /var/lib/tempest
-    $SUDO /var/lib/tempest/.venv/bin/testr last || true
-    $SUDO bash -c "/var/lib/tempest/.venv/bin/testr last --subunit > /var/tmp/packstack/latest/testrepository.subunit" || true
+    $SUDO .tox/all/bin/testr last || true
+    $SUDO bash -c ".tox/all/bin/testr last --subunit > /var/tmp/packstack/latest/testrepository.subunit" || true
     popd
 fi
 

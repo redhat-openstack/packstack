@@ -52,9 +52,11 @@ def initSequences(controller):
 # -------------------------- step functions --------------------------
 
 def run_tempest(config, messages):
-    logfile = basedefs.DIR_LOG + "/run_tempest.log"
+    logfile = basedefs.DIR_LOG + "/tempest.log"
     print("Running Tempest on %s" % config['CONFIG_TEMPEST_HOST'])
     server = utils.ScriptRunner(config['CONFIG_TEMPEST_HOST'])
-    server.append('/var/lib/tempest/run_tempest.sh -V %s > %s'
+    server.append('pushd /var/lib/tempest')
+    server.append('tox -eall -- --concurrency=2 %s > %s'
                   % (config['CONFIG_RUN_TEMPEST_TESTS'], logfile))
+    server.append('popd')
     server.execute()
