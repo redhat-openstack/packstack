@@ -5,4 +5,6 @@ $use_subnets = $use_subnets_value ? {
   default => false,
 }
 
+$service_workers = hiera('CONFIG_SERVICE_WORKERS')
+
 Exec { timeout => hiera('DEFAULT_EXEC_TIMEOUT') }

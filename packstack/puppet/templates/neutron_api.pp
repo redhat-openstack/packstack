@@ -6,6 +6,8 @@ class { '::neutron::server':
   identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   sync_db             => true,
   enabled             => true,
+  api_workers         => $service_workers,
+  rpc_workers         => $service_workers
 }
 
 # TODO: FIXME: remove this hack after upstream resolves https://bugs.launchpad.net/puppet-neutron/+bug/1474961

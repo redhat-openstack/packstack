@@ -16,7 +16,8 @@ class { '::cinder::api':
   auth_uri                => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   identity_uri            => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   nova_catalog_info       => 'compute:nova:publicURL',
-  nova_catalog_admin_info => 'compute:nova:adminURL'
+  nova_catalog_admin_info => 'compute:nova:adminURL',
+  service_workers         => $service_workers
 }
 
 class { '::cinder::scheduler': }

@@ -35,7 +35,8 @@ class { '::apache':
 }
 
 class { '::aodh::wsgi::apache':
-  ssl => false,
+  workers => $service_workers,
+  ssl     => false
 }
 if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
   apache::listen { '5000': }
