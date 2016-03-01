@@ -1,4 +1,4 @@
-$provision_demo            = str2bool(hiera('CONFIG_PROVISION_DEMO'))
+$provision_demo         = str2bool(hiera('CONFIG_PROVISION_DEMO'))
 if $provision_demo {
   $username             = 'demo'
   $password             = hiera('CONFIG_KEYSTONE_DEMO_PW')
@@ -83,6 +83,7 @@ class { '::tempest':
   aodh_available            => $aodh_available,
   auth_version              => $auth_version,
   ceilometer_available      => $ceilometer_available,
+  cinder_available          => $cinder_available,
   change_password_available => $change_password_available,
   configure_images          => $configure_images,
   configure_networks        => $configure_networks,
