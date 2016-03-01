@@ -61,7 +61,7 @@ function get_diag_commands {
     for ((i = 0; i < ${#commands[@]}; i++)); do
         # filenames have underscores instead of spaces or slashes
         filename="$(echo "${commands[$i]}" |sed -e "s%[ \/]%_%g").txt"
-        $SUDO "${commands[$i]}" 2>&1 | $SUDO tee -a ${DIAG_LOGDIR}/${filename}
+        $SUDO bash -c "${commands[$i]} 2>&1 > ${DIAG_LOGDIR}/${filename}"
     done
 }
 
@@ -90,16 +90,16 @@ function get_config_and_logs {
         '/var/log/gnocchi'
         '/etc/rabbitmq/'
         '/var/log/rabbitmq'
-        '/etc/mysql'
-        '/var/log/mysql'
-        '/var/log/mysql.err'
-        '/var/log/mysql.log'
-        '/etc/httpd'
+        '/etc/my.cnf.d'
+        '/var/log/mariadb'
+        '/etc/httpd/conf.d/'
         '/var/log/httpd'
-        '/var/tmp/packstack'
-        '/var/log/audit'
-        '/var/log/secure'
+        '/var/tmp/packstack/latest'
+        '/var/tmp/packstack/latest/testrepository.subunit' # So we're copying it
+        '/var/log/audit'                                   # to the root of
+        '/var/log/secure'                                  # /logs
         '/var/log/messages'
+        '/var/log/dstat.log'
         '/etc/puppet/puppet.conf'
         '/etc/puppet/hiera.yaml'
     )
@@ -119,9 +119,9 @@ function get_config_and_logs {
             if [[ "${paths[$i]}" =~ /proc/ ]]; then
                 $SUDO cp "${paths[$i]}" ${DIAG_LOGDIR}/
             elif [[ "${paths[$i]}" =~ /var/ ]]; then
-                $SUDO cp -r "${paths[$i]}" ${LOGDIR}/
+                $SUDO cp -Lr "${paths[$i]}" ${LOGDIR}/
             elif [[ "${paths[$i]}" =~ /etc/ ]]; then
-                $SUDO cp -r "${paths[$i]}" ${CONF_LOGDIR}/
+                $SUDO cp -Lr "${paths[$i]}" ${CONF_LOGDIR}/
             fi
         fi
     done
@@ -143,7 +143,7 @@ function ensure_log_properties {
 
     echo "Compressing all text files..."
     # Compress all files
-    $FIND -iname '*.txt' -execdir gzip -9 {} \+
+    $FIND -iname '*.txt' -execdir gzip -f -9 {} \+
 
     echo "Compressed log and configuration can be found in ${LOGDIR}."
 }
