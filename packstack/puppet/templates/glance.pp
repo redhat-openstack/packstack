@@ -28,7 +28,8 @@ class { '::glance::api':
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
   os_region_name      => hiera('CONFIG_KEYSTONE_REGION'),
-  workers             => $service_workers
+  workers             => $service_workers,
+  known_stores        => ['file', 'http', 'swift']
 }
 
 class { '::glance::registry':
