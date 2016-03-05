@@ -2,7 +2,7 @@
 
 . /etc/nagios/keystonerc_admin
 
-data=$(keystone user-list 2>&1)
+data=$(openstack user list 2>&1)
 rv=$?
 
 if [ "$rv" != "0" ] ; then
