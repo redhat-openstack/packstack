@@ -38,6 +38,7 @@ define enable_rabbitmq {
       default_user             => hiera('CONFIG_AMQP_AUTH_USER'),
       default_pass             => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
       package_provider         => 'yum',
+      repos_ensure             => false,
       admin_enable             => false,
       # FIXME: it's ugly to not to require client certs
       ssl_fail_if_no_peer_cert => true,
@@ -53,6 +54,7 @@ define enable_rabbitmq {
       default_user     => hiera('CONFIG_AMQP_AUTH_USER'),
       default_pass     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
       package_provider => 'yum',
+      repos_ensure     => false,
       admin_enable     => false,
       config_variables => {
         'tcp_listen_options' => '[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]',
