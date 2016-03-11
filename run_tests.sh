@@ -17,7 +17,8 @@ export PATH=$PATH:/usr/local/sbin:/usr/sbin
 
 SCENARIO=${SCENARIO:-scenario001}
 
-# We could want to override the default repositories
+# We could want to override the default repositories or install behavior
+INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
 DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7/current-passed-ci/delorean.repo}
 DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7/delorean-deps.repo}
@@ -108,8 +109,12 @@ if type "dstat" 2>/dev/null; then
 fi
 
 # Setup packstack
-$SUDO python setup.py install
-$SUDO python setup.py install_puppet_modules
+if [ "${INSTALL_FROM_SOURCE}" = true ]; then
+  $SUDO python setup.py install
+  $SUDO python setup.py install_puppet_modules
+else
+  $SUDO yum -y install openstack-packstack
+fi
 
 # Generate configuration from selected scenario and run it
 source ./tests/${SCENARIO}.sh
