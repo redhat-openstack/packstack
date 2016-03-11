@@ -62,6 +62,7 @@ $SUDO yum -y install puppet \
                      libffi-devel \
                      libxml2-devel \
                      libxslt-devel \
+                     libyaml-devel \
                      ruby-devel \
                      openstack-selinux \
                      policycoreutils \
