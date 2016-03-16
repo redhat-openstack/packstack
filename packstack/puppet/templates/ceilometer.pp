@@ -28,6 +28,13 @@ if $config_ceilometer_coordination_backend == 'redis' {
   $coordination_url = ''
 }
 
+if hiera('CONFIG_CEILOMETER_SERVICE_NAME') == 'ceilometer' {
+      $ceilometer_service_name = 'openstack-ceilometer-api'
+} else {
+      $ceilometer_service_name = 'httpd'
+}
+
+
 class { '::ceilometer::db':
   database_connection => "mongodb://${config_mongodb_host}:27017/ceilometer",
 }
@@ -56,5 +63,22 @@ class { '::ceilometer::api':
   keystone_auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
   keystone_identity_uri => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   keystone_password     => hiera('CONFIG_CEILOMETER_KS_PW'),
-  api_workers           => $service_workers
+  api_workers           => $service_workers,
+  service_name          => $ceilometer_service_name,
+}
+
+if $ceilometer_service_name == 'httpd' {
+
+   class { '::apache':
+      purge_configs => false,
+   }
+
+   class { '::ceilometer::wsgi::apache':
+     ssl => false,
+   }
+
+   if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
+     apache::listen { '5000': }
+     apache::listen { '35357': }
+  }
 }
