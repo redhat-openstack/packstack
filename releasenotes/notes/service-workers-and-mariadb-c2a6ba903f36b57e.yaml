@@ -1,0 +1,12 @@
+---
+features:
+  - |
+    Add ``--service-workers`` parameter to configure the amount of
+    workers/threads per process to scale up or down as necessary. Defaults to
+    the amount of cores on the system.
+
+fixes:
+  - |
+    MariaDB max_connections is no longer hardcoded to 1024 and now scales
+    automatically according to the --service-workers parameter.
+    ( Service Workers * 128 ).
