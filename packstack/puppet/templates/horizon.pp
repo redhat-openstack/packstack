@@ -45,13 +45,6 @@ class {'::horizon':
   },
 }
 
-File <| path == $::horizon::params::config_file |> {
-  ensure  => present,
-  owner   => 'root',
-  group   => $::horizon::params::apache_group,
-  mode    => 0640,
-}
-
 # hack for memcached, for now we bind to localhost on ipv6
 # https://bugzilla.redhat.com/show_bug.cgi?id=1210658
 $memcached_bind_host = hiera('CONFIG_IP_VERSION') ? {
