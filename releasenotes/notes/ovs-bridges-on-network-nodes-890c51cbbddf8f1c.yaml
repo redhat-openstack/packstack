@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    OVS bridges are no longer created on compute nodes, they should only be
+    created on network nodes.

@@ -1,0 +1,11 @@
+---
+prelude: >
+    Packstack now provides support for installing and configuring both the
+    Gnocchi and the Aodh telemetry projects.
+features:
+  - |
+    Add support for installing and configuring the Telemetry Alarming Service
+    (Aodh)
+  - |
+    Add support for installing and configuring the Telemetry Time Series
+    Database as a Service (Gnocchi)

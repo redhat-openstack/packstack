@@ -1,0 +1,5 @@
+---
+deprecations:
+  - |
+    Removed the configuration of the Swift S3 endpoint. Swift S3 is not yet
+    supported in Packstack.
