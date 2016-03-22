@@ -200,9 +200,9 @@ This is the current matrix of available tests:
 | sahara     |             |      X      |             |
 | trove      |             |      X      |             |
 | horizon    |      X      |             |             |
-| manila     |      X      |             |             |
-| nagios     |      X      |             |             |
-| SSL        |      X      |             |             |
+| manila     |      X      |             |             |
+| nagios     |      X      |             |             |
+| SSL        |      X      |             |             |
 
 To run these tests:
 

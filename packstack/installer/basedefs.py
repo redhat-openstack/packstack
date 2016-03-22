@@ -34,6 +34,8 @@ PACKSTACK_SRC_DOC = pkg_resources.resource_filename(
 )
 if os.path.exists(PACKSTACK_SRC_DOC):
     PACKSTACK_DOC = PACKSTACK_SRC_DOC
+elif os.path.exists(os.path.join(sys.prefix, 'share/packstack/packstack.rst')):
+    PACKSTACK_DOC = os.path.join(sys.prefix, 'share/packstack/packstack.rst')
 else:
     PACKSTACK_DOC = '/usr/share/packstack/packstack.rst'
 
@@ -44,8 +46,8 @@ except OSError:
     # directory is already created, check ownership
     stat = os.stat(PACKSTACK_VAR_DIR)
     if stat.st_uid == 0 and os.getuid() != stat.st_uid:
-        print ('%s is already created and owned by root. Please change '
-               'ownership and try again.' % PACKSTACK_VAR_DIR)
+        print('%s is already created and owned by root. Please change '
+              'ownership and try again.' % PACKSTACK_VAR_DIR)
         sys.exit(1)
 finally:
     uid, gid = get_current_user()
@@ -54,8 +56,8 @@ finally:
         try:
             os.chown(PACKSTACK_VAR_DIR, uid, gid)
         except Exception as ex:
-            print ('Unable to change owner of %s. Please fix ownership '
-                   'manually and try again.' % PACKSTACK_VAR_DIR)
+            print('Unable to change owner of %s. Please fix ownership '
+                  'manually and try again.' % PACKSTACK_VAR_DIR)
             sys.exit(1)
 
 _tmpdirprefix = datetime.datetime.now().strftime('%Y%m%d-%H%M%S-')
@@ -72,7 +74,7 @@ if os.path.exists(LATEST_LOG_DIR):
     try:
         os.unlink(LATEST_LOG_DIR)
     except OSError:
-        print ('Unable to delete symbol link for log dir %s.' % LATEST_LOG_DIR)
+        print('Unable to delete symbol link for log dir %s.' % LATEST_LOG_DIR)
 
 try:
     # Extract folder name at /var/tmp/packstack/<VAR_DIR> and do a relative
@@ -80,14 +82,14 @@ try:
     os.symlink(os.path.basename(VAR_DIR),
                os.path.join(PACKSTACK_VAR_DIR, 'latest'))
 except OSError:
-    print ('Unable to create symbol link for log dir %s.' % LATEST_LOG_DIR)
+    print('Unable to create symbol link for log dir %s.' % LATEST_LOG_DIR)
 
 PUPPET_DEPENDENCIES = ['puppet', 'hiera', 'openssh-clients', 'tar', 'nc']
 PUPPET_MODULES_DEPS = ['rubygem-json']
 
 FILE_INSTALLER_LOG = "setup.log"
 
-DIR_PROJECT_DIR = os.environ.get('INSTALLER_PROJECT_DIR', os.path.join(os.getcwd(), 'packstack'))
+DIR_PROJECT_DIR = os.environ.get('INSTALLER_PROJECT_DIR', os.path.abspath(os.path.join(os.path.split(__file__)[0], '..')))
 DIR_PLUGINS = os.path.join(DIR_PROJECT_DIR, "plugins")
 DIR_MODULES = os.path.join(DIR_PROJECT_DIR, "modules")
 
