@@ -65,11 +65,13 @@ define enable_rabbitmq {
 
   Package['erlang'] -> Class['rabbitmq']
 
+  # TO-DO: remove this workaround as soon as this is fixed in puppetlabs-rabbitmq module
+  #        https://github.com/puppetlabs/puppetlabs-rabbitmq/pull/454
   File <| path == '/etc/rabbitmq/rabbitmq.config' |> {
     ensure  => present,
     owner   => 'rabbitmq',
     group   => 'rabbitmq',
-    mode    => 0640,
+    mode    => '0640',
   }
 
 }
