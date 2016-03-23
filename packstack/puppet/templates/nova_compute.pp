@@ -54,8 +54,11 @@ service { 'tuned':
   require => Package['tuned'],
 }
 
+# tries/try_sleep to try and circumvent rhbz1320744
 exec { 'tuned-virtual-host':
-  unless  => '/usr/sbin/tuned-adm active | /bin/grep virtual-host',
-  command => '/usr/sbin/tuned-adm profile virtual-host',
-  require => Service['tuned'],
+  unless    => '/usr/sbin/tuned-adm active | /bin/grep virtual-host',
+  command   => '/usr/sbin/tuned-adm profile virtual-host',
+  require   => Service['tuned'],
+  tries     => 3,
+  try_sleep => 5
 }
