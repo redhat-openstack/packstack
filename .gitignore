@@ -5,3 +5,4 @@
 vendor/*
 Gemfile.lock
 packstack.egg-info
+releasenotes/build
