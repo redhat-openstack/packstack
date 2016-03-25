@@ -1,9 +1,19 @@
 
 $max_connections = $service_workers * 128
 
-# Package mariadb-server conflicts with mariadb-galera-server
+
+if ($::mariadb_provides_galera == 'true') {
+  # Since mariadb 10.1 galera is included in main mariadb
+  $mariadb_package_name = 'mariadb-server-galera'
+  $mariadb_present      = 'present'
+} else  {
+  # Package mariadb-server conflicts with mariadb-galera-server
+  $mariadb_package_name = 'mariadb-galera-server'
+  $mariadb_present      = 'absent'
+}
+
 package { 'mariadb-server':
-  ensure => absent,
+  ensure => $mariadb_present,
 }
 
 $bind_address = hiera('CONFIG_IP_VERSION') ? {
@@ -15,7 +25,7 @@ $bind_address = hiera('CONFIG_IP_VERSION') ? {
 $mysql_root_password = hiera('CONFIG_MARIADB_PW')
 
 class { '::mysql::server':
-  package_name     => 'mariadb-galera-server',
+  package_name     => $mariadb_package_name,
   restart          => true,
   root_password    => $mysql_root_password,
   require          => Package['mariadb-server'],
