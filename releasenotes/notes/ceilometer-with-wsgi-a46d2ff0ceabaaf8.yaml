@@ -1,0 +1,4 @@
+---
+features:
+  - |
+    Add support for deploying Ceilometer behind Apache with WSGI.

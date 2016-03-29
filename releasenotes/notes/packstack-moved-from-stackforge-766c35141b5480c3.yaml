@@ -1,0 +1,5 @@
+---
+other:
+  - |
+    The Packstack project repository was moved from https://github.com/stackforge/packstack to
+    https://github.com/openstack/packstack

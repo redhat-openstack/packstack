@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Several updates to Packstack to keep up with supported upstream projects
+    new features, deprecations or removals throughout the cycle.

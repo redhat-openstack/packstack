@@ -1,0 +1,5 @@
+---
+deprecations:
+  - |
+    qpid support has been dropped from oslo.messaging and as such, support for
+    it has been removed from Packstack.

@@ -1,0 +1,16 @@
+---
+prelude: >
+    The Tempest implementation in Packstack has been refactored and improved in
+    order to be able to install, configure and run Tempest against itself.
+    We have leveraged these new features to have Packstack gate patch reviews
+    against integration jobs where the patch is tested automatically against a
+    wide range of configuration scenarios.
+features:
+  - |
+    Implemented test scenarios and tools to troubleshoot failed installations
+
+  - |
+    Implemented gate jobs which install Packstack and run tempest against itself
+
+  - |
+    Tempest installation and configuration has been vastly improved

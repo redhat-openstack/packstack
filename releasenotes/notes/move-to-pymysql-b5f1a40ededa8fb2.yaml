@@ -1,0 +1,4 @@
+---
+features:
+  - |
+    Transition to the new PyMySQL driver for database access.
