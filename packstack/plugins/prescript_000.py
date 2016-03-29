@@ -1169,6 +1169,38 @@ def manage_epel(host, config):
         logger.warning(msg % host)
 
 
+def manage_centos_release_openstack(host, config):
+    """
+    Installs and enables CentOS OpenStack release package if installed locally.
+    """
+    try:
+        cmd = "rpm -qa --qf='%{name}-%{version}-%{release}.%{arch}\n' | grep centos-release-openstack"
+        rc, out = utils.execute(cmd, use_shell=True)
+    except exceptions.ExecuteRuntimeError:
+        # No CentOS Cloud SIG repo, so we don't need to continue
+        return
+
+    match = re.match(r'^centos-release-openstack-(?P<branch>\w+)\-(?P<version>\w+)\-(?P<release>\d+\.[\d\w]+)', out)
+    if not match:
+        # No CentOS Cloud SIG repo, so we don't need to continue
+        return
+    branch, version, release = match.group('branch'), match.group('version'), match.group('release')
+    package_name = ("centos-release-openstack-%(branch)s-%(version)s-"
+                    "%(release)s" % locals())
+
+    server = utils.ScriptRunner(host)
+    server.append("(rpm -q 'centos-release-openstack-%(branch)s' ||"
+                  " yum -y install centos-release-openstack-%(branch)s) || true"
+                  % locals())
+
+    try:
+        server.execute()
+    except exceptions.ScriptRuntimeError as ex:
+        msg = ('Failed to set CentOS Cloud SIG repo on host %s:\n%s'
+               % (host, ex))
+        raise exceptions.ScriptRuntimeError(msg)
+
+
 def manage_rdo(host, config):
     """
     Installs and enables RDO repo on host in case it is installed locally.
@@ -1182,7 +1214,7 @@ def manage_rdo(host, config):
 
     match = re.match(r'^(?P<version>\w+)\-(?P<release>\d+\.[\d\w]+)\n', out)
     version, release = match.group('version'), match.group('release')
-    rdo_url = ("http://rdo.fedorapeople.org/openstack/openstack-%(version)s/"
+    rdo_url = ("https://www.rdoproject.org/repos/openstack-%(version)s/"
                "rdo-release-%(version)s-%(release)s.rpm" % locals())
 
     server = utils.ScriptRunner(host)
@@ -1408,6 +1440,8 @@ def server_prep(config, messages):
 
         server.execute()
 
+        # enable CentOS Cloud SIG repo if installed locally
+        manage_centos_release_openstack(hostname, config)
         # enable RDO if it is installed locally
         manage_rdo(hostname, config)
         # enable or disable EPEL according to configuration
