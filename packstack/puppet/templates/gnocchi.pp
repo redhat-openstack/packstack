@@ -42,4 +42,12 @@ class { '::gnocchi::storage::file': }
 
 class {'::gnocchi::metricd': }
 
+class {'::gnocchi::statsd':
+  resource_id         => '5e3fcbe2-7aab-475d-b42c-a440aa42e5ad',
+  user_id             => 'e0ca4711-1128-422c-abd6-62db246c32e7',
+  project_id          => 'af0c88e8-90d8-4795-9efe-57f965e67318',
+  archive_policy_name => 'high',
+  flush_delay         => '10',
+}
+
 include ::gnocchi::client
