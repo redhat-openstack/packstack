@@ -3,6 +3,10 @@ $config_mongodb_host = hiera('CONFIG_MONGODB_HOST_URL')
 
 $config_ceilometer_coordination_backend = hiera('CONFIG_CEILOMETER_COORDINATION_BACKEND')
 
+$config_ceilometer_metering_backend = hiera('CONFIG_CEILOMETER_METERING_BACKEND')
+
+$config_gnocchi_host = hiera('CONFIG_KEYSTONE_HOST_URL')
+
 if $config_ceilometer_coordination_backend == 'redis' {
   $redis_ha = hiera('CONFIG_REDIS_HA')
   $redis_host = hiera('CONFIG_REDIS_MASTER_HOST_URL')
@@ -39,7 +43,20 @@ class { '::ceilometer::db':
   database_connection => "mongodb://${config_mongodb_host}:27017/ceilometer",
 }
 
-class { '::ceilometer::collector': }
+class { '::ceilometer::collector':
+  meter_dispatcher => $config_ceilometer_metering_backend,
+}
+
+if $config_ceilometer_metering_backend == 'gnocchi' {
+
+  include ::gnocchi::client
+  class { '::ceilometer::dispatcher::gnocchi':
+    filter_service_activity   => false,
+    url                       => "http://${config_gnocchi_host}:8041",
+    archive_policy            => 'high',
+    resources_definition_file => 'gnocchi_resources.yaml',
+  }
+}
 
 class { '::ceilometer::agent::notification': }
 
@@ -75,6 +92,10 @@ if $ceilometer_service_name == 'httpd' {
 
    class { '::ceilometer::wsgi::apache':
      ssl => false,
+   }
+
+   if hiera('CONFIG_GNOCCHI_INSTALL') == 'y' {
+     apache::listen { '8041': }
    }
 
    if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
