@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Add neutron plugin option ``CONFIG_NEUTRON_OVS_TUNNEL_SUBNETS`` to configure
+    IP filtering to accept tunneling packets from these subnets instead of
+    specific IP addresses of peer nodes.

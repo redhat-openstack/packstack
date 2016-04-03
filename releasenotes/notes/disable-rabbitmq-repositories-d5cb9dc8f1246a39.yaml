@@ -1,0 +1,5 @@
+---
+fixes:
+  - |
+    Do not enable RabbitMQ repo during installation, Packstack does not retrieve
+    it from there in any case.
