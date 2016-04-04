@@ -28,8 +28,3 @@ class { '::trove::taskmanager':
   verbose  => true,
   debug    => hiera('CONFIG_DEBUG_MODE'),
 }
-
-# TO-DO: Remove this as soon as bz#1298245 is resolved.
-trove_config {
-  'DEFAULT/api_paste_config':  value => '/usr/share/trove/trove-dist-paste.ini';
-}
