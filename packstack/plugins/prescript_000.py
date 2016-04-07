@@ -1215,7 +1215,7 @@ def manage_rdo(host, config):
     match = re.match(r'^(?P<version>\w+)\-(?P<release>\d+\.[\d\w]+)\n', out)
     version, release = match.group('version'), match.group('release')
     rdo_url = ("https://www.rdoproject.org/repos/openstack-%(version)s/"
-               "rdo-release-%(version)s-%(release)s.rpm" % locals())
+               "rdo-release-%(version)s.rpm" % locals())
 
     server = utils.ScriptRunner(host)
     server.append("(rpm -q 'rdo-release-%(version)s' ||"
