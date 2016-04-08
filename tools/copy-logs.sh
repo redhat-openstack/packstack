@@ -75,6 +75,8 @@ function get_config_and_logs {
         '/etc/os-release'
         '/etc/sudoers'
         '/etc/sudoers.d'
+        '/etc/hosts'
+        '/etc/pip.conf'
         '/etc/libvirt'
         '/var/log/libvirt'
         '/etc/qemu'
