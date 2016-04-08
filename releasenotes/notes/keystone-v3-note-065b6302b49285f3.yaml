@@ -1,0 +1,5 @@
+---
+issues:
+  - Keystone v3 API is not fully functional in Packstack. Cinder does not
+    work properly if CONFIG_KEYSTONE_API_VERSION is set to v3.
+
