@@ -120,7 +120,7 @@ fi
 
 # Setup packstack
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
-  $SUDO python setup.py install
+  $SUDO pip install .
   $SUDO python setup.py install_puppet_modules
 else
   $SUDO yum -y install openstack-packstack
