@@ -51,7 +51,6 @@ $tempest_repo_uri      = hiera('CONFIG_PROVISION_TEMPEST_REPO_URI')
 $tempest_repo_revision = hiera('CONFIG_PROVISION_TEMPEST_REPO_REVISION')
 $tempest_clone_path    = '/var/lib/tempest'
 $tempest_clone_owner   = 'root'
-$setup_venv            = true
 $tempest_user          = hiera('CONFIG_PROVISION_TEMPEST_USER')
 $tempest_password      = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
 
@@ -68,11 +67,6 @@ $sahara_available     = str2bool(hiera('CONFIG_SAHARA_INSTALL'))
 $heat_available       = str2bool(hiera('CONFIG_HEAT_INSTALL'))
 $swift_available      = str2bool(hiera('CONFIG_SWIFT_INSTALL'))
 $configure_tempest    = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
-
-# on standalone install we depend on this package
-package {'python-openstackclient':
-  before => Class['::tempest'],
-}
 
 class { '::tempest':
   admin_domain_name         => $admin_domain_name,
@@ -105,7 +99,6 @@ class { '::tempest':
   public_router_id          => $public_router_id,
   resize_available          => $resize_available,
   sahara_available          => $sahara_available,
-  setup_venv                => $setup_venv,
   swift_available           => $swift_available,
   tempest_clone_owner       => $tempest_clone_owner,
   tempest_clone_path        => $tempest_clone_path,

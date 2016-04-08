@@ -20,8 +20,8 @@ SCENARIO=${SCENARIO:-scenario001}
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
-DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7/current-passed-ci/delorean.repo}
-DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7/delorean-deps.repo}
+DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7-mitaka/current-passed-ci/delorean.repo}
+DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7-mitaka/delorean-deps.repo}
 
 # If logs should be retrieved automatically
 COPY_LOGS=${COPY_LOGS:-true}
@@ -38,6 +38,15 @@ if [ $(id -u) != 0 ]; then
     $SUDO sed -i 's/^PermitRootLogin no/PermitRootLogin without-password/g' /etc/ssh/sshd_config
     $SUDO service sshd restart
 fi
+
+# TODO: REMOVE ME
+# https://github.com/openstack/diskimage-builder/blob/b5bcb3b60ec33c4538baa1aeacd026998b155ca6/elements/yum-minimal/pre-install.d/03-yum-cleanup#L26
+$SUDO yum -y reinstall glibc-common
+
+# Make swap configuration consistent
+# TODO: REMOVE ME
+# https://review.openstack.org/#/c/300122/
+source ./tools/fix_disk_layout.sh
 
 # Bump ulimit to avoid too many open file errors
 echo "${USER} soft nofile 65536" | $SUDO tee -a /etc/security/limits.conf
