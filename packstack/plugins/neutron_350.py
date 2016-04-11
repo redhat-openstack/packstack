@@ -872,10 +872,6 @@ def create_l2_agent_manifests(config, messages):
     for host in network_hosts | compute_hosts:
         manifestfile = "%s_neutron.pp" % (host,)
         manifestdata = "$cfg_neutron_ovs_host = '%s'\n" % host
-        if host in network_hosts:
-            manifestdata += "$create_bridges = true\n"
-        else:
-            manifestdata += "$create_bridges = false\n"
         # neutron ovs port only on network hosts
         if (
             agent == "openvswitch" and (
@@ -887,6 +883,9 @@ def create_l2_agent_manifests(config, messages):
                     common.cidr_to_ifname(i, host, config) for i in iface_arr
                 ]
             config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"] = iface_arr
+            manifestdata += "$create_bridges = true\n"
+        else:
+            manifestdata += "$create_bridges = false\n"
         manifestdata += getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
         # Additional configurations required for compute hosts and
