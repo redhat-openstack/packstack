@@ -16,6 +16,13 @@ exec { 'qemu-kvm':
   command => 'yum install -y -d 0 -e 0 qemu-kvm',
   onlyif  => 'yum install -y -d 0 -e 0 qemu-kvm-rhev &> /dev/null && exit 1 || exit 0',
   before  => Class['nova::compute::libvirt'],
+} ->
+# chmod is workaround for https://bugzilla.redhat.com/show_bug.cgi?id=950436
+file { '/dev/kvm':
+  owner  => 'root',
+  group  => 'kvm',
+  mode   => '666',
+  before => Class['nova::compute::libvirt'],
 }
 
 $libvirt_vnc_bind_host = hiera('CONFIG_IP_VERSION') ? {
@@ -31,14 +38,6 @@ class { '::nova::compute::libvirt':
   migration_support        => true,
   libvirt_inject_partition => '-1',
 }
-
-exec { 'load_kvm':
-  user    => 'root',
-  command => '/bin/sh /etc/sysconfig/modules/kvm.modules',
-  onlyif  => '/usr/bin/test -e /etc/sysconfig/modules/kvm.modules',
-}
-
-Class['nova::compute'] -> Exec['load_kvm']
 
 file_line { 'libvirt-guests':
   path    => '/etc/sysconfig/libvirt-guests',
