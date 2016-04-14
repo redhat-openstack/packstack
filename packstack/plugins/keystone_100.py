@@ -780,6 +780,8 @@ def munge_ldap_config_params(config, messages):
 def create_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("keystone")
+    if config['CONFIG_KEYSTONE_SERVICE_NAME'] == 'httpd':
+        manifestdata += getManifestTemplate("apache_ports")
 
     if config['CONFIG_IP_VERSION'] == 'ipv6':
         host = config['CONFIG_CONTROLLER_HOST']
