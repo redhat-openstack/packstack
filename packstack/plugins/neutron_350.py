@@ -615,6 +615,9 @@ def create_manifests(config, messages):
     config['SERVICE_PLUGINS'] = (service_plugins if service_plugins
                                  else 'undef')
 
+    config['FIREWALL_DRIVER'] = ("neutron.agent.linux.iptables_firewall."
+                                 "OVSHybridIptablesFirewallDriver")
+
     plugin_manifest = 'neutron_ml2_plugin'
 
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
