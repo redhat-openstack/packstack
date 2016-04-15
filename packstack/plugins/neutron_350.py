@@ -183,6 +183,22 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-ovs-bridges-compute",
+             "PROMPT": ("Enter a comma separated list of bridges for the "
+                        "Neutron OVS plugin in compute nodes. They must "
+                        "be included in os-neutron-ovs-bridge-mappings and "
+                        "os-neutron-ovs-bridge-interfaces."),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVS_BRIDGES_COMPUTE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
         ],
 
         "NEUTRON_OVS_AGENT_TUNNEL": [
@@ -863,29 +879,55 @@ def create_l2_agent_manifests(config, messages):
         # For example, the input string 'A, B' should formatted as '['A','B']'.
         config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS"] = bm_arr
         config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"] = []
+
+        # Bridge configuration and mappings for compute nodes can be different.
+        # Parameter CONFIG_NEUTRON_OVS_BRIDGES_COMPUTE contains the list of
+        # bridge names, included in bridge mappings and bridge interfaces, that
+        # must be created in compute nodes.
+        brd_arr_cmp = get_values(config["CONFIG_NEUTRON_OVS_BRIDGES_COMPUTE"])
+        if_arr_cmp = []
+        mapp_arr_cmp = []
+        for brd in brd_arr_cmp:
+            if_arr_cmp.append(common.find_pair_with(iface_arr, brd, 0))
+            mapp_arr_cmp.append(common.find_pair_with(bm_arr, brd, 1))
+
+        config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS_COMPUTE"] = mapp_arr_cmp
+        config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES_COMPUTE"] = []
+
     elif agent == "linuxbridge":
         host_var = 'CONFIG_NEUTRON_LB_HOST'
         template_name = 'neutron_lb_agent'
     else:
         raise KeyError("Unknown layer2 agent")
 
+    no_local_types = set(ovs_type) & set(['gre', 'vxlan', 'vlan', 'flat'])
+    no_tunnel_types = set(ovs_type) & set(['vlan', 'flat'])
+
     for host in network_hosts | compute_hosts:
         manifestfile = "%s_neutron.pp" % (host,)
         manifestdata = "$cfg_neutron_ovs_host = '%s'\n" % host
-        # neutron ovs port only on network hosts
+        # NICs connected to OVS bridges can be required in network nodes if
+        # vlan, flat, vxlan or gre are enabled. For compute nodes, they are
+        # only required if vlan or flat are enabled.
         if (
             agent == "openvswitch" and (
-                (host in network_hosts and tunnel_types)
-                or 'vlan' in ovs_type)
+                (host in network_hosts and no_local_types)
+                or no_tunnel_types)
         ):
             if config['CONFIG_USE_SUBNETS'] == 'y':
                 iface_arr = [
                     common.cidr_to_ifname(i, host, config) for i in iface_arr
                 ]
+                if_arr_cmp = [
+                    common.cidr_to_ifname(i, host, config) for i in if_arr_cmp
+                ]
             config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES"] = iface_arr
+            config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES_COMPUTE"] = if_arr_cmp
             manifestdata += "$create_bridges = true\n"
         else:
             manifestdata += "$create_bridges = false\n"
+        is_network_host = str(host in network_hosts).lower()
+        manifestdata += "$network_host = %s\n" % is_network_host
         manifestdata += getManifestTemplate(template_name)
         appendManifestFile(manifestfile, manifestdata + "\n")
         # Additional configurations required for compute hosts and
