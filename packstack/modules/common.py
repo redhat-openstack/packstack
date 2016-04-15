@@ -85,3 +85,14 @@ def cidr_to_ifname(cidr, host, config):
                     break
         result.append(':'.join(translated))
     return ','.join(result)
+
+
+# Function find_pair_with search in a list of "key:value" pairs, one
+# containing the desired element as key (if index is 0), or value (if index
+# is 1). It returns the pair if it's found or KeyError.
+def find_pair_with(pairs_list, element, index):
+    for pair in pairs_list:
+        found_element = pair.split(':')[index].strip()
+        if found_element == element:
+            return pair
+    raise KeyError('Couldn\'t find element %s in %s.' % (element, pairs_list))
