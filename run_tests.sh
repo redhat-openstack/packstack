@@ -77,6 +77,9 @@ $SUDO yum -y install puppet \
                      policycoreutils \
                      "@Development Tools"
 
+# Don't assume pip is installed
+which pip || easy_install pip
+
 # TO-DO: Packstack should handle Hiera and Puppet configuration, so that it works
 # no matter the environment
 $SUDO su -c 'cat > /etc/puppet/puppet.conf <<EOF
