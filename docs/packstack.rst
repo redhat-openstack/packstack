@@ -725,6 +725,9 @@ Nova Options
 **CONFIG_NOVA_KS_PW**
     Password to use for the Compute service to authenticate with the Identity service.
 
+**CONFIG_NOVA_MANAGE_FLAVORS**
+    Whether or not Packstack should manage a default initial set of Nova flavors. Defaults to 'y'.
+
 **CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO**
     Overcommitment ratio for virtual to physical CPUs. Specify 1.0 to disable CPU overcommitment.
 
