@@ -20,16 +20,9 @@ if $provision_demo {
 }
 
 if $provision_demo or $provision_tempest {
-  $admin_tenant_name    = 'admin'
 
-  ## Neutron
-  $public_network_name  = 'public'
-  $public_subnet_name   = 'public_subnet'
-  $private_network_name = 'private'
-  $private_subnet_name  = 'private_subnet'
-  $fixed_range          = '10.0.0.0/24'
-  $router_name          = 'router1'
-
+  # Keystone
+  $admin_tenant_name = 'admin'
   keystone_tenant { $tenant_name:
     ensure      => present,
     enabled     => true,
@@ -56,6 +49,13 @@ if $provision_demo or $provision_tempest {
 
   ## Neutron
   if $provision_neutron {
+    $public_network_name  = 'public'
+    $public_subnet_name   = 'public_subnet'
+    $private_network_name = 'private'
+    $private_subnet_name  = 'private_subnet'
+    $fixed_range          = '10.0.0.0/24'
+    $router_name          = 'router1'
+
     $neutron_deps = [Neutron_network[$public_network_name]]
 
     neutron_network { $public_network_name:
