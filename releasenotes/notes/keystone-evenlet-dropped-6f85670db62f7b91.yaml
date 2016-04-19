@@ -1,0 +1,7 @@
+---
+deprecations:
+  - |
+    Keystone eventlet support has been removed as of
+    https://review.openstack.org/249486. Packstack support has also been
+    removed, so parameter CONFIG_KEYSTONE_SERVICE_NAME in the config file
+    will be ignored.
