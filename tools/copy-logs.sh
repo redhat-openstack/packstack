@@ -61,7 +61,8 @@ function get_diag_commands {
     for ((i = 0; i < ${#commands[@]}; i++)); do
         # filenames have underscores instead of spaces or slashes
         filename="$(echo "${commands[$i]}" |sed -e "s%[ \/]%_%g").txt"
-        $SUDO bash -c "${commands[$i]} 2>&1 > ${DIAG_LOGDIR}/${filename}"
+        # Run diagnostic commands but don't fail the whole thing if one command fails
+        $SUDO bash -c "${commands[$i]} 2>&1 > ${DIAG_LOGDIR}/${filename}" || true
     done
 }
 
