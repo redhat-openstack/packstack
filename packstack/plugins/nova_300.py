@@ -95,6 +95,20 @@ def initConfig(controller):
              "NEED_CONFIRM": True,
              "CONDITION": False},
 
+            {"CMD_OPTION": "nova-manage-flavors",
+             "PROMPT": (
+                 "Should Packstack manage default Nova flavors"
+             ),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "y",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_NOVA_MANAGE_FLAVORS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "novasched-cpu-allocation-ratio",
              "PROMPT": "Enter the CPU overcommitment ratio. Set to 1.0 to "
                        "disable CPU overcommitment",
