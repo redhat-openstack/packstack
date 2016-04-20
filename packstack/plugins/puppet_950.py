@@ -145,7 +145,7 @@ def copy_puppet_modules(config, messages):
                            'gnocchi', 'heat', 'horizon', 'inifile', 'ironic',
                            'keystone', 'manila', 'memcached', 'mongodb',
                            'mysql', 'neutron', 'nova', 'nssdb', 'openstack',
-                           'openstacklib', 'packstack', 'rabbitmq',
+                           'openstacklib', 'oslo', 'packstack', 'rabbitmq',
                            'redis', 'remote', 'rsync', 'sahara', 'ssh',
                            'stdlib', 'swift', 'sysctl', 'tempest', 'trove',
                            'vcsrepo', 'vlan', 'vswitch', 'xinetd', ))

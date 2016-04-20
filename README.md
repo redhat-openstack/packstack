@@ -22,7 +22,10 @@ options have yet to be added.
 
 ## Installation of openstack-puppet-modules (REQUIRED if running packstack from source):
 
-    $ sudo python setup.py install_puppet_modules
+    $ export GEM_HOME=/tmp/somedir
+    $ gem install r10k
+    $ sudo /tmp/somedir/bin/r10k puppetfile install -v
+    $ sudo cp -r packstack/puppet/modules/packstack /usr/share/openstack-puppet/modules
 
 ### Option 1 (all-in-one)
 

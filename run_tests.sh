@@ -22,12 +22,82 @@ INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
 DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7-mitaka/current-passed-ci/delorean.repo}
 DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7-mitaka/delorean-deps.repo}
-
+GIT_BASE_URL=${GIT_BASE_URL:-git://git.openstack.org}
 # If logs should be retrieved automatically
 COPY_LOGS=${COPY_LOGS:-true}
 
+
+# Install external Puppet modules with r10k
+# Uses the following variables:
+#
+# - ``GEM_BIN_DIR`` must be set to Gem bin directory
+# - ``PUPPETFILE_DIR`` must be set to Puppet modules directory
+install_external() {
+  $SUDO ${GEM_BIN_DIR}r10k puppetfile install -v --moduledir ${PUPPETFILE_DIR} --puppetfile Puppetfile1
+}
+
+# Install Puppet OpenStack modules with zuul-cloner
+# Uses the following variables:
+#
+# - ``PUPPETFILE_DIR`` must be set to Puppet modules directory
+# - ``ZUUL_REF`` must be set to Zuul ref. Fallback to 'None'.
+# - ``ZUUL_BRANCH`` must be set to Zuul branch. Fallback to 'master'.
+# - ``ZUUL_URL`` must be set to Zuul URL
+install_openstack() {
+  cat > clonemap.yaml <<EOF
+clonemap:
+  - name: '(.*?)/puppet-(.*)'
+    dest: '$PUPPETFILE_DIR/\2'
+EOF
+
+  # Periodic jobs run without ref on master
+  ZUUL_REF=${ZUUL_REF:-None}
+  ZUUL_BRANCH=${ZUUL_BRANCH:-master}
+
+  local project_names=$(awk '{ if ($1 == ":git") print $3 }' \
+    Puppetfile0 | tr -d "'," | cut -d '/' -f 4- | xargs
+  )
+  $SUDO /usr/zuul-env/bin/zuul-cloner -m clonemap.yaml \
+    --cache-dir /opt/git \
+    --zuul-ref $ZUUL_REF \
+    --zuul-branch $ZUUL_BRANCH \
+    --zuul-url $ZUUL_URL \
+    $GIT_BASE_URL $project_names
+}
+
+# Install all Puppet modules with r10k
+# Uses the following variables:
+#
+# - ``GEM_BIN_DIR`` must be set to Gem bin directory
+install_all() {
+  $SUDO ${GEM_BIN_DIR}r10k puppetfile install -v --puppetfile Puppetfile
+}
+
+# Install Puppet OpenStack modules and dependencies by using
+# zuul-cloner or r10k.
+# Uses the following variables:
+#
+# - ``PUPPETFILE_DIR`` must be set to Puppet modules directory
+# - ``ZUUL_REF`` must be set to Zuul ref
+# - ``ZUUL_BRANCH`` must be set to Zuul branch
+# - ``ZUUL_URL`` must be set to Zuul URL
+install_modules() {
+  # If zuul-cloner is there, have it install modules using zuul refs
+  if [ -e /usr/zuul-env/bin/zuul-cloner ] ; then
+    csplit Puppetfile /'Non-OpenStack modules'/ \
+      --prefix Puppetfile \
+      --suffix '%d'
+    install_external
+    install_openstack
+  else
+    install_all
+  fi
+  # Copy the Packstack Puppet module
+  $SUDO cp -r packstack/puppet/modules/packstack ${PUPPETFILE_DIR}
+}
+
 if [ $(id -u) != 0 ]; then
-    SUDO='sudo'
+    SUDO='sudo -E'
 
     # Packstack will connect as root to localhost, set-up the keypair and sshd
     ssh-keygen -t rsa -C "packstack-integration-test" -N "" -f ~/.ssh/id_rsa
@@ -75,6 +145,7 @@ $SUDO yum -y install puppet \
                      ruby-devel \
                      openstack-selinux \
                      policycoreutils \
+                     rubygems \
                      "@Development Tools"
 
 # Don't assume pip is installed
@@ -124,7 +195,13 @@ fi
 # Setup packstack
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   $SUDO pip install .
-  $SUDO python setup.py install_puppet_modules
+  export GEM_BIN_DIR=/tmp/packstackgems/bin/
+  export PUPPETFILE_DIR=/usr/share/openstack-puppet/modules
+  export GEM_HOME=/tmp/packstackgems
+  $SUDO gem install r10k --no-ri --no-rdoc
+  # make sure there is no puppet module pre-installed
+  $SUDO rm -rf "${PUPPETFILE_DIR:?}/"*
+  install_modules
 else
   $SUDO yum -y install openstack-packstack
 fi
