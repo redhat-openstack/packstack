@@ -12,12 +12,15 @@ if $kombu_ssl_keyfile {
   }
 }
 class { '::glance::notify::rabbitmq':
-  rabbit_host        => hiera('CONFIG_AMQP_HOST_URL'),
-  rabbit_port        => hiera('CONFIG_AMQP_CLIENTS_PORT'),
-  rabbit_use_ssl     => hiera('CONFIG_AMQP_SSL_ENABLED'),
-  rabbit_userid      => hiera('CONFIG_AMQP_AUTH_USER'),
-  rabbit_password    => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-  kombu_ssl_ca_certs => $kombu_ssl_ca_certs,
-  kombu_ssl_keyfile  => $kombu_ssl_keyfile,
-  kombu_ssl_certfile => $kombu_ssl_certfile,
+  rabbit_host                  => hiera('CONFIG_AMQP_HOST_URL'),
+  rabbit_notification_exchange => 'glance',
+  rabbit_notification_topic    => 'notifications',
+  rabbit_port                  => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+  rabbit_use_ssl               => hiera('CONFIG_AMQP_SSL_ENABLED'),
+  rabbit_userid                => hiera('CONFIG_AMQP_AUTH_USER'),
+  rabbit_password              => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+  kombu_ssl_ca_certs           => $kombu_ssl_ca_certs,
+  kombu_ssl_keyfile            => $kombu_ssl_keyfile,
+  kombu_ssl_certfile           => $kombu_ssl_certfile,
+  notification_driver          => 'messagingv2',
 }

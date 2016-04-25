@@ -18,10 +18,6 @@ keystone_user_role { "${keystone_admin}@admin":
 }
 
 class { '::heat::keystone::domain':
-  auth_url          => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-  keystone_admin    => $keystone_admin,
-  keystone_password => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
-  keystone_tenant   => 'admin',
   domain_name       => hiera('CONFIG_HEAT_DOMAIN'),
   domain_admin      => hiera('CONFIG_HEAT_DOMAIN_ADMIN'),
   domain_password   => hiera('CONFIG_HEAT_DOMAIN_PASSWORD'),
