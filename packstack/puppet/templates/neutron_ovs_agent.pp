@@ -29,4 +29,5 @@ class { '::neutron::agents::ml2::ovs':
   local_ip         => force_ip($localip),
   vxlan_udp_port   => hiera('CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT',undef),
   l2_population    => hiera('CONFIG_NEUTRON_USE_L2POPULATION'),
+  firewall_driver  => hiera('FIREWALL_DRIVER'),
 }
