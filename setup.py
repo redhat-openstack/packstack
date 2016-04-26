@@ -104,7 +104,8 @@ setup(
     include_package_data=True,
     long_description=read('README.md'),
     zip_safe=False,
-    install_requires=['netaddr', 'pyOpenSSL', 'PyYAML', 'docutils'],
+    install_requires=['netaddr>=0.7.6', 'pyOpenSSL<15.0.0', 'PyYAML>=3.10',
+                      'docutils>=0.11', 'cryptography<=1.2.2,>=1.0'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
