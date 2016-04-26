@@ -122,9 +122,13 @@ def create_manifest(config, messages):
 
     append_for("keystone", suffix)
     for mod in ['nova', 'cinder', 'glance', 'neutron', 'heat', 'sahara',
-                'trove', 'ironic', 'manila', 'gnocchi']:
+                'trove', 'ironic', 'manila']:
         if config['CONFIG_%s_INSTALL' % mod.upper()] == 'y':
             append_for(mod, suffix)
+
+    if (config['CONFIG_GNOCCHI_INSTALL'] == 'y' and
+       config['CONFIG_CEILOMETER_INSTALL'] == 'y'):
+        append_for('gnocchi', suffix)
 
     hosts = filtered_hosts(config, exclude=False, dbhost=True)
 
