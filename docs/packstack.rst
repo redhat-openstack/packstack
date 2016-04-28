@@ -872,6 +872,9 @@ Neutron OVS agent config
 **CONFIG_NEUTRON_OVS_BRIDGE_IFACES**
     Comma-separated list of colon-separated Open vSwitch <bridge>:<interface> pairs. The interface will be added to the associated bridge. If you desire the bridge to be persistent a value must be added to this directive, also CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS must be set in order to create the proper port. This can be achieved from the command line by issuing the following command: packstack --allinone --os-neutron-ovs-bridge-mappings=ext-net:br-ex --os-neutron-ovs-bridge-interfaces=br-ex:eth0
 
+**CONFIG_NEUTRON_OVS_BRIDGES_COMPUTE**
+    Comma-separated list of Open vSwitch bridges that must be created and connected to interfaces in compute nodes when flat or vlan type drivers are enabled. These bridges must exist in CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS and CONFIG_NEUTRON_OVS_BRIDGE_IFACES. Example: --os-neutron-ovs-bridges-compute=br-vlan --os-neutron-ovs-bridge-mappings="extnet:br-ex,physnet1:br-vlan" --os-neutron-ovs-bridge-interfaces="br-ex:eth1,br-vlan:eth2"
+
 Neutron OVS agent config for tunnels
 ------------------------------------
 

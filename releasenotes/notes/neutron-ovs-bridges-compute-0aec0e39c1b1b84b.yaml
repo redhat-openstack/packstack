@@ -1,0 +1,12 @@
+---
+features:
+  - |
+    New parameter ``--os-neutron-ovs-bridges-compute`` has been introduced to
+    set the OVS bridges created and configured in compute nodes when vlan or
+    flat type drivers are enabled.
+
+fixes:
+  - |
+    Before this patch, all defined OVS bridges were created in both network
+    and compute hosts. However, in certain topologies some bridges are only
+    required in network hosts.

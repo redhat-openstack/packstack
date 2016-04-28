@@ -13,9 +13,17 @@ if $ovs_agent_vxlan_cfg_neut_ovs_tun_if != '' {
   $localip = $cfg_neutron_ovs_host
 }
 
+if $network_host {
+  $bridge_ifaces_param = 'CONFIG_NEUTRON_OVS_BRIDGE_IFACES'
+  $bridge_mappings_param = 'CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'
+} else {
+  $bridge_ifaces_param = 'CONFIG_NEUTRON_OVS_BRIDGE_IFACES_COMPUTE'
+  $bridge_mappings_param = 'CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS_COMPUTE'
+}
+
 if $create_bridges {
-  $bridge_uplinks  = hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_IFACES')
-  $bridge_mappings = hiera_array('CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS')
+  $bridge_uplinks  = hiera_array($bridge_ifaces_param)
+  $bridge_mappings = hiera_array($bridge_mappings_param)
 } else {
   $bridge_uplinks  = []
   $bridge_mappings = []
