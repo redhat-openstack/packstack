@@ -992,16 +992,19 @@ def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
     # subscribe to required channel
     cmd = ('subscription-manager list --consumed | grep -i openstack || '
            'subscription-manager subscribe --pool %s')
-    pool = ("$(subscription-manager list --available"
-            " | grep -m1 -A15 'Red Hat Enterprise Linux OpenStack Platform'"
-            " | grep -i 'Pool ID:' | awk '{print $3}')")
+    pool = ("$(subscription-manager list --available | sed -n "
+            "\'/Red Hat OpenStack/, /Pool ID:/"
+            " { s/Pool ID:[[:space:]]*\\([[:alnum:]]*\\)/\\1/ p} \'"
+            " | head -1 )")
     server.append(cmd % pool)
 
     if optional:
         server.append("subscription-manager repos "
                       "--enable rhel-%s-server-optional-rpms" % releasever)
+        server.append("subscription-manager repos "
+                      "--enable rhel-%s-server-extras-rpms" % releasever)
     server.append("subscription-manager repos "
-                  "--enable rhel-%s-server-openstack-5.0-rpms" % releasever)
+                  "--enable rhel-%s-server-openstack-8-rpms" % releasever)
 
     # mrg channel naming is a big mess
     if releasever == '7':
