@@ -89,7 +89,7 @@ class { '::memcached':
 
 $firewall_port = hiera('CONFIG_HORIZON_PORT')
 
-firewall { "001 horizon ${firewall_port}  incoming":
+firewall { "001 horizon ${firewall_port} incoming":
   proto  => 'tcp',
   dport  => [$firewall_port],
   action => 'accept',
