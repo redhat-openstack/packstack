@@ -83,10 +83,7 @@ except OSError:
     print ('Unable to create symbol link for log dir %s.' % LATEST_LOG_DIR)
 
 PUPPET_DEPENDENCIES = ['puppet', 'hiera', 'openssh-clients', 'tar', 'nc']
-PUPPET_MODULES_PKGS = [
-    'openstack-puppet-modules',
-    'openstack-packstack-puppet'
-]
+PUPPET_MODULES_DEPS = ['rubygem-json']
 
 FILE_INSTALLER_LOG = "setup.log"
 

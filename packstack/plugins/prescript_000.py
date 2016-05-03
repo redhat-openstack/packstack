@@ -1309,25 +1309,7 @@ def preinstall_and_discover(config, messages):
     """
     config['HOST_LIST'] = list(filtered_hosts(config))
 
-    all_deps = ''
-    for pkg in basedefs.PUPPET_MODULES_PKGS:
-        local = utils.ScriptRunner()
-        local.append(
-            'rpm -q --requires %s | egrep -v "^(rpmlib|\/|perl)"' % pkg
-        )
-        # this can fail if there are no dependencies other than those
-        # filtered out by the egrep expression.
-        rc, pkg_deps = local.execute(can_fail=False)
-        errmsg = '%s is not installed' % pkg
-        if errmsg in pkg_deps:
-            # modules package might not be installed if we are running
-            # from source; in this case we assume user knows what (s)he's
-            # doing and we don't install modules dependencies
-            continue
-        all_deps += ' ' + pkg_deps.strip()
-
-    deps = list(basedefs.PUPPET_DEPENDENCIES)
-    deps.extend([i.strip() for i in all_deps.split() if i.strip()])
+    deps = list(basedefs.PUPPET_DEPENDENCIES) + list(basedefs.PUPPET_MODULES_DEPS)
 
     details = {}
     for hostname in config['HOST_LIST']:
