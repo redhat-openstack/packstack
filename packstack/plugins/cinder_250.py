@@ -89,7 +89,8 @@ def initConfig(controller):
 
             {"CMD_OPTION": "cinder-backend",
              "PROMPT": "Enter the Cinder backend to be configured",
-             "OPTION_LIST": ["lvm", "gluster", "nfs", "vmdk", "netapp"],
+             "OPTION_LIST": ["lvm", "gluster", "nfs", "vmdk", "netapp",
+                             "solidfire"],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "lvm",
              "MASK_INPUT": False,
@@ -445,6 +446,45 @@ def initConfig(controller):
              "USE_DEFAULT": True,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+            ],
+
+        "CINDERSOLIDFIRE": [
+            {"CMD_OPTION": "cinder-solidfire-login",
+             "PROMPT": ("Enter the cluster admin login"),
+             "OPTION_LIST": [""],
+             "VALIDATORS": [validators.validate_not_empty],
+             "PROCESSORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_CINDER_SOLIDFIRE_LOGIN",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+            {"CMD_OPTION": "cinder-solidfire-password",
+             "PROMPT": ("Enter cluster admin password"),
+             "OPTION_LIST": [""],
+             "VALIDATORS": [validators.validate_not_empty],
+             "PROCESSORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_CINDER_SOLIDFIRE_PASSWORD",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
+            {"CMD_OPTION": "cinder-solidfire-hostname",
+             "PROMPT": ("Enter a SolidFire hostname or IP"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "PROCESSORS": [processors.process_add_quotes_around_values],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_CINDER_SOLIDFIRE_HOSTNAME",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
             ]
     }
     update_params_usage(basedefs.PACKSTACK_DOC, conf_params)
@@ -530,6 +570,13 @@ def initConfig(controller):
         {"GROUP_NAME": "CINDERNETAPPESERIES",
          "DESCRIPTION": "Cinder NetApp E-Series configuration",
          "PRE_CONDITION": check_netapp_eseries_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "CINDERSOLIDFIRE",
+         "DESCRIPTION": "Cinder SolidFire configuration",
+         "PRE_CONDITION": check_solidfire_options,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True}
@@ -632,6 +679,11 @@ def check_netapp_vserver_options(config):
 def check_netapp_eseries_options(config):
     return (check_netapp_options(config) and
             config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "eseries")
+
+
+def check_solidfire_options(config):
+    return (config['CONFIG_CINDER_INSTALL'] == 'y' and
+            'solidfire' in config['CONFIG_CINDER_BACKEND'])
 
 
 # -------------------------- step functions --------------------------
