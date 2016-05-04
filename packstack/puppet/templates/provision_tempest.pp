@@ -58,21 +58,19 @@ $tempest_password      = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
 $tempest_flavor_ref     = "42"
 $tempest_flavor_ref_alt = "84"
 
-# TODO: Refactor flavor provisioning when https://review.openstack.org/#/c/305463/ lands
-$os_auth_options = "--os-username ${admin_username} --os-password ${admin_password} --os-tenant-name ${admin_tenant_name} --os-auth-url ${identity_uri}"
-Exec {
-  path => '/usr/bin:/bin:/usr/sbin:/sbin'
+nova_flavor { 'm1.nano':
+  ensure => present,
+  id     => $tempest_flavor_ref,
+  ram    => '128',
+  disk   => '0',
+  vcpus  => '1',
 }
-
-exec { 'manage_m1.nano_nova_flavor':
-  provider => shell,
-  command  => "openstack ${os_auth_options} flavor create --id ${tempest_flavor_ref} --ram 128 --disk 0 --vcpus 1 m1.nano",
-  unless   => "openstack ${os_auth_options} flavor list | grep m1.nano",
-}
-exec { 'manage_m1.micro_nova_flavor':
-  provider => shell,
-  command  => "openstack ${os_auth_options} flavor create --id ${tempest_flavor_ref_alt} --ram 128 --disk 0 --vcpus 1 m1.micro",
-  unless   => "openstack ${os_auth_options} flavor list | grep m1.micro",
+nova_flavor { 'm1.micro':
+  ensure => present,
+  id     => $tempest_flavor_ref_alt,
+  ram    => '128',
+  disk   => '0',
+  vcpus  => '1',
 }
 
 # Service availability for testing based on configuration

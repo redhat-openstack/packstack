@@ -41,44 +41,47 @@ if $db_purge {
   }
 }
 
-# TODO: Refactor flavor provisioning when https://review.openstack.org/#/c/305463/ lands
 $manage_flavors = str2bool(hiera('CONFIG_NOVA_MANAGE_FLAVORS'))
-
 if $manage_flavors {
-  $os_auth_options = "--os-username nova --os-password ${admin_password} --os-tenant-name services --os-auth-url ${auth_uri}"
-  Exec {
-    path => '/usr/bin:/bin:/usr/sbin:/sbin'
+  Class['::nova::api'] -> Nova_flavor<||>
+
+  nova_flavor { 'm1.tiny':
+    ensure => present,
+    id     => '1',
+    ram    => '512',
+    disk   => '1',
+    vcpus  => '1',
   }
 
-  # Manage a default set of flavors
-  exec { 'manage_m1.tiny_nova_flavor':
-    provider => shell,
-    command  => "openstack ${os_auth_options} flavor create --id 1 --ram 512 --disk 1 --vcpus 1 m1.tiny",
-    unless   => "openstack ${os_auth_options} flavor list | grep m1.tiny",
-    require  => Class['::nova::api'],
+  nova_flavor { 'm1.small':
+    ensure => present,
+    id     => '2',
+    ram    => '2048',
+    disk   => '20',
+    vcpus  => '1',
   }
-  exec { 'manage_m1.small_nova_flavor':
-    provider => shell,
-    command  => "openstack ${os_auth_options} flavor create --id 2 --ram 2048 --disk 20 --vcpus 1 m1.small",
-    unless   => "openstack ${os_auth_options} flavor list | grep m1.small",
-    require  => Class['::nova::api'],
+
+  nova_flavor { 'm1.medium':
+    ensure => present,
+    id     => '3',
+    ram    => '4096',
+    disk   => '40',
+    vcpus  => '2',
   }
-  exec { 'manage_m1.medium_nova_flavor':
-    provider => shell,
-    command  => "openstack ${os_auth_options} flavor create --id 3 --ram 4096 --disk 40 --vcpus 2 m1.medium",
-    unless   => "openstack ${os_auth_options} flavor list | grep m1.medium",
-    require  => Class['::nova::api'],
+
+  nova_flavor { 'm1.large':
+    ensure => present,
+    id     => '4',
+    ram    => '8192',
+    disk   => '80',
+    vcpus  => '4',
   }
-  exec { 'manage_m1.large_nova_flavor':
-    provider => shell,
-    command  => "openstack ${os_auth_options} flavor create --id 4 --ram 8192 --disk 80 --vcpus 4 m1.large",
-    unless   => "openstack ${os_auth_options} flavor list | grep m1.large",
-    require  => Class['::nova::api'],
-  }
-  exec { 'manage_m1.xlarge_nova_flavor':
-    provider => shell,
-    command  => "openstack ${os_auth_options} flavor create --id 5 --ram 16384 --disk 160 --vcpus 8 m1.xlarge",
-    unless   => "openstack ${os_auth_options} flavor list | grep m1.xlarge",
-    require  => Class['::nova::api'],
+
+  nova_flavor { 'm1.xlarge':
+    ensure => present,
+    id     => '5',
+    ram    => '16384',
+    disk   => '160',
+    vcpus  => '8',
   }
 }
