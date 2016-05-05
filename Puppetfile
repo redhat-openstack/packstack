@@ -152,10 +152,6 @@ mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
   :ref => 'master'
 
-mod 'vlan',
-  :git => 'https://github.com/derekhiggins/puppet-vlan',
-  :ref => 'master'
-
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',
   :ref => 'master'
