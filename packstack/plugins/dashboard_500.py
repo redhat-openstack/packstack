@@ -208,6 +208,7 @@ def create_manifest(config, messages):
             config["CONFIG_HORIZON_NEUTRON_VPN"] = True
 
     manifestdata = getManifestTemplate("horizon")
+    manifestdata += getManifestTemplate("apache_ports")
     appendManifestFile(manifestfile, manifestdata)
 
     msg = ("To access the OpenStack Dashboard browse to %s://%s/dashboard .\n"

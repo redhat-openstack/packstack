@@ -85,21 +85,11 @@ class { '::ceilometer::api':
 }
 
 if $ceilometer_service_name == 'httpd' {
-
    class { '::apache':
-      purge_configs => false,
+     purge_configs => false,
    }
 
    class { '::ceilometer::wsgi::apache':
      ssl => false,
    }
-
-   if hiera('CONFIG_GNOCCHI_INSTALL') == 'y' {
-     apache::listen { '8041': }
-   }
-
-   if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
-     apache::listen { '5000': }
-     apache::listen { '35357': }
-  }
 }

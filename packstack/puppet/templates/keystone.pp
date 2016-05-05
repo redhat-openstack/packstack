@@ -53,10 +53,6 @@ if $keystone_service_name == 'httpd' {
     workers => $service_workers,
     ssl     => $keystone_use_ssl
   }
-
-  if hiera('CONFIG_HORIZON_SSL') == 'y' {
-    apache::listen { '443': }
-  }
 }
 
 class { '::keystone::roles::admin':

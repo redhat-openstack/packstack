@@ -90,6 +90,7 @@ def create_manifest(config, messages):
     manifestfile = "%s_aodh.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "aodh"))
     manifestdata += getManifestTemplate("aodh")
+    manifestdata += getManifestTemplate("apache_ports")
 
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         ssl_cert_file = config['CONFIG_AODH_SSL_CERT'] = (

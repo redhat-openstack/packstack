@@ -9,10 +9,6 @@ class { '::gnocchi::wsgi::apache':
   workers => $service_workers,
   ssl     => false
 }
-if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'httpd' {
-  apache::listen { '5000': }
-  apache::listen { '35357': }
-}
 
 class { '::gnocchi':
   database_connection => "mysql+pymysql://gnocchi:${gnocchi_cfg_db_pw}@${gnocchi_cfg_mariadb_host}/gnocchi?charset=utf8",

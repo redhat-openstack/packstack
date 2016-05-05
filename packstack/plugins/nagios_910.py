@@ -94,6 +94,7 @@ def create_manifest(config, messages):
 
     manifestfile = "%s_nagios.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("nagios_server")
+    manifestdata += getManifestTemplate("apache_ports")
     appendManifestFile(manifestfile, manifestdata)
 
 

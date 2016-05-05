@@ -271,6 +271,8 @@ def create_manifest(config, messages):
     manifestfile = "%s_ceilometer.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "ceilometer"))
     manifestdata += getManifestTemplate("ceilometer")
+    if config['CONFIG_CEILOMETER_SERVICE_NAME'] == 'httpd':
+        manifestdata += getManifestTemplate("apache_ports")
 
     if config['CONFIG_CEILOMETER_COORDINATION_BACKEND'] == 'redis':
         # Determine if we need to configure multiple sentinel hosts as

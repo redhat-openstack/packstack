@@ -99,6 +99,7 @@ def initSequences(controller):
 def create_manifest(config, messages):
     manifestfile = "%s_gnocchi.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("gnocchi")
+    manifestdata += getManifestTemplate("apache_ports")
 
     fw_details = dict()
     key = "gnocchi_api"
