@@ -491,7 +491,7 @@ Cinder Config parameters
     Password to use for the Block Storage service to authenticate with the Identity service.
 
 **CONFIG_CINDER_BACKEND**
-    Storage backend to use for the Block Storage service; valid options are: lvm, gluster, nfs, vmdk, netapp. ['lvm', 'gluster', 'nfs', 'vmdk', 'netapp']
+    Storage backend to use for the Block Storage service; valid options are: lvm, gluster, nfs, vmdk, netapp, solidfire. ['lvm', 'gluster', 'nfs', 'vmdk', 'netapp', 'solidfire']
 
 Cinder volume create Config parameters
 --------------------------------------
@@ -604,6 +604,18 @@ Cinder NetApp E-Series configuration
 
 **CONFIG_CINDER_NETAPP_STORAGE_POOLS**
     Restricts provisioning to the specified storage pools. Only dynamic disk pools are currently supported. The value must be a comma-separated list of disk pool names to be used for provisioning. Defaults to ''.
+
+Cinder SolidFire configuration
+------------------------------
+
+**CONFIG_CINDER_SOLIDFIRE_LOGIN**
+    Cluster admin account name used to access the SolidFire storage system.
+
+**CONFIG_CINDER_SOLIDFIRE_PASSWORD**
+    Password for the SolidFire cluster admin user account specified in the CONFIG_CINDER_SOLIDFIRE_LOGIN parameter.
+
+**CONFIG_CINDER_SOLIDFIRE_HOSTNAME**
+    Hostname (or IP address) for the SolidFire storage system's MVIP.
 
 Manila Config parameters
 ------------------------

@@ -1,0 +1,9 @@
+---
+features:
+  - |
+    Added basic support for SolidFire storage as a backend to Cinder.
+    The following 3 config options have been added:
+
+    * CONFIG_CINDER_SOLIDFIRE_LOGIN - SolidFire cluster admin name.
+    * CONFIG_CINDER_SOLIDFIRE_PASSWORD - SolidFire cluster admin password.
+    * CONFIG_CINDER_SOLIDFIRE_HOSTNAME - SolidFire MVIP hostname or IP.
