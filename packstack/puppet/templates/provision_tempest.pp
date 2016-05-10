@@ -54,6 +54,27 @@ $tempest_clone_owner   = 'root'
 $tempest_user          = hiera('CONFIG_PROVISION_TEMPEST_USER')
 $tempest_password      = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
 
+# Nano and Micro flavors are used, otherwise flavors used by default too much resources for nothing
+$tempest_flavor_ref     = "42"
+$tempest_flavor_ref_alt = "84"
+
+# TODO: Refactor flavor provisioning when https://review.openstack.org/#/c/305463/ lands
+$os_auth_options = "--os-username ${admin_username} --os-password ${admin_password} --os-tenant-name ${admin_tenant_name} --os-auth-url ${identity_uri}"
+Exec {
+  path => '/usr/bin:/bin:/usr/sbin:/sbin'
+}
+
+exec { 'manage_m1.nano_nova_flavor':
+  provider => shell,
+  command  => "openstack ${os_auth_options} flavor create --id ${tempest_flavor_ref} --ram 128 --disk 0 --vcpus 1 m1.nano",
+  unless   => "openstack ${os_auth_options} flavor list | grep m1.nano",
+}
+exec { 'manage_m1.micro_nova_flavor':
+  provider => shell,
+  command  => "openstack ${os_auth_options} flavor create --id ${tempest_flavor_ref_alt} --ram 128 --disk 0 --vcpus 1 m1.micro",
+  unless   => "openstack ${os_auth_options} flavor list | grep m1.micro",
+}
+
 # Service availability for testing based on configuration
 $cinder_available     = str2bool(hiera('CONFIG_CINDER_INSTALL'))
 $glance_available     = str2bool(hiera('CONFIG_GLANCE_INSTALL'))
@@ -82,6 +103,8 @@ class { '::tempest':
   configure_images          => $configure_images,
   configure_networks        => $configure_networks,
   debug                     => $debug,
+  flavor_ref                => $tempest_flavor_ref,
+  flavor_ref_alt            => $tempest_flavor_ref_alt,
   glance_available          => $glance_available,
   heat_available            => $heat_available,
   horizon_available         => $horizon_available,
