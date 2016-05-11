@@ -1095,8 +1095,10 @@ def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
     if optional:
         server.append("subscription-manager repos "
                       "--enable rhel-%s-server-optional-rpms" % releasever)
+        server.append("subscription-manager repos "
+                      "--enable rhel-%s-server-extras-rpms" % releasever)
     server.append("subscription-manager repos "
-                  "--enable rhel-%s-server-openstack-7.0-rpms" % releasever)
+                  "--enable rhel-%s-server-openstack-9-rpms" % releasever)
 
     server.append("yum clean all")
     server.append("rpm -q --whatprovides yum-utils || "
