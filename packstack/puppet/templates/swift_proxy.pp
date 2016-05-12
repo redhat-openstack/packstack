@@ -20,10 +20,27 @@ class { '::memcached':
   max_memory => '10%%',
 }
 
-class { '::swift::proxy':
-  # swift seems to require ipv6 address without brackets
-  proxy_local_net_ip => hiera('CONFIG_STORAGE_HOST'),
-  pipeline           => [
+if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+  $swift_pipeline = [
+    'catch_errors',
+    'bulk',
+    'healthcheck',
+    'cache',
+    'crossdomain',
+    'ratelimit',
+    'authtoken',
+    'keystone',
+    'staticweb',
+    'tempurl',
+    'slo',
+    'formpost',
+    'account_quotas',
+    'container_quotas',
+    'ceilometer',
+    'proxy-server',
+  ]
+} else {
+  $swift_pipeline = [
     'catch_errors',
     'bulk',
     'healthcheck',
@@ -39,7 +56,13 @@ class { '::swift::proxy':
     'account_quotas',
     'container_quotas',
     'proxy-server',
-  ],
+  ]
+}
+
+class { '::swift::proxy':
+  # swift seems to require ipv6 address without brackets
+  proxy_local_net_ip => hiera('CONFIG_STORAGE_HOST'),
+  pipeline           => $swift_pipeline,
   account_autocreate => true,
   workers => $service_workers
 }

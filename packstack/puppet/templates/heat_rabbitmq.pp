@@ -15,6 +15,13 @@ if ! is_service_default($kombu_ssl_keyfile) {
   File[$files_to_set_owner] ~> Service<||>
 }
 
+
+if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+  $heat_notification_driver = 'messagingv2'
+} else {
+  $heat_notification_driver = $::os_service_default
+}
+
 class { '::heat':
   keystone_password   => hiera('CONFIG_HEAT_KS_PW'),
   auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
@@ -32,4 +39,5 @@ class { '::heat':
   kombu_ssl_ca_certs  => $kombu_ssl_ca_certs,
   kombu_ssl_keyfile   => $kombu_ssl_keyfile,
   kombu_ssl_certfile  => $kombu_ssl_certfile,
+  notification_driver => $heat_notification_driver,
 }
