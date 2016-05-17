@@ -11,12 +11,6 @@ $bind_host = hiera('CONFIG_IP_VERSION') ? {
   # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 
-if hiera('CONFIG_KEYSTONE_SERVICE_NAME') == 'keystone' {
-  $keystone_service_name = 'openstack-keystone'
-} else {
-  $keystone_service_name = 'httpd'
-}
-
 class { '::keystone::client': }
 
 if hiera('CONFIG_KEYSTONE_DB_PURGE_ENABLE',false) {
@@ -37,22 +31,21 @@ class { '::keystone':
   token_provider      => "keystone.token.providers.${keystone_token_provider_str}.Provider",
   verbose             => true,
   debug               => hiera('CONFIG_DEBUG_MODE'),
-  service_name        => $keystone_service_name,
+  service_name        => 'httpd',
   enable_ssl          => $keystone_use_ssl,
   public_bind_host    => $bind_host,
   admin_bind_host     => $bind_host,
   default_domain      => 'Default',
 }
 
-if $keystone_service_name == 'httpd' {
-  class { '::apache':
-    purge_configs => false,
-  }
+class { '::apache':
+  purge_configs => false,
+}
 
-  class { '::keystone::wsgi::apache':
-    workers => $service_workers,
-    ssl     => $keystone_use_ssl
-  }
+
+class { '::keystone::wsgi::apache':
+  workers => $service_workers,
+  ssl     => $keystone_use_ssl
 }
 
 class { '::keystone::roles::admin':

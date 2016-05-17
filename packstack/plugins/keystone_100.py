@@ -164,18 +164,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "keystone-service-name",
-             "PROMPT": "Enter the Keystone service name.",
-             "OPTION_LIST": ['keystone', 'httpd'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "httpd",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_KEYSTONE_SERVICE_NAME',
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "keystone-identity-backend",
              "PROMPT": "Enter the Keystone identity backend type.",
              "OPTION_LIST": ['sql', 'ldap'],
@@ -780,8 +768,7 @@ def munge_ldap_config_params(config, messages):
 def create_manifest(config, messages):
     manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
     manifestdata = getManifestTemplate("keystone")
-    if config['CONFIG_KEYSTONE_SERVICE_NAME'] == 'httpd':
-        manifestdata += getManifestTemplate("apache_ports")
+    manifestdata += getManifestTemplate("apache_ports")
 
     if config['CONFIG_IP_VERSION'] == 'ipv6':
         host = config['CONFIG_CONTROLLER_HOST']
