@@ -53,10 +53,6 @@ else
     $SUDO sysctl -w net.ipv4.ip_local_reserved_ports=${keystone_port},${reserved_ports}
 fi
 
-# TODO: REMOVE ME
-# https://github.com/openstack/diskimage-builder/blob/b5bcb3b60ec33c4538baa1aeacd026998b155ca6/elements/yum-minimal/pre-install.d/03-yum-cleanup#L26
-$SUDO yum -y reinstall glibc-common
-
 # Make swap configuration consistent
 # TODO: REMOVE ME
 # https://review.openstack.org/#/c/300122/
