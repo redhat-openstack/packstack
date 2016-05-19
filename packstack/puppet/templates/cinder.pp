@@ -8,12 +8,14 @@ $bind_host = hiera('CONFIG_IP_VERSION') ? {
   # TO-DO(mmagr): Add IPv6 support when hostnames are used
 }
 
+$cinder_keystone_url = regsubst(regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
+
 class { '::cinder::api':
   bind_host               => $bind_host,
   keystone_password       => hiera('CONFIG_CINDER_KS_PW'),
   keystone_tenant         => 'services',
   keystone_user           => 'cinder',
-  auth_uri                => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+  auth_uri                => $cinder_keystone_url,
   identity_uri            => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
   nova_catalog_info       => 'compute:nova:publicURL',
   nova_catalog_admin_info => 'compute:nova:adminURL',
