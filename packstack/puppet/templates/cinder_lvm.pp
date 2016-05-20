@@ -1,9 +1,12 @@
 $create_cinder_volume = hiera('CONFIG_CINDER_VOLUMES_CREATE')
 
 if $create_cinder_volume == 'y' {
+    # Find an available loop device
+    $loop_dev = chomp(generate('/usr/sbin/losetup', '-f'))
+
     class { '::cinder::setup_test_volume':
       size            => hiera('CONFIG_CINDER_VOLUMES_SIZE'),
-      loopback_device => '/dev/loop2',
+      loopback_device => $loop_dev,
       volume_path     => '/var/lib/cinder',
       volume_name     => 'cinder-volumes',
     } ->
