@@ -52,10 +52,6 @@ if $keystone_service_name == 'httpd' {
   class { '::keystone::wsgi::apache':
     ssl => $keystone_use_ssl,
   }
-
-  if hiera('CONFIG_HORIZON_SSL') == 'y' {
-    apache::listen { '443': }
-  }
 }
 
 class { '::keystone::roles::admin':
