@@ -35,6 +35,14 @@ if ($::fqdn == '' or $::fqdn =~ /localhost/) {
   $vncproxy_server = $::fqdn
 }
 
+if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+  $instance_usage_audit = true
+  $instance_usage_audit_period = 'hour'
+} else {
+  $instance_usage_audit = false
+  $instance_usage_audit_period = 'month'
+}
+
 class { '::nova::compute':
   enabled                       => true,
   vncproxy_host                 => hiera('CONFIG_KEYSTONE_HOST_URL'),
@@ -42,6 +50,8 @@ class { '::nova::compute':
   vncserver_proxyclient_address => $vncproxy_server,
   compute_manager               => hiera('CONFIG_NOVA_COMPUTE_MANAGER'),
   pci_passthrough               => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST'),
+  instance_usage_audit          => $instance_usage_audit,
+  instance_usage_audit_period   => $instance_usage_audit_period,
 }
 
 # Tune the host with a virtual hosts profile

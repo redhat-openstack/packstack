@@ -26,12 +26,13 @@ if $kombu_ssl_keyfile {
 }
 
 $nova_common_rabbitmq_cfg_storage_host = hiera('CONFIG_STORAGE_HOST_URL')
-$nova_common_notification_driver = hiera('CONFIG_CEILOMETER_INSTALL') ? {
-  'y'     => [
-    'nova.openstack.common.notifier.rabbit_notifier',
-    'ceilometer.compute.nova_notifier'
-  ],
-  default => undef
+
+if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+  $nova_common_notification_driver = 'messagingv2'
+  $notify_on_state_change = 'vm_and_task_state'
+} else {
+  $nova_common_notification_driver = undef
+  $notify_on_state_change = undef
 }
 
 class { '::nova':
@@ -49,6 +50,7 @@ class { '::nova':
   kombu_ssl_keyfile       => $kombu_ssl_keyfile,
   kombu_ssl_certfile      => $kombu_ssl_certfile,
   notification_driver     => $nova_common_notification_driver,
+  notify_on_state_change  => $notify_on_state_change,
   database_connection     => "mysql+pymysql://nova:${nova_db_pw}@${nova_mariadb_host}/nova",
   api_database_connection => "mysql+pymysql://nova_api:${nova_db_pw}@${nova_mariadb_host}/nova_api",
 }

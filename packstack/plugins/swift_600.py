@@ -150,12 +150,12 @@ def initSequences(controller):
          'functions': [create_keystone_manifest]},
         {'title': 'Adding Swift builder manifest entries',
          'functions': [create_builder_manifest]},
-        {'title': 'Adding Swift proxy manifest entries',
-         'functions': [create_proxy_manifest]},
         {'title': 'Adding Swift storage manifest entries',
          'functions': [create_storage_manifest]},
         {'title': 'Adding Swift common manifest entries',
          'functions': [create_common_manifest]},
+        {'title': 'Adding Swift proxy manifest entries',
+         'functions': [create_proxy_manifest]},
     ]
     controller.addSequence("Installing OpenStack Swift", [], [], steps)
 
@@ -287,7 +287,8 @@ def create_builder_manifest(config, messages):
 def create_proxy_manifest(config, messages):
     manifestfile = "%s_swift.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata = getManifestTemplate("swift_proxy")
-
+    if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
+        manifestdata += getManifestTemplate("swift_ceilometer_rabbitmq")
     fw_details = dict()
     key = "swift_proxy"
     fw_details.setdefault(key, {})

@@ -112,6 +112,8 @@ def create_manifest(config, messages):
     manifestfile = "%s_sahara.pp" % config['CONFIG_STORAGE_HOST']
     manifestdata = getManifestTemplate(get_mq(config, "sahara"))
     manifestdata += getManifestTemplate("sahara.pp")
+    if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
+        manifestdata += getManifestTemplate('sahara_ceilometer')
 
     fw_details = dict()
     key = "sahara-api"
