@@ -1025,6 +1025,18 @@ Provisioning tempest config
 **CONFIG_RUN_TEMPEST_TESTS**
     Test suites to run, example: "smoke dashboard TelemetryAlarming". Optional, defaults to "smoke".
 
+**CONFIG_PROVISION_UEC_IMAGE_NAME**
+    Name of the uec image created in Glance used in tempest tests (default "cirros-uec").
+
+**CONFIG_PROVISION_UEC_IMAGE_KERNEL_URL**
+    URL of the kernel image copied to Glance image for uec image (defaults to a URL for a recent "cirros" uec image).
+
+**CONFIG_PROVISION_UEC_IMAGE_RAMDISK_URL**
+    URL of the ramdisk image copied to Glance image for uec image (defaults to a URL for a recent "cirros" uec image).
+
+**CONFIG_PROVISION_UEC_IMAGE_DISK_URL**
+    URL of the disk image copied to Glance image for uec image (defaults to a URL for a recent "cirros" uec image).
+
 Provisioning all-in-one ovs bridge config
 -----------------------------------------
 

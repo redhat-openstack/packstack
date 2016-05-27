@@ -1,0 +1,13 @@
+---
+features:
+  - |
+    When tempest provisioning is enabled, three glance images
+    following uec schema (AKI,ARI,AMI) are created. These
+    images are used for tempest tests. This is done for issue
+    in https://bugs.launchpad.net/cirros/+bug/1312199
+    Image name and URLs to download images can be modified
+    with parameters:
+    * CONFIG_PROVISION_UEC_IMAGE_NAME
+    * CONFIG_PROVISION_UEC_IMAGE_KERNEL_URL
+    * CONFIG_PROVISION_UEC_IMAGE_RAMDISK_URL
+    * CONFIG_PROVISION_UEC_IMAGE_DISK_URL
