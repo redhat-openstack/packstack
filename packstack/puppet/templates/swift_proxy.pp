@@ -97,7 +97,7 @@ class { '::swift::proxy::ratelimit':
 }
 
 class { '::swift::proxy::keystone':
-  operator_roles => ['admin', 'SwiftOperator'],
+  operator_roles => ['admin', 'SwiftOperator', '_member_'],
 }
 
 class { '::swift::proxy::authtoken':
