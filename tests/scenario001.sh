@@ -24,6 +24,8 @@ $SUDO packstack --allinone \
           --os-gnocchi-install=n \
           --os-swift-install=n \
           --os-manila-install=y \
+          --os-horizon-ssl=y \
+          --amqp-enable-ssl=y \
           --glance-backend=file \
           --provision-demo=y \
           --provision-tempest=y \

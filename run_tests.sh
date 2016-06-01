@@ -216,6 +216,10 @@ else
   $SUDO yum -y install openstack-packstack
 fi
 
+# Make sure the fqdn is associated to the IP in /etc/hosts
+# Needed for Horizon SSL tests in Tempest
+echo -e "\n127.0.0.1 $(facter fqdn)" | $SUDO tee -a /etc/hosts
+
 # Generate configuration from selected scenario and run it
 source ./tests/${SCENARIO}.sh
 result=$?

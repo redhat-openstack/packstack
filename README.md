@@ -202,6 +202,7 @@ This is the current matrix of available tests:
 | horizon    |      X      |             |             |
 | manila     |      X      |             |             |
 | nagios     |      X      |             |             |
+| SSL        |      X      |             |             |
 
 To run these tests:
 
