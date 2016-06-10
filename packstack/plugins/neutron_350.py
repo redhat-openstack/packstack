@@ -613,8 +613,13 @@ def create_manifests(config, messages):
     global q_hosts
 
     service_plugins = []
+    service_providers = []
     if config['CONFIG_LBAAS_INSTALL'] == 'y':
+        lbaas_sp = ('LOADBALANCER:Haproxy:neutron_lbaas.services.loadbalancer.'
+                    'drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver'
+                    ':default')
         service_plugins.append('lbaas')
+        service_providers.append(lbaas_sp)
 
     # ML2 uses the L3 Router service plugin to implement l3 agent
     service_plugins.append('router')
@@ -627,9 +632,15 @@ def create_manifests(config, messages):
 
     if config['CONFIG_NEUTRON_VPNAAS'] == 'y':
         service_plugins.append('vpnaas')
+        vpnaas_sp = ('VPN:libreswan:neutron_vpnaas.services.vpn.'
+                     'service_drivers.ipsec.IPsecVPNDriver:default')
+        service_providers.append(vpnaas_sp)
 
     config['SERVICE_PLUGINS'] = (service_plugins if service_plugins
                                  else 'undef')
+
+    config['SERVICE_PROVIDERS'] = (service_providers if service_providers
+                                   else [])
 
     config['FIREWALL_DRIVER'] = ("neutron.agent.linux.iptables_firewall."
                                  "OVSHybridIptablesFirewallDriver")
