@@ -10,9 +10,6 @@ case $amqp  {
 
 
 define enable_rabbitmq {
-  package { 'erlang':
-    ensure => 'installed',
-  }
 
   if $::amqp_enable_ssl {
     $kombu_ssl_ca_certs = hiera('CONFIG_AMQP_SSL_CACERT_FILE', undef)
@@ -62,8 +59,6 @@ define enable_rabbitmq {
       },
     }
   }
-
-  Package['erlang'] -> Class['rabbitmq']
 
   File <| path == '/etc/rabbitmq/rabbitmq.config' |> {
     ensure  => present,
