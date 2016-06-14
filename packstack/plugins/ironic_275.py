@@ -22,10 +22,6 @@ from packstack.installer import validators
 from packstack.installer import processors
 
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.shortcuts import get_mq
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import createFirewallResources
-from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import generate_ssl_cert
 
 # ------------------ Ironic Packstack Plugin initialization ------------------
@@ -78,9 +74,7 @@ def initSequences(controller):
         return
 
     steps = [
-        {'title': 'Adding Ironic Keystone manifest entries',
-         'functions': [create_keystone_manifest]},
-        {'title': 'Adding Ironic manifest entries',
+        {'title': 'Preparing Ironic entries',
          'functions': [create_manifest]},
     ]
 
@@ -103,10 +97,6 @@ def create_manifest(config, messages):
         generate_ssl_cert(config, ssl_host, service, ssl_key_file,
                           ssl_cert_file)
 
-    manifestfile = "%s_ironic.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate(get_mq(config, "ironic"))
-    manifestdata += getManifestTemplate("ironic.pp")
-
     fw_details = dict()
     key = "ironic-api"
     fw_details.setdefault(key, {})
@@ -116,15 +106,3 @@ def create_manifest(config, messages):
     fw_details[key]['ports'] = ['6385']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_IRONIC_API_RULES'] = fw_details
-
-    manifestdata += createFirewallResources('FIREWALL_IRONIC_API_RULES')
-    appendManifestFile(manifestfile, manifestdata, 'pre')
-
-
-def create_keystone_manifest(config, messages):
-    if config['CONFIG_UNSUPPORTED'] != 'y':
-        config['CONFIG_IRONIC_HOST'] = config['CONFIG_CONTROLLER_HOST']
-
-    manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_ironic.pp")
-    appendManifestFile(manifestfile, manifestdata)

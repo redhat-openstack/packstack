@@ -1,0 +1,25 @@
+---
+features:
+  - Previously, Packstack created many individual manifest files from
+    smaller snippets (templates), and executed them following a certain
+    order. This is sub-optimal, since it forces code duplication and goes
+    against the Puppet design of running a single manifest.
+
+    This patch refactors the manifest execution, with the following changes
+
+    - Only 4 templates used, so max 4 Puppet executions on a host. Controller
+      manifest, network node manifest, compute node manifest, and a firewall
+      manifest, which is still generated on the fly for simplicity.
+
+    - The previous snippets are now part of the Packstack Puppet module, and
+      included as needed by the controller/network/compute manifests. This
+      concept is similar to the one used by the puppet-openstack-integration
+      project.
+
+    - The remaining Python code is left untouched, so we can keep complete
+      compatibility with previous answer files.
+
+deprecations:
+  - |
+    Redis HA support has been removed from Packstack.
+

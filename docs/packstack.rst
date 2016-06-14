@@ -1070,32 +1070,12 @@ MONGODB Config parameters
 Redis Config parameters
 -----------------------
 
-**CONFIG_REDIS_MASTER_HOST**
-    IP address of the server on which to install the Redis master server.
+**CONFIG_REDIS_HOST**
+    IP address of the server on which to install the Redis server.
 
 **CONFIG_REDIS_PORT**
-    Port on which the Redis server(s) listens.
+    Port on which the Redis server listens.
 
-**CONFIG_REDIS_HA**
-    Specify 'y' to have Redis try to use HA. ['y', 'n']
-
-**CONFIG_REDIS_SLAVE_HOSTS**
-    Hosts on which to install Redis slaves.
-
-**CONFIG_REDIS_SENTINEL_HOSTS**
-    Hosts on which to install Redis sentinel servers.
-
-**CONFIG_REDIS_SENTINEL_CONTACT_HOST**
-    Host to configure as the Redis coordination sentinel.
-
-**CONFIG_REDIS_SENTINEL_PORT**
-    Port on which Redis sentinel servers listen.
-
-**CONFIG_REDIS_SENTINEL_QUORUM**
-    Quorum value for Redis sentinel servers.
-
-**CONFIG_REDIS_MASTER_NAME**
-    Name of the master server watched by the Redis sentinel. ['[a-z]+']
 
 Aodh Config parameters
 ----------------------

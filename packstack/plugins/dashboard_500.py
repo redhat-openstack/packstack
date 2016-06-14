@@ -25,8 +25,6 @@ from packstack.installer import utils
 from packstack.installer import validators
 
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import generate_ssl_cert
 from packstack.modules.ospluginutils import deliver_ssl_file
 
@@ -131,7 +129,7 @@ def initSequences(controller):
         return
 
     steps = [
-        {'title': 'Adding Horizon manifest entries',
+        {'title': 'Preparing Horizon entries',
          'functions': [create_manifest]}
     ]
     controller.addSequence("Installing OpenStack Horizon", [], [], steps)
@@ -141,7 +139,6 @@ def initSequences(controller):
 
 def create_manifest(config, messages):
     horizon_host = config['CONFIG_CONTROLLER_HOST']
-    manifestfile = "%s_horizon.pp" % horizon_host
 
     proto = "http"
     config["CONFIG_HORIZON_PORT"] = 80
@@ -206,10 +203,6 @@ def create_manifest(config, messages):
             config["CONFIG_HORIZON_NEUTRON_FW"] = True
         if config["CONFIG_NEUTRON_VPNAAS"] == 'y':
             config["CONFIG_HORIZON_NEUTRON_VPN"] = True
-
-    manifestdata = getManifestTemplate("horizon")
-    manifestdata += getManifestTemplate("apache_ports")
-    appendManifestFile(manifestfile, manifestdata)
 
     msg = ("To access the OpenStack Dashboard browse to %s://%s/dashboard .\n"
            "Please, find your login credentials stored in the keystonerc_admin"
