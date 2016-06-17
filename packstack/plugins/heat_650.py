@@ -94,7 +94,7 @@ def initConfig(controller):
          "PROMPT": "Should Packstack install Heat CloudFormation API",
          "OPTION_LIST": ["y", "n"],
          "VALIDATORS": [validators.validate_options],
-         "DEFAULT_VALUE": "n",
+         "DEFAULT_VALUE": "y",
          "MASK_INPUT": False,
          "LOOSE_VALIDATION": False,
          "CONF_NAME": "CONFIG_HEAT_CFN_INSTALL",
