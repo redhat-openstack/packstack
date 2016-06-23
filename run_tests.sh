@@ -66,8 +66,8 @@ echo "root hard nofile 65536" | $SUDO tee -a /etc/security/limits.conf
 
 # Setup repositories
 if [ "${MANAGE_REPOS}" = true ]; then
-    $SUDO curl ${DELOREAN} -o /etc/yum.repos.d/delorean.repo
-    $SUDO curl ${DELOREAN_DEPS} -o /etc/yum.repos.d/delorean-deps.repo
+    $SUDO curl -L ${DELOREAN} -o /etc/yum.repos.d/delorean.repo
+    $SUDO curl -L ${DELOREAN_DEPS} -o /etc/yum.repos.d/delorean-deps.repo
 fi
 
 # Install dependencies
