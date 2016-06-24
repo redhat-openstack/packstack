@@ -10,12 +10,16 @@ if $provision_demo_br {
   $floating_range_br = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
 }
 
-neutron_config {
-  'keystone_authtoken/identity_uri':      value => hiera('CONFIG_KEYSTONE_ADMIN_URL');
-  'keystone_authtoken/auth_uri':          value => hiera('CONFIG_KEYSTONE_PUBLIC_URL');
-  'keystone_authtoken/admin_tenant_name': value => 'services';
-  'keystone_authtoken/admin_user':        value => 'neutron';
-  'keystone_authtoken/admin_password':    value => hiera('CONFIG_NEUTRON_KS_PW');
+# If nova network is enabled this code should not be executed
+
+if ( hiera('CONFIG_NEUTRON_INSTALL') == 'y' ) {
+  neutron_config {
+    'keystone_authtoken/identity_uri':      value => hiera('CONFIG_KEYSTONE_ADMIN_URL');
+    'keystone_authtoken/auth_uri':          value => hiera('CONFIG_KEYSTONE_PUBLIC_URL');
+    'keystone_authtoken/admin_tenant_name': value => 'services';
+    'keystone_authtoken/admin_user':        value => 'neutron';
+    'keystone_authtoken/admin_password':    value => hiera('CONFIG_NEUTRON_KS_PW');
+  }
 }
 
 if $provision_neutron_br and $setup_ovs_bridge {
