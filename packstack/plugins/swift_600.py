@@ -16,7 +16,6 @@
 Installs and configures Swift
 """
 
-import os
 import re
 import uuid
 import netaddr
@@ -29,10 +28,6 @@ from packstack.installer import utils
 from packstack.installer.utils import split_hosts
 
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import createFirewallResources
-from packstack.modules.ospluginutils import getManifestTemplate
-from packstack.modules.ospluginutils import manifestfiles
 
 # ------------- Swift Packstack Plugin Initialization --------------
 
@@ -146,16 +141,12 @@ def initSequences(controller):
         return
 
     steps = [
-        {'title': 'Adding Swift Keystone manifest entries',
-         'functions': [create_keystone_manifest]},
-        {'title': 'Adding Swift builder manifest entries',
+        {'title': 'Preparing Swift builder entries',
          'functions': [create_builder_manifest]},
-        {'title': 'Adding Swift storage manifest entries',
-         'functions': [create_storage_manifest]},
-        {'title': 'Adding Swift common manifest entries',
-         'functions': [create_common_manifest]},
-        {'title': 'Adding Swift proxy manifest entries',
+        {'title': 'Preparing Swift proxy entries',
          'functions': [create_proxy_manifest]},
+        {'title': 'Preparing Swift storage entries',
+         'functions': [create_storage_manifest]},
     ]
     controller.addSequence("Installing OpenStack Swift", [], [], steps)
 
@@ -207,6 +198,9 @@ def parse_devices(config):
     if not devices:
         devices.append({'device': None, 'zone': 1,
                         'device_name': 'swiftloopback'})
+        config['CONFIG_SWIFT_LOOPBACK'] = 'y'
+    else:
+        config['CONFIG_SWIFT_LOOPBACK'] = 'n'
     return devices
 
 
@@ -245,17 +239,10 @@ def get_storage_size(config):
 
 # -------------------------- step functions --------------------------
 
-def create_keystone_manifest(config, messages):
-    # parse devices in first step
-    global devices
-    devices = parse_devices(config)
-    manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_swift")
-    appendManifestFile(manifestfile, manifestdata)
-
 
 def create_builder_manifest(config, messages):
     global devices
+    devices = parse_devices(config)
     # The ring file should be built and distributed before the storage services
     # come up. Specifically the replicator crashes if the ring isn't present
 
@@ -267,28 +254,28 @@ def create_builder_manifest(config, messages):
                '  weight => 10, }\n')
         return fmt % (dev_type, host, dev_port, devicename, zone)
 
-    manifestfile = "%s_ring_swift.pp" % config['CONFIG_STORAGE_HOST']
-    manifestdata = getManifestTemplate("swift_builder")
-
     # Add each device to the ring
     devicename = 0
-    for device in devices:
-        host = config['CONFIG_STORAGE_HOST_URL']
-        devicename = device['device_name']
-        zone = device['zone']
-        for dev_type, dev_port in [('ring_object_device', 6000),
-                                   ('ring_container_device', 6001),
-                                   ('ring_account_device', 6002)]:
-            manifestdata += device_def(dev_type, host, dev_port, devicename,
-                                       zone)
-    appendManifestFile(manifestfile, manifestdata, 'swiftbuilder')
+    for configkey, dev_type, dev_port in (
+        [('SWIFT_RING_OBJECT_DEVICES', 'ring_object_device', 6000),
+         ('SWIFT_RING_CONTAINER_DEVICES', 'ring_container_device', 6001),
+         ('SWIFT_RING_ACCOUNT_DEVICES', 'ring_account_device', 6002)]):
+        swift_dev_details = dict()
+        host = utils.force_ip(config['CONFIG_STORAGE_HOST_URL'])
+        fstype = config["CONFIG_SWIFT_STORAGE_FSTYPE"]
+        for device in devices:
+            devicename = device['device_name']
+            key = "dev_%s_%s" % (host, devicename)
+            swift_dev_details.setdefault(key, {})
+            zone = device['zone']
+            swift_dev_details[key]['name'] = "%s:%s/%s" % (host, dev_port,
+                                                           devicename)
+            swift_dev_details[key]['weight'] = "%s" % 10
+            swift_dev_details[key]['zone'] = "%s" % zone
+        config[configkey] = swift_dev_details
 
 
 def create_proxy_manifest(config, messages):
-    manifestfile = "%s_swift.pp" % config['CONFIG_STORAGE_HOST']
-    manifestdata = getManifestTemplate("swift_proxy")
-    if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
-        manifestdata += getManifestTemplate("swift_ceilometer_rabbitmq")
     fw_details = dict()
     key = "swift_proxy"
     fw_details.setdefault(key, {})
@@ -299,31 +286,28 @@ def create_proxy_manifest(config, messages):
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_SWIFT_PROXY_RULES'] = fw_details
 
-    manifestdata += createFirewallResources('FIREWALL_SWIFT_PROXY_RULES')
-    appendManifestFile(manifestfile, manifestdata)
-
 
 def create_storage_manifest(config, messages):
     global devices
 
-    manifestfile = "%s_swift.pp" % config['CONFIG_STORAGE_HOST']
-    manifestdata = getManifestTemplate("swift_storage")
+    devicename = 0
+    swift_dev_details = dict()
+    host = utils.force_ip(config['CONFIG_STORAGE_HOST_URL'])
+    fstype = config["CONFIG_SWIFT_STORAGE_FSTYPE"]
 
     # this need to happen once per storage device
     for device in devices:
-        host = config['CONFIG_STORAGE_HOST']
-        devicename = device['device_name']
-        device = device['device']
-        fstype = config["CONFIG_SWIFT_STORAGE_FSTYPE"]
-        if device:
-            check_device(host, device)
-            manifestdata += ('\nswift::storage::%s { "%s":\n'
-                             '  device => "%s",\n}\n'
-                             % (fstype, devicename, device))
-        else:
-            # create loopback device if none was specified
+        if device['device'] is None:
             config['CONFIG_SWIFT_STORAGE_SEEK'] = get_storage_size(config)
-            manifestdata += "\n" + getManifestTemplate("swift_loopback")
+        else:
+            devicename = device['device_name']
+            devicedev = device['device']
+            key = "dev_%s_%s" % (host, devicename)
+            swift_dev_details.setdefault(key, {})
+            swift_dev_details[key]['device'] = "%s" % devicename
+            swift_dev_details[key]['dev'] = "%s" % devicedev
+            swift_dev_details[key]['fstype'] = "%s" % fstype
+    config['CONFIG_SWIFT_STORAGE_DEVICES'] = swift_dev_details
 
     # set allowed hosts for firewall
     hosts = set([config['CONFIG_STORAGE_HOST']])
@@ -340,13 +324,3 @@ def create_storage_manifest(config, messages):
         fw_details[key]['ports'] = ['6000', '6001', '6002', '873']
         fw_details[key]['proto'] = "tcp"
     config['FIREWALL_SWIFT_STORAGE_RULES'] = fw_details
-
-    manifestdata += createFirewallResources('FIREWALL_SWIFT_STORAGE_RULES')
-    appendManifestFile(manifestfile, manifestdata)
-
-
-def create_common_manifest(config, messages):
-    for manifestfile, marker in manifestfiles.getFiles():
-        if manifestfile.endswith("_swift.pp"):
-            data = getManifestTemplate("swift_common")
-            appendManifestFile(os.path.split(manifestfile)[1], data)

@@ -23,9 +23,6 @@ from packstack.installer import utils
 
 from packstack.modules.common import filtered_hosts
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import createFirewallResources
-from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import generate_ssl_cert
 
 # ------------- AMQP Packstack Plugin Initialization --------------
@@ -155,7 +152,7 @@ def initConfig(controller):
 
 def initSequences(controller):
     amqpsteps = [
-        {'title': 'Adding AMQP manifest entries',
+        {'title': 'Preparing AMQP entries',
          'functions': [create_manifest]}
     ]
     controller.addSequence("Installing AMQP", [], [], amqpsteps)
@@ -188,9 +185,6 @@ def create_manifest(config, messages):
         config['CONFIG_AMQP_AUTH_PASSWORD'] = 'guest'
         config['CONFIG_AMQP_AUTH_USER'] = 'guest'
 
-    manifestfile = "%s_amqp.pp" % config['CONFIG_AMQP_HOST']
-    manifestdata = getManifestTemplate('amqp')
-
     if config['CONFIG_IP_VERSION'] == 'ipv6':
         config['CONFIG_AMQP_HOST_URL'] = "[%s]" % config['CONFIG_AMQP_HOST']
     else:
@@ -207,6 +201,3 @@ def create_manifest(config, messages):
         fw_details[key]['ports'] = ['5671', '5672']
         fw_details[key]['proto'] = "tcp"
     config['FIREWALL_AMQP_RULES'] = fw_details
-
-    manifestdata += createFirewallResources('FIREWALL_AMQP_RULES')
-    appendManifestFile(manifestfile, manifestdata, 'pre')

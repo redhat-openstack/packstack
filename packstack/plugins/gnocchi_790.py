@@ -22,9 +22,6 @@ from packstack.installer import validators
 from packstack.installer import processors
 
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import createFirewallResources
-from packstack.modules.ospluginutils import getManifestTemplate
 
 # ------------- Gnocchi Packstack Plugin Initialization --------------
 
@@ -86,10 +83,8 @@ def initSequences(controller):
        controller.CONF['CONFIG_CEILOMETER_INSTALL'] != 'y'):
         return
 
-    steps = [{'title': 'Adding Gnocchi manifest entries',
-              'functions': [create_manifest]},
-             {'title': 'Adding Gnocchi Keystone manifest entries',
-              'functions': [create_keystone_manifest]}]
+    steps = [{'title': 'Preparing Gnocchi entries',
+              'functions': [create_manifest]}]
     controller.addSequence("Installing OpenStack Gnocchi", [], [],
                            steps)
 
@@ -97,10 +92,6 @@ def initSequences(controller):
 # -------------------------- step functions --------------------------
 
 def create_manifest(config, messages):
-    manifestfile = "%s_gnocchi.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("gnocchi")
-    manifestdata += getManifestTemplate("apache_ports")
-
     fw_details = dict()
     key = "gnocchi_api"
     fw_details.setdefault(key, {})
@@ -110,11 +101,3 @@ def create_manifest(config, messages):
     fw_details[key]['ports'] = ['8041']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_GNOCCHI_RULES'] = fw_details
-    manifestdata += createFirewallResources('FIREWALL_GNOCCHI_RULES')
-    appendManifestFile(manifestfile, manifestdata, 'gnocchi')
-
-
-def create_keystone_manifest(config, messages):
-    manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_gnocchi")
-    appendManifestFile(manifestfile, manifestdata)

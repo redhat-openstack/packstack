@@ -33,7 +33,6 @@ class ManifestFiles(object):
     def __init__(self):
         self.filelist = []
         self.data = {}
-        self.global_data = None
 
     # continuous manifest file that have the same marker can be
     # installed in parallel, if on different servers
@@ -61,15 +60,12 @@ class ManifestFiles(object):
         Write out the manifest data to disk, this should only be called once
         write before the puppet manifests are copied to the various servers
         """
-        if not self.global_data:
-            with open(os.path.join(PUPPET_TEMPLATE_DIR, "global.pp")) as gfp:
-                self.global_data = gfp.read() % controller.CONF
         os.mkdir(basedefs.PUPPET_MANIFEST_DIR, 0o700)
         for fname, data in self.data.items():
             path = os.path.join(basedefs.PUPPET_MANIFEST_DIR, fname)
             fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
             with os.fdopen(fd, 'w') as fp:
-                fp.write(self.global_data + data)
+                fp.write(data)
 manifestfiles = ManifestFiles()
 
 
@@ -84,10 +80,6 @@ def appendManifestFile(manifest_name, data, marker=''):
     manifestfiles.addFile(manifest_name, marker, data)
 
 
-def prependManifestFile(manifest_name, data, marker=''):
-    manifestfiles.prependFile(manifest_name, marker, data)
-
-
 def generateHieraDataFile():
     os.mkdir(basedefs.HIERADATA_DIR, 0o700)
     with open(HIERA_COMMON_YAML, 'w') as outfile:
@@ -95,11 +87,6 @@ def generateHieraDataFile():
                                 explicit_start=True,
                                 default_flow_style=False))
     os.symlink(os.path.basename(HIERA_COMMON_YAML), HIERA_DEFAULTS_YAML)
-
-
-def createFirewallResources(hiera_key, default_value='{}'):
-    hiera_function = "hiera('%s', %s)" % (hiera_key, default_value)
-    return "create_resources(packstack::firewall, %s)\n\n" % hiera_function
 
 
 def generate_ssl_cert(config, host, service, ssl_key_file, ssl_cert_file):

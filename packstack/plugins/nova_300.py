@@ -27,15 +27,10 @@ from packstack.installer import utils
 from packstack.installer import validators
 
 from packstack.modules import common
+from packstack.modules.common import filtered_hosts
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.shortcuts import get_mq
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import prependManifestFile
-from packstack.modules.ospluginutils import createFirewallResources
 from packstack.modules.ospluginutils import deliver_ssl_file
-from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import generate_ssl_cert
-from packstack.modules.ospluginutils import manifestfiles
 
 # ------------- Nova Packstack Plugin Initialization --------------
 
@@ -392,35 +387,29 @@ def initSequences(controller):
         return
 
     if controller.CONF['CONFIG_NEUTRON_INSTALL'] == 'y':
-        network_title = ('Adding OpenStack Network-related '
-                         'Nova manifest entries')
+        network_title = ('Preparing OpenStack Network-related '
+                         'Nova entries')
         network_function = create_neutron_manifest
     else:
-        network_title = 'Adding Nova Network manifest entries'
+        network_title = 'Preparing Nova Network entries'
         network_function = create_network_manifest
 
     novaapisteps = [
-        {'title': 'Adding Nova API manifest entries',
+        {'title': 'Preparing Nova API entries',
          'functions': [create_api_manifest]},
-        {'title': 'Adding Nova Keystone manifest entries',
-         'functions': [create_keystone_manifest]},
-        {'title': 'Adding Nova Cert manifest entries',
-         'functions': [create_cert_manifest]},
-        {'title': 'Adding Nova Conductor manifest entries',
-         'functions': [create_conductor_manifest]},
         {'title': 'Creating ssh keys for Nova migration',
          'functions': [create_ssh_keys]},
         {'title': 'Gathering ssh host keys for Nova migration',
          'functions': [gather_host_keys]},
-        {'title': 'Adding Nova Compute manifest entries',
+        {'title': 'Preparing Nova Compute entries',
          'functions': [create_compute_manifest]},
-        {'title': 'Adding Nova Scheduler manifest entries',
+        {'title': 'Preparing Nova Scheduler entries',
          'functions': [create_sched_manifest]},
-        {'title': 'Adding Nova VNC Proxy manifest entries',
+        {'title': 'Preparing Nova VNC Proxy entries',
          'functions': [create_vncproxy_manifest]},
         {'title': network_title,
          'functions': [network_function]},
-        {'title': 'Adding Nova Common manifest entries',
+        {'title': 'Preparing Nova Common entries',
          'functions': [create_common_manifest]},
     ]
 
@@ -540,8 +529,6 @@ def create_api_manifest(config, messages):
         config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = None
     else:
         config['CONFIG_NEUTRON_METADATA_PW_UNQUOTED'] = "%s" % config['CONFIG_NEUTRON_METADATA_PW']
-    manifestfile = "%s_api_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_api")
 
     fw_details = dict()
     key = "nova_api"
@@ -552,27 +539,6 @@ def create_api_manifest(config, messages):
     fw_details[key]['ports'] = ['8773', '8774', '8775']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_NOVA_API_RULES'] = fw_details
-    manifestdata += createFirewallResources('FIREWALL_NOVA_API_RULES')
-
-    appendManifestFile(manifestfile, manifestdata, 'novaapi')
-
-
-def create_keystone_manifest(config, messages):
-    manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_nova")
-    appendManifestFile(manifestfile, manifestdata)
-
-
-def create_cert_manifest(config, messages):
-    manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_cert")
-    appendManifestFile(manifestfile, manifestdata)
-
-
-def create_conductor_manifest(config, messages):
-    manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_conductor")
-    appendManifestFile(manifestfile, manifestdata)
 
 
 def create_compute_manifest(config, messages):
@@ -593,8 +559,6 @@ def create_compute_manifest(config, messages):
         config['CONFIG_NOVA_COMPUTE_MIGRATE_URL'] = (
             'qemu+tcp://nova@%s/system'
         )
-
-    ssh_hostkeys = ''
 
     ssh_keys_details = {}
     for host in compute_hosts:
@@ -617,7 +581,6 @@ def create_compute_manifest(config, messages):
             ssh_keys_details[key]['type'] = host_key_type
 
     config['SSH_KEYS'] = ssh_keys_details
-    ssh_hostkeys += getManifestTemplate("sshkey")
 
     if config['CONFIG_VMWARE_BACKEND'] == 'y':
         vcenters = [i.strip() for i in
@@ -637,13 +600,12 @@ def create_compute_manifest(config, messages):
             else:
                 vcenters = len(compute_hosts) * [vcenters[0]]
         vmware_clusters = dict(zip(compute_hosts, vcenters))
+        config['CONFIG_VCENTER_CLUSTERS'] = vmware_clusters
 
     for host in compute_hosts:
         if config['CONFIG_IRONIC_INSTALL'] == 'y':
             cm = 'ironic.nova.compute.manager.ClusteredComputeManager'
             config['CONFIG_NOVA_COMPUTE_MANAGER'] = cm
-
-        manifestdata = getManifestTemplate("nova_compute")
 
         fw_details = dict()
         cf_fw_qemu_mig_key = "FIREWALL_NOVA_QEMU_MIG_RULES_%s" % host
@@ -657,31 +619,8 @@ def create_compute_manifest(config, messages):
             fw_details[key]['proto'] = "tcp"
 
         config[cf_fw_qemu_mig_key] = fw_details
-        manifestdata += createFirewallResources(cf_fw_qemu_mig_key)
-
-        if config['CONFIG_VMWARE_BACKEND'] == 'y':
-            manifestdata += ("\n$nova_vcenter_cluster_name = '%s'\n" %
-                             vmware_clusters[host])
-            manifestdata += getManifestTemplate("nova_compute_vmware.pp")
-        elif config['CONFIG_IRONIC_INSTALL'] == 'y':
-            manifestdata += getManifestTemplate("nova_compute_ironic.pp")
-        else:
-            manifestdata += getManifestTemplate("nova_compute_libvirt.pp")
-
-        if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
-                config['CONFIG_CINDER_INSTALL'] == 'y' and
-                'gluster' in config['CONFIG_CINDER_BACKEND']):
-            manifestdata += getManifestTemplate("nova_gluster")
-        if (config['CONFIG_VMWARE_BACKEND'] != 'y' and
-                config['CONFIG_CINDER_INSTALL'] == 'y' and
-                'nfs' in config['CONFIG_CINDER_BACKEND']):
-            manifestdata += getManifestTemplate("nova_nfs")
-        manifestfile = "%s_nova.pp" % host
 
         if config['CONFIG_NEUTRON_INSTALL'] != 'y':
-            if host not in network_hosts:
-                manifestdata += getManifestTemplate('nova_compute_flat')
-
             key = 'CONFIG_NOVA_COMPUTE_PRIVIF'
             if not config[key].strip():
                 config[key] = dummy_interface(host)
@@ -711,10 +650,6 @@ def create_compute_manifest(config, messages):
                 generate_ssl_cert(config, host, service, ssl_key_file,
                                   ssl_cert_file)
 
-            mq_template = get_mq(config, "nova_ceilometer")
-            manifestdata += getManifestTemplate(mq_template)
-            manifestdata += getManifestTemplate("nova_ceilometer")
-
         fw_details = dict()
         key = "nova_compute"
         fw_details.setdefault(key, {})
@@ -724,12 +659,6 @@ def create_compute_manifest(config, messages):
         fw_details[key]['ports'] = ['5900-5999']
         fw_details[key]['proto'] = "tcp"
         config['FIREWALL_NOVA_COMPUTE_RULES'] = fw_details
-
-        manifestdata += "\n" + createFirewallResources(
-            'FIREWALL_NOVA_COMPUTE_RULES'
-            )
-        manifestdata += "\n" + ssh_hostkeys
-        appendManifestFile(manifestfile, manifestdata)
 
 
 def create_network_manifest(config, messages):
@@ -768,28 +697,11 @@ def create_network_manifest(config, messages):
         net_size = 2 ** (32 - int(routing_prefix))
         config['CONFIG_NOVA_NETWORK_FIXEDSIZE'] = str(net_size)
 
-        manifestfile = "%s_nova.pp" % host
-        manifestdata = getManifestTemplate("nova_network")
-        # Restart libvirt if we deploy nova network on compute
-        if host in compute_hosts:
-            manifestdata += getManifestTemplate("nova_network_libvirt")
-
-        # in multihost mode each compute host runs nova-api-metadata
-        if multihost and host != api_host and host in compute_hosts:
-            manifestdata += getManifestTemplate("nova_metadata")
-        appendManifestFile(manifestfile, manifestdata)
-
 
 def create_sched_manifest(config, messages):
-    manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
     if config['CONFIG_IRONIC_INSTALL'] == 'y':
-        manifestdata = getManifestTemplate("nova_sched_ironic.pp")
         ram_alloc = '1.0'
         config['CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO'] = ram_alloc
-        manifestdata += getManifestTemplate("nova_sched.pp")
-    else:
-        manifestdata = getManifestTemplate("nova_sched.pp")
-    appendManifestFile(manifestfile, manifestdata)
 
 
 def create_vncproxy_manifest(config, messages):
@@ -820,10 +732,6 @@ def create_vncproxy_manifest(config, messages):
             generate_ssl_cert(config, ssl_host, service, ssl_key_file,
                               ssl_cert_file)
 
-    manifestfile = "%s_nova.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("nova_vncproxy")
-    appendManifestFile(manifestfile, manifestdata)
-
 
 def create_common_manifest(config, messages):
     global compute_hosts, network_hosts
@@ -834,45 +742,34 @@ def create_common_manifest(config, messages):
     dbacces_hosts = set([config.get('CONFIG_CONTROLLER_HOST')])
     dbacces_hosts |= network_hosts
 
-    for manifestfile, marker in manifestfiles.getFiles():
+    for host in filtered_hosts(config):
         pw_in_sqlconn = False
-        if manifestfile.endswith("_nova.pp"):
-            host, manifest = manifestfile.split('_', 1)
-            host = host.strip()
+        host = host.strip()
 
-            if host in compute_hosts and host not in dbacces_hosts:
-                # we should omit password in case we are installing only
-                # nova-compute to the host
-                perms = "nova"
-                pw_in_sqlconn = False
-            else:
-                perms = "nova:%s" % config['CONFIG_NOVA_DB_PW']
-                pw_in_sqlconn = True
+        if host in compute_hosts and host not in dbacces_hosts:
+            # we should omit password in case we are installing only
+            # nova-compute to the host
+            perms = "nova"
+            pw_in_sqlconn = False
+        else:
+            perms = "nova:%s" % config['CONFIG_NOVA_DB_PW']
+            pw_in_sqlconn = True
 
-            mariadb_host_url = config['CONFIG_MARIADB_HOST_URL']
-            sqlconn = "mysql+pymysql://%s@%s/nova" % (perms, mariadb_host_url)
-            if pw_in_sqlconn:
-                config['CONFIG_NOVA_SQL_CONN_PW'] = sqlconn
-            else:
-                config['CONFIG_NOVA_SQL_CONN_NOPW'] = sqlconn
+        mariadb_host_url = config['CONFIG_MARIADB_HOST_URL']
+        sqlconn = "mysql+pymysql://%s@%s/nova" % (perms, mariadb_host_url)
+        if pw_in_sqlconn:
+            config['CONFIG_NOVA_SQL_CONN_PW'] = sqlconn
+        else:
+            config['CONFIG_NOVA_SQL_CONN_NOPW'] = sqlconn
 
-            # for nova-network in multihost mode each compute host is metadata
-            # host otherwise we use api host
-            if (network_type == 'nova' and network_multi and
-                    host in compute_hosts):
-                metadata = host
-            else:
-                metadata = config['CONFIG_CONTROLLER_HOST']
-            config['CONFIG_NOVA_METADATA_HOST'] = metadata
-
-            data = getManifestTemplate(get_mq(config, "nova_common"))
-            if pw_in_sqlconn:
-                data += getManifestTemplate("nova_common_pw")
-            else:
-                data += getManifestTemplate("nova_common_nopw")
-            # We need to have class nova before class nova::api, so prepend
-            # instead of append
-            prependManifestFile(os.path.split(manifestfile)[1], data)
+        # for nova-network in multihost mode each compute host is metadata
+        # host otherwise we use api host
+        if (network_type == 'nova' and network_multi and
+                host in compute_hosts):
+            metadata = host
+        else:
+            metadata = config['CONFIG_CONTROLLER_HOST']
+        config['CONFIG_NOVA_METADATA_HOST'] = metadata
 
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         nova_hosts = compute_hosts
@@ -899,8 +796,3 @@ def create_neutron_manifest(config, messages):
     else:
         virt_driver = 'nova.virt.libvirt.vif.LibvirtGenericVIFDriver'
         config['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = virt_driver
-
-    for manifestfile, marker in manifestfiles.getFiles():
-        if manifestfile.endswith("_nova.pp"):
-            data = getManifestTemplate("nova_neutron")
-            appendManifestFile(os.path.split(manifestfile)[1], data)

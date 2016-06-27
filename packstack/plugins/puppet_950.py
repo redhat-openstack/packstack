@@ -25,9 +25,12 @@ from packstack.installer import utils
 from packstack.installer import basedefs
 from packstack.installer.exceptions import PuppetError
 from packstack.installer.exceptions import ScriptRuntimeError
+from packstack.installer.utils import split_hosts
 
 from packstack.modules.common import filtered_hosts
+from packstack.modules.ospluginutils import appendManifestFile
 from packstack.modules.ospluginutils import generateHieraDataFile
+from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import manifestfiles
 from packstack.modules.puppet import validate_logfile
 from packstack.modules.puppet import scan_logfile
@@ -61,6 +64,8 @@ def initSequences(controller):
     controller.insertSequence("Clean Up", [], [], puppetpresteps, index=0)
 
     puppetsteps = [
+        {'title': 'Preparing Puppet manifests',
+            'functions': [prepare_puppet_modules]},
         {'title': 'Copying Puppet modules and manifests',
             'functions': [copy_puppet_modules]},
         {'title': 'Applying Puppet manifests',
@@ -237,8 +242,27 @@ def apply_puppet_manifest(config, messages):
             server.append(cmd)
             server.execute(log=logcmd)
 
-    # wait for outstanding puppet runs befor exiting
+    # wait for outstanding puppet runs before exiting
     wait_for_puppet(currently_running, messages)
+
+
+def prepare_puppet_modules(config, messages):
+    network_hosts = split_hosts(config['CONFIG_NETWORK_HOSTS'])
+    compute_hosts = split_hosts(config['CONFIG_COMPUTE_HOSTS'])
+
+    manifestdata = getManifestTemplate("controller")
+    manifestfile = "%s_controller.pp" % config['CONFIG_CONTROLLER_HOST']
+    appendManifestFile(manifestfile, manifestdata, marker='controller')
+
+    for host in network_hosts:
+        manifestdata = getManifestTemplate("network")
+        manifestfile = "%s_network.pp" % host
+        appendManifestFile(manifestfile, manifestdata, marker='network')
+
+    for host in compute_hosts:
+        manifestdata = getManifestTemplate("compute")
+        manifestfile = "%s_compute.pp" % host
+        appendManifestFile(manifestfile, manifestdata, marker='compute')
 
 
 def finalize(config, messages):

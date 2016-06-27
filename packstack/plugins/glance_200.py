@@ -22,10 +22,6 @@ from packstack.installer import processors
 from packstack.installer import utils
 
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.shortcuts import get_mq
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import createFirewallResources
-from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import generate_ssl_cert
 
 # ------------- Glance Packstack Plugin Initialization --------------
@@ -94,9 +90,7 @@ def initSequences(controller):
         return
 
     glancesteps = [
-        {'title': 'Adding Glance Keystone manifest entries',
-         'functions': [create_keystone_manifest]},
-        {'title': 'Adding Glance manifest entries',
+        {'title': 'Preparing Glance entries',
          'functions': [create_manifest]}
     ]
     controller.addSequence("Installing OpenStack Glance", [], [], glancesteps)
@@ -112,12 +106,6 @@ def process_backend(value, param_name, config):
 
 # -------------------------- step functions --------------------------
 
-def create_keystone_manifest(config, messages):
-    manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_glance")
-    appendManifestFile(manifestfile, manifestdata)
-
-
 def create_manifest(config, messages):
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         ssl_host = config['CONFIG_STORAGE_HOST']
@@ -131,12 +119,6 @@ def create_manifest(config, messages):
         generate_ssl_cert(config, ssl_host, service, ssl_key_file,
                           ssl_cert_file)
 
-    manifestfile = "%s_glance.pp" % config['CONFIG_STORAGE_HOST']
-    manifestdata = getManifestTemplate("glance")
-    if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
-        mq_template = get_mq(config, "glance_ceilometer")
-        manifestdata += getManifestTemplate(mq_template)
-
     fw_details = dict()
     key = "glance_api"
     fw_details.setdefault(key, {})
@@ -146,10 +128,3 @@ def create_manifest(config, messages):
     fw_details[key]['ports'] = ['9292']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_GLANCE_RULES'] = fw_details
-
-    # Set the backend
-    manifestdata += getManifestTemplate(
-        'glance_%s.pp' % config['CONFIG_GLANCE_BACKEND'])
-
-    manifestdata += createFirewallResources('FIREWALL_GLANCE_RULES')
-    appendManifestFile(manifestfile, manifestdata)

@@ -22,10 +22,6 @@ from packstack.installer import validators
 from packstack.installer import processors
 
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.shortcuts import get_mq
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import createFirewallResources
-from packstack.modules.ospluginutils import getManifestTemplate
 from packstack.modules.ospluginutils import generate_ssl_cert
 
 # ------------------ Trove Packstack Plugin initialization ------------------
@@ -126,23 +122,14 @@ def initSequences(controller):
         return
 
     steps = [
-        {'title': 'Adding Trove Keystone manifest entries',
-         'functions': [create_keystone_manifest]},
-        {'title': 'Adding Trove manifest entries',
-         'functions': [create_manifest]},
+        {'title': 'Preparing Trove entries',
+         'functions': [create_manifest]}
     ]
 
     controller.addSequence("Installing Trove", [], [], steps)
 
+
 # ------------------------ step functions --------------------------
-
-
-def create_keystone_manifest(config, messages):
-    manifestfile = "%s_keystone.pp" % config['CONFIG_CONTROLLER_HOST']
-    manifestdata = getManifestTemplate("keystone_trove.pp")
-    appendManifestFile(manifestfile, manifestdata)
-
-
 def create_manifest(config, messages):
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         ssl_cert_file = config['CONFIG_TROVE_SSL_CERT'] = (
@@ -160,10 +147,6 @@ def create_manifest(config, messages):
             config['CONFIG_TROVE_NOVA_PW'] == ''):
         config['CONFIG_TROVE_NOVA_PW'] = config['CONFIG_TROVE_KS_PW']
 
-    manifestfile = "%s_trove.pp" % config["CONFIG_CONTROLLER_HOST"]
-    manifestdata = getManifestTemplate(get_mq(config, "trove"))
-    manifestdata += getManifestTemplate('trove.pp')
-
     fw_details = dict()
     key = "trove"
     fw_details.setdefault(key, {})
@@ -173,6 +156,3 @@ def create_manifest(config, messages):
     fw_details[key]['ports'] = ['8779']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_TROVE_API_RULES'] = fw_details
-
-    manifestdata += createFirewallResources('FIREWALL_TROVE_API_RULES')
-    appendManifestFile(manifestfile, manifestdata, marker='trove')

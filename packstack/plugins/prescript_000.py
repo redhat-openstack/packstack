@@ -33,8 +33,6 @@ from packstack.installer import validators
 from packstack.modules.common import filtered_hosts
 from packstack.modules.common import is_all_in_one
 from packstack.modules.documentation import update_params_usage
-from packstack.modules.ospluginutils import appendManifestFile
-from packstack.modules.ospluginutils import getManifestTemplate
 
 # ------------- Prescript Packstack Plugin Initialization --------------
 
@@ -946,7 +944,7 @@ def initSequences(controller):
          'functions': [server_prep]},
         {'title': 'Pre installing Puppet and discovering hosts\' details',
          'functions': [preinstall_and_discover]},
-        {'title': 'Adding pre install manifest entries',
+        {'title': 'Preparing pre-install entries',
          'functions': [create_manifest]},
     ]
 
@@ -1458,11 +1456,6 @@ def create_manifest(config, messages):
     else:
         config['CONFIG_STORAGE_HOST_URL'] = config['CONFIG_STORAGE_HOST']
 
-    for hostname in filtered_hosts(config):
-        manifestfile = "%s_prescript.pp" % hostname
-        manifestdata = getManifestTemplate("prescript")
-        appendManifestFile(manifestfile, manifestdata)
-
 
 def create_ntp_manifest(config, messages):
     srvlist = [i.strip()
@@ -1472,23 +1465,3 @@ def create_ntp_manifest(config, messages):
 
     definiton = '\n'.join(['server %s' % i for i in srvlist])
     config['CONFIG_NTP_SERVER_DEF'] = '%s\n' % definiton
-
-    marker = uuid.uuid4().hex[:16]
-
-    for hostname in filtered_hosts(config):
-        hostnfo = config['HOST_DETAILS'][hostname]
-        releaseos = hostnfo['operatingsystem']
-        releasever = hostnfo['operatingsystemmajrelease']
-
-        # Configure chrony for Fedora or RHEL/CentOS 7
-        if releaseos == 'Fedora' or releasever == '7':
-            manifestdata = getManifestTemplate('chrony')
-            appendManifestFile('%s_chrony.pp' % hostname,
-                               manifestdata,
-                               marker=marker)
-        # For previous versions, configure ntpd
-        else:
-            manifestdata = getManifestTemplate('ntpd')
-            appendManifestFile('%s_ntpd.pp' % hostname,
-                               manifestdata,
-                               marker=marker)
