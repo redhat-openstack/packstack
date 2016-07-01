@@ -813,14 +813,12 @@ def create_l2_agent_manifests(config, messages):
 
         config["CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS_COMPUTE"] = mapp_arr_cmp
         config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES_COMPUTE"] = []
-
+        no_local_types = set(ovs_type) & set(['gre', 'vxlan', 'vlan', 'flat'])
+        no_tunnel_types = set(ovs_type) & set(['vlan', 'flat'])
     elif agent == "linuxbridge":
         host_var = 'CONFIG_NEUTRON_LB_HOST'
     else:
         raise KeyError("Unknown layer2 agent")
-
-    no_local_types = set(ovs_type) & set(['gre', 'vxlan', 'vlan', 'flat'])
-    no_tunnel_types = set(ovs_type) & set(['vlan', 'flat'])
 
     for host in network_hosts | compute_hosts:
         # NICs connected to OVS bridges can be required in network nodes if
