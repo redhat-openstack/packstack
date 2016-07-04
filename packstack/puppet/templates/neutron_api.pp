@@ -7,7 +7,8 @@ class { '::neutron::server':
   sync_db             => true,
   enabled             => true,
   api_workers         => $service_workers,
-  rpc_workers         => $service_workers
+  rpc_workers         => $service_workers,
+  service_providers   => hiera_array('SERVICE_PROVIDERS')
 }
 
 # TODO: FIXME: remove this hack after upstream resolves https://bugs.launchpad.net/puppet-neutron/+bug/1474961
