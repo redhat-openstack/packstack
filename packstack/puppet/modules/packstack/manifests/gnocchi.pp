@@ -7,6 +7,7 @@ class packstack::gnocchi ()
 
     class { '::gnocchi::wsgi::apache':
       workers => hiera('CONFIG_SERVICE_WORKERS'),
+      threads => hiera('CONFIG_SERVICE_WORKERS'),
       ssl     => false
     }
 
