@@ -38,7 +38,7 @@ class packstack::nova::network ()
     $nova_network_privif = hiera('CONFIG_NOVA_NETWORK_PRIVIF')
     $nova_network_pubif = hiera('CONFIG_NOVA_NETWORK_PUBIF')
 
-    Class['::keystone'] -> Nova::Manage::Network<||>
+    Class['::nova::keystone::auth'] -> Nova::Manage::Network<||>
 
     class { '::nova::network':
       enabled                 => true,
