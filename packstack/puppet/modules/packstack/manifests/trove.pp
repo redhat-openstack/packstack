@@ -25,6 +25,7 @@ class packstack::trove ()
       auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       verbose  => true,
       debug    => hiera('CONFIG_DEBUG_MODE'),
+      workers  => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
     class { '::trove::taskmanager':
