@@ -49,7 +49,7 @@ File <| path == $::horizon::params::config_file |> {
   ensure  => present,
   owner   => 'root',
   group   => $::horizon::params::apache_group,
-  mode    => 0640,
+  mode    => '0640',
 }
 
 # hack for memcached, for now we bind to localhost on ipv6

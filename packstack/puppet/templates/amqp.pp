@@ -64,7 +64,7 @@ define enable_rabbitmq {
     ensure  => present,
     owner   => 'rabbitmq',
     group   => 'rabbitmq',
-    mode    => 0640,
+    mode    => '0640',
   }
 
 }
