@@ -14,9 +14,9 @@ class packstack::neutron::api ()
 
     class { '::neutron::server':
       database_connection   => $neutron_sql_connection,
-      auth_password         => $neutron_user_password,
+      password              => $neutron_user_password,
       auth_uri              => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      identity_uri          => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      auth_url              => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       sync_db               => true,
       enabled               => true,
       api_workers           => hiera('CONFIG_SERVICE_WORKERS'),
