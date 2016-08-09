@@ -3,6 +3,16 @@ class packstack::cinder ()
     create_resources(packstack::firewall, hiera('FIREWALL_CINDER_RULES', {}))
     create_resources(packstack::firewall, hiera('FIREWALL_CINDER_API_RULES', {}))
 
+    case hiera('CONFIG_CINDER_BACKEND') {
+      'lvm':       { $default_volume_type = 'iscsi' }
+      'gluster':   { $default_volume_type = 'glusterfs' }
+      'nfs':       { $default_volume_type = 'nfs' }
+      'vmdk':      { $default_volume_type = 'vmdk' }
+      'netapp':    { $default_volume_type = 'netapp' }
+      'solidfire': { $default_volume_type = 'solidfire' }
+      default:     { $default_volume_type = 'iscsi' }
+    }
+
     cinder_config {
       'DEFAULT/glance_host': value => hiera('CONFIG_STORAGE_HOST_URL');
     }
@@ -25,6 +35,7 @@ class packstack::cinder ()
       nova_catalog_info       => 'compute:nova:publicURL',
       nova_catalog_admin_info => 'compute:nova:adminURL',
       service_workers         => hiera('CONFIG_SERVICE_WORKERS'),
+      default_volume_type     => $default_volume_type,
     }
 
     class { '::cinder::scheduler': }
