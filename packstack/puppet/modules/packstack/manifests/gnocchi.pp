@@ -20,17 +20,16 @@ class packstack::gnocchi ()
      default => '0.0.0.0',
     }
 
-    class { '::gnocchi::api':
-      host                   => $bind_host,
-      keystone_identity_uri  => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      keystone_password      => hiera('CONFIG_GNOCCHI_KS_PW'),
-      keystone_auth_uri      => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      service_name           => 'httpd',
+    class { '::gnocchi::keystone::authtoken':
+      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      auth_version => hiera('CONFIG_KEYSTONE_API_VERSION'),
+      password     => hiera('CONFIG_GNOCCHI_KS_PW')
     }
 
-    # TO-DO: Remove this workaround as soon as module support is implemented (see rhbz#1300662)
-    gnocchi_config {
-      'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
+    class { '::gnocchi::api':
+      host         => $bind_host,
+      service_name => 'httpd'
     }
 
     class { '::gnocchi::db::sync':
