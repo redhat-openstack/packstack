@@ -10,6 +10,7 @@ class packstack::nova::neutron ()
       neutron_project_name => 'services',
       neutron_auth_url    => "${neutron_auth_url}/v3",
       neutron_region_name => hiera('CONFIG_KEYSTONE_REGION'),
+      neutron_url_timeout => '60',
     }
 
     class { '::nova::compute::neutron':
