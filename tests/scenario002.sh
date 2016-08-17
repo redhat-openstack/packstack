@@ -28,6 +28,9 @@ $SUDO packstack --allinone \
           --glance-backend=swift \
           --os-sahara-install=y \
           --os-trove-install=y \
+          --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.4-x86_64-vmlinuz" \
+          --provision-uec-ramdisk-url="/tmp/cirros/cirros-0.3.4-x86_64-initrd" \
+          --provision-uec-disk-url="/tmp/cirros/cirros-0.3.4-x86_64-disk.img" \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \
