@@ -1,0 +1,36 @@
+---
+upgrade:
+  - |
+    Parameters names for SSL certificates subjects have
+    been changed. While old parameters names still works
+    when using answers files, they will not work when
+    passed with packstack cli. For users using them, they
+    are required to move to new CLI parameters, see ``packstack -h``
+    for details of new names.
+
+deprecations:
+  - |
+    SSL certificates subject parameters can be used now
+    both to create a new selfsigned CA certificate or
+    to generate new server certificates using an existing
+    CA certificate. In order to provide a more accurate
+    usage description for SSL certificates subject parameters,
+    they have been renamed as follows:
+
+      * CONFIG_SELFSIGN_CACERT_SUBJECT_C is renamed to
+        CONFIG_SSL_CERT_SUBJECT_C
+      * CONFIG_SELFSIGN_CACERT_SUBJECT_ST is renamed to
+        CONFIG_SSL_CERT_SUBJECT_ST
+      * CONFIG_SELFSIGN_CACERT_SUBJECT_L is renamed to
+        CONFIG_SSL_CERT_SUBJECT_L
+      * CONFIG_SELFSIGN_CACERT_SUBJECT_O is renamed to
+        CONFIG_SSL_CERT_SUBJECT_O
+      * CONFIG_SELFSIGN_CACERT_SUBJECT_OU is renamed to
+        CONFIG_SSL_CERT_SUBJECT_OU
+      * CONFIG_SELFSIGN_CACERT_SUBJECT_CN is renamed to
+        CONFIG_SSL_CERT_SUBJECT_CN
+      * CONFIG_SELFSIGN_CACERT_SUBJECT_MAIL is renamed to
+        CONFIG_SSL_CERT_SUBJECT_MAIL
+
+    Old parameters names in answer files will still work
+    but it's recomended to move to new ones.

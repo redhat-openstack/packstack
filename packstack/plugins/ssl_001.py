@@ -86,93 +86,98 @@ def initConfig(controller):
              "CONF_NAME": 'CONFIG_SSL_CACERT_SELFSIGN',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False}
-        ],
+             "CONDITION": False},
 
-        "SSL_SELFSIGN": [
-            {"CMD_OPTION": "selfsign-cacert-subject-country",
-             "PROMPT": "Enter the selfsigned CAcert subject country.",
+            {"CMD_OPTION": "ssl-cert-subject-country",
+             "PROMPT": "Enter the ssl certificates subject country.",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "--",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_SELFSIGN_CACERT_SUBJECT_C',
+             "CONF_NAME": 'CONFIG_SSL_CERT_SUBJECT_C',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_SELFSIGN_CACERT_SUBJECT_C']},
 
-            {"CMD_OPTION": "selfsign-cacert-subject-state",
-             "PROMPT": "Enter the selfsigned CAcert subject state.",
+            {"CMD_OPTION": "ssl-cert-subject-state",
+             "PROMPT": "Enter the ssl certificates subject state.",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "State",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_SELFSIGN_CACERT_SUBJECT_ST',
+             "CONF_NAME": 'CONFIG_SSL_CERT_SUBJECT_ST',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_SELFSIGN_CACERT_SUBJECT_ST']},
 
-            {"CMD_OPTION": "selfsign-cacert-subject-location",
-             "PROMPT": "Enter the selfsigned CAcert subject location.",
+            {"CMD_OPTION": "ssl-cert-subject-location",
+             "PROMPT": "Enter the ssl certificate subject location.",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "City",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_SELFSIGN_CACERT_SUBJECT_L',
+             "CONF_NAME": 'CONFIG_SSL_CERT_SUBJECT_L',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_SELFSIGN_CACERT_SUBJECT_L']},
 
-            {"CMD_OPTION": "selfsign-cacert-subject-organization",
-             "PROMPT": "Enter the selfsigned CAcert subject organization.",
+            {"CMD_OPTION": "ssl-cert-subject-organization",
+             "PROMPT": "Enter the ssl certificate subject organization.",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "openstack",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_SELFSIGN_CACERT_SUBJECT_O',
+             "CONF_NAME": 'CONFIG_SSL_CERT_SUBJECT_O',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_SELFSIGN_CACERT_SUBJECT_O']},
 
-            {"CMD_OPTION": "selfsign-cacert-subject-organizational-unit",
-             "PROMPT": "Enter the selfsigned CAcert subject organizational unit.",
+            {"CMD_OPTION": "ssl-cert-subject-organizational-unit",
+             "PROMPT": "Enter the ssl certificate subject organizational unit.",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "packstack",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_SELFSIGN_CACERT_SUBJECT_OU',
+             "CONF_NAME": 'CONFIG_SSL_CERT_SUBJECT_OU',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_SELFSIGN_CACERT_SUBJECT_OU']},
 
-            {"CMD_OPTION": "selfsign-cacert-subject-common-name",
-             "PROMPT": "Enter the selfsigned CAcert subject common name.",
+            {"CMD_OPTION": "ssl-cert-subject-common-name",
+             "PROMPT": "Enter the ssl certificaate subject common name.",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": gethostname(),
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_SELFSIGN_CACERT_SUBJECT_CN',
+             "CONF_NAME": 'CONFIG_SSL_CERT_SUBJECT_CN',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_SELFSIGN_CACERT_SUBJECT_CN']},
 
-            {"CMD_OPTION": "selfsign-cacert-subject-email",
-             "PROMPT": "Enter the selfsigned CAcert subject admin email.",
+            {"CMD_OPTION": "ssl-cert-subject-email",
+             "PROMPT": "Enter the ssl certificate subject admin email.",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
              "DEFAULT_VALUE": "admin@%s" % gethostname(),
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_SELFSIGN_CACERT_SUBJECT_MAIL',
+             "CONF_NAME": 'CONFIG_SSL_CERT_SUBJECT_MAIL',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "DEPRECATES": ['CONFIG_SELFSIGN_CACERT_SUBJECT_MAIL']},
         ]
     }
     update_params_usage(basedefs.PACKSTACK_DOC, params)
@@ -184,13 +189,6 @@ def initConfig(controller):
          "PRE_CONDITION_MATCH": "yes",
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
-
-        {"GROUP_NAME": "SSL_SELFSIGN",
-         "DESCRIPTION": "SSL selfsigned CAcert Config parameters",
-         "PRE_CONDITION": 'CONFIG_SSL_CACERT_SELFSIGN',
-         "PRE_CONDITION_MATCH": "y",
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True}
     ]
     for group in groups:
         controller.addGroup(group, params[group['GROUP_NAME']])
@@ -248,15 +246,15 @@ def create_self_signed_cert(config, messages):
         k.generate_key(crypto.TYPE_RSA, 4096)
 
         # create a self-signed cert
-        mail = config['CONFIG_SELFSIGN_CACERT_SUBJECT_MAIL']
+        mail = config['CONFIG_SSL_CERT_SUBJECT_MAIL']
         cert = crypto.X509()
         subject = cert.get_subject()
-        subject.C = config['CONFIG_SELFSIGN_CACERT_SUBJECT_C']
-        subject.ST = config['CONFIG_SELFSIGN_CACERT_SUBJECT_ST']
-        subject.L = config['CONFIG_SELFSIGN_CACERT_SUBJECT_L']
-        subject.O = config['CONFIG_SELFSIGN_CACERT_SUBJECT_O']
-        subject.OU = config['CONFIG_SELFSIGN_CACERT_SUBJECT_OU']
-        subject.CN = config['CONFIG_SELFSIGN_CACERT_SUBJECT_CN']
+        subject.C = config['CONFIG_SSL_CERT_SUBJECT_C']
+        subject.ST = config['CONFIG_SSL_CERT_SUBJECT_ST']
+        subject.L = config['CONFIG_SSL_CERT_SUBJECT_L']
+        subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']
+        subject.OU = config['CONFIG_SSL_CERT_SUBJECT_OU']
+        subject.CN = config['CONFIG_SSL_CERT_SUBJECT_CN']
         subject.emailAddress = mail
         cert.set_serial_number(1000)
         cert.gmtime_adj_notBefore(0)

@@ -105,16 +105,16 @@ def generate_ssl_cert(config, host, service, ssl_key_file, ssl_cert_file):
 
         k = crypto.PKey()
         k.generate_key(crypto.TYPE_RSA, 4096)
-        mail = config['CONFIG_SELFSIGN_CACERT_SUBJECT_MAIL']
+        mail = config['CONFIG_SSL_CERT_SUBJECT_MAIL']
         hostinfo = config['HOST_DETAILS'][host]
         fqdn = hostinfo['fqdn']
         cert = crypto.X509()
         subject = cert.get_subject()
-        subject.C = config['CONFIG_SELFSIGN_CACERT_SUBJECT_C']
-        subject.ST = config['CONFIG_SELFSIGN_CACERT_SUBJECT_ST']
-        subject.L = config['CONFIG_SELFSIGN_CACERT_SUBJECT_L']
-        subject.O = config['CONFIG_SELFSIGN_CACERT_SUBJECT_O']
-        subject.OU = config['CONFIG_SELFSIGN_CACERT_SUBJECT_OU']
+        subject.C = config['CONFIG_SSL_CERT_SUBJECT_C']
+        subject.ST = config['CONFIG_SSL_CERT_SUBJECT_ST']
+        subject.L = config['CONFIG_SSL_CERT_SUBJECT_L']
+        subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']
+        subject.OU = config['CONFIG_SSL_CERT_SUBJECT_OU']
         subject.CN = "%s/%s" % (service, fqdn)
         subject.emailAddress = mail
 
