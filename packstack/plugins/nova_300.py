@@ -212,6 +212,19 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CMD_OPTION": "nova-libvirt-virt-type",
+             "PROMPT": (
+                 "The nova hypervisor that should be used. Either qemu or kvm."
+             ),
+             "OPTION_LIST": ['qemu', 'kvm'],
+             "DEFAULT_VALUE": '%{::default_hypervisor}',
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_NOVA_LIBVIRT_VIRT_TYPE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
         ],
 
         "NOVA_NETWORK": [
