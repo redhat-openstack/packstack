@@ -1,33 +1,28 @@
-Firewall <| |> -> Class['nova::compute::libvirt']
-
 # Ensure Firewall changes happen before libvirt service start
 # preventing a clash with rules being set by libvirt
-
-if str2bool($::is_virtual) {
-  $libvirt_virt_type = 'qemu'
-} else {
-  $libvirt_virt_type = 'kvm'
-}
-
-# We need to preferably install qemu-kvm-rhev
-exec { 'qemu-kvm':
-  path    => '/usr/bin',
-  command => 'yum install -y -d 0 -e 0 qemu-kvm',
-  onlyif  => 'yum install -y -d 0 -e 0 qemu-kvm-rhev &> /dev/null && exit 1 || exit 0',
-  before  => Class['nova::compute::libvirt'],
-} ->
-# chmod is workaround for https://bugzilla.redhat.com/show_bug.cgi?id=950436
-file { '/dev/kvm':
-  owner  => 'root',
-  group  => 'kvm',
-  mode   => '666',
-  before => Class['nova::compute::libvirt'],
-}
+Firewall <| |> -> Class['nova::compute::libvirt']
 
 $libvirt_vnc_bind_host = hiera('CONFIG_IP_VERSION') ? {
   'ipv6'  => '::0',
   default => '0.0.0.0',
   # TO-DO(mmagr): Add IPv6 support when hostnames are used
+}
+
+$libvirt_virt_type = hiera('CONFIG_NOVA_LIBVIRT_VIRT_TYPE')
+if $libvirt_virt_type == 'kvm' {
+    # Workaround for bad /dev/kvm permissions
+    # https://bugzilla.redhat.com/show_bug.cgi?id=950436
+    file { '/dev/kvm':
+      owner  => 'root',
+      group  => 'kvm',
+      mode   => '666',
+    }
+
+    # We have to fix the permissions after the installation has been done
+    # and before the service is started.
+    Package <| title == 'libvirt' |> ->
+    File['/dev/kvm'] ->
+    Service <| title == 'libvirt' |>
 }
 
 class { '::nova::compute::libvirt':
