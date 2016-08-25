@@ -63,13 +63,16 @@ class packstack::ceilometer ()
       default => '0.0.0.0',
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
+
+    class { '::ceilometer::keystone::authtoken':
+      auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password => hiera('CONFIG_CEILOMETER_KS_PW'),
+    } ->
     class { '::ceilometer::api':
-      host                  => $bind_host,
-      keystone_auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      keystone_identity_uri => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      keystone_password     => hiera('CONFIG_CEILOMETER_KS_PW'),
-      api_workers           => hiera('CONFIG_SERVICE_WORKERS'),
-      service_name          => $ceilometer_service_name,
+      host         => $bind_host,
+      api_workers  => hiera('CONFIG_SERVICE_WORKERS'),
+      service_name => $ceilometer_service_name,
     }
 
     if $ceilometer_service_name == 'httpd' {
