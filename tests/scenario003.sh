@@ -12,6 +12,7 @@ echo -e "Generating packstack config for:
 - aodh
 - gnocchi
 - heat
+- magnum
 - tempest (regex: 'smoke TelemetryAlarming')"
 echo "tempest will run if packstack's installation completes successfully."
 echo
@@ -25,6 +26,7 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-horizon-install=n \
           --glance-backend=file \
           --os-heat-install=y \
+          --os-magnum-install=y \
           --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.4-x86_64-vmlinuz" \
           --provision-uec-ramdisk-url="/tmp/cirros/cirros-0.3.4-x86_64-initrd" \
           --provision-uec-disk-url="/tmp/cirros/cirros-0.3.4-x86_64-disk.img" \

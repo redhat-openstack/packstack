@@ -43,6 +43,15 @@ class packstack::mariadb::services ()
        }
     }
 
+    if hiera('CONFIG_MAGNUM_INSTALL') == 'y' {
+        class { '::magnum::db::mysql':
+          password      => hiera('CONFIG_MAGNUM_DB_PW'),
+          host          => '%',
+          allowed_hosts => '%',
+          charset       => 'utf8',
+       }
+    }
+
     if hiera('CONFIG_IRONIC_INSTALL') == 'y' {
         class { '::ironic::db::mysql':
           password      => hiera('CONFIG_IRONIC_DB_PW'),

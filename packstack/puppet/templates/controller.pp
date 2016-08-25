@@ -142,6 +142,12 @@ if hiera('CONFIG_HEAT_INSTALL') == 'y' {
   }
 }
 
+if hiera('CONFIG_MAGNUM_INSTALL') == 'y' {
+  include '::packstack::keystone::magnum'
+  include '::packstack::magnum'
+  include '::packstack::magnum::rabbitmq'
+}
+
 if hiera('CONFIG_PROVISION_DEMO') == 'y' or hiera('CONFIG_PROVISION_TEMPEST') == 'y' {
   include '::packstack::provision'
   if hiera('CONFIG_GLANCE_INSTALL') == 'y' {
