@@ -725,6 +725,10 @@ Nova Options
 **CONFIG_NOVA_KS_PW**
     Password to use for the Compute service to authenticate with the Identity service.
 
+**CONFIG_NOVA_LIBVIRT_VIRT_TYPE**
+    The hypervisor driver to use with Nova. Can be either 'qemu' or 'kvm'.
+    Defaults to 'qemu' on virtual machines and 'kvm' on bare metal hardware.
+
 **CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO**
     Overcommitment ratio for virtual to physical CPUs. Specify 1.0 to disable CPU overcommitment.
 
