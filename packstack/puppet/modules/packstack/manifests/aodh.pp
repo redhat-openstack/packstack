@@ -12,11 +12,14 @@ class packstack::aodh ()
       $coordination_url = ''
     }
 
+    class { '::aodh::keystone::authtoken':
+      password => hiera('CONFIG_AODH_KS_PW'),
+      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+    }
+
     class { '::aodh::api':
-      enabled               => true,
-      keystone_password     => hiera('CONFIG_AODH_KS_PW'),
-      keystone_identity_uri => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      service_name          => 'httpd',
+      enabled      => true,
+      service_name => 'httpd',
     }
 
     class { '::aodh::wsgi::apache':
