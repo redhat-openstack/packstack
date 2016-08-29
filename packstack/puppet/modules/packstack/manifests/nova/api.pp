@@ -19,13 +19,16 @@ class packstack::nova::api ()
     $auth_uri = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
     $admin_password = hiera('CONFIG_NOVA_KS_PW')
 
+    class {'::nova::keystone::authtoken':
+      password => $admin_password,
+      auth_uri => $auth_uri,
+      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+    }
+
     class { '::nova::api':
       api_bind_address                     => $bind_host,
       metadata_listen                      => $bind_host,
       enabled                              => true,
-      auth_uri                             => $auth_uri,
-      identity_uri                         => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      admin_password                       => $admin_password,
       neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
       default_floating_pool                => $default_floating_pool,
       pci_alias                            => hiera('CONFIG_NOVA_PCI_ALIAS'),
