@@ -8,11 +8,14 @@ class packstack::trove ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
+    class { '::trove::keystone::authtoken':
+      password => hiera('CONFIG_TROVE_KS_PW'),
+      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+    }
+
     class { '::trove::api':
       bind_host         => $bind_host,
       enabled           => true,
-      keystone_password => hiera('CONFIG_TROVE_KS_PW'),
-      auth_url          => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       cert_file         => false,
       key_file          => false,
       ca_file           => false,
