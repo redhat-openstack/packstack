@@ -47,7 +47,9 @@ if hiera('CONFIG_CINDER_INSTALL') == 'y' {
     include '::packstack::cinder::backup'
   }
 
-  case hiera('CONFIG_CINDER_BACKEND') {
+  $cinder_backends = hiera_array('CONFIG_CINDER_BACKEND')
+
+  case $cinder_backends[0] {
     'lvm':       { include '::packstack::cinder::backend::lvm' }
     'gluster':   { include '::packstack::cinder::backend::gluster' }
     'nfs':       { include '::packstack::cinder::backend::nfs' }
