@@ -3,7 +3,9 @@ class packstack::cinder ()
     create_resources(packstack::firewall, hiera('FIREWALL_CINDER_RULES', {}))
     create_resources(packstack::firewall, hiera('FIREWALL_CINDER_API_RULES', {}))
 
-    case hiera('CONFIG_CINDER_BACKEND') {
+    $cinder_backends = hiera_array('CONFIG_CINDER_BACKEND')
+
+    case $cinder_backends[0] {
       'lvm':       { $default_volume_type = 'iscsi' }
       'gluster':   { $default_volume_type = 'glusterfs' }
       'nfs':       { $default_volume_type = 'nfs' }
