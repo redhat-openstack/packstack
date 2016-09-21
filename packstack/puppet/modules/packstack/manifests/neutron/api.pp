@@ -9,7 +9,6 @@ class packstack::neutron::api ()
     $neutron_sql_connection  = "mysql+pymysql://${neutron_db_user}:${neutron_db_password}@${neutron_db_host}/${neutron_db_name}"
     $neutron_user_password   = hiera('CONFIG_NEUTRON_KS_PW')
     $neutron_fwaas_enabled   = str2bool(hiera('CONFIG_NEUTRON_FWAAS'))
-    $neutron_lbaas_enabled   = str2bool(hiera('CONFIG_LBAAS_INSTALL'))
     $neutron_vpnaas_enabled  = str2bool(hiera('CONFIG_NEUTRON_VPNAAS'))
 
     class { '::neutron::server':
@@ -24,7 +23,6 @@ class packstack::neutron::api ()
       service_providers     => hiera_array('SERVICE_PROVIDERS'),
       ensure_fwaas_package  => $neutron_fwaas_enabled,
       ensure_vpnaas_package => $neutron_vpnaas_enabled,
-      ensure_lbaas_package  => $neutron_lbaas_enabled,
     }
 
     file { '/etc/neutron/api-paste.ini':

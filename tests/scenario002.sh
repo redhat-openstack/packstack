@@ -8,6 +8,7 @@ echo -e "Generating packstack config for:
 - glance (swift backend)
 - nova
 - neutron (ovs+vxlan)
+- lbaasv2
 - swift
 - sahara
 - trove
@@ -26,6 +27,7 @@ $SUDO packstack --allinone \
           --os-horizon-install=n \
           --nagios-install=n \
           --glance-backend=swift \
+          --os-neutron-lbaas-install=y \
           --os-sahara-install=y \
           --os-trove-install=y \
           --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.4-x86_64-vmlinuz" \
