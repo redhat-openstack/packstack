@@ -4,83 +4,83 @@ moduledir '/usr/share/openstack-puppet/modules'
 
 mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'cinder',
   :git => 'https://github.com/openstack/puppet-cinder',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'glance',
   :git => 'https://github.com/openstack/puppet-glance',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'gnocchi',
   :git => 'https://github.com/openstack/puppet-gnocchi',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'horizon',
   :git => 'https://github.com/openstack/puppet-horizon',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'ironic',
   :git => 'https://github.com/openstack/puppet-ironic',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'keystone',
   :git => 'https://github.com/openstack/puppet-keystone',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'manila',
   :git => 'https://github.com/openstack/puppet-manila',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'nova',
   :git => 'https://github.com/openstack/puppet-nova',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'openstacklib',
   :git => 'https://github.com/openstack/puppet-openstacklib',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'oslo',
   :git => 'https://github.com/openstack/puppet-oslo',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'sahara',
   :git => 'https://github.com/openstack/puppet-sahara',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'swift',
   :git => 'https://github.com/openstack/puppet-swift',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'tempest',
   :git => 'https://github.com/openstack/puppet-tempest',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'trove',
   :git => 'https://github.com/openstack/puppet-trove',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 mod 'vswitch',
   :git => 'https://github.com/openstack/puppet-vswitch',
-  :ref => 'master'
+  :ref => 'stable/newton'
 
 ## Non-OpenStack modules
 
