@@ -715,6 +715,8 @@ def create_l3_manifests(config, messages):
                 config['CONFIG_NEUTRON_OVS_BRIDGE_CREATE'] = 'y'
             else:
                 config['CONFIG_NEUTRON_OVS_BRIDGE_CREATE'] = 'n'
+        else:
+            config['CONFIG_NEUTRON_OVS_BRIDGE_CREATE'] = 'n'
 
 
 def create_dhcp_manifests(config, messages):
