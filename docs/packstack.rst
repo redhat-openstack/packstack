@@ -129,26 +129,26 @@ Packstack supports ability to be get CA certificate and use it to sign all certi
 **CONFIG_SSL_CACERT_SELFSIGN**
     Specify 'y' if you want Packstack to pregenerate the CA Certificate.
 
-SSL selfsigned CACert options
+SSL certificates options
 -----------------------------
 
-**CONFIG_SELFSIGN_CACERT_SUBJECT_C**
-    Enter the selfsigned CAcert subject country.
+**CONFIG_SSL_CERT_SUBJECT_C**
+    Enter the ssl certificates subject country.
 
-**CONFIG_SELFSIGN_CACERT_SUBJECT_ST**
-    Enter the selfsigned CAcert subject state.
+**CONFIG_SSL_CERT_SUBJECT_ST**
+    Enter the ssl certificates subject state.
 
-**CONFIG_SELFSIGN_CACERT_SUBJECT_L**
-    Enter the selfsigned CAcert subject location.
+**CONFIG_SSL_CERT_SUBJECT_L**
+    Enter the ssl certificates subject location.
 
-**CONFIG_SELFSIGN_CACERT_SUBJECT_O**
-    Enter the selfsigned CAcert subject organization.
+**CONFIG_SSL_CERT_SUBJECT_O**
+    Enter the ssl certificates subject organization.
 
-**CONFIG_SELFSIGN_CACERT_SUBJECT_OU**
-    Enter the selfsigned CAcert subject organizational unit.
+**CONFIG_SSL_CERT_SUBJECT_OU**
+    Enter the ssl certificates subject organizational unit.
 
-**CONFIG_SELFSIGN_CACERT_SUBJECT_CN**
-    Enter the selfsigned CAcert subject common name.
+**CONFIG_SSL_CERT_SUBJECT_CN**
+    Enter the ssl certificates subject common name.
 
 vCenter Config Parameters
 -------------------------
