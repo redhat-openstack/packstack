@@ -8,8 +8,4 @@ class packstack::neutron::lbaas ()
       enable_v2        => true,
       debug            => hiera('CONFIG_DEBUG_MODE'),
     }
-
-    class {'::neutron::services::lbaas':
-      service_providers => 'LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.plugin_driver.HaproxyOnHostPluginDriver',
-    }
 }
