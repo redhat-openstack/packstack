@@ -32,7 +32,9 @@ gnocchi_config {
   'keystone_authtoken/auth_version': value => hiera('CONFIG_KEYSTONE_API_VERSION');
 }
 
-class { '::gnocchi::db::sync': }
+class { '::gnocchi::db::sync': 
+  extra_opts => '--create-legacy-resource-types',
+}
 class { '::gnocchi::storage': }
 class { '::gnocchi::storage::file': }
 
