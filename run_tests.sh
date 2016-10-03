@@ -23,9 +23,9 @@ MANAGE_REPOS=${MANAGE_REPOS:-true}
 DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7-newton/current-passed-ci/delorean.repo}
 DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7-newton/delorean-deps.repo}
 GIT_BASE_URL=${GIT_BASE_URL:-git://git.openstack.org}
+ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
 # If logs should be retrieved automatically
 COPY_LOGS=${COPY_LOGS:-true}
-
 
 # Install external Puppet modules with r10k
 # Uses the following variables:
