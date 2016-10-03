@@ -4,3 +4,5 @@ PyYAML>=3.10
 docutils>=0.11
 cryptography!=1.3.0,>=1.0
 pyOpenSSL<15.0.0
+# Until https://github.com/eliben/pycparser/issues/147 is fixed 
+pycparser==2.13
