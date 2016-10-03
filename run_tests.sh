@@ -22,7 +22,7 @@ INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
 DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7-mitaka/current-passed-ci/delorean.repo}
 DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7-mitaka/delorean-deps.repo}
-
+ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
 # If logs should be retrieved automatically
 COPY_LOGS=${COPY_LOGS:-true}
 
