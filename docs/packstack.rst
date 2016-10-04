@@ -740,6 +740,7 @@ Nova Options
 **CONFIG_NOVA_LIBVIRT_VIRT_TYPE**
     The hypervisor driver to use with Nova. Can be either 'qemu' or 'kvm'.
     Defaults to 'qemu' on virtual machines and 'kvm' on bare metal hardware.
+    For nested KVM set it explicitly to 'kvm'.
 
 **CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO**
     Overcommitment ratio for virtual to physical CPUs. Specify 1.0 to disable CPU overcommitment.
