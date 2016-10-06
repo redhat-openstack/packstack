@@ -600,8 +600,11 @@ def create_manifests(config, messages):
     service_plugins = []
     service_providers = []
     if config['CONFIG_LBAAS_INSTALL'] == 'y':
+        lbaas_plugin = ('neutron_lbaas.services.loadbalancer.plugin.'
+                        'LoadBalancerPluginv2')
+        service_plugins.append(lbaas_plugin)
         lbaas_sp = ('LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.'
-                    'plugin_driver.HaproxyOnHostPluginDriver')
+                    'plugin_driver.HaproxyOnHostPluginDriver:default')
         service_providers.append(lbaas_sp)
 
     # ML2 uses the L3 Router service plugin to implement l3 agent

@@ -10,6 +10,7 @@ class packstack::neutron::api ()
     $neutron_user_password   = hiera('CONFIG_NEUTRON_KS_PW')
     $neutron_fwaas_enabled   = str2bool(hiera('CONFIG_NEUTRON_FWAAS'))
     $neutron_vpnaas_enabled  = str2bool(hiera('CONFIG_NEUTRON_VPNAAS'))
+    $neutron_lbaas_enabled   = str2bool(hiera('CONFIG_LBAAS_INSTALL'))
 
     class { '::neutron::server':
       database_connection   => $neutron_sql_connection,
@@ -28,6 +29,10 @@ class packstack::neutron::api ()
     file { '/etc/neutron/api-paste.ini':
       ensure  => file,
       mode    => '0640',
+    }
+
+    if $neutron_lbaas_enabled {
+       class { '::neutron::services::lbaas': }
     }
 
     Class['::neutron::server'] -> File['/etc/neutron/api-paste.ini']
