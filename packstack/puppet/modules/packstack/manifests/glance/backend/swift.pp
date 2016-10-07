@@ -1,5 +1,6 @@
 class packstack::glance::backend::swift ()
 {
+    Service<| tag == 'swift-service' |> -> Service['glance-api']
     class { '::glance::backend::swift':
       swift_store_user                    => 'services:glance',
       swift_store_key                     => hiera('CONFIG_GLANCE_KS_PW'),

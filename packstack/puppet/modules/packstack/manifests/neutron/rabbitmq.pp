@@ -15,7 +15,7 @@ class packstack::neutron::rabbitmq ()
       file { $files_to_set_owner:
         owner   => 'neutron',
         group   => 'neutron',
-        require => Package['openstack-neutron'],
+        require => Package['neutron'],
       }
       File[$files_to_set_owner] ~> Service<| tag == 'neutron-service' |>
     }

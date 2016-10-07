@@ -7,7 +7,7 @@ class {'::packstack::prereqs':
   stage => init,
 }
 
-if hiera('CONFIG_NTP_SERVERS', undef) != undef {
+if hiera('CONFIG_NTP_SERVERS', '') != '' {
   include '::packstack::chrony'
 }
 

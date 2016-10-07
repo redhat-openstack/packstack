@@ -25,13 +25,19 @@ class packstack::nova::api ()
       auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
+    if hiera('CONFIG_NOVA_PCI_ALIAS') == '' {
+      $pci_alias = false
+    } else {
+      $pci_alias = hiera('CONFIG_NOVA_PCI_ALIAS')
+    }
+
     class { '::nova::api':
       api_bind_address                     => $bind_host,
       metadata_listen                      => $bind_host,
       enabled                              => true,
       neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
       default_floating_pool                => $default_floating_pool,
-      pci_alias                            => hiera('CONFIG_NOVA_PCI_ALIAS'),
+      pci_alias                            => $pci_alias,
       sync_db_api                          => true,
       osapi_compute_workers                => hiera('CONFIG_SERVICE_WORKERS'),
       metadata_workers                     => hiera('CONFIG_SERVICE_WORKERS'),

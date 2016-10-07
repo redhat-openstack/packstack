@@ -7,7 +7,7 @@ class {'::packstack::prereqs':
   stage => init,
 }
 
-if hiera('CONFIG_NTP_SERVERS', undef) != undef {
+if hiera('CONFIG_NTP_SERVERS', '') != '' {
   include '::packstack::chrony'
 }
 
@@ -38,8 +38,8 @@ if hiera('CONFIG_GLANCE_INSTALL') == 'y' {
 
 if hiera('CONFIG_CINDER_INSTALL') == 'y' {
   include '::packstack::keystone::cinder'
-  include '::packstack::cinder'
   include '::packstack::cinder::rabbitmq'
+  include '::packstack::cinder'
   if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
     include '::packstack::cinder::ceilometer'
   }
@@ -71,7 +71,6 @@ if hiera('CONFIG_NOVA_INSTALL') == 'y' {
   include '::packstack::nova'
   include '::packstack::nova::common'
   include '::packstack::nova::api'
-
   include '::packstack::nova::cert'
   include '::packstack::nova::conductor'
   if hiera('CONFIG_IRONIC_INSTALL') == 'y' {

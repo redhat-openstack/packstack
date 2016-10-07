@@ -237,6 +237,9 @@ else
   $SUDO yum -y install openstack-packstack
 fi
 
+# Make sure there are no other puppet modules in the system (happens in gate)
+$SUDO rm -rf /etc/puppet/modules/*
+
 # Make sure the fqdn is associated to the IP in /etc/hosts
 # Needed for Horizon SSL tests in Tempest
 echo -e "\n127.0.0.1 $(facter fqdn)" | $SUDO tee -a /etc/hosts

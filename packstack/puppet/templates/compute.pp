@@ -9,7 +9,7 @@ class {'::packstack::prereqs':
 
 create_resources(sshkey, hiera('SSH_KEYS', {}))
 
-if hiera('CONFIG_NTP_SERVERS', undef) != undef {
+if hiera('CONFIG_NTP_SERVERS', '') != '' {
   include '::packstack::chrony'
 }
 
