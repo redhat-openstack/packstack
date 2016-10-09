@@ -15,7 +15,7 @@ echo -e "Generating packstack config for:
 echo "tempest will run if packstack's installation completes successfully."
 echo
 
-$SUDO packstack "${ADDITIONAL_ARGS}" \
+$SUDO packstack ${ADDITIONAL_ARGS} \
           --allinone \
           --debug \
           --service-workers=2 \
