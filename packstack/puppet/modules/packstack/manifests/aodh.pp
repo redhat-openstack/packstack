@@ -29,6 +29,7 @@ class packstack::aodh ()
 
     class { '::aodh::auth':
       auth_password => hiera('CONFIG_AODH_KS_PW'),
+      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }
     class { '::aodh::evaluator':
       coordination_url => $coordination_url,
