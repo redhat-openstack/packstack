@@ -43,7 +43,6 @@ class packstack::nova ()
       rabbit_use_ssl          => hiera('CONFIG_AMQP_SSL_ENABLED'),
       rabbit_userid           => hiera('CONFIG_AMQP_AUTH_USER'),
       rabbit_password         => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-      verbose                 => true,
       debug                   => hiera('CONFIG_DEBUG_MODE'),
       nova_public_key         => $public_key,
       nova_private_key        => $private_key,

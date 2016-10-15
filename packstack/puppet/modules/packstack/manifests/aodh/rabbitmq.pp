@@ -17,7 +17,6 @@ class packstack::aodh::rabbitmq ()
     $config_mongodb_host = hiera('CONFIG_MONGODB_HOST_URL')
 
     class { '::aodh':
-      verbose            => true,
       debug              => hiera('CONFIG_DEBUG_MODE'),
       rabbit_host        => hiera('CONFIG_AMQP_HOST_URL'),
       rabbit_port        => hiera('CONFIG_AMQP_CLIENTS_PORT'),

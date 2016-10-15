@@ -31,7 +31,6 @@ class packstack::neutron::rabbitmq ()
       core_plugin           => hiera('CONFIG_NEUTRON_CORE_PLUGIN'),
       allow_overlapping_ips => true,
       service_plugins       => hiera_array('SERVICE_PLUGINS'),
-      verbose               => true,
       debug                 => hiera('CONFIG_DEBUG_MODE'),
       kombu_ssl_ca_certs  => $kombu_ssl_ca_certs,
       kombu_ssl_keyfile   => $kombu_ssl_keyfile,

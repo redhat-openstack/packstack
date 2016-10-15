@@ -14,8 +14,8 @@ class packstack::provision::tempest ()
     }
 
     # Authentication/Keystone
-    $identity_uri          = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
-    $identity_uri_v3       = regsubst($identity_uri, 'v2.0', 'v3')
+    $identity_uri          = regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'), 'v3', 'v2.0')
+    $identity_uri_v3       = regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'), 'v2.0', 'v3')
     $auth_version          = regsubst(hiera('CONFIG_KEYSTONE_API_VERSION'), '.0', '')
     $admin_username        = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
     $admin_password        = hiera('CONFIG_KEYSTONE_ADMIN_PW')

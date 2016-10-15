@@ -19,21 +19,18 @@ class packstack::trove ()
       cert_file         => false,
       key_file          => false,
       ca_file           => false,
-      verbose           => true,
       debug             => hiera('CONFIG_DEBUG_MODE'),
       workers           => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
     class { '::trove::conductor':
       auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      verbose  => true,
       debug    => hiera('CONFIG_DEBUG_MODE'),
       workers  => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
     class { '::trove::taskmanager':
       auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      verbose  => true,
       debug    => hiera('CONFIG_DEBUG_MODE'),
     }
 }

@@ -25,7 +25,6 @@ class packstack::manila::rabbitmq ()
       rabbit_userid   => hiera('CONFIG_AMQP_AUTH_USER'),
       rabbit_password => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
       sql_connection  => "mysql+pymysql://manila:${db_pw}@${mariadb_host}/manila",
-      verbose         => true,
       debug           => hiera('CONFIG_DEBUG_MODE'),
     }
 }

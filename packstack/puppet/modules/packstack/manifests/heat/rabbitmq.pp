@@ -37,7 +37,6 @@ class packstack::heat::rabbitmq ()
       rabbit_use_ssl      => hiera('CONFIG_AMQP_SSL_ENABLED'),
       rabbit_userid       => hiera('CONFIG_AMQP_AUTH_USER'),
       rabbit_password     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-      verbose             => true,
       debug               => hiera('CONFIG_DEBUG_MODE'),
       database_connection => "mysql+pymysql://heat:${heat_rabbitmq_cfg_heat_db_pw}@${heat_rabbitmq_cfg_mariadb_host}/heat",
       kombu_ssl_ca_certs  => $kombu_ssl_ca_certs,

@@ -33,7 +33,6 @@ class packstack::keystone ()
       admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
       database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
       token_provider      => "keystone.token.providers.${keystone_token_provider_str}.Provider",
-      verbose             => true,
       debug               => hiera('CONFIG_DEBUG_MODE'),
       service_name        => 'httpd',
       enable_ssl          => $keystone_use_ssl,
@@ -71,8 +70,7 @@ class packstack::keystone ()
       internal_url   => $keystone_url,
       admin_url      => $keystone_admin_url,
       region         => hiera('CONFIG_KEYSTONE_REGION'),
-      # so far enforce v2 as default endpoint
-      version        => 'v2.0',
+      version        => 'v3',
     }
 
     # default assignment driver is SQL

@@ -141,7 +141,7 @@ def initConfig(controller):
              "PROMPT": "Enter the Keystone API version string.",
              "OPTION_LIST": ['v2.0', 'v3'],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'v2.0',
+             "DEFAULT_VALUE": 'v3',
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": 'CONFIG_KEYSTONE_API_VERSION',

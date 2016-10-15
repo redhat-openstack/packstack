@@ -21,7 +21,6 @@ class packstack::sahara::rabbitmq ()
     class { '::sahara':
       database_connection =>
         "mysql+pymysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
-      verbose             => true,
       debug               => hiera('CONFIG_DEBUG_MODE'),
       admin_user          => 'sahara',
       admin_password      => hiera('CONFIG_SAHARA_KS_PW'),
