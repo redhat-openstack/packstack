@@ -6,18 +6,20 @@ class packstack::provision::bridge ()
     $provision_tempest_br    = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
     $provision_demo_br       = str2bool(hiera('CONFIG_PROVISION_DEMO'))
 
+    $neutron_user_password   = hiera('CONFIG_NEUTRON_KS_PW')
+
     if $provision_demo_br {
       $floating_range_br = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
     } elsif $provision_tempest_br {
       $floating_range_br = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
     }
 
-    neutron_config {
-      'keystone_authtoken/identity_uri':      value => hiera('CONFIG_KEYSTONE_ADMIN_URL');
-      'keystone_authtoken/auth_uri':          value => hiera('CONFIG_KEYSTONE_PUBLIC_URL');
-      'keystone_authtoken/admin_tenant_name': value => 'services';
-      'keystone_authtoken/admin_user':        value => 'neutron';
-      'keystone_authtoken/admin_password':    value => hiera('CONFIG_NEUTRON_KS_PW');
+    class { '::neutron::keystone::authtoken':
+      username     => 'neutron',
+      password     => $neutron_user_password,
+      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      project_name => 'services',
     }
 
     if $provision_neutron_br and $setup_ovs_bridge {

@@ -12,11 +12,16 @@ class packstack::neutron::api ()
     $neutron_vpnaas_enabled  = str2bool(hiera('CONFIG_NEUTRON_VPNAAS'))
     $neutron_lbaas_enabled   = str2bool(hiera('CONFIG_LBAAS_INSTALL'))
 
+    class { '::neutron::keystone::authtoken':
+      username     => 'neutron',
+      password     => $neutron_user_password,
+      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      project_name => 'services',
+    }
+
     class { '::neutron::server':
       database_connection   => $neutron_sql_connection,
-      password              => $neutron_user_password,
-      auth_uri              => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url              => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       sync_db               => true,
       enabled               => true,
       api_workers           => hiera('CONFIG_SERVICE_WORKERS'),
