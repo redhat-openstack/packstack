@@ -6,5 +6,5 @@ class packstack::nova::ceilometer ()
       auth_region   => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
-    class { '::ceilometer::agent::compute': }
+    class { '::ceilometer::agent::polling': }
 }
