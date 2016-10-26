@@ -15,7 +15,7 @@ class packstack::ceilometer::rabbitmq ()
     }
 
     class { '::ceilometer':
-      metering_secret    => hiera('CONFIG_CEILOMETER_SECRET'),
+      telemetry_secret   => hiera('CONFIG_CEILOMETER_SECRET'),
       debug              => hiera('CONFIG_DEBUG_MODE'),
       rabbit_host        => hiera('CONFIG_AMQP_HOST_URL'),
       rabbit_port        => hiera('CONFIG_AMQP_CLIENTS_PORT'),
