@@ -25,15 +25,14 @@ class packstack::cinder ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    $cinder_keystone_url = regsubst(regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
+    class { '::cinder::keystone::authtoken':
+      auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password => hiera('CONFIG_CINDER_KS_PW'),
+    }
 
     class { '::cinder::api':
       bind_host               => $bind_host,
-      keystone_password       => hiera('CONFIG_CINDER_KS_PW'),
-      keystone_tenant         => 'services',
-      keystone_user           => 'cinder',
-      auth_uri                => $cinder_keystone_url,
-      identity_uri            => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       nova_catalog_info       => 'compute:nova:publicURL',
       nova_catalog_admin_info => 'compute:nova:adminURL',
       service_workers         => hiera('CONFIG_SERVICE_WORKERS'),
