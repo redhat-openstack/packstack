@@ -28,7 +28,7 @@ class packstack::nagios::nrpe ()
     # disk used on /var
     file_line{'df_var':
       path  => '/etc/nagios/nrpe.cfg',
-      match => "command\[df_var\]=",
+      match => 'command\[df_var\]=',
       line  => "command[df_var]=df /var/ | sed -re 's/.* ([0-9]+)%.*/\\1/' | grep -E '^[0-9]'",
     } ->
 
