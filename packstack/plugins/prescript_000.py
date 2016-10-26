@@ -1353,11 +1353,12 @@ def preinstall_and_discover(config, messages):
         # such as "Warning: Config file /etc/puppet/hiera.yaml not found,
         # using Hiera defaults"
         server.clear()
-        server.append('[[ ! -L /etc/puppet/hiera.yaml ]] && '
+        server.append('[[ -f /etc/hiera.yaml ]] && '
+                      '[[ ! -L /etc/puppet/hiera.yaml ]] && '
                       'ln -s /etc/hiera.yaml /etc/puppet/hiera.yaml || '
-                      'echo "hiera.yaml symlink already created"')
+                      'echo "skipping creation of  hiera.yaml symlink"')
         server.append("sed -i 's;:datadir:.*;:datadir: "
-                      "%s/hieradata;g' /etc/puppet/hiera.yaml"
+                      "%s/hieradata;g' $(puppet config print hiera_config)"
                       % details[hostname]['tmpdir'])
         server.execute()
     config['HOST_DETAILS'] = details
