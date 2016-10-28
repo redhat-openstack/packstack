@@ -90,7 +90,7 @@ class packstack::mariadb::services_remote () {
         }
     }
 
-    if hiera('CONFIG_GNOCCHI_INSTALL') == 'y' and
+    if hiera('CONFIG_GNOCCHI_INSTALL') == 'y' {
         remote_database { 'gnocchi':
           ensure      => 'present',
           charset     => 'utf8',
