@@ -151,13 +151,13 @@ def initConfig(controller):
 
             {"CMD_OPTION": "keystone-token-format",
              "PROMPT": "Enter the Keystone token format.",
-             "OPTION_LIST": ['UUID', 'PKI'],
+             "OPTION_LIST": ['UUID', 'PKI', 'FERNET'],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'UUID',
+             "DEFAULT_VALUE": 'FERNET',
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": 'CONFIG_KEYSTONE_TOKEN_FORMAT',
-             "USE_DEFAULT": True,
+             "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
