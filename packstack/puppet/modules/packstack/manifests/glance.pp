@@ -19,14 +19,15 @@ class packstack::glance ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
+    class { '::glance::api::authtoken':
+      auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password => hiera('CONFIG_GLANCE_KS_PW'),
+    }
+
     class { '::glance::api':
       bind_host           => $bind_host,
       registry_host       => $registry_host,
-      auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      keystone_tenant     => 'services',
-      keystone_user       => 'glance',
-      keystone_password   => hiera('CONFIG_GLANCE_KS_PW'),
       pipeline            => 'keystone',
       database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
       debug               => hiera('CONFIG_DEBUG_MODE'),
@@ -35,13 +36,14 @@ class packstack::glance ()
       known_stores        => ['file', 'http', 'swift']
     }
 
+    class { '::glance::registry::authtoken':
+      auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password => hiera('CONFIG_GLANCE_KS_PW'),
+    }
+
     class { '::glance::registry':
-      auth_uri            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      identity_uri        => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       bind_host           => $bind_host,
-      keystone_tenant     => 'services',
-      keystone_user       => 'glance',
-      keystone_password   => hiera('CONFIG_GLANCE_KS_PW'),
       database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
       debug               => hiera('CONFIG_DEBUG_MODE'),
       workers             => hiera('CONFIG_SERVICE_WORKERS'),
