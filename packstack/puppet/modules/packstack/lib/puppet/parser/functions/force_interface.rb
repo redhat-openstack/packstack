@@ -30,6 +30,9 @@ module Puppet::Parser::Functions
             lookupvar('interfaces').split(',').each do |interface|
               interface.strip!
               ifaddr = lookupvar("ipaddress_#{interface}")
+              if ifaddr == nil
+                next
+              end
               ifcidr = IPAddr.new ifaddr
               if cidr.include?(ifcidr)
                 translated.push(interface)
