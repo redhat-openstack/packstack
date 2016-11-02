@@ -24,7 +24,7 @@ options have yet to be added.
 
     $ export GEM_HOME=/tmp/somedir
     $ gem install r10k
-    $ sudo /tmp/somedir/bin/r10k puppetfile install -v
+    $ sudo -E /tmp/somedir/bin/r10k puppetfile install -v
     $ sudo cp -r packstack/puppet/modules/packstack /usr/share/openstack-puppet/modules
 
 ### Option 1 (all-in-one)
