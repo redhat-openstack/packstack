@@ -1017,7 +1017,10 @@ def main():
     except Exception as e:
         logging.error(traceback.format_exc())
         print("\n" + utils.color_text("ERROR : " + str(e), 'red'))
-        print(output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO % (logFile))
+        try:
+            print(output_messages.ERR_CHECK_LOG_FILE_FOR_MORE_INFO % (logFile))
+        except NameError:
+            pass
         sys.exit(1)
 
     finally:
