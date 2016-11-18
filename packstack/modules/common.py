@@ -77,12 +77,13 @@ def cidr_to_ifname(cidr, host, config):
 
             for interface in info['interfaces'].split(','):
                 interface = interface.strip()
-                ipaddr = info['ipaddress_{}'.format(interface)]
-                netmask = info['netmask_{}'.format(interface)]
-                subnet_b = netaddr.IPNetwork('{ipaddr}/{netmask}'.format(**locals()))
-                if subnet_a == subnet_b:
-                    translated.append(interface)
-                    break
+                ipaddr = info.get('ipaddress_{}'.format(interface))
+                netmask = info.get('netmask_{}'.format(interface))
+                if ipaddr and netmask:
+                    subnet_b = netaddr.IPNetwork('{ipaddr}/{netmask}'.format(**locals()))
+                    if subnet_a == subnet_b:
+                        translated.append(interface)
+                        break
         result.append(':'.join(translated))
     return ','.join(result)
 
