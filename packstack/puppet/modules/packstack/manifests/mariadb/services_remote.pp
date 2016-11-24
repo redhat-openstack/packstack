@@ -152,6 +152,37 @@ class packstack::mariadb::services_remote () {
         }
     }
 
+    if hiera('CONFIG_MAGNUM_INSTALL') == 'y' {
+        remote_database { 'magnum':
+          ensure      => 'present',
+          charset     => 'utf8',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+        }
+
+        $mariadb_magnum_noinstall_db_pw = hiera('CONFIG_MAGNUM_DB_PW')
+
+        remote_database_user { 'magnum@%':
+          password_hash => mysql_password($mariadb_magnum_noinstall_db_pw),
+          db_host       => hiera('CONFIG_MARIADB_HOST'),
+          db_user       => hiera('CONFIG_MARIADB_USER'),
+          db_password   => hiera('CONFIG_MARIADB_PW'),
+          provider      => 'mysql',
+          require       => Remote_database['magnum'],
+        }
+
+        remote_database_grant { 'magnum@%/magnum':
+          privileges  => 'all',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+          require     => Remote_database_user['magnum@%'],
+        }
+    }
+
     if hiera('CONFIG_IRONIC_INSTALL') == 'y' {
         remote_database { 'ironic':
           ensure      => 'present',

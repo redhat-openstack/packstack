@@ -26,6 +26,10 @@ mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat',
   :ref => 'master'
 
+mod 'magnum',
+  :git => 'https://github.com/openstack/puppet-magnum',
+  :ref => 'master'
+
 mod 'horizon',
   :git => 'https://github.com/openstack/puppet-horizon',
   :ref => 'master'

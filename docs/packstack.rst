@@ -71,6 +71,9 @@ Global Options
 **CONFIG_HEAT_INSTALL**
     Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
 
+**CONFIG_MAGNUM_INSTALL**
+    Specify 'y' to install OpenStack Container Service (magnum). ['y', 'n']
+
 **CONFIG_SAHARA_INSTALL**
     Specify 'y' to install OpenStack Data Processing (sahara). In case of sahara installation packstack also installs heat.['y', 'n']
 
@@ -1131,6 +1134,15 @@ Nagios Config parameters
 
 **CONFIG_NAGIOS_PW**
     Password of the nagiosadmin user on the Nagios server.
+
+Magnum Options
+------------------------
+
+**CONFIG_MAGNUM_DB_PW**
+    Password to use for the Magnum to access the database.
+
+**CONFIG_MAGNUM_KS_PW**
+    Password to use for the Magnum to authenticate with the Identity service.
 
 Log files and Debug info
 ------------------------
