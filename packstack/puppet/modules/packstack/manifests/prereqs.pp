@@ -1,7 +1,5 @@
 class packstack::prereqs ()
 {
-    include ::firewall
-
     # We don't have openstack-selinux package for Fedora
     if $::operatingsystem != 'Fedora' {
       package{ 'openstack-selinux':

@@ -7,6 +7,8 @@ class {'::packstack::prereqs':
   stage => init,
 }
 
+include ::firewall
+
 create_resources(sshkey, hiera('SSH_KEYS', {}))
 
 if hiera('CONFIG_NTP_SERVERS', '') != '' {

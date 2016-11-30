@@ -37,7 +37,7 @@ class packstack::keystone ()
     class { '::keystone':
       admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
       database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
-      token_provider      => "keystone.token.providers.${keystone_token_provider_str}.Provider",
+      token_provider      => "${keystone_token_provider_str}",
       enable_fernet_setup => $enable_fernet_setup,
       debug               => hiera('CONFIG_DEBUG_MODE'),
       service_name        => 'httpd',

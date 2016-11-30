@@ -7,6 +7,8 @@ class {'::packstack::prereqs':
   stage => init,
 }
 
+include ::firewall
+
 if hiera('CONFIG_NTP_SERVERS', '') != '' {
   include '::packstack::chrony'
 }

@@ -68,7 +68,8 @@ class packstack::ceilometer ()
       auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       password => hiera('CONFIG_CEILOMETER_KS_PW'),
-    } ->
+    }
+
     class { '::ceilometer::api':
       host         => $bind_host,
       api_workers  => hiera('CONFIG_SERVICE_WORKERS'),
