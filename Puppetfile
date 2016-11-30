@@ -124,6 +124,10 @@ mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
   :ref => 'master'
 
+mod 'panko',
+  :git => 'https://github.com/openstack/puppet-panko',
+  :ref => 'master'
+
 mod 'rabbitmq',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq',
   :ref => 'master'

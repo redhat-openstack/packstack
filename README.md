@@ -196,6 +196,7 @@ This is the current matrix of available tests:
 | ceilometer |             |             |      X      |
 | aodh       |             |             |      X      |
 | gnocchi    |             |             |      X      |
+| panko      |             |             |      X      |
 | heat       |             |             |      X      |
 | swift      |             |      X      |             |
 | sahara     |             |      X      |             |

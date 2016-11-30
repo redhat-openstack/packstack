@@ -171,6 +171,11 @@ if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and hiera('CONFIG_GNOCCHI_INSTALL')
   include '::packstack::gnocchi'
 }
 
+if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and hiera('CONFIG_PANKO_INSTALL') == 'y' {
+  include '::packstack::keystone::panko'
+  include '::packstack::panko'
+}
+
 if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
   include '::packstack::mongodb'
   include '::packstack::keystone::ceilometer'

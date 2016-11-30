@@ -68,6 +68,9 @@ Global Options
 **CONFIG_GNOCCHI_INSTALL**
     Specify 'y' to install OpenStack Metering as a Service (gnocchi). ['y', 'n']
 
+**CONFIG_PANKO_INSTALL**
+    Specify 'y' to install OpenStack Events Service (panko). ['y', 'n']
+
 **CONFIG_HEAT_INSTALL**
     Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
 
@@ -1100,6 +1103,15 @@ Gnocchi Config parameters
 
 **CONFIG_GNOCCHI_KS_PW**
     Password to use for Gnocchi to authenticate with the Identity service.
+
+Panko Config parameters
+-------------------------
+
+**CONFIG_PANKO_DB_PW**
+    Password to use for Panko to access the database.
+
+**CONFIG_PANKO_KS_PW**
+    Password to use for Panko to authenticate with the Identity service.
 
 
 Sahara Config parameters

@@ -8,6 +8,8 @@ class packstack::ceilometer ()
 
     $config_ceilometer_metering_backend = hiera('CONFIG_CEILOMETER_METERING_BACKEND')
 
+    $config_ceilometer_events_backend = hiera('CONFIG_CEILOMETER_EVENTS_BACKEND')
+
     $config_gnocchi_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
     if $config_ceilometer_coordination_backend == 'redis' {
@@ -33,6 +35,7 @@ class packstack::ceilometer ()
 
     class { '::ceilometer::collector':
       meter_dispatcher => $config_ceilometer_metering_backend,
+      event_dispatcher => $config_ceilometer_events_backend,
     }
 
     if $config_ceilometer_metering_backend == 'gnocchi' {

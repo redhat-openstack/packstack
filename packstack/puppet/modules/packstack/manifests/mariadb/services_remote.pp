@@ -152,6 +152,37 @@ class packstack::mariadb::services_remote () {
         }
     }
 
+    if hiera('CONFIG_PANKO_INSTALL') == 'y' {
+        remote_database { 'panko':
+          ensure      => 'present',
+          charset     => 'utf8',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+        }
+
+        $panko_cfg_db_pw = hiera('CONFIG_PANKO_DB_PW')
+
+        remote_database_user { 'panko@%':
+          password_hash => mysql_password($panko_cfg_db_pw),
+          db_host       => hiera('CONFIG_MARIADB_HOST'),
+          db_user       => hiera('CONFIG_MARIADB_USER'),
+          db_password   => hiera('CONFIG_MARIADB_PW'),
+          provider      => 'mysql',
+          require       => Remote_database['panko'],
+        }
+
+        remote_database_grant { 'panko@%/panko':
+          privileges  => 'all',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+          require     => Remote_database_user['panko@%'],
+        }
+    }
+
     if hiera('CONFIG_HEAT_INSTALL') == 'y' {
         remote_database { 'heat':
           ensure      => 'present',

@@ -91,6 +91,8 @@ function get_config_and_logs {
         '/var/log/ceilometer'
         '/etc/gnocchi' # gnocchi is nested under telemetry in governance
         '/var/log/gnocchi'
+        '/var/log/panko'
+        '/etc/panko' # panko is nested under telemetry in governance
         '/etc/rabbitmq/'
         '/var/log/rabbitmq'
         '/etc/my.cnf.d'

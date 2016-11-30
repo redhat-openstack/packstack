@@ -93,6 +93,17 @@ def initConfig(controller):
              "USE_DEFAULT": True,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CONF_NAME": "CONFIG_CEILOMETER_EVENTS_BACKEND",
+             "CMD_OPTION": "ceilometer-events-backend",
+             "PROMPT": "Enter the events backend to use",
+             "OPTION_LIST": ['database', 'panko'],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": 'database',
+             "MASK_INPUT": False,
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "MONGODB": [
