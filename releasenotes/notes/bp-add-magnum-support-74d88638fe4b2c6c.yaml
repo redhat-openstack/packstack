@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Packstack supports the deployment of magnum, the
+    container Infrastructure Management Service
+    for OpenStack.
