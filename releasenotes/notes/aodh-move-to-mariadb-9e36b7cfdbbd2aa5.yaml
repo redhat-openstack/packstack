@@ -1,0 +1,8 @@
+---
+features:
+  - Aodh project has removed support for non-SQL drivers
+    in https://review.openstack.org/#/c/373043/.
+    Packstack has switched aodh storage backend from
+    MongoDB to mysqld. A new parameter CONFIG_AODH_DB_PW
+    has been added to configure the password of the
+    aodh user in the database.

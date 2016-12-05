@@ -121,6 +121,37 @@ class packstack::mariadb::services_remote () {
         }
     }
 
+    if hiera('CONFIG_AODH_INSTALL') == 'y' {
+        remote_database { 'aodh':
+          ensure      => 'present',
+          charset     => 'utf8',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+        }
+
+        $aodh_cfg_db_pw = hiera('CONFIG_AODH_DB_PW')
+
+        remote_database_user { 'aodh@%':
+          password_hash => mysql_password($aodh_cfg_db_pw),
+          db_host       => hiera('CONFIG_MARIADB_HOST'),
+          db_user       => hiera('CONFIG_MARIADB_USER'),
+          db_password   => hiera('CONFIG_MARIADB_PW'),
+          provider      => 'mysql',
+          require       => Remote_database['aodh'],
+        }
+
+        remote_database_grant { 'aodh@%/aodh':
+          privileges  => 'all',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+          require     => Remote_database_user['aodh@%'],
+        }
+    }
+
     if hiera('CONFIG_HEAT_INSTALL') == 'y' {
         remote_database { 'heat':
           ensure      => 'present',

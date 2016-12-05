@@ -34,6 +34,15 @@ class packstack::mariadb::services ()
         }
     }
 
+    if hiera('CONFIG_AODH_INSTALL') == 'y' and
+       hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+        class { '::aodh::db::mysql':
+          password      => hiera('CONFIG_AODH_DB_PW'),
+          host          => '%',
+          allowed_hosts => '%',
+        }
+    }
+
     if hiera('CONFIG_HEAT_INSTALL') == 'y' {
         class { '::heat::db::mysql':
           password      => hiera('CONFIG_HEAT_DB_PW'),
