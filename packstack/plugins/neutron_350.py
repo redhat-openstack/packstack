@@ -615,6 +615,9 @@ def create_manifests(config, messages):
 
     if config['CONFIG_NEUTRON_FWAAS'] == 'y':
         service_plugins.append('firewall')
+        fwaas_sp = ('FIREWALL:Iptables:neutron.agent.linux.iptables_firewall.'
+                    'OVSHybridIptablesFirewallDriver:default')
+        service_providers.append(fwaas_sp)
 
     if config['CONFIG_NEUTRON_VPNAAS'] == 'y':
         service_plugins.append('vpnaas')
