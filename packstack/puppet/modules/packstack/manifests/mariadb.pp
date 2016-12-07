@@ -4,7 +4,7 @@ class packstack::mariadb ()
     create_resources(packstack::firewall, hiera('FIREWALL_MARIADB_RULES', {}))
     $max_connections = hiera('CONFIG_SERVICE_WORKERS') * 128
 
-    if ($::mariadb_provides_galera == 'true') {
+    if ($::mariadb_provides_galera) {
       # Since mariadb 10.1 galera is included in main mariadb
       $mariadb_package_name = 'mariadb-server-galera'
       $mariadb_present      = 'present'
