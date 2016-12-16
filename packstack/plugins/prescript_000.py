@@ -278,7 +278,7 @@ def initConfig(controller):
 
             {"CMD_OPTION": "os-magnum-install",
              "PROMPT": (
-                 "Should Packstack install OpenStack Container Service (Magnum)"
+                 "Should Packstack install OpenStack Container Infrastructure Management Service (Magnum)"
              ),
              "OPTION_LIST": ["y", "n"],
              "VALIDATORS": [validators.validate_options],

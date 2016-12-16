@@ -72,7 +72,7 @@ Global Options
     Specify 'y' to install OpenStack Orchestration (heat). ['y', 'n']
 
 **CONFIG_MAGNUM_INSTALL**
-    Specify 'y' to install OpenStack Container Service (magnum). ['y', 'n']
+    Specify 'y' to install OpenStack Container Infrastructure Management Service (magnum). ['y', 'n']
 
 **CONFIG_SAHARA_INSTALL**
     Specify 'y' to install OpenStack Data Processing (sahara). In case of sahara installation packstack also installs heat.['y', 'n']
