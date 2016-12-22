@@ -1091,6 +1091,9 @@ Aodh Config parameters
 **CONFIG_AODH_KS_PW**
     Password to use for Telemetry Alarming to authenticate with the Identity service.
 
+**CONFIG_AODH_DB_PW**
+    Password to use for Telemetry Alarming (AODH) to access the database.
+
 
 Gnocchi Config parameters
 -------------------------

@@ -44,7 +44,20 @@ def initConfig(controller):
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,
              "NEED_CONFIRM": True,
-             "CONDITION": False}
+             "CONDITION": False},
+
+            {"CMD_OPTION": "aodh-db-passwd",
+             "PROMPT": "Enter the password for the aodh DB access",
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "PW_PLACEHOLDER",
+             "PROCESSORS": [processors.process_password],
+             "MASK_INPUT": True,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_AODH_DB_PW",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": True,
+             "CONDITION": False},
         ]
     }
 
