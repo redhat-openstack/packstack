@@ -18,6 +18,10 @@ class packstack::glance ()
       default => '0.0.0.0',
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
+    $default_store = hiera('CONFIG_GLANCE_BACKEND') ? {
+      'swift' => 'swift',
+      default => 'file',
+    }
 
     class { '::glance::api::authtoken':
       auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
@@ -33,7 +37,8 @@ class packstack::glance ()
       debug               => hiera('CONFIG_DEBUG_MODE'),
       os_region_name      => hiera('CONFIG_KEYSTONE_REGION'),
       workers             => hiera('CONFIG_SERVICE_WORKERS'),
-      known_stores        => ['file', 'http', 'swift']
+      stores              => ['file', 'http', 'swift'],
+      default_store       => $default_store,
     }
 
     class { '::glance::registry::authtoken':

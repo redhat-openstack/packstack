@@ -7,8 +7,6 @@ class packstack::nova::sched ()
                                     'ComputeCapabilitiesFilter', 'ImagePropertiesFilter',
                                     'ServerGroupAntiAffinityFilter',
                                     'ServerGroupAffinityFilter', 'CoreFilter'],
-      cpu_allocation_ratio      => hiera('CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO'),
-      ram_allocation_ratio      => hiera('CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO'),
     }
 
     class { '::nova::scheduler':
