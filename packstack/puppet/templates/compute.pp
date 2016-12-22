@@ -56,19 +56,6 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
      hiera ('CONFIG_NEUTRON_L2_AGENT') == 'openvswitch' {
     include '::packstack::neutron::sriov'
   }
-} else {
-  include '::packstack::nova::network::libvirt'
-
-  $multihost = hiera('CONFIG_NOVA_NETWORK_MULTIHOST')
-  $network_hosts =  split(hiera('CONFIG_NETWORK_HOSTS'),',')
-  if $multihost {
-    if ! member($network_hosts, choose_my_ip(hiera('HOST_LIST'))) {
-      include '::packstack::nova::metadata'
-    }
-  }
-  if ! member($network_hosts, choose_my_ip(hiera('HOST_LIST'))) {
-    include '::packstack::nova::compute::flat'
-  }
 }
 
 if hiera('CONFIG_NAGIOS_INSTALL') == 'y' {

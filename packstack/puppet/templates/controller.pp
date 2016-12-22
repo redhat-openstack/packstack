@@ -82,8 +82,6 @@ if hiera('CONFIG_NOVA_INSTALL') == 'y' {
   include '::packstack::nova::vncproxy'
   if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
     include '::packstack::nova::neutron'
-  } else {
-    include '::packstack::nova::network'
   }
 }
 
