@@ -100,6 +100,17 @@ class packstack::mariadb::services ()
           host          => '%',
           allowed_hosts => '%',
           charset       => 'utf8',
+          setup_cell0   => true,
+        }
+        class { '::nova::db::sync_cell_v2':
+          transport_url => os_transport_url({
+            'transport' => 'rabbit',
+            'hosts'     => [hiera('CONFIG_AMQP_HOST_URL')],
+            'port'      => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+            'username'  => hiera('CONFIG_AMQP_AUTH_USER'),
+            'password'  => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+            'ssl'       => sprintf('%s', hiera('CONFIG_AMQP_SSL_ENABLED')),
+          })
         }
     }
 

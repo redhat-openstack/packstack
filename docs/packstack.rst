@@ -864,9 +864,6 @@ Neutron ML2 plugin config
 **CONFIG_NEUTRON_ML2_VNI_RANGES**
     Comma-separated list of <vni_min>:<vni_max> tuples enumerating ranges of VXLAN VNI IDs that are available for tenant network allocation. Minimum value is 0 and maximum value is 16777215.
 
-**CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED**
-    Specify 'y' if the sriov agent is required
-
 **CONFIG_NEUTRON_ML2_SRIOV_INTERFACE_MAPPINGS**
     Comma-separated list of interface mappings for the OpenStack Networking ML2 SRIOV agent. Each tuple in the list must be in the format <physical_network>:<net_interface>. Example: physnet1:eth1,physnet2:eth2,physnet3:eth3.
 

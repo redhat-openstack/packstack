@@ -375,18 +375,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "os-neutron-ml2-sriov-agent-required",
-             "CONF_NAME": "CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED",
-             "PROMPT": ("Set to y if the sriov agent is required"),
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "os-neutron-ml2-sriov-interface-mappings",
              "PROMPT": ("Enter a comma separated list of interface mappings "
                         "for the Neutron ML2 sriov agent"),
@@ -494,11 +482,6 @@ def initSequences(controller):
     if config['CONFIG_NOVA_INSTALL'] == 'y':
         compute_hosts = split_hosts(config['CONFIG_COMPUTE_HOSTS'])
     q_hosts = api_hosts | network_hosts | compute_hosts
-
-    if config['CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED'] == 'y':
-        config['CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED'] = True
-    else:
-        config['CONFIG_NEUTRON_ML2_SRIOV_AGENT_REQUIRED'] = False
 
     neutron_steps = [
         {'title': 'Preparing Neutron LBaaS Agent entries',
