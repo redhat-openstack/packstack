@@ -7,6 +7,11 @@ class packstack::heat::rabbitmq ()
     $kombu_ssl_keyfile = hiera('CONFIG_HEAT_SSL_KEY', $::os_service_default)
     $kombu_ssl_certfile = hiera('CONFIG_HEAT_SSL_CERT', $::os_service_default)
 
+    $rabbit_host = hiera('CONFIG_AMQP_HOST_URL')
+    $rabbit_port = hiera('CONFIG_AMQP_CLIENTS_PORT')
+    $rabbit_userid = hiera('CONFIG_AMQP_AUTH_USER')
+    $rabbit_password = hiera('CONFIG_AMQP_AUTH_PASSWORD')
+
     if ! is_service_default($kombu_ssl_keyfile) {
       $files_to_set_owner = [ $kombu_ssl_keyfile, $kombu_ssl_certfile ]
       file { $files_to_set_owner:
@@ -32,11 +37,8 @@ class packstack::heat::rabbitmq ()
     class { '::heat':
       keystone_ec2_uri    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       rpc_backend         => 'rabbit',
-      rabbit_host         => hiera('CONFIG_AMQP_HOST_URL'),
-      rabbit_port         => hiera('CONFIG_AMQP_CLIENTS_PORT'),
       rabbit_use_ssl      => hiera('CONFIG_AMQP_SSL_ENABLED'),
-      rabbit_userid       => hiera('CONFIG_AMQP_AUTH_USER'),
-      rabbit_password     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+      default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       debug               => hiera('CONFIG_DEBUG_MODE'),
       database_connection => "mysql+pymysql://heat:${heat_rabbitmq_cfg_heat_db_pw}@${heat_rabbitmq_cfg_mariadb_host}/heat",
       kombu_ssl_ca_certs  => $kombu_ssl_ca_certs,

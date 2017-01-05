@@ -3,6 +3,11 @@ class packstack::nova ()
     $nova_db_pw = hiera('CONFIG_NOVA_DB_PW')
     $nova_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
 
+    $rabbit_host = hiera('CONFIG_AMQP_HOST_URL')
+    $rabbit_port = hiera('CONFIG_AMQP_CLIENTS_PORT')
+    $rabbit_userid = hiera('CONFIG_AMQP_AUTH_USER')
+    $rabbit_password = hiera('CONFIG_AMQP_AUTH_PASSWORD')
+
     $private_key = {
       'type' => hiera('NOVA_MIGRATION_KEY_TYPE'),
       key  => hiera('NOVA_MIGRATION_KEY_SECRET'),
@@ -38,11 +43,8 @@ class packstack::nova ()
 
     class { '::nova':
       glance_api_servers      => "${nova_common_rabbitmq_cfg_storage_host}:9292",
-      rabbit_host             => hiera('CONFIG_AMQP_HOST_URL'),
-      rabbit_port             => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+      default_transport_url   => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       rabbit_use_ssl          => hiera('CONFIG_AMQP_SSL_ENABLED'),
-      rabbit_userid           => hiera('CONFIG_AMQP_AUTH_USER'),
-      rabbit_password         => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
       debug                   => hiera('CONFIG_DEBUG_MODE'),
       nova_public_key         => $public_key,
       nova_private_key        => $private_key,
