@@ -1,6 +1,8 @@
 class packstack::apache ()
 {
-    include ::apache
+    class {'::apache':
+      purge_configs => false,
+    }
 
     if hiera('CONFIG_HORIZON_SSL')  == 'y' {
       ensure_packages(['mod_ssl'], {'ensure' => 'present'})
