@@ -32,8 +32,8 @@ if hiera('CONFIG_VMWARE_BACKEND') == 'y' {
   include '::packstack::nova::compute::libvirt'
 }
 
-if hiera('CONFIG_VMWARE_BACKEND') == 'y' and
-   hiera('CONFIG_CINDER_INSTALL') == 'y' {
+if hiera('CONFIG_CINDER_INSTALL') == 'y' and
+   hiera('CONFIG_VMWARE_BACKEND') != 'y' {
    if 'gluster' in hiera_array('CONFIG_CINDER_BACKEND') {
     include '::packstack::nova::gluster'
    }
