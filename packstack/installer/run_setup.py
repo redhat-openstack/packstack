@@ -748,15 +748,6 @@ def single_step_aio_install(options, logFile):
 
     options.install_hosts = utils.get_localhost_ip()
 
-    # Also allow the command line to set values for any of these options
-    # by testing if they have been set before we set them here
-    if not options.novanetwork_pubif:
-        options.novanetwork_pubif = utils.device_from_ip(options.install_hosts)
-    if not options.novacompute_privif:
-        options.novacompute_privif = ''
-    if not options.novanetwork_privif:
-        options.novanetwork_privif = ''
-
     single_step_install(options, logFile)
 
 

@@ -26,7 +26,6 @@ from packstack.installer import processors
 from packstack.installer import utils
 from packstack.installer import validators
 
-from packstack.modules import common
 from packstack.modules.common import filtered_hosts
 from packstack.modules.documentation import update_params_usage
 from packstack.modules.ospluginutils import deliver_ssl_file
@@ -226,167 +225,14 @@ def initConfig(controller):
              "NEED_CONFIRM": True,
              "CONDITION": False},
         ],
-
-        "NOVA_NETWORK": [
-            {"CMD_OPTION": "novacompute-privif",
-             "PROMPT": ("Enter the Private interface for Flat DHCP on the Nova"
-                        " compute servers"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [],
-             "DEFAULT_VALUE": '',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_COMPUTE_PRIVIF",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-manager",
-             "PROMPT": "Enter the Nova network manager",
-             "OPTION_LIST": [r'^nova\.network\.manager\.\w+Manager$'],
-             "VALIDATORS": [validators.validate_regexp],
-             "DEFAULT_VALUE": "nova.network.manager.FlatDHCPManager",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_MANAGER",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-pubif",
-             "PROMPT": "Enter the Public interface on the Nova network server",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": primary_netif,
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_PUBIF",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-privif",
-             "PROMPT": ("Enter the Private interface for network manager on "
-                        "the Nova network server"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [],
-             "DEFAULT_VALUE": '',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_PRIVIF",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-fixed-range",
-             "PROMPT": "Enter the IP Range for network manager",
-             "OPTION_LIST": ["^[\:\.\da-fA-f]+(\/\d+){0,1}$"],
-             "PROCESSORS": [processors.process_cidr],
-             "VALIDATORS": [validators.validate_regexp],
-             "DEFAULT_VALUE": "192.168.32.0/22",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_FIXEDRANGE",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-floating-range",
-             "PROMPT": "Enter the IP Range for Floating IP's",
-             "OPTION_LIST": ["^[\:\.\da-fA-f]+(\/\d+){0,1}$"],
-             "PROCESSORS": [processors.process_cidr],
-             "VALIDATORS": [validators.validate_regexp],
-             "DEFAULT_VALUE": "10.3.4.0/22",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_FLOATRANGE",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-auto-assign-floating-ip",
-             "PROMPT": ("Should new instances automatically have a floating "
-                        "IP assigned?"),
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
-
-        "NOVA_NETWORK_VLAN": [
-            {"CMD_OPTION": "novanetwork-vlan-start",
-             "PROMPT": "Enter first VLAN for private networks",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": 100,
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_VLAN_START",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-num-networks",
-             "PROMPT": "How many networks should be supported",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": 1,
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_NUMBER",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "novanetwork-network-size",
-             "PROMPT": "How many addresses should be in each private subnet",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": 255,
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_NETWORK_SIZE",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
     }
     update_params_usage(basedefs.PACKSTACK_DOC, nova_params)
-
-    def use_nova_network(config):
-        return (config['CONFIG_NOVA_INSTALL'] == 'y' and
-                config['CONFIG_NEUTRON_INSTALL'] != 'y')
-
-    def use_nova_network_vlan(config):
-        manager = 'nova.network.manager.VlanManager'
-        return (config['CONFIG_NOVA_INSTALL'] == 'y' and
-                config['CONFIG_NEUTRON_INSTALL'] != 'y' and
-                config['CONFIG_NOVA_NETWORK_MANAGER'] == manager)
 
     nova_groups = [
         {"GROUP_NAME": "NOVA",
          "DESCRIPTION": "Nova Options",
          "PRE_CONDITION": "CONFIG_NOVA_INSTALL",
          "PRE_CONDITION_MATCH": "y",
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
-        {"GROUP_NAME": "NOVA_NETWORK",
-         "DESCRIPTION": "Nova Network Options",
-         "PRE_CONDITION": use_nova_network,
-         "PRE_CONDITION_MATCH": True,
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
-        {"GROUP_NAME": "NOVA_NETWORK_VLAN",
-         "DESCRIPTION": "Nova Network VLAN Options",
-         "PRE_CONDITION": use_nova_network_vlan,
-         "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
     ]
@@ -403,9 +249,6 @@ def initSequences(controller):
         network_title = ('Preparing OpenStack Network-related '
                          'Nova entries')
         network_function = create_neutron_manifest
-    else:
-        network_title = 'Preparing Nova Network entries'
-        network_function = create_network_manifest
 
     novaapisteps = [
         {'title': 'Preparing Nova API entries',
@@ -428,70 +271,6 @@ def initSequences(controller):
 
     controller.addSequence("Installing OpenStack Nova API", [], [],
                            novaapisteps)
-
-
-# ------------------------- helper functions -------------------------
-
-def check_ifcfg(host, device):
-    """
-    Raises ScriptRuntimeError if given host does not have give device.
-    """
-    server = utils.ScriptRunner(host)
-    cmd = "ip addr show dev %s || ( echo Device %s does not exist && exit 1 )"
-    server.append(cmd % (device, device))
-    server.execute()
-
-
-def bring_up_ifcfg(host, device):
-    """
-    Brings given device up if it's down. Raises ScriptRuntimeError in case
-    of failure.
-    """
-    server = utils.ScriptRunner(host)
-    server.append('ip link show up | grep "%s"' % device)
-    try:
-        server.execute()
-    except exceptions.ScriptRuntimeError:
-        server.clear()
-        cmd = 'ip link set dev %s up'
-        server.append(cmd % device)
-        try:
-            server.execute()
-        except exceptions.ScriptRuntimeError:
-            msg = ('Failed to bring up network interface %s on host %s.'
-                   ' Interface should be up so OpenStack can work'
-                   ' properly.' % (device, host))
-            raise exceptions.ScriptRuntimeError(msg)
-
-
-def dummy_interface(host):
-    """Creates dummy interface on given hosts.
-
-    Returns interface name.
-    """
-    # Only single dummy interface will be created, hence the name is hardcoded
-    ifname = 'dummy'
-    script = (
-        'DEVICE={0}\n'
-        'BOOTPROTO=none\n'
-        'ONBOOT=yes\n'
-        'TYPE=Ethernet\n'
-        'NM_CONTROLLED=no\n'.format(ifname)
-    )
-    server = utils.ScriptRunner(host)
-    server.append(
-        'ip link show {ifname} || ('
-        'modprobe dummy && '
-        'ip link set name {ifname} dev dummy0 && '
-        'ip link set dev dummy address 06:66:DE:AF:66:60'
-        ')'.format(**locals())
-    )
-    server.append(
-        'cat > /etc/sysconfig/network-scripts/ifcfg-{ifname} '
-        '<<EOF\n{script}EOF'.format(**locals())
-    )
-    server.execute()
-    return ifname
 
 
 # ------------------------ Step Functions -------------------------
@@ -633,23 +412,6 @@ def create_compute_manifest(config, messages):
 
         config[cf_fw_qemu_mig_key] = fw_details
 
-        if config['CONFIG_NEUTRON_INSTALL'] != 'y':
-            key = 'CONFIG_NOVA_COMPUTE_PRIVIF'
-            if not config[key].strip():
-                config[key] = dummy_interface(host)
-            if config['CONFIG_USE_SUBNETS'] == 'y':
-                netface = common.cidr_to_ifname(
-                    config[key], host, config
-                )
-            else:
-                netface = config[key]
-            check_ifcfg(host, netface)
-            try:
-                bring_up_ifcfg(host, netface)
-            except exceptions.ScriptRuntimeError as ex:
-                # just warn user to do it by himself
-                messages.append(str(ex))
-
         if config['CONFIG_CEILOMETER_INSTALL'] == 'y':
             if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
                 ssl_cert_file = config['CONFIG_CEILOMETER_SSL_CERT'] = (
@@ -672,43 +434,6 @@ def create_compute_manifest(config, messages):
         fw_details[key]['ports'] = ['5900-5999']
         fw_details[key]['proto'] = "tcp"
         config['FIREWALL_NOVA_COMPUTE_RULES'] = fw_details
-
-
-def create_network_manifest(config, messages):
-    global compute_hosts, network_hosts
-    if config['CONFIG_NEUTRON_INSTALL'] == "y":
-        return
-
-    # set default values for VlanManager in case this values are not in config
-    for key, value in [('CONFIG_NOVA_NETWORK_VLAN_START', 100),
-                       ('CONFIG_NOVA_NETWORK_SIZE', 255),
-                       ('CONFIG_NOVA_NETWORK_NUMBER', 1)]:
-        config[key] = config.get(key, value)
-
-    api_host = config['CONFIG_CONTROLLER_HOST']
-    multihost = len(network_hosts) > 1
-    config['CONFIG_NOVA_NETWORK_MULTIHOST'] = multihost and 'true' or 'false'
-    for host in network_hosts:
-        for i in ('CONFIG_NOVA_NETWORK_PRIVIF', 'CONFIG_NOVA_NETWORK_PUBIF'):
-            if not config[i].strip():
-                config[i] = dummy_interface(host)
-            netface = config[i]
-            if config['CONFIG_USE_SUBNETS'] == 'y':
-                netface = common.cidr_to_ifname(netface, host, config)
-            check_ifcfg(host, netface)
-            try:
-                bring_up_ifcfg(host, netface)
-            except exceptions.ScriptRuntimeError as ex:
-                # just warn user to do it by himself
-                messages.append(str(ex))
-
-        key = 'CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP'
-        config[key] = config[key] == "y"
-
-        # We need to explicitly set the network size
-        routing_prefix = config['CONFIG_NOVA_NETWORK_FIXEDRANGE'].split('/')[1]
-        net_size = 2 ** (32 - int(routing_prefix))
-        config['CONFIG_NOVA_NETWORK_FIXEDSIZE'] = str(net_size)
 
 
 def create_sched_manifest(config, messages):
@@ -800,9 +525,6 @@ def create_common_manifest(config, messages):
 
 
 def create_neutron_manifest(config, messages):
-    if config['CONFIG_NEUTRON_INSTALL'] != "y":
-        return
-
     if config['CONFIG_IRONIC_INSTALL'] == 'y':
         virt_driver = 'nova.virt.firewall.NoopFirewallDriver'
         config['CONFIG_NOVA_LIBVIRT_VIF_DRIVER'] = virt_driver

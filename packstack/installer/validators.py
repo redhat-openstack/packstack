@@ -384,3 +384,15 @@ def validate_multi_export(param, options=None):
     """
     for export in param.split(","):
         validate_export(export)
+
+
+def validate_neutron(param, options=None):
+    """
+    Raises ParamValidationError if neutron is not enabled.
+    This is intended to make user aware nova-network has been removed
+    in ocata cycle.
+    """
+    validate_options(param, options=options)
+    if param != 'y':
+        msg = ('Nova network support has been removed in Ocata. Neutron service must be enabled')
+        raise ParamValidationError(msg)

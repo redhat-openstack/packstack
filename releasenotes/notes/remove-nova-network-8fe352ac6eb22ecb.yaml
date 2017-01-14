@@ -1,0 +1,18 @@
+---
+deprecations:
+  - |
+    Service nova-network has been removed in nova project
+    in Ocata. Packstack has removed support to deploying
+    this service, what implies some changes:
+
+      * CONFIG_NEUTRON_INSTALL must allways be set to y
+      * CONFIG_NOVA_COMPUTE_PRIVIF option has been removed.
+      * CONFIG_NOVA_NETWORK_MANAGER option has been removed.
+      * CONFIG_NOVA_NETWORK_PUBIF option has been removed.
+      * CONFIG_NOVA_NETWORK_PRIVIF option has been removed.
+      * CONFIG_NOVA_NETWORK_FIXEDRANGE option has been removed.
+      * CONFIG_NOVA_NETWORK_FLOATRANGE option has been removed.
+      * CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP option has been removed.
+      * CONFIG_NOVA_NETWORK_VLAN_START  option has been removed.
+      * CONFIG_NOVA_NETWORK_NUMBER option has been removed.
+      * CONFIG_NOVA_NETWORK_SIZE option has been removed.

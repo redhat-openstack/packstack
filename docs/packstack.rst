@@ -51,7 +51,7 @@ Global Options
     Specify 'y' to install OpenStack Compute (nova). ['y', 'n']
 
 **CONFIG_NEUTRON_INSTALL**
-    Specify 'y' to install OpenStack Networking (neutron); otherwise, Compute Networking (nova) will be used. ['y', 'n']
+    Specify 'y' to install OpenStack Networking (neutron) ['y']
 
 **CONFIG_HORIZON_INSTALL**
     Specify 'y' to install OpenStack Dashboard (horizon). ['y', 'n']
@@ -117,7 +117,7 @@ Global Options
     Specify 'y' if you want to use unsupported parameters. This should be used only if you know what you are doing. Issues caused by using unsupported options will not be fixed before the next major release. ['y', 'n']
 
 **CONFIG_USE_SUBNETS**
-    Specify 'y' if you want to use subnet addresses (in CIDR format) instead of interface names in following options: CONFIG_NOVA_COMPUTE_PRIVIF, CONFIG_NOVA_NETWORK_PRIVIF, CONFIG_NOVA_NETWORK_PUBIF, CONFIG_NEUTRON_OVS_BRIDGE_IFACES, CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS, CONFIG_NEUTRON_OVS_TUNNEL_IF. This is useful for cases when interface names are not same on all installation hosts.
+    Specify 'y' if you want to use subnet addresses (in CIDR format) instead of interface names in following options: CONFIG_NEUTRON_OVS_BRIDGE_IFACES, CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS, CONFIG_NEUTRON_OVS_TUNNEL_IF. This is useful for cases when interface names are not same on all installation hosts.
 
 SSL setup
 ---------
@@ -773,42 +773,6 @@ Nova Options
 
 **CONFIG_VNC_SSL_KEY**
     SSL keyfile corresponding to the certificate if one was entered. If CONFIG_HORIZON_SSL is set to 'n' this parameter is ignored.
-
-Nova Network Options
---------------------
-
-**CONFIG_NOVA_COMPUTE_PRIVIF**
-    Private interface for flat DHCP on the Compute servers.
-
-**CONFIG_NOVA_NETWORK_MANAGER**
-    Compute Network Manager. ['^nova\\.network\\.manager\\.\\w+Manager$']
-
-**CONFIG_NOVA_NETWORK_PUBIF**
-    Public interface on the Compute network server.
-
-**CONFIG_NOVA_NETWORK_PRIVIF**
-    Private interface for flat DHCP on the Compute network server.
-
-**CONFIG_NOVA_NETWORK_FIXEDRANGE**
-    IP Range for flat DHCP. ['^[\\:\\.\\da-fA-f]+(\\/\\d+){0,1}$']
-
-**CONFIG_NOVA_NETWORK_FLOATRANGE**
-    IP Range for floating IP addresses. ['^[\\:\\.\\da-fA-f]+(\\/\\d+){0,1}$']
-
-**CONFIG_NOVA_NETWORK_AUTOASSIGNFLOATINGIP**
-    Specify 'y' to automatically assign a floating IP to new instances. ['y', 'n']
-
-Nova Network VLAN Options
--------------------------
-
-**CONFIG_NOVA_NETWORK_VLAN_START**
-    First VLAN for private networks (Compute networking).
-
-**CONFIG_NOVA_NETWORK_NUMBER**
-    Number of networks to support (Compute networking).
-
-**CONFIG_NOVA_NETWORK_SIZE**
-    Number of addresses in each private subnet (Compute networking).
 
 Neutron config
 --------------

@@ -166,7 +166,7 @@ def initConfig(controller):
                  "Should Packstack install OpenStack Networking (Neutron)"
              ),
              "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
+             "VALIDATORS": [validators.validate_neutron],
              "DEFAULT_VALUE": "y",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
