@@ -100,18 +100,20 @@ class packstack::mariadb::services ()
           host          => '%',
           allowed_hosts => '%',
           charset       => 'utf8',
-          setup_cell0   => true,
+          #TODO(apevec): enable it again when it's fixed upstream in nova
+          # https://bugs.launchpad.net/nova/+bug/1656276
+          setup_cell0   => false,
         }
-        class { '::nova::db::sync_cell_v2':
-          transport_url => os_transport_url({
-            'transport' => 'rabbit',
-            'hosts'     => [hiera('CONFIG_AMQP_HOST_URL')],
-            'port'      => hiera('CONFIG_AMQP_CLIENTS_PORT'),
-            'username'  => hiera('CONFIG_AMQP_AUTH_USER'),
-            'password'  => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
-            'ssl'       => sprintf('%s', hiera('CONFIG_AMQP_SSL_ENABLED')),
-          })
-        }
+        #class { '::nova::db::sync_cell_v2':
+        #  transport_url => os_transport_url({
+        #    'transport' => 'rabbit',
+        #    'hosts'     => [hiera('CONFIG_AMQP_HOST_URL')],
+        #    'port'      => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+        #    'username'  => hiera('CONFIG_AMQP_AUTH_USER'),
+        #    'password'  => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
+        #    'ssl'       => sprintf('%s', hiera('CONFIG_AMQP_SSL_ENABLED')),
+        #  })
+        #}
     }
 
     if hiera('CONFIG_PANKO_INSTALL') == 'y' and
