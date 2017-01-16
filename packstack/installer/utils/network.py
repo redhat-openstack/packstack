@@ -12,50 +12,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import netifaces
+import socket
+import logging
+from ..exceptions import NetworkError
+from .shell import ScriptRunner
+
 netaddr_available = True
 try:
     import netaddr
 except ImportError:
     netaddr_available = False
 
-import re
-import socket
-import logging
-from ..exceptions import NetworkError
-from .shell import execute
-from .shell import ScriptRunner
-
 
 def get_localhost_ip():
     """
     Returns IP address of localhost.
     """
-    # TO-DO: Will probably need to find better way to find out localhost
-    #        address.
-
-    # find nameservers
-    ns_regex = re.compile('nameserver\s*(?P<ns_ip>[\d\.\:]+)')
-    rc, resolv = execute('cat /etc/resolv.conf | grep nameserver',
-                         can_fail=False, use_shell=True, log=False)
-    nsrvs = []
-    for line in resolv.split('\n'):
-        match = ns_regex.match(line.strip())
-        if match:
-            nsrvs.append(match.group('ns_ip'))
-
-    # try to connect to nameservers and return own IP address
-    nsrvs.append('8.8.8.8')  # default to google dns
-    for i in nsrvs:
+    # Try to get the IPv4 or IPv6 default gateway, then open a socket
+    # to discover our local IP
+    gw = None
+    for protocol in (socket.AF_INET, socket.AF_INET6):
         try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.connect((i, 0))
-            loc_ip = s.getsockname()[0]
-        except socket.error:
+            gw = netifaces.gateways()['default'][protocol][0]
+            if protocol == socket.AF_INET6:
+                gw = gw + '%' + netifaces.gateways()['default'][protocol][1]
+            discovered_protocol = protocol
+            break
+        except KeyError:    # No default gw for this protocol
             continue
-        else:
-            return loc_ip
-    raise NetworkError('Local IP address discovery failed. Please set '
-                       'nameserver correctly.')
+    else:
+        raise NetworkError('Local IP address discovery failed. Please set '
+                           'a default gateway for your system.')
+
+    address = socket.getaddrinfo(gw, 0, discovered_protocol,
+                                 socket.SOCK_DGRAM)[0]
+    s = socket.socket(discovered_protocol, socket.SOCK_DGRAM)
+    s.connect(address[4])
+    # Remove chars after %. Does nothing on IPv4, removes scope id in IPv6
+    loc_ip = s.getsockname()[0].split('%')[0]
+
+    return loc_ip
 
 
 _host_cache = {}
