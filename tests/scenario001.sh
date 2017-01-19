@@ -26,6 +26,7 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-swift-install=n \
           --os-manila-install=y \
           --os-horizon-ssl=y \
+          --nagios-install=y \
           --amqp-enable-ssl=y \
           --glance-backend=file \
           --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.4-x86_64-vmlinuz" \

@@ -1,0 +1,7 @@
+---
+upgrade:
+  - |
+    Default value for configuration option CONFIG_NAGIOS_INSTALL has been
+    changed to 'n' in Ocata. Users that require nagios installation in their
+    packstack deployent will need to explicitely modify it to 'y' using
+    answers file or command line option '--nagios-install'.
