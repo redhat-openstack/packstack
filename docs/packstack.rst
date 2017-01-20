@@ -1016,6 +1016,30 @@ Provisioning tempest config
 **CONFIG_PROVISION_TEMPEST_FLOATRANGE**
     CIDR network address for the floating IP subnet.
 
+**CONFIG_PROVISION_TEMPEST_FLAVOR_NAME**
+    Primary flavor name to use in Tempest.
+
+**CONFIG_PROVISION_TEMPEST_FLAVOR_DISK**
+    Primary flavor's disk quota in Gb.
+
+**CONFIG_PROVISION_TEMPEST_FLAVOR_RAM**
+    Primary flavor's ram in Mb.
+
+**CONFIG_PROVISION_TEMPEST_FLAVOR_VCPUS**
+    Primary flavor's vcpus number.
+
+**CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_NAME**
+    Alternative flavor name to use in Tempest.
+
+**CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_DISK**
+    Alternative flavor's disk quota in Gb.
+
+**CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_RAM**
+    Alternative flavor's ram in Mb.
+
+**CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_VCPUS**
+    Alternative flavor's vcpus number.
+
 **CONFIG_RUN_TEMPEST**
     Specify 'y' to run Tempest smoke test as last step of installation.
 

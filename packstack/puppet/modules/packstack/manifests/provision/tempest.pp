@@ -53,24 +53,32 @@ class packstack::provision::tempest ()
     $tempest_user          = hiera('CONFIG_PROVISION_TEMPEST_USER')
     $tempest_password      = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
 
-    # Nano and Micro flavors are used, otherwise flavors used by default too much resources for nothing
-    $tempest_flavor_ref     = "42"
-    $tempest_flavor_ref_alt = "84"
+    $tempest_flavor_name = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_NAME')
+    $tempest_flavor_ref  = "42"
+    $tempest_flavor_ram  = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_RAM')
+    $tempest_flavor_disk = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_DISK')
+    $tempest_flavor_vcpus= hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_VCPUS')
 
-    nova_flavor { 'm1.nano':
+    $tempest_flavor_alt_name = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_NAME')
+    $tempest_flavor_alt_ref  = "84"
+    $tempest_flavor_alt_ram  = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_RAM')
+    $tempest_flavor_alt_disk = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_DISK')
+    $tempest_flavor_alt_vcpus= hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_VCPUS')
+
+    nova_flavor { $tempest_flavor_name :
       ensure => present,
       id     => $tempest_flavor_ref,
-      ram    => '128',
-      disk   => '0',
-      vcpus  => '1',
+      ram    => $tempest_flavor_ram,
+      disk   => $tempest_flavor_disk,
+      vcpus  => $tempest_flavor_vcpus,
       require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
     }
-    nova_flavor { 'm1.micro':
+    nova_flavor { $tempest_flavor_alt_name :
       ensure => present,
-      id     => $tempest_flavor_ref_alt,
-      ram    => '128',
-      disk   => '0',
-      vcpus  => '1',
+      id     => $tempest_flavor_alt_ref,
+      ram    => $tempest_flavor_alt_ram,
+      disk   => $tempest_flavor_alt_disk,
+      vcpus  => $tempest_flavor_alt_vcpus,
       require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
     }
 
@@ -122,7 +130,7 @@ class packstack::provision::tempest ()
       configure_networks        => $configure_networks,
       debug                     => $debug,
       flavor_ref                => $tempest_flavor_ref,
-      flavor_ref_alt            => $tempest_flavor_ref_alt,
+      flavor_ref_alt            => $tempest_flavor_alt_ref,
       glance_available          => $glance_available,
       heat_available            => $heat_available,
       horizon_available         => $horizon_available,

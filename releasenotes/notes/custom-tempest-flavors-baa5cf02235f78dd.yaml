@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Added new set of variables CONFIG_PROVISION_TEMPEST_FLAVOR_*,
+    enabling the customization of created flavors.
