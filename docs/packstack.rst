@@ -856,6 +856,9 @@ Neutron OVS agent config
 **CONFIG_NEUTRON_OVS_BRIDGES_COMPUTE**
     Comma-separated list of Open vSwitch bridges that must be created and connected to interfaces in compute nodes when flat or vlan type drivers are enabled. These bridges must exist in CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS and CONFIG_NEUTRON_OVS_BRIDGE_IFACES. Example: --os-neutron-ovs-bridges-compute=br-vlan --os-neutron-ovs-bridge-mappings="extnet:br-ex,physnet1:br-vlan" --os-neutron-ovs-bridge-interfaces="br-ex:eth1,br-vlan:eth2"
 
+**CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET**
+    Name of physical network used for external network when enabling CONFIG_PROVISION_DEMO. Name must be one of the included in CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS. Example: --os-neutron-ovs-bridge-mappings="extnet:br-ex,physnet1:br-vlan" --os-neutron-ovs-bridge-interfaces="br-ex:eth1,br-vlan:eth2" --os-neutron-ovs-external-physnet="extnet"
+
 Neutron OVS agent config for tunnels
 ------------------------------------
 

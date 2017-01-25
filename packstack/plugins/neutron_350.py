@@ -160,7 +160,7 @@ def initConfig(controller):
                         "the Neutron openvswitch plugin"),
              "OPTION_LIST": [],
              "VALIDATORS": [],
-             "DEFAULT_VALUE": "",
+             "DEFAULT_VALUE": "extnet:br-ex",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS",
@@ -196,6 +196,18 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "os-neutron-ovs-external-physnet",
+             "PROMPT": ("Enter the name of the physical external network as"
+                        "defined in bridge mappings"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "extnet",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "NEUTRON_OVS_AGENT_TUNNEL": [
@@ -247,7 +259,7 @@ def initConfig(controller):
                         "entrypoints"),
              "OPTION_LIST": ["local", "flat", "vlan", "gre", "vxlan"],
              "VALIDATORS": [validators.validate_multi_options],
-             "DEFAULT_VALUE": "vxlan",
+             "DEFAULT_VALUE": "vxlan,flat",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,

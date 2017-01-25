@@ -1,0 +1,12 @@
+---
+features:
+  - In previous releases neutron L3 agent was configured
+    statically to manage only br-ex as provider network.
+    This way of configuring neutron is being deprecated in neutron
+    and it's recomended to move to a new mode where a
+    single L3 agent is able to manage multiple provider
+    networks. To implement it, a new parameter
+    CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET has been introduced.
+    Default configuration has been modified to preserve the
+    same behavior, creating a public network attached to
+    br-ex bridge.

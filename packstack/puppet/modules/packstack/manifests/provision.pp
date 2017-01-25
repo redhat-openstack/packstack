@@ -57,13 +57,16 @@ class packstack::provision ()
         $private_subnet_name  = 'private_subnet'
         $fixed_range          = '10.0.0.0/24'
         $router_name          = 'router1'
+        $public_physnet       = hiera('CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET')
 
         $neutron_deps = [Neutron_network[$public_network_name]]
 
         neutron_network { $public_network_name:
-          ensure          => present,
-          router_external => true,
-          tenant_name     => $admin_tenant_name,
+          ensure                    => present,
+          router_external           => true,
+          tenant_name               => $admin_tenant_name,
+          provider_network_type     => 'flat',
+          provider_physical_network => $public_physnet,
         }
         neutron_subnet { $public_subnet_name:
           ensure       => 'present',
