@@ -52,6 +52,8 @@ class packstack::nova::api ()
       }
     }
 
+    include ::nova::cell_v2::simple_setup
+
     $manage_flavors = str2bool(hiera('CONFIG_NOVA_MANAGE_FLAVORS'))
     if $manage_flavors {
       Class['::nova::api'] -> Nova_flavor<||>
