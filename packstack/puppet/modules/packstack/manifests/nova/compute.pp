@@ -59,6 +59,16 @@ class packstack::nova::compute ()
       instance_usage_audit_period   => $instance_usage_audit_period,
     }
 
+    class { '::nova::placement':
+      auth_url       => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      password       => hiera('CONFIG_NOVA_KS_PW'),
+      os_region_name => hiera('CONFIG_KEYSTONE_REGION'),
+    }
+
+    include ::nova::cell_v2::discover_hosts
+
+    Class['nova::compute'] ~> Class['nova::cell_v2::discover_hosts']
+
     # Tune the host with a virtual hosts profile
     ensure_packages(['tuned'], {'ensure' => 'present'})
 

@@ -1,0 +1,4 @@
+---
+features:
+  - Packstack now installs and configures the Nova Placement API which is
+    required from Ocata onwards.

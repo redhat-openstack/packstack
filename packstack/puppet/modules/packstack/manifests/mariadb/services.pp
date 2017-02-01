@@ -101,6 +101,12 @@ class packstack::mariadb::services ()
           allowed_hosts => '%',
           charset       => 'utf8',
         }
+        class { '::nova::db::mysql_placement':
+          password      => hiera('CONFIG_NOVA_DB_PW'),
+          host          => '%',
+          allowed_hosts => '%',
+          charset       => 'utf8',
+        }
     }
 
     if hiera('CONFIG_PANKO_INSTALL') == 'y' and
