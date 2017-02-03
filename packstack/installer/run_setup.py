@@ -389,6 +389,9 @@ def _loadParamFromFile(config, section, param_name):
 
     # Keep param value in our never ending global conf
     controller.CONF[param.CONF_NAME] = value
+    # Add message to controller.MESSAGES if defined in parameter
+    if param.MESSAGE:
+        _handleParamMessage(param, value)
 
     return value
 
@@ -621,6 +624,21 @@ def _summaryParamsToLog():
                 if param.CONF_NAME in controller.CONF:
                     maskedValue = mask(controller.CONF[param.CONF_NAME])
                     logging.debug("%s: %s" % (param.CMD_OPTION, maskedValue))
+
+
+def _handleParamMessage(param, value):
+    """
+    add message to the information displayed at the end of the execution
+    for parameters with MESSAGE option. if parameter has MESSAGE_VALUES
+    option, message will be only displayed if the provided value is in
+    MESSAGE_VALUES.
+    """
+    message_values = param.MESSAGE_VALUES if param.MESSAGE_VALUES is not None else None
+    if not message_values or value in message_values:
+        message = utils.color_text('Parameter %s: %s'
+                                   % (param.CONF_NAME, param.MESSAGE), 'red')
+        if message not in controller.MESSAGES:
+            controller.MESSAGES.append(message)
 
 
 def runSequences():
