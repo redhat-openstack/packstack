@@ -369,7 +369,9 @@ def initConfig(controller):
              "CONF_NAME": "CONFIG_NAGIOS_INSTALL",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "MESSAGE": "Nagios installation option is deprecated and will be removed from packstack in Pike.",
+             "MESSAGE_VALUES": ["y"]},
 
             {"CMD_OPTION": "exclude-servers",
              "PROMPT": (
