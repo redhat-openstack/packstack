@@ -988,12 +988,6 @@ Provisioning tempest config
 **CONFIG_PROVISION_TEMPEST_FLOATRANGE**
     CIDR network address for the floating IP subnet.
 
-**CONFIG_PROVISION_TEMPEST_REPO_URI**
-    URI of the Integration Test Suite git repository.
-
-**CONFIG_PROVISION_TEMPEST_REPO_REVISION**
-    Revision (branch) of the Integration Test Suite git repository.
-
 **CONFIG_RUN_TEMPEST**
     Specify 'y' to run Tempest smoke test as last step of installation.
 

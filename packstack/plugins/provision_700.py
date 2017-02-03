@@ -253,31 +253,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "provision-tempest-repo-uri",
-             "PROMPT": "What is the uri of the Tempest git repository?",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": "https://github.com/openstack/tempest.git",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_REPO_URI",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "provision-tempest-repo-revision",
-             "PROMPT": ("What revision, branch, or tag of the Tempest git "
-                        "repository should be used"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": "master",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_TEMPEST_REPO_REVISION",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "run-tempest",
              "PROMPT": ("Do you wish to run tempest?"),
              "OPTION_LIST": ["y", "n"],
@@ -367,10 +342,7 @@ def initConfig(controller):
     # provision.pp needs them all. So we will initialize them with default
     # values
     params = [
-        controller.getParamByName(x)
-        for x in ['CONFIG_PROVISION_TEMPEST_REPO_URI',
-                  'CONFIG_PROVISION_TEMPEST_REPO_REVISION',
-                  'CONFIG_PROVISION_OVS_BRIDGE']
+        controller.getParamByName('CONFIG_PROVISION_OVS_BRIDGE')
     ]
     for param in params:
         value = controller.CONF.get(param.CONF_NAME, param.DEFAULT_VALUE)

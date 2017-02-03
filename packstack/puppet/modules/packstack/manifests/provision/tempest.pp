@@ -49,10 +49,7 @@ class packstack::provision::tempest ()
     $public_router_id          = undef
 
     # Tempest
-    $tempest_repo_uri      = hiera('CONFIG_PROVISION_TEMPEST_REPO_URI')
-    $tempest_repo_revision = hiera('CONFIG_PROVISION_TEMPEST_REPO_REVISION')
-    $tempest_clone_path    = '/var/lib/tempest'
-    $tempest_clone_owner   = 'root'
+    $tempest_workspace    = '/var/lib/tempest'
     $tempest_user          = hiera('CONFIG_PROVISION_TEMPEST_USER')
     $tempest_password      = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
 
@@ -125,10 +122,8 @@ class packstack::provision::tempest ()
       resize_available          => $resize_available,
       sahara_available          => $sahara_available,
       swift_available           => $swift_available,
-      tempest_clone_owner       => $tempest_clone_owner,
-      tempest_clone_path        => $tempest_clone_path,
-      tempest_repo_revision     => $tempest_repo_revision,
-      tempest_repo_uri          => $tempest_repo_uri,
+      tempest_workspace         => $tempest_workspace,
+      install_from_source       => false,
       tenant_name               => $tenant_name,
       trove_available           => $trove_available,
       username                  => $username,
@@ -137,6 +132,6 @@ class packstack::provision::tempest ()
 
     tempest_config { 'object-storage/operator_role':
       value => 'SwiftOperator',
-      path  => "${tempest_clone_path}/etc/tempest.conf",
+      path  => "${tempest_workspace}/etc/tempest.conf",
     }
 }

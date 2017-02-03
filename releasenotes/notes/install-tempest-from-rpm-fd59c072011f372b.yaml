@@ -1,0 +1,5 @@
+---
+features:
+  - Install tempest from rpm.
+deprecations:
+  - CONFIG_PROVISION_TEMPEST_REPO_URI and CONFIG_PROVISION_TEMPEST_REPO_REVISION options are removed.

@@ -56,7 +56,7 @@ def run_tempest(config, messages):
     print("Running Tempest on %s" % config['CONFIG_TEMPEST_HOST'])
     server = utils.ScriptRunner(config['CONFIG_TEMPEST_HOST'])
     server.append('pushd /var/lib/tempest')
-    server.append('tox -eall \'(%s)\' -- --concurrency=2  > %s'
+    server.append('tempest run --regex \'(%s)\' --concurrency 2  > %s'
                   % (config['CONFIG_RUN_TEMPEST_TESTS'].replace(' ', '|'),
                      logfile))
     server.append('popd')
