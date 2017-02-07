@@ -328,7 +328,7 @@ def create_api_manifest(config, messages):
     fw_details[key]['host'] = "ALL"
     fw_details[key]['service_name'] = "nova api"
     fw_details[key]['chain'] = "INPUT"
-    fw_details[key]['ports'] = ['8773', '8774', '8775']
+    fw_details[key]['ports'] = ['8773', '8774', '8775', '8778']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_NOVA_API_RULES'] = fw_details
 

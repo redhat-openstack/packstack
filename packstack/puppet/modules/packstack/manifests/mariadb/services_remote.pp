@@ -368,6 +368,80 @@ class packstack::mariadb::services_remote () {
           provider    => 'mysql',
           require     => Remote_database_user['nova@%'],
         }
+
+        remote_database { 'nova_api':
+          ensure      => 'present',
+          charset     => 'utf8',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+        }
+
+        remote_database_user { 'nova_api@%':
+          password_hash => mysql_password($mariadb_nova_noinstall_db_pw),
+          db_host       => hiera('CONFIG_MARIADB_HOST'),
+          db_user       => hiera('CONFIG_MARIADB_USER'),
+          db_password   => hiera('CONFIG_MARIADB_PW'),
+          provider      => 'mysql',
+          require       => Remote_database['nova_api'],
+        }
+
+        remote_database_grant { 'nova_api@%/nova_api':
+          privileges  => 'all',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+          require     => Remote_database_user['nova_api@%'],
+        }
+
+        remote_database { 'nova_placement':
+          ensure      => 'present',
+          charset     => 'utf8',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+        }
+
+        remote_database_user { 'nova_placement@%':
+          password_hash => mysql_password($mariadb_nova_noinstall_db_pw),
+          db_host       => hiera('CONFIG_MARIADB_HOST'),
+          db_user       => hiera('CONFIG_MARIADB_USER'),
+          db_password   => hiera('CONFIG_MARIADB_PW'),
+          provider      => 'mysql',
+          require       => Remote_database['nova_placement'],
+        }
+
+        remote_database_grant { 'nova_placement@%/nova_placement':
+          privileges  => 'all',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+          require     => Remote_database_user['nova_placement@%'],
+        }
+
+        remote_database { 'nova_cell0':
+          ensure      => 'present',
+          charset     => 'utf8',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+        }
+
+        remote_database_grant { 'nova@%/nova_cell0':
+          privileges  => 'all',
+          db_host     => hiera('CONFIG_MARIADB_HOST'),
+          db_user     => hiera('CONFIG_MARIADB_USER'),
+          db_password => hiera('CONFIG_MARIADB_PW'),
+          provider    => 'mysql',
+          require     => [ Remote_database_user['nova@%'],
+                          Remote_database['nova_cell0'] ],
+        }
+
     }
 
     if hiera('CONFIG_SAHARA_INSTALL') == 'y' {

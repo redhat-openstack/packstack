@@ -42,7 +42,24 @@ class packstack::nova::api ()
       metadata_workers                     => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
-    Package<| title == 'nova-common' |> -> Class['nova::api']
+    class { '::nova::wsgi::apache_placement':
+      bind_host => $bind_host,
+      api_port  => '8778',
+      ssl       => false,
+      workers   => hiera('CONFIG_SERVICE_WORKERS'),
+    } ->
+    # TODO(jpena): remove the sample file from the package, then remove this workaround
+    # https://review.rdoproject.org/r/4721
+    file { '/etc/httpd/conf.d/00-nova-placement-api.conf':
+      ensure => absent,
+      before => Service['httpd'],
+    }
+
+    class { '::nova::placement':
+      auth_url       => $auth_uri,
+      password       => $admin_password,
+      os_region_name => hiera('CONFIG_KEYSTONE_REGION'),
+    }
 
     $db_purge = hiera('CONFIG_NOVA_DB_PURGE_ENABLE')
     if $db_purge {
