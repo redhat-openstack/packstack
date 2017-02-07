@@ -1,0 +1,24 @@
+---
+features:
+  - |
+    Packstack can display parameter specific messages when a MESSAGE option
+    is added to the parameter. If MESSAGE_VALUES exist for the parameter, the
+    message will only be shown if the value provided by the user is included
+    in MESSAGE_VALUES. Example:
+
+        {"CMD_OPTION": "example-service-install",
+         "OPTION_LIST": ["y", "n"],
+         "VALIDATORS": [validators.validate_options],
+         "DEFAULT_VALUE": 'n',
+         "MASK_INPUT": False,
+         "LOOSE_VALIDATION": False,
+         "CONF_NAME": "CONFIG_EXAMPLE_SERVICE_INSTALL",
+         "USE_DEFAULT": False,
+         "NEED_CONFIRM": False,
+         "CONDITION": False,
+         "MESSAGE_VALUES": ["y"],
+         "MESSAGE": "Example service installation will be removed from packstack in Pike"}
+
+    In this case, if the user enable installation of example service, a message
+    will be displayed at the end of packstack execution with content "Example
+    service installation will be removed from packstack in Pike"
