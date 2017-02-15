@@ -1,0 +1,4 @@
+---
+features:
+  - New config parameter CONFIG_PROVISION_IMAGE_PROPERTIES
+    introduced, useful when provided image needs custom parameters

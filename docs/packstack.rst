@@ -995,6 +995,9 @@ Provisioning demo config
 **CONFIG_PROVISION_IMAGE_FORMAT**
     Format for the demo image (default "qcow2").
 
+**CONFIG_PROVISION_IMAGE_PROPERTIES**
+    Properties of the demo image (none by default).
+
 **CONFIG_PROVISION_IMAGE_SSH_USER**
     User to use when connecting to instances booted from the demo image.
 

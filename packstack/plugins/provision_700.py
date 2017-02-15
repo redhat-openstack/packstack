@@ -135,6 +135,19 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
+            {"CMD_OPTION": "provision-image-properties",
+             "PROMPT": ("Enter the comma-separated list of key=value pairs "
+                        "to set as the properties of the demo image"),
+             "OPTION_LIST": False,
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_PROVISION_IMAGE_PROPERTIES",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
             {"CMD_OPTION": "provision-image-ssh-user",
              "PROMPT": ("Enter the name of a user to use when connecting "
                         "to the demo image via ssh"),
