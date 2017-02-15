@@ -15,7 +15,7 @@ class packstack::nova::api ()
         $default_floating_pool = 'nova'
     }
 
-    $auth_uri = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
+    $auth_uri = hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS')
     $admin_password = hiera('CONFIG_NOVA_KS_PW')
 
     class {'::nova::keystone::authtoken':
