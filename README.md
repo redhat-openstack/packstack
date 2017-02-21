@@ -13,13 +13,15 @@ can be performed only by running a script, without any additional effort.
 
     $ yum install -y git
     $ git clone git://github.com/jodlajodla/packstack.git
-    $ cd packstack && sudo bash run_setup.sh ironic
+    $ cd packstack && git checkout stable/newton
+    $ sudo bash run_setup.sh ironic
 
 ## Installation of Packstack with default components:
 
     $ yum install -y git
     $ git clone git://github.com/jodlajodla/packstack.git
-    $ cd packstack && sudo bash run_setup.sh
+    $ cd packstack && git checkout stable/newton
+    $ sudo bash run_setup.sh
 
 ## Development and general information
 
