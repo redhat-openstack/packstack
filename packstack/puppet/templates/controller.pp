@@ -77,8 +77,9 @@ if hiera('CONFIG_NOVA_INSTALL') == 'y' {
   include '::packstack::nova::conductor'
   if hiera('CONFIG_IRONIC_INSTALL') == 'y' {
     include '::packstack::nova::sched::ironic'
+  } else {
+    include '::packstack::nova::sched'
   }
-  include '::packstack::nova::sched'
   include '::packstack::nova::vncproxy'
   if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
     include '::packstack::nova::neutron'
