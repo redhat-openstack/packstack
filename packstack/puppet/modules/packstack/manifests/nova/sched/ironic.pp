@@ -1,7 +1,10 @@
 class packstack::nova::sched::ironic ()
 {
-    nova_config {
-      'DEFAULT/scheduler_host_manager':
-        value => 'nova.scheduler.ironic_host_manager.IronicHostManager';
-    }
+  class {'::nova::scheduler::filter':
+    scheduler_host_manager => 'ironic_host_manager',
+  }
+
+  class { '::nova::scheduler':
+    enabled => true,
+  }
 }
