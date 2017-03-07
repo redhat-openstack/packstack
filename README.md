@@ -192,6 +192,7 @@ This is the current matrix of available tests:
 | nova       |      X      |      X      |      X      |
 | neutron    |      X      |      X      |      X      |
 | lbaasv2    |             |      X      |             |
+| vpnaas     |             |      X      |             |
 | cinder     |      X      |             |             |
 | ceilometer |             |             |      X      |
 | aodh       |             |             |      X      |
