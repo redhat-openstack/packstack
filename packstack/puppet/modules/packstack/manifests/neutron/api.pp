@@ -40,5 +40,9 @@ class packstack::neutron::api ()
        class { '::neutron::services::lbaas': }
     }
 
+    if $neutron_vpnaas_enabled {
+      class { '::neutron::services::vpnaas': }
+    }
+
     Class['::neutron::server'] -> File['/etc/neutron/api-paste.ini']
 }
