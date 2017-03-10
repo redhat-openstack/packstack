@@ -29,6 +29,7 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --nagios-install=n \
           --glance-backend=swift \
           --os-neutron-lbaas-install=y \
+          --os-neutron-vpnaas-install=y \
           --os-sahara-install=y \
           --os-trove-install=y \
           --keystone-token-format=UUID \
