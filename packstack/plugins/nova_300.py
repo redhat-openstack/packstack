@@ -352,6 +352,8 @@ def create_compute_manifest(config, messages):
             'qemu+tcp://nova@%s/system'
         )
 
+    config["CONFIG_NOVA_ALLOW_RESIZE_TO_SAME"] = len(compute_hosts) == 1
+
     ssh_keys_details = {}
     for host in compute_hosts:
         try:

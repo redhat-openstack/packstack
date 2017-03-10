@@ -57,6 +57,7 @@ class packstack::nova::compute ()
       pci_passthrough               => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST'),
       instance_usage_audit          => $instance_usage_audit,
       instance_usage_audit_period   => $instance_usage_audit_period,
+      allow_resize_to_same_host     => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
     }
 
     class { '::nova::placement':
