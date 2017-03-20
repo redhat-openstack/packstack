@@ -53,7 +53,6 @@ class packstack::nova::compute ()
       vncproxy_host                 => hiera('CONFIG_KEYSTONE_HOST_URL'),
       vncproxy_protocol             => hiera('CONFIG_VNCPROXY_PROTOCOL'),
       vncserver_proxyclient_address => $vncproxy_server,
-      compute_manager               => hiera('CONFIG_NOVA_COMPUTE_MANAGER'),
       pci_passthrough               => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST'),
       instance_usage_audit          => $instance_usage_audit,
       instance_usage_audit_period   => $instance_usage_audit_period,

@@ -142,19 +142,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "nova-compute-manager",
-             "PROMPT": ("Enter the compute manager for nova "
-                        "migration"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": "nova.compute.manager.ComputeManager",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NOVA_COMPUTE_MANAGER",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "nova-ssl-cert",
              "PROMPT": ("Enter the path to a PEM encoded certificate to be used "
                         "on the https server, leave blank if one should be "
@@ -397,10 +384,6 @@ def create_compute_manifest(config, messages):
         config['CONFIG_VCENTER_CLUSTERS'] = vmware_clusters
 
     for host in compute_hosts:
-        if config['CONFIG_IRONIC_INSTALL'] == 'y':
-            cm = 'ironic.nova.compute.manager.ClusteredComputeManager'
-            config['CONFIG_NOVA_COMPUTE_MANAGER'] = cm
-
         fw_details = dict()
         cf_fw_qemu_mig_key = "FIREWALL_NOVA_QEMU_MIG_RULES_%s" % host
         for c_host in compute_hosts:

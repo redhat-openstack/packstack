@@ -757,9 +757,6 @@ Nova Options
 **CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL**
     Protocol used for instance migration. Valid options are: tcp and ssh. Note that by default, the Compute user is created with the /sbin/nologin shell so that the SSH protocol will not work. To make the SSH protocol work, you must configure the Compute user on compute hosts manually. ['tcp', 'ssh']
 
-**CONFIG_NOVA_COMPUTE_MANAGER**
-    Manager that runs the Compute service.
-
 **CONFIG_NOVA_PCI_ALIAS**
     Enter the PCI passthrough array of hash in JSON style for controller eg.
     [{"vendor_id":"1234", "product_id":"5678", "name":"default"}, {...}]

@@ -1,0 +1,4 @@
+---
+other:
+  - Remove nova compute manager option, removed in Nova
+    and puppet-nova.
