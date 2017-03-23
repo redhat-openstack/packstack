@@ -34,6 +34,9 @@ class packstack::provision::tempest ()
     $image_source       = hiera('CONFIG_PROVISION_IMAGE_URL')
     $image_format       = hiera('CONFIG_PROVISION_IMAGE_FORMAT')
 
+    # clients should be able to ssh to instances
+    $run_ssh = true
+
     # network name
     $public_network_name = 'public'
 
@@ -113,6 +116,7 @@ class packstack::provision::tempest ()
       image_name_alt            => $image_name_alt,
       image_name                => $uec_image_name,
       image_ssh_user            => $image_ssh_user,
+      run_ssh                   => $run_ssh,
       log_file                  => $log_file,
       neutron_available         => $neutron_available,
       nova_available            => $nova_available,
