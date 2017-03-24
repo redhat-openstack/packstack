@@ -29,12 +29,10 @@ class packstack::gnocchi ()
 
     class { '::gnocchi::api':
       host         => $bind_host,
-      service_name => 'httpd'
+      service_name => 'httpd',
+      sync_db      => true,
     }
 
-    class { '::gnocchi::db::sync':
-      extra_opts => '--create-legacy-resource-types',
-    }
     class { '::gnocchi::storage': }
     class { '::gnocchi::storage::file': }
 
