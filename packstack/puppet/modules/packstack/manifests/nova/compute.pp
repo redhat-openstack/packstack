@@ -29,8 +29,6 @@ class packstack::nova::compute ()
     nova_config{
       'DEFAULT/volume_api_class':
         value => 'nova.volume.cinder.API';
-      'libvirt/live_migration_uri':
-        value => hiera('CONFIG_NOVA_COMPUTE_MIGRATE_URL');
     }
 
     if ($::fqdn == '' or $::fqdn =~ /localhost/) {

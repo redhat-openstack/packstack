@@ -94,7 +94,7 @@ mod 'certmonger',
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
-  :ref => 'master'
+  :ref => '2.2.1'
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
@@ -122,7 +122,7 @@ mod 'nssdb',
 
 mod 'rabbitmq',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq',
-  :ref => 'master'
+  :ref => '03b859292fe94dd727bd4b5b795b658beb2bdb4a'
 
 mod 'redis',
   :git => 'https://github.com/arioch/puppet-redis',
@@ -154,5 +154,5 @@ mod 'vcsrepo',
 
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',
-  :ref => 'master'
+  :ref => '9beb441c0c5433f6a1a42dd70aea173de5b800e4'
 
