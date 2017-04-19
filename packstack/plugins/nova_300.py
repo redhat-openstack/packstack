@@ -341,17 +341,6 @@ def create_compute_manifest(config, messages):
     else:
         config["CONFIG_VNCPROXY_PROTOCOL"] = "http"
 
-    migrate_protocol = config['CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL']
-    if migrate_protocol == 'ssh':
-        config['CONFIG_NOVA_COMPUTE_MIGRATE_URL'] = (
-            'qemu+ssh://nova@%s/system?no_verify=1&'
-            'keyfile=/etc/nova/ssh/nova_migration_key'
-        )
-    else:
-        config['CONFIG_NOVA_COMPUTE_MIGRATE_URL'] = (
-            'qemu+tcp://nova@%s/system'
-        )
-
     config["CONFIG_NOVA_ALLOW_RESIZE_TO_SAME"] = len(compute_hosts) == 1
 
     ssh_keys_details = {}

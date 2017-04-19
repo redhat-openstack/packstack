@@ -4,87 +4,87 @@ moduledir '/usr/share/openstack-puppet/modules'
 
 mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'cinder',
   :git => 'https://github.com/openstack/puppet-cinder',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'glance',
   :git => 'https://github.com/openstack/puppet-glance',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'gnocchi',
   :git => 'https://github.com/openstack/puppet-gnocchi',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'magnum',
   :git => 'https://github.com/openstack/puppet-magnum',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'horizon',
   :git => 'https://github.com/openstack/puppet-horizon',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'ironic',
   :git => 'https://github.com/openstack/puppet-ironic',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'keystone',
   :git => 'https://github.com/openstack/puppet-keystone',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'manila',
   :git => 'https://github.com/openstack/puppet-manila',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'nova',
   :git => 'https://github.com/openstack/puppet-nova',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'openstacklib',
   :git => 'https://github.com/openstack/puppet-openstacklib',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'oslo',
   :git => 'https://github.com/openstack/puppet-oslo',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'sahara',
   :git => 'https://github.com/openstack/puppet-sahara',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'swift',
   :git => 'https://github.com/openstack/puppet-swift',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'tempest',
   :git => 'https://github.com/openstack/puppet-tempest',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'trove',
   :git => 'https://github.com/openstack/puppet-trove',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 mod 'vswitch',
   :git => 'https://github.com/openstack/puppet-vswitch',
-  :ref => 'master'
+  :ref => 'stable/ocata'
 
 ## Non-OpenStack modules
 

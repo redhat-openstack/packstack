@@ -20,8 +20,8 @@ SCENARIO=${SCENARIO:-scenario001}
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
-DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7-master/current-passed-ci/delorean.repo}
-DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7-master/delorean-deps.repo}
+DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7-ocata/current-passed-ci/delorean.repo}
+DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7-ocata/delorean-deps.repo}
 GIT_BASE_URL=${GIT_BASE_URL:-git://git.openstack.org}
 ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
 # If logs should be retrieved automatically
