@@ -25,20 +25,8 @@ class packstack::ceilometer ()
       $coordination_url = ''
     }
 
-    if hiera('CONFIG_CEILOMETER_SERVICE_NAME') == 'ceilometer' {
-          $ceilometer_service_name = 'openstack-ceilometer-api'
-    } else {
-          $ceilometer_service_name = 'httpd'
-    }
-
-
     class { '::ceilometer::db':
       database_connection => "mongodb://${config_mongodb_host}:27017/ceilometer",
-    }
-
-    class { '::ceilometer::collector':
-      meter_dispatcher => $config_ceilometer_metering_backend,
-      event_dispatcher => $config_ceilometer_events_backend,
     }
 
     if $config_ceilometer_metering_backend == 'gnocchi' {
@@ -64,27 +52,9 @@ class packstack::ceilometer ()
       coordination_url => $coordination_url,
     }
 
-    $bind_host = hiera('CONFIG_IP_VERSION') ? {
-      'ipv6'  => '::0',
-      default => '0.0.0.0',
-      # TO-DO(mmagr): Add IPv6 support when hostnames are used
-    }
-
     class { '::ceilometer::keystone::authtoken':
       auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       password => hiera('CONFIG_CEILOMETER_KS_PW'),
-    }
-
-    class { '::ceilometer::api':
-      host         => $bind_host,
-      api_workers  => hiera('CONFIG_SERVICE_WORKERS'),
-      service_name => $ceilometer_service_name,
-    }
-
-    if $ceilometer_service_name == 'httpd' {
-       class { '::ceilometer::wsgi::apache':
-         ssl => false,
-       }
     }
 }

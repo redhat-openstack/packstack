@@ -1,0 +1,3 @@
+---
+fixes:
+  - Remove confguring ceilometer collector and api in packstack.
