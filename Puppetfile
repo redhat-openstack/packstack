@@ -150,7 +150,7 @@ mod 'ssh',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => 'master'
+  :ref => 'f15cc31041cb902d0025f1e35d9403956ad2fc79'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
