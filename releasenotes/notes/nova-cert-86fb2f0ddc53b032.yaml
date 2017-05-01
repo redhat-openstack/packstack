@@ -1,0 +1,4 @@
+---
+other:
+  - Removing Nova cert service, which has been removed in Nova
+    during Pike cycle.

@@ -73,7 +73,6 @@ if hiera('CONFIG_NOVA_INSTALL') == 'y' {
   include '::packstack::nova'
   include '::packstack::nova::common'
   include '::packstack::nova::api'
-  include '::packstack::nova::cert'
   include '::packstack::nova::conductor'
   if hiera('CONFIG_IRONIC_INSTALL') == 'y' {
     include '::packstack::nova::sched::ironic'
