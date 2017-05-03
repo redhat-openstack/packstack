@@ -35,4 +35,5 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \
+	  --provision-tempest-repo-revision=${TEMPEST_VERSION:-12.2.0} \
           --run-tempest-tests="smoke" || export FAILURE=true
