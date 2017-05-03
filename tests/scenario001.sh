@@ -34,4 +34,5 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \
+	  --provision-tempest-repo-revision=${TEMPEST_VERSION:-14.0.0} \
           --run-tempest-tests="smoke dashboard" || export FAILURE=true
