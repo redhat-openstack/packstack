@@ -1,0 +1,13 @@
+---
+deprecations:
+  - |
+    The option to deploy nagios from packstack was
+    deprecated in Ocata release and it has been removed
+    in Pike. Following options have been retired:
+
+      * CONFIG_NAGIOS_INSTALL
+      * CONFIG_NAGIOS_PW
+
+    Note that CentOS OpsTools Special Interest Group provides
+    packages and automation tooling to deploy monitoring tools
+    and integrate them with RDO.

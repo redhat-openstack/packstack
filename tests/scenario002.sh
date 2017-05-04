@@ -26,7 +26,6 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-gnocchi-install=n \
           --os-cinder-install=n \
           --os-horizon-install=n \
-          --nagios-install=n \
           --glance-backend=swift \
           --os-neutron-lbaas-install=y \
           --os-neutron-vpnaas-install=y \

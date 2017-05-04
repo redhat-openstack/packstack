@@ -92,9 +92,6 @@ Global Options
 **CONFIG_NTP_SERVERS**
     Comma-separated list of NTP servers. Leave plain if Packstack should not install ntpd on instances.
 
-**CONFIG_NAGIOS_INSTALL**
-    Specify 'y' to install Nagios to monitor OpenStack hosts. Nagios provides additional tools for monitoring the OpenStack environment. ['y', 'n']
-
 **EXCLUDE_SERVERS**
     Comma-separated list of servers to be excluded from the installation. This is helpful if you are running Packstack a second time with the same answer file and do not want Packstack to overwrite these server's configurations. Leave empty if you do not need to exclude any servers.
 
@@ -1095,12 +1092,6 @@ Trove config parameters
 
 **CONFIG_TROVE_NOVA_PW**
     Password to use when OpenStack Database-as-a-Service connects to the Compute service.
-
-Nagios Config parameters
-------------------------
-
-**CONFIG_NAGIOS_PW**
-    Password of the nagiosadmin user on the Nagios server.
 
 Magnum Options
 ------------------------

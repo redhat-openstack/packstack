@@ -48,7 +48,3 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
     include '::packstack::provision::bridge'
   }
 }
-
-if hiera('CONFIG_NAGIOS_INSTALL') == 'y' {
-  include '::packstack::nagios::nrpe'
-}

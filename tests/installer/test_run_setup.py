@@ -53,8 +53,7 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
         Test packstack.installer.run_setup.main
 
         This test effectivly runs all of the python code ran by
-        packstack --install-hosts=127.0.0.1 --os-swift-install=y \
-        --nagios-install=y
+        packstack --install-hosts=127.0.0.1 --os-swift-install=y
 
         It is a fairly wide net but boost code coverage of the packstack
         python code to about 85%, more finer grained tests should also be
@@ -102,8 +101,8 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
         sys.argv = ['packstack', '--debug',
                     '--ssh-public-key=%s' % dummy_public_key,
                     '--install-hosts=127.0.0.1', '--os-swift-install=y',
-                    '--nagios-install=y', '--ssl-cacert-selfsign=y',
-                    '--ssl-cert-dir=%s' % os.path.expanduser('~/')]
+                    '--ssl-cacert-selfsign=y', '--ssl-cert-dir=%s' %
+                    os.path.expanduser('~/')]
 
         # There is no puppet logfile to validate, so replace
         # ospluginutils.validate_puppet_logfile with a mock function

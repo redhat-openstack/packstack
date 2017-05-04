@@ -356,23 +356,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "nagios-install",
-             "PROMPT": (
-                 "Should Packstack install Nagios to monitor OpenStack "
-                 "hosts"
-             ),
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'n',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_NAGIOS_INSTALL",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False,
-             "MESSAGE": "Nagios installation option is deprecated and will be removed from packstack in Pike.",
-             "MESSAGE_VALUES": ["y"]},
-
             {"CMD_OPTION": "exclude-servers",
              "PROMPT": (
                  "Enter a comma separated list of server(s) to be excluded."

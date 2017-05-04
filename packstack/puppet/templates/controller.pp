@@ -205,8 +205,3 @@ if hiera('CONFIG_SAHARA_INSTALL') == 'y' {
     include '::packstack::sahara::ceilometer'
   }
 }
-
-if hiera('CONFIG_NAGIOS_INSTALL') == 'y' {
-  include '::packstack::nagios::server'
-  include '::packstack::nagios::nrpe'
-}

@@ -817,7 +817,7 @@ def initCmdLineParser():
                                               "if only a single host is supplied then it is setup as an all in one installation. An answerfile "
                                               "will also be generated and should be used if Packstack needs to be run a second time ")
     parser.add_option("--allinone", action="store_true", help="Shorthand for --install-hosts=<local ipaddr> --novanetwork-pubif=<dev> "
-                                                              "--novacompute-privif=lo --novanetwork-privif=lo --os-swift-install=y --nagios-install=y "
+                                                              "--novacompute-privif=lo --novanetwork-privif=lo --os-swift-install=y"
                                                               ", this option can be used to install an all in one OpenStack on this host")
 
     parser.add_option("-t", "--timeout", default=300, help="The timeout for puppet Exec calls")

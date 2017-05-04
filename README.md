@@ -200,7 +200,6 @@ This is the current matrix of available tests:
 | trove      |             |      X      |             |
 | horizon    |      X      |             |             |
 | manila     |      X      |             |             |
-| nagios     |      X      |             |             |
 | SSL        |      X      |             |             |
 
 To run these tests:

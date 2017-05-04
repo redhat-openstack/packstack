@@ -57,7 +57,3 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
     include '::packstack::neutron::sriov'
   }
 }
-
-if hiera('CONFIG_NAGIOS_INSTALL') == 'y' {
-  include '::packstack::nagios::nrpe'
-}
