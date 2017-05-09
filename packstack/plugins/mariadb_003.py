@@ -96,9 +96,9 @@ def initSequences(controller):
 
 def create_manifest(config, messages):
     if config['CONFIG_MARIADB_INSTALL'] == 'y':
-        host = config['CONFIG_MARIADB_HOST']
-    else:
         host = config['CONFIG_CONTROLLER_HOST']
+    else:
+        host = config['CONFIG_MARIADB_HOST']
 
     if config['CONFIG_IP_VERSION'] == 'ipv6':
         config['CONFIG_MARIADB_HOST_URL'] = "[%s]" % host
