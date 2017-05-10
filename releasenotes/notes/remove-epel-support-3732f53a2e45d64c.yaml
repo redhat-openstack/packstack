@@ -1,0 +1,5 @@
+---
+deprecations:
+  - Support to enable the EPEL repository has been removed.
+    It is known to cause conflicts with packages provided
+    with RDO, and it is no longer needed.

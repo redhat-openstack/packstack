@@ -579,18 +579,6 @@ def initConfig(controller):
         ],
 
         "SERVERPREPARE": [
-            {"CMD_OPTION": "use-epel",
-             "PROMPT": "To subscribe each server to EPEL enter \"y\"",
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_USE_EPEL",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "additional-repo",
              "PROMPT": ("Enter a comma separated list of URLs to any "
                         "additional yum repositories to install"),
@@ -1134,70 +1122,6 @@ def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
     server.execute(mask_list=[password])
 
 
-def manage_epel(host, config):
-    """
-    Installs and/or enables EPEL repo if it is required or disables it if it
-    is not required.
-    """
-    relevant = ('redhat', 'centos', 'scientific')
-    if detect_os_and_version(host)[0].lower() not in relevant:
-        return
-
-    # yum's $releasever can be non numeric on RHEL, so interpolate here
-    releasever = detect_os_and_version(host)[1].split('.')[0]
-    mirrors = ('https://mirrors.fedoraproject.org/metalink?repo=epel-%s&'
-               'arch=$basearch' % releasever)
-    server = utils.ScriptRunner(host)
-    if config['CONFIG_USE_EPEL'] == 'y':
-        server.append('REPOFILE=$(mktemp)')
-        server.append('cat /etc/yum.conf > $REPOFILE')
-        server.append("echo -e '[packstack-epel]\nname=packstack-epel\n"
-                      "enabled=1\nmirrorlist=%(mirrors)s' >> $REPOFILE"
-                      % locals())
-        server.append('( rpm -q --whatprovides epel-release ||'
-                      ' yum install -y --nogpg -c $REPOFILE epel-release ) '
-                      '|| true')
-        server.append('rm -rf $REPOFILE')
-        try:
-            server.execute()
-        except exceptions.ScriptRuntimeError as ex:
-            msg = 'Failed to set EPEL repo on host %s:\n%s' % (host, ex)
-            raise exceptions.ScriptRuntimeError(msg)
-
-    # if there's an epel repo explicitly enables or disables it
-    # according to: CONFIG_USE_EPEL
-    if config['CONFIG_USE_EPEL'] == 'y':
-        cmd = 'enable'
-        enabled = '(1|True)'
-    else:
-        cmd = 'disable'
-        enabled = '(0|False)'
-
-    server.clear()
-    server.append('rpm -q yum-utils || yum -y install yum-utils')
-    server.append('yum-config-manager --%(cmd)s epel' % locals())
-    rc, out = server.execute()
-
-    # yum-config-manager returns 0 always, but returns current setup
-    # if succeeds
-    match = re.search('enabled\s*\=\s*%(enabled)s' % locals(), out)
-    if match:
-        return
-    msg = 'Failed to set EPEL repo on host %s:\n'
-    if cmd == 'enable':
-        # fail in case user wants to have EPEL enabled
-        msg += ('RPM file seems to be installed, but appropriate repo file is '
-                'probably missing in /etc/yum.repos.d/')
-        raise exceptions.ScriptRuntimeError(msg % host)
-    else:
-        # just warn in case disabling failed which might happen when EPEL repo
-        # is not installed at all
-        msg += 'This is OK in case you don\'t want EPEL installed and enabled.'
-        # TO-DO: fill logger name when logging will be refactored.
-        logger = logging.getLogger()
-        logger.warning(msg % host)
-
-
 def manage_centos_release_openstack(host, config):
     """
     Installs and enables CentOS OpenStack release package if installed locally.
@@ -1456,8 +1380,6 @@ def server_prep(config, messages):
         manage_centos_release_openstack(hostname, config)
         # enable RDO if it is installed locally
         manage_rdo(hostname, config)
-        # enable or disable EPEL according to configuration
-        manage_epel(hostname, config)
 
         # Add yum repositories if configured
         CONFIG_REPO = config["CONFIG_REPO"].strip()

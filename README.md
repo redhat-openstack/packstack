@@ -52,10 +52,6 @@ Then edit `ans.txt` as appropriate e.g.
 - Edit the IP address to anywhere you want to install a piece of OpenStack on another server
 - Edit the 3 network interfaces to whatever makes sense in your setup
 
-you'll need to use a icehouse repository for example for RHEL
-
-    $ CONFIG_REPO=http://repos.fedorapeople.org/repos/openstack/openstack-icehouse/epel-6/
-
     $ packstack --answer-file=ans.txt
 
 ### Option 3 (prompts for configuration options)

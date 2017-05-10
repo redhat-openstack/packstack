@@ -184,9 +184,6 @@ Global unsupported options
 Server Prepare Configs
 -----------------------
 
-**CONFIG_USE_EPEL**
-   Specify 'y' to enable the EPEL repository (Extra Packages for Enterprise Linux). ['y', 'n']
-
 **CONFIG_REPO**
     Comma-separated list of URLs for any additional yum repositories, to use for installation.
 

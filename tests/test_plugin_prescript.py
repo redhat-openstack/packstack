@@ -32,7 +32,6 @@ class OSPluginUtilsTestCase(PackstackTestCaseMixin, TestCase):
         password = "dasd|'asda%><?"
 
         prescript_000.controller.CONF["CONFIG_KEYSTONE_HOST"] = "1.2.3.4"
-        prescript_000.controller.CONF["CONFIG_USE_EPEL"] = "n"
         prescript_000.controller.CONF["CONFIG_REPO"] = ""
         prescript_000.controller.CONF["CONFIG_RH_USER"] = "testuser"
         prescript_000.controller.CONF["CONFIG_RH_PW"] = password
