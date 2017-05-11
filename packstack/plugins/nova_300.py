@@ -134,7 +134,7 @@ def initConfig(controller):
                         "migration"),
              "OPTION_LIST": ['tcp', 'ssh'],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'tcp',
+             "DEFAULT_VALUE": 'ssh',
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL",
@@ -346,7 +346,7 @@ def create_compute_manifest(config, messages):
             key = "%s.%s" % (host_key_type, hostname)
             ssh_keys_details.setdefault(key, {})
             ssh_keys_details[key]['ensure'] = 'present'
-            ssh_keys_details[key]['host_aliases'] = aliases + addrs
+            ssh_keys_details[key]['host_aliases'] = [hostname] + aliases + addrs
             ssh_keys_details[key]['key'] = host_key_data
             ssh_keys_details[key]['type'] = host_key_type
 

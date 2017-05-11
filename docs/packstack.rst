@@ -752,7 +752,7 @@ Nova Options
     Overcommitment ratio for virtual to physical RAM. Specify 1.0 to disable RAM overcommitment.
 
 **CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL**
-    Protocol used for instance migration. Valid options are: tcp and ssh. Note that by default, the Compute user is created with the /sbin/nologin shell so that the SSH protocol will not work. To make the SSH protocol work, you must configure the Compute user on compute hosts manually. ['tcp', 'ssh']
+    Protocol used for instance migration. Valid options are: ssh and tcp. Note that the tcp protocol is not encrypted, so it is insecure. ['ssh', 'tcp']
 
 **CONFIG_NOVA_PCI_ALIAS**
     Enter the PCI passthrough array of hash in JSON style for controller eg.
