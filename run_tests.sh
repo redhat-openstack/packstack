@@ -24,6 +24,7 @@ DELOREAN=${DELOREAN:-http://trunk.rdoproject.org/centos7-newton/current-passed-c
 DELOREAN_DEPS=${DELOREAN_DEPS:-http://trunk.rdoproject.org/centos7-newton/delorean-deps.repo}
 GIT_BASE_URL=${GIT_BASE_URL:-git://git.openstack.org}
 ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
+SELINUX_ENFORCING=${SELINUX_ENFORCING:-true}
 # If logs should be retrieved automatically
 COPY_LOGS=${COPY_LOGS:-true}
 
@@ -133,6 +134,13 @@ echo "${USER} soft nofile 65536" | $SUDO tee -a /etc/security/limits.conf
 echo "${USER} hard nofile 65536" | $SUDO tee -a /etc/security/limits.conf
 echo "root soft nofile 65536" | $SUDO tee -a /etc/security/limits.conf
 echo "root hard nofile 65536" | $SUDO tee -a /etc/security/limits.conf
+
+# Set SELinux to enforcing/permissive as needed
+if [ "${SELINUX_ENFORCING}" = true ]; then
+    $SUDO setenforce 1
+else
+    $SUDO setenforce 0
+fi
 
 # Setup repositories
 if [ "${MANAGE_REPOS}" = true ]; then
