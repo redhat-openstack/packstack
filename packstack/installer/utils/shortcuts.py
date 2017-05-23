@@ -58,6 +58,10 @@ def split_hosts(hosts_string):
     hosts = set()
     for host in hosts_string.split(','):
         shost = host.strip()
+        # for lvm backed device (in the form of /dev/mapper/<vg>-<lv> or /dev/<vg>/<lv>)
+        # taken from https://github.com/harveyzh/packstack/commit/d2f8adfeaabb874ab36dd50bc6a016c1fff389db
+        if '/' in shost:
+            shost = shost.split('/')[0]
         if shost:
             hosts.add(shost)
     return hosts
