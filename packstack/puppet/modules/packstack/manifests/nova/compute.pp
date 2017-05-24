@@ -10,20 +10,46 @@ class packstack::nova::compute ()
 
     # Install the private key to be used for live migration.  This needs to be
     # configured into libvirt/live_migration_uri in nova.conf.
-    file { '/etc/nova/ssh':
-      ensure  => directory,
-      owner   => root,
-      group   => root,
-      mode    => '0700',
-      require => Package['nova-common'],
-    }
+    $migrate_transport = hiera('CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL')
+    if $migrate_transport == 'ssh' {
+      ensure_packages(['openstack-nova-migration'], {'ensure' => 'present'})
 
-    file { '/etc/nova/ssh/nova_migration_key':
-      content => hiera('NOVA_MIGRATION_KEY_SECRET'),
-      mode    => '0600',
-      owner   => root,
-      group   => root,
-      require => File['/etc/nova/ssh'],
+      file { '/etc/nova/migration/identity':
+        content => hiera('NOVA_MIGRATION_KEY_SECRET'),
+        mode    => '0600',
+        owner   => root,
+        group   => root,
+        require => Package['openstack-nova-migration'],
+      }
+    
+      $key_type = hiera('NOVA_MIGRATION_KEY_TYPE')
+      $key_content = hiera('NOVA_MIGRATION_KEY_PUBLIC')
+
+      file { '/etc/nova/migration/authorized_keys':
+        content => "${key_type} ${key_content}",
+        mode    => '0640',
+        owner   => root,
+        group   => nova_migration,
+        require => Package['openstack-nova-migration'],
+      }
+
+      augeas{'Match block for user nova_migration':
+        context => '/files/etc/ssh/sshd_config',
+        changes => [
+          'set Match[User nova_migration]/Condition/User nova_migration',
+          'set Match[Condition/User = "nova_migration"]/Settings/AllowTcpForwarding no',
+          'set Match[Condition/User = "nova_migration"]/Settings/AuthorizedKeysFile /etc/nova/migration/authorized_keys',
+          'set Match[Condition/User = "nova_migration"]/Settings/ForceCommand /bin/nova-migration-wrapper',
+          'set Match[Condition/User = "nova_migration"]/Settings/PasswordAuthentication no',
+          'set Match[Condition/User = "nova_migration"]/Settings/X11Forwarding no',
+         ],
+        onlyif => 'match Match[Condition/User = "nova_migration"] size == 0',
+        notify => Service['sshd']
+      }
+
+      service {'sshd':
+        ensure  => running,
+      }
     }
 
     nova_config{

@@ -30,8 +30,7 @@ class packstack::nova::compute::libvirt ()
     $migrate_transport = hiera('CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL')
     if $migrate_transport == 'ssh' {
       $client_extraparams = {
-        no_verify => 1,
-        keyfile   => '/etc/nova/ssh/nova_migration_key',
+        keyfile   => '/etc/nova/migration/identity',
       }
     } else {
       $client_extraparams = {}
@@ -39,7 +38,7 @@ class packstack::nova::compute::libvirt ()
 
     class { '::nova::migration::libvirt':
       transport   => $migrate_transport,
-      client_user => 'nova',
+      client_user => 'nova_migration',
       client_extraparams => $client_extraparams,
       require => Class['::nova::compute::libvirt']
     }

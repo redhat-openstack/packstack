@@ -1,0 +1,5 @@
+---
+security:
+  - Improving security of the Nova migration configuration.
+    Now, ssh is the default option for Nova migration, and
+    a specific migration user is used.
