@@ -51,13 +51,6 @@ class packstack::nova::compute::libvirt ()
       libvirt_inject_partition => '-1',
     }
 
-    file_line { 'libvirt-guests':
-      path    => '/etc/sysconfig/libvirt-guests',
-      line    => 'ON_BOOT=ignore',
-      match   => '^[\s#]*ON_BOOT=.*',
-      require => Class['::nova::compute::libvirt'],
-    }
-
     # Remove libvirt's default network (usually virbr0) as it's unnecessary and
     # can be confusing
     exec {'virsh-net-destroy-default':
