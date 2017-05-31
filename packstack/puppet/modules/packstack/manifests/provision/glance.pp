@@ -38,6 +38,15 @@ class packstack::provision::glance ()
         source           => $uec_image_source_ramdisk,
         id               => '0b50e2e5-1440-4654-b568-4e120ddf28c1'
       }
+      $uec_properties = { 'kernel_id' => '146d4a6b-ad1e-4d9f-8b08-98eae3c3dab4',
+                          'ramdisk_id' => '0b50e2e5-1440-4654-b568-4e120ddf28c1' }
+      # Same properties we require for QCOW2 image, we need for UEC image too
+      if $image_format == 'qcow2' {
+        $image_properties_hash = $image_properties.split(',').map |$tok| { $tok.split('=') }.flatten.hash
+        $uec_properties_all = $uec_properties.merge($image_properties_hash)
+      } else {
+        $uec_properties_all = $uec_properties
+      }
 
       glance_image{$uec_image_name:
         ensure           => present,
@@ -45,7 +54,7 @@ class packstack::provision::glance ()
         container_format => 'ami',
         disk_format      => 'qcow2',
         source           => $uec_image_source_disk,
-        properties       => { 'kernel_id' => '146d4a6b-ad1e-4d9f-8b08-98eae3c3dab4', 'ramdisk_id' => '0b50e2e5-1440-4654-b568-4e120ddf28c1' },
+        properties       => $uec_properties_all,
         require          => [ Glance_image["${uec_image_name}-kernel"], Glance_image["${uec_image_name}-ramdisk"] ]
       }
 
@@ -59,7 +68,7 @@ class packstack::provision::glance ()
         # See https://bugs.launchpad.net/cinder/+bug/1693926
         disk_format      => 'qcow2',
         source           => $uec_image_source_disk,
-        properties       => { 'kernel_id' => '146d4a6b-ad1e-4d9f-8b08-98eae3c3dab4', 'ramdisk_id' => '0b50e2e5-1440-4654-b568-4e120ddf28c1' },
+        properties       => $uec_properties_all,
         require          => [ Glance_image["${uec_image_name}-kernel"], Glance_image["${uec_image_name}-ramdisk"] ]
       }
 
