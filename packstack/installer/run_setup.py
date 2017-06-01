@@ -657,7 +657,7 @@ def _main(options, configFile=None, logFile=None):
         path = _getanswerfilepath()
         if path:
             generateAnswerFile(path)
-    # If an answer file was provided, some options may have been overriden
+    # If an answer file was provided, some options may have been overridden
     # Overwrite answer file with updated options
     else:
         generateAnswerFile(options.answer_file)
