@@ -41,7 +41,7 @@ class packstack::provision::glance ()
         ensure           => present,
         is_public        => 'yes',
         container_format => 'ami',
-        disk_format      => 'ami',
+        disk_format      => 'qcow2',
         source           => $uec_image_source_disk,
         properties       => { 'kernel_id' => '146d4a6b-ad1e-4d9f-8b08-98eae3c3dab4', 'ramdisk_id' => '0b50e2e5-1440-4654-b568-4e120ddf28c1' },
         require          => [ Glance_image["${uec_image_name}-kernel"], Glance_image["${uec_image_name}-ramdisk"] ]
@@ -51,7 +51,11 @@ class packstack::provision::glance ()
         ensure           => present,
         is_public        => 'yes',
         container_format => 'ami',
-        disk_format      => 'ami',
+        # FIXME(jpena): ami used to be an acceptable disk format, but we are
+        # failing to boot from volume since https://review.openstack.org/453341
+        # because qemu-img convert does not recognize is as a valid format.
+        # See https://bugs.launchpad.net/cinder/+bug/1693926
+        disk_format      => 'qcow2',
         source           => $uec_image_source_disk,
         properties       => { 'kernel_id' => '146d4a6b-ad1e-4d9f-8b08-98eae3c3dab4', 'ramdisk_id' => '0b50e2e5-1440-4654-b568-4e120ddf28c1' },
         require          => [ Glance_image["${uec_image_name}-kernel"], Glance_image["${uec_image_name}-ramdisk"] ]
