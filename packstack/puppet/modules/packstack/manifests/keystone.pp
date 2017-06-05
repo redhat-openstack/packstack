@@ -8,6 +8,10 @@ class packstack::keystone ()
     $keystone_token_provider_str = downcase(hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'))
     $keystone_url = regsubst(regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
     $keystone_admin_url = hiera('CONFIG_KEYSTONE_ADMIN_URL')
+    $keystone_api_version = hiera('CONFIG_KEYSTONE_API_VERSION') ? {
+      'v2.0'  => 'v2.0',
+      default => '',
+    }
 
     $bind_host = hiera('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
@@ -71,8 +75,7 @@ class packstack::keystone ()
       internal_url   => $keystone_url,
       admin_url      => $keystone_admin_url,
       region         => hiera('CONFIG_KEYSTONE_REGION'),
-      # so far enforce v2 as default endpoint
-      version        => 'v2.0',
+      version        => $keystone_api_version,
     }
 
     # default assignment driver is SQL
