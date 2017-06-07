@@ -86,7 +86,7 @@ mod 'vswitch',
 
 mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
-  :ref => 'master'
+  :ref => '1.10.0'
 
 mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger',
@@ -94,27 +94,27 @@ mod 'certmonger',
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
-  :ref => '2.2.1'
+  :ref => '2.2.0'
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
-  :ref => 'master'
+  :ref => '1.8.1'
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
-  :ref => 'master'
+  :ref => '1.6.0'
 
 mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached',
-  :ref => 'master'
+  :ref => 'v2.8.1'
 
 mod 'mongodb',
   :git => 'https://github.com/puppetlabs/puppetlabs-mongodb',
-  :ref => 'master'
+  :ref => '0.14.0'
 
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
-  :ref => 'master'
+  :ref => '3.9.0'
 
 mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
@@ -122,7 +122,7 @@ mod 'nssdb',
 
 mod 'rabbitmq',
   :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq',
-  :ref => '03b859292fe94dd727bd4b5b795b658beb2bdb4a'
+  :ref => '5.5.0'
 
 mod 'redis',
   :git => 'https://github.com/arioch/puppet-redis',
@@ -134,7 +134,7 @@ mod 'remote',
 
 mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync',
-  :ref => 'master'
+  :ref => '0.4.0'
 
 mod 'ssh',
   :git => 'https://github.com/saz/puppet-ssh',
@@ -142,17 +142,17 @@ mod 'ssh',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => 'master'
+  :ref => '4.12.0'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
-  :ref => 'master'
+  :ref => 'v0.0.11'
 
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
-  :ref => 'master'
+  :ref => '1.4.0'
 
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',
-  :ref => '9beb441c0c5433f6a1a42dd70aea173de5b800e4'
+  :ref => '2.0.0'
 
