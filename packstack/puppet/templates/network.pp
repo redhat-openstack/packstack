@@ -25,7 +25,9 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
   if hiera('CONFIG_LBAAS_INSTALL') == 'y' {
     include '::packstack::neutron::lbaas'
   }
-  include '::packstack::neutron::l3'
+  if hiera('CONFIG_NEUTRON_L2_AGENT') != 'ovn' {
+    include '::packstack::neutron::l3'
+  }
   if hiera('CONFIG_NEUTRON_OVS_BRIDGE_CREATE') == 'y' {
     include '::packstack::neutron::ovs_bridge'
   }
@@ -33,17 +35,17 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
   case hiera('CONFIG_NEUTRON_L2_AGENT') {
     'openvswitch': { include '::packstack::neutron::ovs_agent' }
     'linuxbridge': { include '::packstack::neutron::lb_agent' }
+    'ovn':         { include '::packstack::neutron::ovn_agent' }
     default:       { include '::packstack::neutron::ovs_agent' }
   }
   include '::packstack::neutron::bridge'
-  include '::packstack::neutron::dhcp'
+  if hiera('CONFIG_NEUTRON_L2_AGENT') != 'ovn' {
+    include '::packstack::neutron::dhcp'
+    include '::packstack::neutron::metadata'
+  }
   if hiera('CONFIG_NEUTRON_METERING_AGENT_INSTALL') == 'y' {
     include '::packstack::neutron::metering'
   }
-  if hiera('CONFIG_NOVA_INSTALL') == 'y' {
-    include '::packstack::neutron::metadata'
-  }
-
   if hiera('CONFIG_PROVISION_DEMO') == 'y' or hiera('CONFIG_PROVISION_TEMPEST') == 'y' {
     include '::packstack::provision::bridge'
   }

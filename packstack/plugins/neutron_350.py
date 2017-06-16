@@ -252,12 +252,96 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
+        "NEUTRON_OVN_AGENT": [
+            {"CMD_OPTION": "os-neutron-ovn-bridge-mappings",
+             "PROMPT": ("Enter a comma separated list of bridge mappings for "
+                        "the Neutron Open Virtual Network plugin"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "extnet:br-ex",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-ovn-bridge-interfaces",
+             "PROMPT": ("Enter a comma separated list of OVS bridge:interface "
+                        "pairs for the Neutron Open Virtual Network plugin"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVN_BRIDGE_IFACES",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-ovn-bridges-compute",
+             "PROMPT": ("Enter a comma separated list of bridges for the "
+                        "Neutron Open Virtual Network plugin in compute nodes."
+                        "They must be included in os-neutron-ovs-bridge-mappings "
+                        "and os-neutron-ovs-bridge-interfaces."),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVN_BRIDGES_COMPUTE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-ovn-external-physnet",
+             "PROMPT": ("Enter the name of the physical external network as"
+                        "defined in bridge mappings"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "extnet",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
+
+        "NEUTRON_OVN_AGENT_TUNNEL": [
+            {"CMD_OPTION": "os-neutron-ovn-tunnel-if",
+             "PROMPT": ("Enter interface with IP to override the default "
+                        "tunnel local IP"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVN_TUNNEL_IF",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "os-neutron-ovn-tunnel-subnets",
+             "PROMPT": ("Enter comma separated list of subnets used for "
+                        "tunneling to make them allowed by IP filtering."),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_NEUTRON_OVN_TUNNEL_SUBNETS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
+
         "NEUTRON_ML2_PLUGIN": [
             {"CMD_OPTION": "os-neutron-ml2-type-drivers",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_TYPE_DRIVERS",
              "PROMPT": ("Enter a comma separated list of network type driver "
                         "entrypoints"),
-             "OPTION_LIST": ["local", "flat", "vlan", "gre", "vxlan"],
+             "OPTION_LIST": ["local", "flat", "vlan", "gre", "vxlan", "geneve"],
              "VALIDATORS": [validators.validate_multi_options],
              "DEFAULT_VALUE": "vxlan,flat",
              "MASK_INPUT": False,
@@ -270,7 +354,7 @@ def initConfig(controller):
              "CONF_NAME": "CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES",
              "PROMPT": ("Enter a comma separated ordered list of "
                         "network_types to allocate as tenant networks"),
-             "OPTION_LIST": ["local", "vlan", "gre", "vxlan"],
+             "OPTION_LIST": ["local", "vlan", "gre", "vxlan", "geneve"],
              "VALIDATORS": [validators.validate_multi_options],
              "DEFAULT_VALUE": "vxlan",
              "MASK_INPUT": False,
@@ -285,7 +369,7 @@ def initConfig(controller):
                         "mechanism driver entrypoints"),
              "OPTION_LIST": ["logger", "test", "linuxbridge", "openvswitch",
                              "hyperv", "ncs", "arista", "cisco_nexus",
-                             "mlnx", "l2population", "sriovnicswitch"],
+                             "mlnx", "l2population", "sriovnicswitch", "ovn"],
              "VALIDATORS": [validators.validate_multi_options],
              "DEFAULT_VALUE": "openvswitch",
              "MASK_INPUT": False,
@@ -364,7 +448,7 @@ def initConfig(controller):
             {"CMD_OPTION": "os-neutron-l2-agent",
              "PROMPT": ("Enter the name of the L2 agent to be used "
                         "with Neutron"),
-             "OPTION_LIST": ["linuxbridge", "openvswitch"],
+             "OPTION_LIST": ["linuxbridge", "openvswitch", "ovn"],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "openvswitch",
              "MASK_INPUT": False,
@@ -372,7 +456,11 @@ def initConfig(controller):
              "CONF_NAME": "CONFIG_NEUTRON_L2_AGENT",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
-             "CONDITION": False},
+             "CONDITION": False,
+             "MESSAGE": ("You have choosen OVN neutron backend. Note that this backend does not support LBaaS, VPNaaS or FWaaS services. "
+                         "Geneve will be used as encapsulation method for tenant networks"),
+             "MESSAGE_VALUES": ["ovn"]},
+
             {"CMD_OPTION": "os-neutron-ml2-supported-pci-vendor-devs",
              "CONF_NAME": "CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS",
              "PROMPT": ("Enter a comma separated list of supported PCI "
@@ -444,6 +532,20 @@ def initConfig(controller):
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "NEUTRON_OVN_AGENT",
+         "DESCRIPTION": "Neutron OVN agent config",
+         "PRE_CONDITION": use_ml2_with_ovn,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
+        {"GROUP_NAME": "NEUTRON_OVN_AGENT_TUNNEL",
+         "DESCRIPTION": "Neutron OVN agent config for tunnels",
+         "PRE_CONDITION": use_ml2_with_ovn,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
     ]
     for group in conf_groups:
         params = conf_params[group["GROUP_NAME"]]
@@ -466,6 +568,40 @@ def initSequences(controller):
                 and 'linuxbridge' not in
                 config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']):
             config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += ', openvswitch'
+
+    if use_ml2_with_ovn(config):
+        if ('ovn' not in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']):
+            config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] = 'ovn'
+        # OVN only supports geneve encapsulation
+        if ('geneve' not in config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS']):
+            config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS'] += ', geneve'
+        config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'] = 'geneve'
+        # VPNaaS, LBaaS and FWaaS are not supported with OVN
+        config['CONFIG_NEUTRON_FWAAS'] = 'n'
+        config['CONFIG_NEUTRON_VPNAAS'] = 'n'
+        config['CONFIG_LBAAS_INSTALL'] = 'n'
+        config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] = 'n'
+        # When using OVN we need to create the same L2 infrastucture as
+        # for OVS, so I'm copying value for required variables and use
+        # the same logic
+        ovs_tunnel_sub = 'CONFIG_NEUTRON_OVS_TUNNEL_SUBNETS'
+        ovn_tunnel_sub = 'CONFIG_NEUTRON_OVN_TUNNEL_SUBNETS'
+        config[ovs_tunnel_sub] = config[ovn_tunnel_sub]
+        ovs_tunnel_if = 'CONFIG_NEUTRON_OVS_TUNNEL_IF'
+        ovn_tunnel_if = 'CONFIG_NEUTRON_OVN_TUNNEL_IF'
+        config[ovs_tunnel_if] = config[ovn_tunnel_if]
+        ovs_mappings = 'CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'
+        ovn_mappings = 'CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS'
+        config[ovs_mappings] = config[ovn_mappings]
+        ovs_ifaces = 'CONFIG_NEUTRON_OVS_BRIDGE_IFACES'
+        ovn_ifaces = 'CONFIG_NEUTRON_OVN_BRIDGE_IFACES'
+        config[ovs_ifaces] = config[ovn_ifaces]
+        ovs_compute = 'CONFIG_NEUTRON_OVS_BRIDGES_COMPUTE'
+        ovn_compute = 'CONFIG_NEUTRON_OVN_BRIDGES_COMPUTE'
+        config[ovs_compute] = config[ovn_compute]
+        ovs_external = 'CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET'
+        ovn_external = 'CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET'
+        config[ovs_external] = config[ovn_external]
 
     plugin_db = 'neutron'
     plugin_path = 'neutron.plugins.ml2.plugin.Ml2Plugin'
@@ -532,6 +668,11 @@ def use_ml2_with_ovs(config):
             config["CONFIG_NEUTRON_L2_AGENT"] == 'openvswitch')
 
 
+def use_ml2_with_ovn(config):
+    return (neutron_install(config) and
+            config["CONFIG_NEUTRON_L2_AGENT"] == 'ovn')
+
+
 def use_openvswitch_vxlan(config):
     ml2_vxlan = (
         use_ml2_with_ovs(config) and
@@ -544,6 +685,14 @@ def use_openvswitch_gre(config):
     ml2_vxlan = (
         use_ml2_with_ovs(config) and
         'gre' in config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES']
+    )
+    return ml2_vxlan
+
+
+def use_ovn_geneve(config):
+    ml2_vxlan = (
+        use_ml2_with_ovn(config) and
+        'geneve' in config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES']
     )
     return ml2_vxlan
 
@@ -562,6 +711,9 @@ def get_if_driver(config):
         return 'neutron.agent.linux.interface.OVSInterfaceDriver'
     elif agent == 'linuxbridge':
         return 'neutron.agent.linux.interface.BridgeInterfaceDriver'
+    else:
+        # OVN does not provides a interface driver
+        return ''
 
 
 def find_mapping(haystack, needle):
@@ -581,6 +733,9 @@ def tunnel_fw_details(config, host, src, fw_details):
     if use_openvswitch_vxlan(config):
         fw_details[key]['proto'] = 'udp'
         tun_port = ("%s" % config['CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT'])
+    elif use_ovn_geneve(config):
+        fw_details[key]['proto'] = 'udp'
+        tun_port = "6081"
     else:
         fw_details[key]['proto'] = 'gre'
         tun_port = None
@@ -602,8 +757,11 @@ def create_manifests(config, messages):
                     'plugin_driver.HaproxyOnHostPluginDriver:default')
         service_providers.append(lbaas_sp)
 
-    # ML2 uses the L3 Router service plugin to implement l3 agent
-    service_plugins.append('router')
+    if use_ml2_with_ovn(config):
+        service_plugins.append('ovn-router')
+    else:
+        # ML2 uses the L3 Router service plugin to implement l3 agent for linuxbridge and ovs
+        service_plugins.append('router')
 
     if config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
         service_plugins.append('metering')
@@ -655,10 +813,26 @@ def create_manifests(config, messages):
             fw_details[key]['chain'] = "INPUT"
             fw_details[key]['ports'] = ['9696']
             fw_details[key]['proto'] = "tcp"
+            if use_ml2_with_ovn(config):
+                key = "ovn_northd_%s" % host
+                fw_details.setdefault(key, {})
+                fw_details[key]['host'] = "ALL"
+                fw_details[key]['service_name'] = "ovn northd"
+                fw_details[key]['chain'] = "INPUT"
+                fw_details[key]['ports'] = ['6641']
+                fw_details[key]['proto'] = "tcp"
+                key = "ovn_southd_%s" % host
+                fw_details.setdefault(key, {})
+                fw_details[key]['host'] = "ALL"
+                fw_details[key]['service_name'] = "ovn southd"
+                fw_details[key]['chain'] = "INPUT"
+                fw_details[key]['ports'] = ['6642']
+                fw_details[key]['proto'] = "tcp"
             config['FIREWALL_NEUTRON_SERVER_RULES'] = fw_details
 
         # We also need to open VXLAN/GRE port for agent
-        if use_openvswitch_vxlan(config) or use_openvswitch_gre(config):
+        if (use_openvswitch_vxlan(config) or use_openvswitch_gre(config) or
+                use_ovn_geneve(config)):
             if config['CONFIG_IP_VERSION'] == 'ipv6':
                 msg = output_messages.WARN_IPV6_OVS
                 messages.append(utils.color_text(msg % host, 'red'))
@@ -706,7 +880,8 @@ def create_l3_manifests(config, messages):
         config['CONFIG_NEUTRON_L3_HOST'] = host
         config['CONFIG_NEUTRON_L3_INTERFACE_DRIVER'] = get_if_driver(config)
 
-        if config['CONFIG_NEUTRON_L2_AGENT'] == 'openvswitch':
+        if (config['CONFIG_NEUTRON_L2_AGENT'] == 'openvswitch' or
+                config['CONFIG_NEUTRON_L2_AGENT'] == 'ovn'):
             ext_bridge = config['CONFIG_NEUTRON_L3_EXT_BRIDGE']
             mapping = find_mapping(
                 config['CONFIG_NEUTRON_OVS_BRIDGE_MAPPINGS'],
@@ -721,8 +896,10 @@ def create_l3_manifests(config, messages):
 
 
 def create_dhcp_manifests(config, messages):
-    global network_hosts
+    if use_ml2_with_ovn(config):
+        return
 
+    global network_hosts
     for host in network_hosts:
         config["CONFIG_NEUTRON_DHCP_HOST"] = host
         config['CONFIG_NEUTRON_DHCP_INTERFACE_DRIVER'] = get_if_driver(config)
@@ -751,6 +928,8 @@ def create_dhcp_manifests(config, messages):
 
 
 def create_lbaas_manifests(config, messages):
+    if use_ml2_with_ovn(config):
+        return
     global network_hosts
 
     if not config['CONFIG_LBAAS_INSTALL'] == 'y':
@@ -761,6 +940,8 @@ def create_lbaas_manifests(config, messages):
 
 
 def create_metering_agent_manifests(config, messages):
+    if use_ml2_with_ovn(config):
+        return
     global network_hosts
 
     if not config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
@@ -784,7 +965,7 @@ def create_l2_agent_manifests(config, messages):
     else:
         config['CONFIG_NEUTRON_USE_L2POPULATION'] = False
 
-    if agent == "openvswitch":
+    if agent in ["openvswitch", "ovn"]:
         ovs_type = 'CONFIG_NEUTRON_ML2_TYPE_DRIVERS'
         ovs_type = config.get(ovs_type, 'local')
         tunnel = use_openvswitch_vxlan(config) or use_openvswitch_gre(config)
@@ -828,7 +1009,7 @@ def create_l2_agent_manifests(config, messages):
         # vlan, flat, vxlan or gre are enabled. For compute nodes, they are
         # only required if vlan or flat are enabled.
         if (
-            agent == "openvswitch" and (
+            agent in ["openvswitch", "ovn"] and (
                 (host in network_hosts and no_local_types)
                 or no_tunnel_types)
         ):

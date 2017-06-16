@@ -1,0 +1,20 @@
+---
+features:
+  - |
+    Now packstack support using Open Virtual Network (ovn) as neutron
+    plugin. To enable it you need to set CONFIG_NEUTRON_L2_AGENT to ovn.
+    Additionally some options have been added to configure different options
+    and topologies:
+
+        * CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS
+        * CONFIG_NEUTRON_OVN_BRIDGE_IFACES
+        * CONFIG_NEUTRON_OVN_BRIDGES_COMPUTE
+        * CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET
+        * CONFIG_NEUTRON_OVN_TUNNEL_IF
+        * CONFIG_NEUTRON_OVN_TUNNEL_SUBNETS
+
+    Additionally, geneve has been included as an option to existing parameters
+    CONFIG_NEUTRON_ML2_TYPE_DRIVERS and CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES.
+    Note that OVN networking has still some limitations, as lack of support of
+    for LBaaS, FWaaS and VPNaaS. Consult networking-ovn documentation for
+    further details.
