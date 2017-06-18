@@ -1,0 +1,5 @@
+---
+features:
+  - Users would like the ability to use custom lvm
+    names during deployment. This is now possible using
+    the cinder-volume-name parameter. 

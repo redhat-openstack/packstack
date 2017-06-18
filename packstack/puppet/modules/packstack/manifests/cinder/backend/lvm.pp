@@ -1,6 +1,7 @@
 class packstack::cinder::backend::lvm ()
 {
     $create_cinder_volume = hiera('CONFIG_CINDER_VOLUMES_CREATE')
+    $cinder_volume_name = hiera('CONFIG_CINDER_VOLUME_NAME')
 
     if $create_cinder_volume == 'y' {
         # Find an available loop device
@@ -10,7 +11,7 @@ class packstack::cinder::backend::lvm ()
           size            => hiera('CONFIG_CINDER_VOLUMES_SIZE'),
           loopback_device => $loop_dev,
           volume_path     => '/var/lib/cinder',
-          volume_name     => 'cinder-volumes',
+          volume_name     => $cinder_volume_name,
         }
 
         # Add loop device on boot
@@ -19,8 +20,8 @@ class packstack::cinder::backend::lvm ()
 
           file_line{ 'rc.local_losetup_cinder_volume':
             path  => '/etc/rc.d/rc.local',
-            match => '^.*/var/lib/cinder/cinder-volumes.*$',
-            line  => 'losetup -f /var/lib/cinder/cinder-volumes && service openstack-cinder-volume restart',
+            match => "^.*/var/lib/cinder/$cinder_volume_name.*$",
+            line  => "losetup -f /var/lib/cinder/$cinder_volume_name && service openstack-cinder-volume restart",
           }
 
           file { '/etc/rc.d/rc.local':
@@ -33,7 +34,7 @@ class packstack::cinder::backend::lvm ()
             path    => '/usr/lib/systemd/system/openstack-losetup.service',
             before  => Service['openstack-losetup'],
             notify  => Exec['reload systemd files for cinder-volume'],
-            content => '[Unit]
+            content => "[Unit]
     Description=Setup cinder-volume loop device
     DefaultDependencies=false
     Before=openstack-cinder-volume.service
@@ -41,13 +42,13 @@ class packstack::cinder::backend::lvm ()
 
     [Service]
     Type=oneshot
-    ExecStart=/usr/bin/sh -c \'/usr/sbin/losetup -j /var/lib/cinder/cinder-volumes | /usr/bin/grep /var/lib/cinder/cinder-volumes || /usr/sbin/losetup -f /var/lib/cinder/cinder-volumes\'
-    ExecStop=/usr/bin/sh -c \'/usr/sbin/losetup -j /var/lib/cinder/cinder-volumes | /usr/bin/cut -d : -f 1 | /usr/bin/xargs /usr/sbin/losetup -d\'
+    ExecStart=/usr/bin/sh -c \'/usr/sbin/losetup -j /var/lib/cinder/$cinder_volume_name | /usr/bin/grep /var/lib/cinder/$cinder_volume_name || /usr/sbin/losetup -f /var/lib/cinder/$cinder_volume_name\'
+    ExecStop=/usr/bin/sh -c \'/usr/sbin/losetup -j /var/lib/cinder/$cinder_volume_name | /usr/bin/cut -d : -f 1 | /usr/bin/xargs /usr/sbin/losetup -d\'
     TimeoutSec=60
     RemainAfterExit=yes
 
     [Install]
-    RequiredBy=openstack-cinder-volume.service',
+    RequiredBy=openstack-cinder-volume.service",
           }
 
           exec { 'reload systemd files for cinder-volume':
@@ -86,6 +87,7 @@ class packstack::cinder::backend::lvm ()
     cinder::backend::iscsi { 'lvm':
       iscsi_ip_address => hiera('CONFIG_STORAGE_HOST_URL'),
       require          => Package['lvm2'],
+      volume_group     => $cinder_volume_name,
     }
 
     cinder::type { 'iscsi':
