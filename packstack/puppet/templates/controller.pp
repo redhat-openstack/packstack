@@ -93,6 +93,9 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
     include '::packstack::neutron::notifications'
   }
   include '::packstack::neutron::ml2'
+  if hiera('CONFIG_NEUTRON_L2_AGENT') == 'ovn' {
+    include '::packstack::neutron::ovn_northd'
+  }
 }
 
 if hiera('CONFIG_MANILA_INSTALL') == 'y' {

@@ -19,6 +19,14 @@ class packstack::neutron::ml2 ()
       firewall_driver           => hiera('FIREWALL_DRIVER'),
       supported_pci_vendor_devs => hiera_array('CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS'),
       extension_drivers         => 'port_security',
+      max_header_size           => 38,
+    }
+
+    if hiera('CONFIG_NEUTRON_L2_AGENT') == 'ovn' {
+      class {'::neutron::plugins::ml2::ovn':
+        ovn_nb_connection => "tcp:${hiera('CONFIG_CONTROLLER_HOST')}:6641",
+        ovn_sb_connection => "tcp:${hiera('CONFIG_CONTROLLER_HOST')}:6642",
+      }
     }
 
     # For cases where "neutron-db-manage upgrade" command is called

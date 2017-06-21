@@ -181,26 +181,27 @@ reproduce these tests on your environment if you wish.
 
 This is the current matrix of available tests:
 
-|     -      | scenario001 | scenario002 | scenario003 |
-|:----------:|:-----------:|:-----------:|:------------:
-| keystone   |   FERNET    |    UUID     |    FERNET   |
-| glance     |    file     |    swift    |     file    |
-| nova       |      X      |      X      |      X      |
-| neutron    |      X      |      X      |      X      |
-| lbaasv2    |             |      X      |             |
-| vpnaas     |             |      X      |             |
-| cinder     |      X      |             |             |
-| ceilometer |             |             |      X      |
-| aodh       |             |             |      X      |
-| gnocchi    |             |             |      X      |
-| panko      |             |             |      X      |
-| heat       |             |             |      X      |
-| swift      |             |      X      |             |
-| sahara     |             |      X      |             |
-| trove      |             |      X      |             |
-| horizon    |      X      |             |             |
-| manila     |      X      |             |             |
-| SSL        |      X      |             |             |
+|     -          | scenario001 | scenario002 | scenario003 |
+|:--------------:|:-----------:|:-----------:|:------------:
+| keystone       |   FERNET    |    UUID     |    FERNET   |
+| glance         |    file     |    swift    |     file    |
+| nova           |      X      |      X      |      X      |
+| neutron        |      X      |      X      |      X      |
+| neutron plugin |     ovn     |     ovs     |     ovs     |
+| lbaasv2        |             |      X      |             |
+| vpnaas         |             |      X      |             |
+| cinder         |      X      |             |             |
+| ceilometer     |             |             |      X      |
+| aodh           |             |             |      X      |
+| gnocchi        |             |             |      X      |
+| panko          |             |             |      X      |
+| heat           |             |             |      X      |
+| swift          |             |      X      |             |
+| sahara         |             |      X      |             |
+| trove          |             |      X      |             |
+| horizon        |      X      |             |             |
+| manila         |      X      |             |             |
+| SSL            |      X      |             |             |
 
 To run these tests:
 

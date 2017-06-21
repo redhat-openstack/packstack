@@ -66,6 +66,10 @@ mod 'oslo',
   :git => 'https://github.com/openstack/puppet-oslo',
   :ref => 'master'
 
+mod 'ovn',
+  :git => 'https://github.com/openstack/puppet-ovn',
+  :ref => 'master'
+
 mod 'panko',
   :git => 'https://github.com/openstack/puppet-panko',
   :ref => 'master'

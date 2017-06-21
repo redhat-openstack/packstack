@@ -796,13 +796,13 @@ Neutron ML2 plugin config
 -------------------------
 
 **CONFIG_NEUTRON_ML2_TYPE_DRIVERS**
-    Comma-separated list of network-type driver entry points to be loaded from the neutron.ml2.type_drivers namespace. ['local', 'flat', 'vlan', 'gre', 'vxlan']
+    Comma-separated list of network-type driver entry points to be loaded from the neutron.ml2.type_drivers namespace. ['local', 'flat', 'vlan', 'gre', 'vxlan', 'geneve']
 
 **CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES**
-    Comma-separated, ordered list of network types to allocate as tenant networks. The 'local' value is only useful for single-box testing and provides no connectivity between hosts. ['local', 'vlan', 'gre', 'vxlan']
+    Comma-separated, ordered list of network types to allocate as tenant networks. The 'local' value is only useful for single-box testing and provides no connectivity between hosts. ['local', 'vlan', 'gre', 'vxlan', 'geneve']
 
 **CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS**
-    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'linuxbridge', 'openvswitch', 'hyperv', 'ncs', 'arista', 'cisco_nexus', 'mlnx', 'l2population', 'sriovnicswitch']
+    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'linuxbridge', 'openvswitch', 'hyperv', 'ncs', 'arista', 'cisco_nexus', 'mlnx', 'l2population', 'sriovnicswitch', 'ovn']
 
 **CONFIG_NEUTRON_ML2_FLAT_NETWORKS**
     Comma-separated list of physical_network names with which flat networks can be created. Use * to allow flat networks with arbitrary physical_network names.
@@ -827,7 +827,7 @@ Neutron ML2 plugin config
 
 
 **CONFIG_NEUTRON_L2_AGENT**
-    Name of the L2 agent to be used with OpenStack Networking. ['linuxbridge', 'openvswitch']
+    Name of the L2 agent to be used with OpenStack Networking. ['linuxbridge', 'openvswitch', 'ovn']
 
 Neutron LB agent config
 -----------------------
@@ -864,6 +864,31 @@ Neutron OVS agent config for VXLAN
 
 **CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT**
     VXLAN UDP port.
+
+Neutron OVN agent config
+------------------------
+
+**CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS**
+    Comma-separated list of bridge mappings for the OpenStack Networking Open Virtual Network plugin. Each tuple in the list must be in the format <physical_network>:<ovs_bridge>. Example: physnet1:br-eth1,physnet2:br-eth2,physnet3:br-eth3
+
+**CONFIG_NEUTRON_OVN_BRIDGE_IFACES**
+    Comma-separated list of colon-separated Open vSwitch <bridge>:<interface> pairs. The interface will be added to the associated bridge. If you desire the bridge to be persistent a value must be added to this directive, also CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS must be set in order to create the proper port. This can be achieved from the command line by issuing the following command: packstack --allinone --os-neutron-ovn-bridge-mappings=ext-net:br-ex --os-neutron-ovn-bridge-interfaces=br-ex:eth0
+
+**CONFIG_NEUTRON_OVN_BRIDGES_COMPUTE**
+    Comma-separated list of Open vSwitch bridges that must be created and connected to interfaces in compute nodes when flat or vlan type drivers are enabled. These bridges must exist in CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS and CONFIG_NEUTRON_OVN_BRIDGE_IFACES. Example: --os-neutron-ovn-bridges-compute=br-vlan --os-neutron-ovn-bridge-mappings="extnet:br-ex,physnet1:br-vlan" --os-neutron-ovn-bridge-interfaces="br-ex:eth1,br-vlan:eth2"
+
+**CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET**
+    Name of physical network used for external network when enabling CONFIG_PROVISION_DEMO. Name must be one of the included in CONFIG_NEUTRON_OVN_BRIDGE_MAPPINGS. Example: --os-neutron-ovn-bridge-mappings="extnet:br-ex,physnet1:br-vlan" --os-neutron-ovn-bridge-interfaces="br-ex:eth1,br-vlan:eth2" --os-neutron-ovn-external-physnet="extnet"
+
+Neutron OVN agent config for tunnels
+------------------------------------
+
+**CONFIG_NEUTRON_OVN_TUNNEL_IF**
+    Interface for the Open vSwitch tunnel. Packstack overrides the IP address used for tunnels on this hypervisor to the IP found on the specified interface (for example, eth1).
+
+**CONFIG_NEUTRON_OVN_TUNNEL_SUBNETS**
+    Comma-separated list of subnets (for example, 192.168.10.0/24,192.168.11.0/24) used for sending tunneling packets. This is used to configure IP filtering to accept tunneling packets from these subnets instead of specific IP addresses of peer nodes. This is useful when you add existing nodes to EXCLUDE_SERVERS because, in this case, packstack cannot modify the IP filtering of the existing nodes.
+
 
 NOVACLIENT Config parameters
 ----------------------------

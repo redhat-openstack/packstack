@@ -41,6 +41,12 @@ class packstack::nova ()
       $notify_on_state_change = undef
     }
 
+    if hiera('CONFIG_NEUTRON_L2_AGENT') == 'ovn' {
+      $novahost = $::fqdn
+    } else {
+      $novahost = undef
+    }
+
     class { '::nova':
       glance_api_servers            => "${nova_common_rabbitmq_cfg_storage_host}:9292",
       default_transport_url         => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
@@ -58,5 +64,6 @@ class packstack::nova ()
       placement_database_connection => "mysql+pymysql://nova_placement:${nova_db_pw}@${nova_mariadb_host}/nova_placement",
       cpu_allocation_ratio          => hiera('CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO'),
       ram_allocation_ratio          => hiera('CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO'),
+      host                          => $novahost,
     }
 }
