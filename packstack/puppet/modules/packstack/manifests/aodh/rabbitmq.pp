@@ -18,7 +18,7 @@ class packstack::aodh::rabbitmq ()
       file { $files_to_set_owner:
         owner   => 'aodh',
         group   => 'aodh',
-        require => Package['openstack-aodh-common'],
+        require => Package['aodh'],
       }
       File[$files_to_set_owner] ~> Service<| tag == 'aodh-service' |>
     }

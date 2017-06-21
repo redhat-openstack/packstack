@@ -14,7 +14,7 @@ class packstack::ceilometer::rabbitmq ()
       file { $files_to_set_owner:
         owner   => 'ceilometer',
         group   => 'ceilometer',
-        require => Package['openstack-ceilometer-common'],
+        require => Package['ceilometer-common'],
       }
       File[$files_to_set_owner] ~> Service<| tag == 'ceilometer-service' |>
     }
