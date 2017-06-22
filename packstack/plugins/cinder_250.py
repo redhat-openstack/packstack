@@ -126,6 +126,20 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
+        "CINDERVOLUMENAME": [
+            {"CMD_OPTION": "cinder-volume-name",
+             "PROMPT": "Enter a name for the Cinder volume",
+             "OPTION_LIST": [],
+             "VALIDATORS": [validators.validate_not_empty],
+             "DEFAULT_VALUE": "cinder-volumes",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_CINDER_VOLUME_NAME",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+        ],
+
         "CINDERGLUSTERMOUNTS": [
             {"CMD_OPTION": "cinder-gluster-mounts",
              "PROMPT": ("Enter a single or comma separated list of gluster "
@@ -500,6 +514,13 @@ def initConfig(controller):
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
+        {"GROUP_NAME": "CINDERVOLUMENAME",
+         "DESCRIPTION": "Cinder volume custom name",
+         "PRE_CONDITION": check_lvm_options,
+         "PRE_CONDITION_MATCH": True,
+         "POST_CONDITION": False,
+         "POST_CONDITION_MATCH": True},
+
         {"GROUP_NAME": "CINDERVOLUMESIZE",
          "DESCRIPTION": "Cinder volume size Config parameters",
          "PRE_CONDITION": check_lvm_vg_options,
@@ -682,7 +703,7 @@ def check_solidfire_options(config):
 # -------------------------- step functions --------------------------
 
 def check_cinder_vg(config, messages):
-    cinders_volume = 'cinder-volumes'
+    cinders_volume = config["CONFIG_CINDER_VOLUME_NAME"]
 
     # Do we have a cinder-volumes vg?
     have_cinders_volume = False
@@ -697,8 +718,7 @@ def check_cinder_vg(config, messages):
     if config["CONFIG_CINDER_VOLUMES_CREATE"] == "n":
         if not have_cinders_volume:
             raise exceptions.MissingRequirements("The cinder server should "
-                                                 "contain a cinder-volumes "
-                                                 "volume group")
+                                                 "contain a volume group")
     match = re.match('^(?P<size>\d+)G$',
                      config['CONFIG_CINDER_VOLUMES_SIZE'].strip())
     if not match:

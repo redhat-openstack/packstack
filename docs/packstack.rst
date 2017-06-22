@@ -502,6 +502,12 @@ Cinder volume size Config parameters
 **CONFIG_CINDER_VOLUMES_SIZE**
     Size of Block Storage volumes group. Actual volume size will be extended with 3% more space for VG metadata. Remember that the size of the volume group will restrict the amount of disk space that you can expose to Compute instances, and that the specified amount must be available on the device used for /var/lib/cinder.
 
+Cinder lvm Config parameters
+----------------------------
+
+**CONFIG_CINDER_VOLUME_NAME**
+    Specify a custom name for the lvm cinder volume group
+
 Cinder gluster Config parameters
 --------------------------------
 

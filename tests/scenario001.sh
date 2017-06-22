@@ -16,6 +16,7 @@ echo
 
 $SUDO packstack ${ADDITIONAL_ARGS} \
           --allinone \
+          --cinder-volume-name="aVolume" \
           --debug \
           --service-workers=2 \
           --default-password="packstack" \
