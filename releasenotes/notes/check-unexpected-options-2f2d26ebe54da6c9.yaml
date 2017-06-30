@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Added new --validate-answer-file switch to check if answerfile contains
+    any unexpected options.

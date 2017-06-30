@@ -88,6 +88,13 @@ To make **Packstack** write more detailed information into the log file you can 
 
     $ packstack -d --allinone
 
+When upgrading to a new OpenStack release and reusing old answerfile
+it is useful to know if any **Packstack** option was removed. If answerfile is
+written by hand it is possible to make a mistake. The `--validate-answer-file`
+switch allows checking if any provided option is not recognized by **Packstack**.
+
+    $ packstack --validate-answer-file=ans.txt
+
 ## Developing
 
 **Warning:**

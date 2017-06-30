@@ -761,6 +761,35 @@ def generateAnswerFile(outputFile, overrides={}):
                 ans_file.write(fmt % args)
 
 
+def validate_answer_file_options(answerfile_path):
+    if not os.path.exists(answerfile_path):
+        raise Exception(
+            output_messages.ERR_NO_ANSWER_FILE % answerfile_path)
+
+    answerfile = ConfigParser.ConfigParser()
+    answerfile.read(answerfile_path)
+    sections = answerfile._sections
+    general_sections = sections.get('general', None)
+
+    if len(sections) != 1:
+        raise Exception('Expected single section')
+    if not general_sections:
+        raise Exception('Expected section [general]')
+
+    general_sections.pop('__name__')
+    answerfile_options = set([key.upper() for key in general_sections])
+
+    possible_options = set()
+    for group in controller.getAllGroups():
+        possible_options.update([key.upper() for key in group.parameters])
+
+    difference = answerfile_options - possible_options
+    if difference:
+        raise Exception(
+            'Found unexpected answerfile options {}'.format(list(difference)))
+    print('Provided answerfile does not contain any unexpected options.')
+
+
 def single_step_aio_install(options, logFile):
     """Installs an All in One host on this host."""
 
@@ -810,6 +839,7 @@ def initCmdLineParser():
     usage = "usage: %prog [options] [--help]"
     parser = OptionParser(usage=usage, version="%prog {0}".format(version_info.version_string()))
     parser.add_option("--gen-answer-file", help="Generate a template of an answer file.")
+    parser.add_option("--validate-answer-file", help="Check if answerfile contains unexpected options.")
     parser.add_option("--answer-file", help="Runs the configuration in non-interactive mode, extracting all information from the"
                                             "configuration file. using this option excludes all other options")
     parser.add_option("--install-hosts", help="Install on a set of hosts in a single step. The format should be a comma separated list "
@@ -979,8 +1009,10 @@ def main():
         controller.CONF['DRY_RUN'] = options.dry_run
         controller.CONF['DIR_LOG'] = basedefs.DIR_LOG
 
-        # If --gen-answer-file was supplied, do not run main
-        if options.gen_answer_file:
+        if options.validate_answer_file:
+            answerfilepath = options.validate_answer_file
+            validate_answer_file_options(answerfilepath)
+        elif options.gen_answer_file:
             answerfilepath = _gettmpanswerfilepath()
             if not answerfilepath:
                 _printAdditionalMessages()
