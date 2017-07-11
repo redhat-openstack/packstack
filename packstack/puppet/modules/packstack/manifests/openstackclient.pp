@@ -26,7 +26,7 @@ class packstack::openstackclient ()
 
     $rcadmin_common_content = "unset OS_SERVICE_TOKEN
     export OS_USERNAME=${ost_cl_keystone_admin_username}
-    export OS_PASSWORD=${ost_cl_keystone_admin_pw}
+    export OS_PASSWORD='${ost_cl_keystone_admin_pw}'
     export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
     export PS1='[\\u@\\h \\W(keystone_admin)]\\$ '
     "
@@ -55,7 +55,7 @@ export OS_IDENTITY_API_VERSION=${int_api_version}
     if hiera('CONFIG_PROVISION_DEMO') == 'y' {
       $demo_common_content = "unset OS_SERVICE_TOKEN
 export OS_USERNAME=demo
-export OS_PASSWORD=${ost_cl_keystone_demo_pw}
+export OS_PASSWORD='${ost_cl_keystone_demo_pw}'
 export PS1='[\\u@\\h \\W(keystone_demo)]\\$ '
 export OS_AUTH_URL=${ost_cl_ctrl_keystone_url}
     "
