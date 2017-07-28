@@ -36,7 +36,12 @@ class packstack::horizon ()
       neutron_options       => {
         'enable_firewall' => hiera('CONFIG_HORIZON_NEUTRON_FW'),
         'enable_vpn'      => hiera('CONFIG_HORIZON_NEUTRON_VPN'),
+        'enable_lb'       => hiera('CONFIG_HORIZON_NEUTRON_LB'),
       },
+    }
+
+    if hiera('CONFIG_LBAAS_INSTALL') == 'y' {
+      ensure_packages(['openstack-neutron-lbaas-ui'], {'ensure' => 'present'})
     }
 
     include '::packstack::memcached'
