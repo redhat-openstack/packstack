@@ -44,6 +44,10 @@ class packstack::horizon ()
       ensure_packages(['openstack-neutron-lbaas-ui'], {'ensure' => 'present'})
     }
 
+    if hiera('CONFIG_MAGNUM_INSTALL') == 'y' {
+      ensure_packages(['openstack-magnum-ui'], {'ensure' => 'present'})
+    }
+
     include '::packstack::memcached'
 
     $firewall_port = hiera('CONFIG_HORIZON_PORT')
