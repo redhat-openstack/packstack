@@ -20,6 +20,7 @@ from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
 from packstack.installer import processors
+from packstack.installer.core import arch
 
 from packstack.modules.documentation import update_params_usage
 
@@ -30,19 +31,23 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 DEMO_IMAGE_NAME = 'cirros'
 DEMO_IMAGE_URL = (
-    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img'
+    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-%s-disk.img'
+    % (arch.cirros_arch())
 )
 DEMO_IMAGE_SSH_USER = 'cirros'
 DEMO_IMAGE_FORMAT = 'qcow2'
 UEC_IMAGE_NAME = 'cirros-uec'
 UEC_IMAGE_KERNEL_URL = (
-    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-kernel'
+    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-%s-kernel'
+    % (arch.cirros_arch())
 )
 UEC_IMAGE_RAMDISK_URL = (
-    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-initramfs'
+    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-%s-initramfs'
+    % (arch.cirros_arch())
 )
 UEC_IMAGE_DISK_URL = (
-    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-x86_64-disk.img'
+    'http://download.cirros-cloud.net/0.3.4/cirros-0.3.4-%s-disk.img'
+    % (arch.cirros_arch())
 )
 
 
