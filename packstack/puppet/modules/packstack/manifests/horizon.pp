@@ -48,6 +48,10 @@ class packstack::horizon ()
       ensure_packages(['openstack-magnum-ui'], {'ensure' => 'present'})
     }
 
+   if hiera('CONFIG_IRONIC_INSTALL') == 'y' {
+      ensure_packages(['openstack-ironic-ui'], {'ensure' => 'present'})
+    }
+
     include '::packstack::memcached'
 
     $firewall_port = hiera('CONFIG_HORIZON_PORT')
