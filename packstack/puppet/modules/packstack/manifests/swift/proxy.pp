@@ -101,4 +101,6 @@ class packstack::swift::proxy ()
     }
 
     class { '::swift::objectexpirer': }
+
+    Keystone_user_role['swift@services'] ~> Service['swift-proxy-server']
 }
