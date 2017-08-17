@@ -128,7 +128,8 @@ if hiera('CONFIG_SWIFT_INSTALL') == 'y' {
   include '::packstack::swift::ringbuilder'
   include '::packstack::swift::proxy'
   include '::packstack::swift::storage'
-  if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+  if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and
+     hiera('CONFIG_ENABLE_CEILOMETER_MIDDLEWARE') == 'y' {
     include '::packstack::swift::ceilometer'
   }
 }
