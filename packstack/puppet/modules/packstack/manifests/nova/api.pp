@@ -25,7 +25,7 @@ class packstack::nova::api ()
     }
 
     if hiera('CONFIG_NOVA_PCI_ALIAS') == '' {
-      $pci_alias = false
+      $pci_alias = $::os_service_default
     } else {
       $pci_alias = hiera('CONFIG_NOVA_PCI_ALIAS')
     }
