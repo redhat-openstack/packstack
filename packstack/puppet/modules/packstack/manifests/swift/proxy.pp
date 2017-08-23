@@ -11,7 +11,8 @@ class packstack::swift::proxy ()
 
     include '::packstack::memcached'
 
-    if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+    if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and
+       hiera('CONFIG_ENABLE_CEILOMETER_MIDDLEWARE') == 'y' {
       $swift_pipeline = [
         'catch_errors',
         'bulk',

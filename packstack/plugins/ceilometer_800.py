@@ -104,6 +104,17 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
+
+            {"CONF_NAME": "CONFIG_ENABLE_CEILOMETER_MIDDLEWARE",
+             "CMD_OPTION": "enable-ceilometer-middleware",
+             "PROMPT": ("Enable ceilometer middleware in swift proxy"),
+             "OPTION_LIST": ["y", "n"],
+             "VALIDATORS": [validators.validate_options],
+             "DEFAULT_VALUE": "n",
+             "MASK_INPUT": False,
+             "USE_DEFAULT": True,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
         ],
 
         "MONGODB": [
