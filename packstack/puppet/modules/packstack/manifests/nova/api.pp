@@ -40,6 +40,7 @@ class packstack::nova::api ()
       sync_db_api                          => true,
       osapi_compute_workers                => hiera('CONFIG_SERVICE_WORKERS'),
       metadata_workers                     => hiera('CONFIG_SERVICE_WORKERS'),
+      allow_resize_to_same_host            => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
     }
 
     class { '::nova::wsgi::apache_placement':
