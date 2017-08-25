@@ -10,11 +10,14 @@ class packstack::provision ()
       $password             = hiera('CONFIG_KEYSTONE_DEMO_PW')
       $tenant_name          = 'demo'
       $floating_range       = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
+      $allocation_pools     = hiera(
+                              'CONFIG_PROVISION_DEMO_ALLOCATION_POOLS')
     } elsif $provision_tempest {
       $username             = hiera('CONFIG_PROVISION_TEMPEST_USER')
       $password             = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
       $tenant_name          = 'tempest'
       $floating_range       = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
+      $allocation_pools     = []
       if (empty($tempest_user) or empty($tempest_password)) {
         fail("Both CONFIG_PROVISION_TEMPEST_USER and
         CONFIG_PROVISION_TEMPEST_USER_PW need to be configured.")
@@ -69,11 +72,12 @@ class packstack::provision ()
           provider_physical_network => $public_physnet,
         }
         neutron_subnet { $public_subnet_name:
-          ensure       => 'present',
-          cidr         => $floating_range,
-          enable_dhcp  => false,
-          network_name => $public_network_name,
-          tenant_name  => $admin_tenant_name,
+          ensure           => 'present',
+          cidr             => $floating_range,
+          allocation_pools => $allocation_pools,
+          enable_dhcp      => false,
+          network_name     => $public_network_name,
+          tenant_name      => $admin_tenant_name,
         }
         neutron_network { $private_network_name:
           ensure      => present,

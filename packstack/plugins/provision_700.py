@@ -15,6 +15,7 @@
 """
 Installs and configures Provisioning for demo usage and testing
 """
+import json
 
 from packstack.installer import basedefs
 from packstack.installer import utils
@@ -99,6 +100,19 @@ def initConfig(controller):
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_PROVISION_DEMO_FLOATRANGE",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "provision-demo-allocation-pools",
+             "PROMPT": ("Enter the allocation pools from the floating IP "
+                        "subnet, as JSON list [\"start=ip1,end=ip2\", ...]"),
+             "OPTION_LIST": [],
+             "VALIDATORS": [],
+             "DEFAULT_VALUE": "[]",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": False,
+             "CONF_NAME": "CONFIG_PROVISION_DEMO_ALLOCATION_POOLS",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
@@ -369,3 +383,9 @@ def initConfig(controller):
 
 def initSequences(controller):
     config = controller.CONF
+    # params modification
+    key = 'CONFIG_PROVISION_DEMO_ALLOCATION_POOLS'
+    value = config.get(key, "[]")
+    config[key] = json.loads(value)
+    if type(config[key]) is not list:
+        raise KeyError("Key %s is not a list: %s" % (key, config[key]))

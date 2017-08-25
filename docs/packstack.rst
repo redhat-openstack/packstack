@@ -986,6 +986,9 @@ Provisioning demo config
 **CONFIG_PROVISION_DEMO_FLOATRANGE**
     CIDR network address for the floating IP subnet.
 
+**CONFIG_PROVISION_DEMO_ALLOCATION_POOLS**
+    Allocation pools in the floating IP subnet.
+
 **CONFIG_PROVISION_IMAGE_URL**
     A URL or local file location for an image to download and provision in Glance (defaults to a URL for a recent "cirros" image).
 

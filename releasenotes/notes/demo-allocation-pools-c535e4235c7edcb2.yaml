@@ -1,0 +1,4 @@
+---
+features:
+  - Introduced CONFIG_PROVISION_DEMO_ALLOCATION_POOLS
+    to restrict public subnet IP address allocations.
