@@ -20,7 +20,7 @@ options have yet to be added.
     $ git clone git://github.com/openstack/packstack.git
     $ cd packstack && sudo python setup.py install
 
-## Installation of openstack-puppet-modules (REQUIRED if running packstack from source):
+## Installation of Puppet modules (REQUIRED if running packstack from source):
 
     $ export GEM_HOME=/tmp/somedir
     $ gem install r10k
@@ -97,21 +97,14 @@ switch allows checking if any provided option is not recognized by **Packstack**
 
 ## Developing
 
-**Warning:**
-this procedure installs **openstack-puppet-modules** containing code that has
-not been upstreamed and fully tested yet and as such will not be as robust as
-the other install procedures.  It is recommended to install from **RPM**
-instead.
-
-To ease development of **Packstack** and **openstack-puppet-modules**, it can be
+To ease development of **Packstack**, it can be
 useful to install from *git* such that updates to the git repositories are
-immediately effective without reinstallation of packstack and
-**openstack-puppet-modules**.
+immediately effective without reinstallation.
 
-To do this, start with a minimal **Fedora 21** installation.  Then remove any
+To do this, start with a minimal **CentOS 7** installation.  Then remove any
 relevant packages that might conflict:
 
-    $ yum -y erase openstack-{packstack*,puppet-modules}
+    $ yum -y erase openstack-packstack*,puppet-*
 
 Disable **SELinux** by changing "`enforcing`" to "`permissive`" in
 `/etc/sysconfig/selinux`, then reboot to allow service changes to take effect
@@ -121,30 +114,20 @@ and swap over networking.  Then install packages:
 
 And install **RDO**:
 
-    $ yum -y install https://rdo.fedorapeople.org/rdo-release.rpm
+    $ yum -y install https://www.rdoproject.org/repos/rdo-release.rpm
     $ yum -y update
 
-Now we get **openstack-puppet-modules**.  Because `python setup.py
-install_puppet_modules` from **Packstack** copies rather than linking, this is not
-entirely straightforward:
+Install Puppet modules as described [above](README.md#installation-of-puppet-modules-required-if-running-packstack-from-source).
 
-    $ git clone https://github.com/redhat-openstack/openstack-puppet-modules
-    $ cd openstack-puppet-modules
-    $ git checkout master-patches
-    $ mkdir /usr/share/openstack-puppet
-    $ ln -sv /root/openstack-puppet-modules /usr/share/openstack-puppet/modules
-
-Then we get **Packstack**, and perform a similar dance:
+Then we get **Packstack**:
 
     $ yum install -y python-crypto python-devel libffi-devel openssl-devel gcc-c++
     $ git clone https://github.com/openstack/packstack
     $ cd packstack
     $ python setup.py develop
-    $ cd /usr/share/openstack-puppet/modules
-    $ ln -sv /root/packstack/packstack/puppet/modules/packstack
 
-And we're done.  Changes to the contents of **Packstack** and
-**openstack-puppet-modules** repositories are picked up by the **Packstack**
+And we're done.  Changes to the contents of **Packstack** source repository
+are picked up by the **Packstack**
 executable without further intervention, and **Packstack** is ready to install.
 
 ## Puppet Style Guide
