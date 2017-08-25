@@ -22,6 +22,7 @@ from packstack.installer import utils
 from packstack.installer import validators
 
 from packstack.modules.documentation import update_params_usage
+from packstack.modules.ospluginutils import generate_ssl_cert
 
 # ------------- Magnum Packstack Plugin Initialization --------------
 PLUGIN_NAME = "OS-Magnum"

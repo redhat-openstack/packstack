@@ -14,9 +14,9 @@ class packstack::magnum::rabbitmq ()
       file { $files_to_set_owner:
         owner   => 'magnum',
         group   => 'magnum',
-        require => Package['openstack-magnum-common'],
+        require => Package['magnum-common'],
       }
-      File[$files_to_set_owner] ~> Service<||>
+      File[$files_to_set_owner] ~> Service<| tag == 'magnum-service' |>
     }
 
     class { '::magnum':
