@@ -17,7 +17,7 @@ define enable_rabbitmq {
 
     class { '::rabbitmq':
       port                     => undef,
-      ssl_port                 => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+      ssl_port                 => 0 + hiera('CONFIG_AMQP_CLIENTS_PORT'),
       ssl_only                 => true,
       ssl                      => true,
       ssl_cacert               => $kombu_ssl_ca_certs,
@@ -37,7 +37,7 @@ define enable_rabbitmq {
     }
   } else {
     class { '::rabbitmq':
-      port             => hiera('CONFIG_AMQP_CLIENTS_PORT'),
+      port             => 0 + hiera('CONFIG_AMQP_CLIENTS_PORT'),
       ssl              => false,
       default_user     => hiera('CONFIG_AMQP_AUTH_USER'),
       default_pass     => hiera('CONFIG_AMQP_AUTH_PASSWORD'),
