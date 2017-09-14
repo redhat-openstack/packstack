@@ -1079,17 +1079,8 @@ Ceilometer Config parameters
 **CONFIG_CEILOMETER_SERVICE_NAME**
     Ceilometer service name. ['httpd', 'ceilometer']
 
-**CONFIG_CEILOMETER_METERING_BACKEND**
-    Backend driver for Telemetry's metering backend configuration. ['database', 'gnocchi']
-
 **CONFIG_ENABLE_CEILOMETER_MIDDLEWARE**
     Whether to enable ceilometer middleware in swift proxy. By default this should be false to avoid unnecessary load.
-
-MONGODB Config parameters
--------------------------
-
-**CONFIG_MONGODB_HOST**
-    IP address of the server on which to install MongoDB.
 
 Redis Config parameters
 -----------------------

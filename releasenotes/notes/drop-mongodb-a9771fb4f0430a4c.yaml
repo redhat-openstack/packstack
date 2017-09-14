@@ -1,0 +1,9 @@
+---
+fixes:
+  - |
+    Drop mongodb support from packstack. Telemetry does not support this
+    anymore and there is no reason to keep deploying and maintaining this
+    going forward. We will use gnocchi for metrics, panko for events instead.
+    Also dropping command options CONFIG_CEILOMETER_METERING_BACKEND and
+    CONFIG_CEILOMETER_EVENTS_BACKEND as we directly set the publishers
+    in the pipeline.

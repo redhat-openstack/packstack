@@ -83,28 +83,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CONF_NAME": "CONFIG_CEILOMETER_METERING_BACKEND",
-             "CMD_OPTION": "ceilometer-metering-backend",
-             "PROMPT": "Enter the metering backend to use",
-             "OPTION_LIST": ['database', 'gnocchi'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'database',
-             "MASK_INPUT": False,
-             "USE_DEFAULT": True,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CONF_NAME": "CONFIG_CEILOMETER_EVENTS_BACKEND",
-             "CMD_OPTION": "ceilometer-events-backend",
-             "PROMPT": "Enter the events backend to use",
-             "OPTION_LIST": ['database', 'panko'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'database',
-             "MASK_INPUT": False,
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CONF_NAME": "CONFIG_ENABLE_CEILOMETER_MIDDLEWARE",
              "CMD_OPTION": "enable-ceilometer-middleware",
              "PROMPT": ("Enable ceilometer middleware in swift proxy"),
@@ -117,19 +95,6 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
-        "MONGODB": [
-            {"CMD_OPTION": "mongodb-host",
-             "PROMPT": "Enter the host for the MongoDB server",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_ssh],
-             "DEFAULT_VALUE": utils.get_localhost_ip(),
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_MONGODB_HOST",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
         "REDIS": [
             {"CMD_OPTION": "redis-host",
              "PROMPT": "Enter the host for the Redis server",
@@ -166,13 +131,6 @@ def initConfig(controller):
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-        {"GROUP_NAME": "MONGODB",
-         "DESCRIPTION": "MONGODB Config parameters",
-         "PRE_CONDITION": "CONFIG_CEILOMETER_INSTALL",
-         "PRE_CONDITION_MATCH": "y",
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
         {"GROUP_NAME": "REDIS",
          "DESCRIPTION": "Redis Config parameters",
          "PRE_CONDITION": "CONFIG_CEILOMETER_COORDINATION_BACKEND",
@@ -189,9 +147,7 @@ def initSequences(controller):
     if controller.CONF['CONFIG_CEILOMETER_INSTALL'] != 'y':
         return
 
-    steps = [{'title': 'Preparing MongoDB entries',
-              'functions': [create_mongodb_manifest]},
-             {'title': 'Preparing Redis entries',
+    steps = [{'title': 'Preparing Redis entries',
               'functions': [create_redis_manifest]},
              {'title': 'Preparing Ceilometer entries',
               'functions': [create_manifest]}]
@@ -223,24 +179,6 @@ def create_manifest(config, messages):
     fw_details[key]['ports'] = ['8777']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_CEILOMETER_RULES'] = fw_details
-
-
-def create_mongodb_manifest(config, messages):
-    host = config['CONFIG_MONGODB_HOST']
-    if config['CONFIG_IP_VERSION'] == 'ipv6':
-        config['CONFIG_MONGODB_HOST_URL'] = "[%s]" % host
-    else:
-        config['CONFIG_MONGODB_HOST_URL'] = host
-
-    fw_details = dict()
-    key = "mongodb_server"
-    fw_details.setdefault(key, {})
-    fw_details[key]['host'] = "%s" % config['CONFIG_CONTROLLER_HOST']
-    fw_details[key]['service_name'] = "mongodb-server"
-    fw_details[key]['chain'] = "INPUT"
-    fw_details[key]['ports'] = ['27017']
-    fw_details[key]['proto'] = "tcp"
-    config['FIREWALL_MONGODB_RULES'] = fw_details
 
 
 def create_redis_manifest(config, messages):

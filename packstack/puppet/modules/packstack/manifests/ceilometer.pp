@@ -2,13 +2,7 @@ class packstack::ceilometer ()
 {
     create_resources(packstack::firewall, hiera('FIREWALL_CEILOMETER_RULES', {}))
 
-    $config_mongodb_host = hiera('CONFIG_MONGODB_HOST_URL')
-
     $config_ceilometer_coordination_backend = hiera('CONFIG_CEILOMETER_COORDINATION_BACKEND')
-
-    $config_ceilometer_metering_backend = hiera('CONFIG_CEILOMETER_METERING_BACKEND')
-
-    $config_ceilometer_events_backend = hiera('CONFIG_CEILOMETER_EVENTS_BACKEND')
 
     $config_gnocchi_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
@@ -25,22 +19,22 @@ class packstack::ceilometer ()
       $coordination_url = ''
     }
 
-    class { '::ceilometer::db':
-      database_connection => "mongodb://${config_mongodb_host}:27017/ceilometer",
+    include ::ceilometer
+
+    exec {'ceilometer-db-upgrade':
+      command   => 'ceilometer-upgrade --skip-metering-database',
+      path      => ['/usr/bin', '/usr/sbin'],
+      try_sleep => 10,
+      tries     => 20
     }
 
-    if $config_ceilometer_metering_backend == 'gnocchi' {
+    Keystone::Resource::Service_identity<||> -> Exec['ceilometer-db-upgrade'] ~>
+      Service['ceilometer-agent-notification']
 
-      include ::gnocchi::client
-      class { '::ceilometer::dispatcher::gnocchi':
-        filter_service_activity   => false,
-        url                       => "http://${config_gnocchi_host}:8041",
-        archive_policy            => 'high',
-        resources_definition_file => 'gnocchi_resources.yaml',
-      }
+    class { '::ceilometer::agent::notification':
+      manage_event_pipeline     => true,
+      event_pipeline_publishers => ["gnocchi://", "panko://"],
     }
-
-    class { '::ceilometer::agent::notification': }
 
     class { '::ceilometer::agent::auth':
       auth_url      => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
