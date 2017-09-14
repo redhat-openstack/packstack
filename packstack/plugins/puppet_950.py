@@ -148,7 +148,7 @@ def copy_puppet_modules(config, messages):
     os_modules = ' '.join(('aodh', 'apache', 'ceilometer', 'certmonger',
                            'cinder', 'concat', 'firewall', 'glance',
                            'gnocchi', 'heat', 'horizon', 'inifile', 'ironic',
-                           'keystone', 'magnum', 'manila', 'memcached', 'mongodb',
+                           'keystone', 'magnum', 'manila', 'memcached',
                            'mysql', 'neutron', 'nova', 'nssdb', 'openstack',
                            'openstacklib', 'oslo', 'ovn', 'packstack', 'panko',
                            'rabbitmq', 'redis', 'remote', 'rsync', 'sahara', 'ssh',

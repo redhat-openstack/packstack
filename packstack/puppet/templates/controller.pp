@@ -179,7 +179,6 @@ if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and hiera('CONFIG_PANKO_INSTALL') =
 }
 
 if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
-  include '::packstack::mongodb'
   include '::packstack::keystone::ceilometer'
   include '::packstack::ceilometer::rabbitmq'
   include '::packstack::ceilometer'

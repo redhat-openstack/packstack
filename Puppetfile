@@ -120,10 +120,6 @@ mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached',
   :ref => 'v3.0.1'
 
-mod 'mongodb',
-  :git => 'https://github.com/puppetlabs/puppetlabs-mongodb',
-  :ref => '0.17.0'
-
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
   :ref => '3.10.0'

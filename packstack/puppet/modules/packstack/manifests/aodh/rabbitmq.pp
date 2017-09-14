@@ -23,8 +23,6 @@ class packstack::aodh::rabbitmq ()
       File[$files_to_set_owner] ~> Service<| tag == 'aodh-service' |>
     }
 
-    $config_mongodb_host = hiera('CONFIG_MONGODB_HOST_URL')
-
     class { '::aodh':
       debug              => hiera('CONFIG_DEBUG_MODE'),
       rabbit_use_ssl     => hiera('CONFIG_AMQP_SSL_ENABLED'),
