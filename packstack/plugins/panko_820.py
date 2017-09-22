@@ -98,6 +98,6 @@ def create_manifest(config, messages):
     fw_details[key]['host'] = "ALL"
     fw_details[key]['service_name'] = "panko-api"
     fw_details[key]['chain'] = "INPUT"
-    fw_details[key]['ports'] = ['8779']
+    fw_details[key]['ports'] = ['8977']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_PANKO_RULES'] = fw_details
