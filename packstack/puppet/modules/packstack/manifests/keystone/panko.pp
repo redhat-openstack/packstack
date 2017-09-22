@@ -5,8 +5,8 @@ class packstack::keystone::panko ()
     class { '::panko::keystone::auth':
       region       => hiera('CONFIG_KEYSTONE_REGION'),
       password     => hiera('CONFIG_PANKO_KS_PW'),
-      public_url   => "http://${keystone_host_url}:8779",
-      admin_url    => "http://${keystone_host_url}:8779",
-      internal_url => "http://${keystone_host_url}:8779",
+      public_url   => "http://${keystone_host_url}:8977",
+      admin_url    => "http://${keystone_host_url}:8977",
+      internal_url => "http://${keystone_host_url}:8977",
     }
 }
