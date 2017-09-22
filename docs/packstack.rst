@@ -60,13 +60,10 @@ Global Options
     Specify 'y' to install OpenStack Object Storage (swift). ['y', 'n']
 
 **CONFIG_CEILOMETER_INSTALL**
-    Specify 'y' to install OpenStack Metering (ceilometer). ['y', 'n']
+    Specify 'y' to install OpenStack Metering (ceilometer). Note this will also automatically install gnocchi service and configures it as the metrics backend. ['y', 'n']
 
 **CONFIG_AODH_INSTALL**
     Specify 'y' to install OpenStack Telemetry Alarming (Aodh). Note Aodh requires Ceilometer to be installed as well. ['y', 'n']
-
-**CONFIG_GNOCCHI_INSTALL**
-    Specify 'y' to install OpenStack Metering as a Service (gnocchi). ['y', 'n']
 
 **CONFIG_PANKO_INSTALL**
     Specify 'y' to install OpenStack Events Service (panko). ['y', 'n']

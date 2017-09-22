@@ -27,7 +27,7 @@ class packstack::apache ()
       apache::listen { '8042': }
     }
 
-    if hiera('CONFIG_GNOCCHI_INSTALL') == 'y' {
+    if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
       # Gnocchi port
       apache::listen { '8041': }
     }

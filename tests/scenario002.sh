@@ -23,7 +23,6 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --default-password="packstack" \
           --os-aodh-install=n \
           --os-ceilometer-install=n \
-          --os-gnocchi-install=n \
           --os-cinder-install=n \
           --os-horizon-install=n \
           --glance-backend=swift \
