@@ -62,8 +62,7 @@ def initConfig(controller):
     update_params_usage(basedefs.PACKSTACK_DOC, gnocchi_params)
 
     def use_gnocchi(config):
-        return (config['CONFIG_CEILOMETER_INSTALL'] == 'y' and
-                config['CONFIG_GNOCCHI_INSTALL'] == 'y')
+        return config['CONFIG_CEILOMETER_INSTALL'] == 'y'
 
     gnocchi_groups = [
         {"GROUP_NAME": "GNOCCHI",
@@ -79,8 +78,7 @@ def initConfig(controller):
 
 
 def initSequences(controller):
-    if (controller.CONF['CONFIG_GNOCCHI_INSTALL'] != 'y' or
-       controller.CONF['CONFIG_CEILOMETER_INSTALL'] != 'y'):
+    if controller.CONF['CONFIG_CEILOMETER_INSTALL'] != 'y':
         return
 
     steps = [{'title': 'Preparing Gnocchi entries',
