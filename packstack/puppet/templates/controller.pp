@@ -168,10 +168,6 @@ if hiera('CONFIG_PROVISION_TEMPEST') == 'y' {
   include '::packstack::provision::tempest'
 }
 
-if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and hiera('CONFIG_GNOCCHI_INSTALL') == 'y' {
-  include '::packstack::keystone::gnocchi'
-  include '::packstack::gnocchi'
-}
 
 if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and hiera('CONFIG_PANKO_INSTALL') == 'y' {
   include '::packstack::keystone::panko'
@@ -179,6 +175,10 @@ if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and hiera('CONFIG_PANKO_INSTALL') =
 }
 
 if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+  # setup gnocchi
+  include '::packstack::keystone::gnocchi'
+  include '::packstack::gnocchi'
+  # setup ceilometer
   include '::packstack::keystone::ceilometer'
   include '::packstack::ceilometer::rabbitmq'
   include '::packstack::ceilometer'

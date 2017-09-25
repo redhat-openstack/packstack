@@ -22,7 +22,6 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --default-password="packstack" \
           --os-aodh-install=n \
           --os-ceilometer-install=n \
-          --os-gnocchi-install=n \
           --os-swift-install=n \
           --os-manila-install=y \
           --os-horizon-ssl=y \

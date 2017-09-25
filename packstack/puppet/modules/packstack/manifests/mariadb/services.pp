@@ -25,8 +25,7 @@ class packstack::mariadb::services ()
         }
     }
 
-    if hiera('CONFIG_GNOCCHI_INSTALL') == 'y' and
-       hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+    if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
         class { '::gnocchi::db::mysql':
           password      => hiera('CONFIG_GNOCCHI_DB_PW'),
           host          => '%',

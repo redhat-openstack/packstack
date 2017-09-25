@@ -1,0 +1,6 @@
+---
+fixes:
+  - |
+    Remove CONFIG_GNOCCHI_INSTALL command line option and make gnocchi install
+    part of ceilometer install. We will always need gnocchi for ceilometer, so
+    this makes sense and one less option for user to worry about.
