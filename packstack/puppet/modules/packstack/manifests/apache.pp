@@ -34,7 +34,7 @@ class packstack::apache ()
 
     if hiera('CONFIG_PANKO_INSTALL') == 'y' {
       # Panko port
-      apache::listen { '8779': }
+      apache::listen { '8977': }
     }
 }
 
