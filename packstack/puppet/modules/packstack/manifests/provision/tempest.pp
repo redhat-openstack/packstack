@@ -136,6 +136,7 @@ class packstack::provision::tempest ()
       horizon_available         => $horizon_available,
       identity_uri              => $identity_uri,
       identity_uri_v3           => $identity_uri_v3,
+      keystone_v2               => false,
       image_alt_ssh_user        => $image_alt_ssh_user,
       image_name_alt            => $image_name_alt,
       image_name                => $uec_image_name,
