@@ -1,0 +1,68 @@
+- job:
+    name: packstack-base
+    parent: base
+    timeout: 3600
+    nodeset: centos-7
+    pre-run: playbooks/packstack-pre
+    run: playbooks/packstack-integration-tempest
+    post-run: playbooks/upload-logs
+    nodeset: centos-7
+    irrelevant-files:
+      - ^docs/.*$
+      - ^releasenotes/.*$
+    required-projects:
+      - openstack/packstack
+      - openstack/puppet-aodh
+      - openstack/puppet-ceilometer
+      - openstack/puppet-cinder
+      - openstack/puppet-glance
+      - openstack/puppet-gnocchi
+      - openstack/puppet-heat
+      - openstack/puppet-magnum
+      - openstack/puppet-horizon
+      - openstack/puppet-ironic
+      - openstack/puppet-keystone
+      - openstack/puppet-manila
+      - openstack/puppet-neutron
+      - openstack/puppet-nova
+      - openstack/puppet-openstack_extras
+      - openstack/puppet-openstacklib
+      - openstack/puppet-oslo
+      - openstack/puppet-ovn
+      - openstack/puppet-panko
+      - openstack/puppet-sahara
+      - openstack/puppet-swift
+      - openstack/puppet-tempest
+      - openstack/puppet-trove
+      - openstack/puppet-vswitch
+
+- job:
+    name: packstack-integration-scenario001-tempest
+    parent: packstack-base
+    vars:
+      scenario: scenario001
+
+- job:
+    name: packstack-integration-scenario002-tempest
+    parent: packstack-base
+    vars:
+      scenario: scenario002
+
+- job:
+    name: packstack-integration-scenario003-tempest
+    parent: packstack-base
+    vars:
+      scenario: scenario003
+
+- project:
+    name: openstack/packstack
+    check:
+      jobs:
+        - packstack-integration-scenario001-tempest
+        - packstack-integration-scenario002-tempest
+        - packstack-integration-scenario003-tempest
+    gate:
+      jobs:
+        - packstack-integration-scenario001-tempest
+        - packstack-integration-scenario002-tempest
+        - packstack-integration-scenario003-tempest

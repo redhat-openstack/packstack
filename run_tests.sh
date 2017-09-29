@@ -43,7 +43,6 @@ install_external() {
 # - ``PUPPETFILE_DIR`` must be set to Puppet modules directory
 # - ``ZUUL_REF`` must be set to Zuul ref. Fallback to 'None'.
 # - ``ZUUL_BRANCH`` must be set to Zuul branch. Fallback to 'master'.
-# - ``ZUUL_URL`` must be set to Zuul URL
 install_openstack() {
   cat > clonemap.yaml <<EOF
 clonemap:
@@ -54,6 +53,7 @@ EOF
   # Periodic jobs run without ref on master
   ZUUL_REF=${ZUUL_REF:-None}
   ZUUL_BRANCH=${ZUUL_BRANCH:-master}
+  GIT_BASE_URL=${GIT_BASE_URL:-git://git.openstack.org}
 
   local project_names=$(awk '{ if ($1 == ":git") print $3 }' \
     Puppetfile0 | tr -d "'," | cut -d '/' -f 4- | xargs
@@ -62,8 +62,7 @@ EOF
     --cache-dir /opt/git \
     --zuul-ref $ZUUL_REF \
     --zuul-branch $ZUUL_BRANCH \
-    --zuul-url $ZUUL_URL \
-    $GIT_BASE_URL $project_names
+    git://git.openstack.org $project_names
 }
 
 # Install all Puppet modules with r10k
@@ -81,7 +80,6 @@ install_all() {
 # - ``PUPPETFILE_DIR`` must be set to Puppet modules directory
 # - ``ZUUL_REF`` must be set to Zuul ref
 # - ``ZUUL_BRANCH`` must be set to Zuul branch
-# - ``ZUUL_URL`` must be set to Zuul URL
 install_modules() {
   # If zuul-cloner is there, have it install modules using zuul refs
   if [ -e /usr/zuul-env/bin/zuul-cloner ] ; then
@@ -101,7 +99,9 @@ if [ $(id -u) != 0 ]; then
     SUDO='sudo -E'
 
     # Packstack will connect as root to localhost, set-up the keypair and sshd
-    ssh-keygen -t rsa -C "packstack-integration-test" -N "" -f ~/.ssh/id_rsa
+    if [ ! -f ~/.ssh/id_rsa ]; then
+      ssh-keygen -t rsa -C "packstack-integration-test" -N "" -f ~/.ssh/id_rsa
+    fi
 
     $SUDO mkdir -p /root/.ssh
     cat ~/.ssh/id_rsa.pub | $SUDO tee -a /root/.ssh/authorized_keys
