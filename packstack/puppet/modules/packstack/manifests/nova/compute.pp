@@ -84,7 +84,6 @@ class packstack::nova::compute ()
       vncproxy_host                 => hiera('CONFIG_KEYSTONE_HOST_URL'),
       vncproxy_protocol             => hiera('CONFIG_VNCPROXY_PROTOCOL'),
       vncserver_proxyclient_address => $vncproxy_server,
-      pci_passthrough               => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST'),
       instance_usage_audit          => $instance_usage_audit,
       instance_usage_audit_period   => $instance_usage_audit_period,
       allow_resize_to_same_host     => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
@@ -95,6 +94,10 @@ class packstack::nova::compute ()
       auth_url       => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       password       => hiera('CONFIG_NOVA_KS_PW'),
       os_region_name => hiera('CONFIG_KEYSTONE_REGION'),
+    }
+
+    class { '::nova::compute::pci':
+      passthrough => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST')
     }
 
     include ::nova::cell_v2::discover_hosts
