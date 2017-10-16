@@ -48,7 +48,7 @@ class packstack::nova ()
     }
 
     class { '::nova':
-      glance_api_servers            => "${nova_common_rabbitmq_cfg_storage_host}:9292",
+      glance_api_servers            => "http://${nova_common_rabbitmq_cfg_storage_host}:9292",
       default_transport_url         => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       rabbit_use_ssl                => hiera('CONFIG_AMQP_SSL_ENABLED'),
       debug                         => hiera('CONFIG_DEBUG_MODE'),
