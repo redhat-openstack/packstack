@@ -18,7 +18,7 @@ class packstack::neutron::ml2 ()
       enable_security_group     => true,
       firewall_driver           => hiera('FIREWALL_DRIVER'),
       supported_pci_vendor_devs => hiera_array('CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS'),
-      extension_drivers         => 'port_security',
+      extension_drivers         => 'port_security,qos',
       max_header_size           => 38,
     }
 

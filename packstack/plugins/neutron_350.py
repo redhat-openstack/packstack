@@ -747,7 +747,7 @@ def tunnel_fw_details(config, host, src, fw_details):
 def create_manifests(config, messages):
     global q_hosts
 
-    service_plugins = []
+    service_plugins = ['qos', 'trunk']
     service_providers = []
     if config['CONFIG_LBAAS_INSTALL'] == 'y':
         lbaas_plugin = ('neutron_lbaas.services.loadbalancer.plugin.'
