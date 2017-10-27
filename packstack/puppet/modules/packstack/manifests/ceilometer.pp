@@ -22,7 +22,7 @@ class packstack::ceilometer ()
     include ::ceilometer
 
     exec {'ceilometer-db-upgrade':
-      command   => 'ceilometer-upgrade --skip-metering-database',
+      command   => 'ceilometer-upgrade',
       path      => ['/usr/bin', '/usr/sbin'],
       try_sleep => 10,
       tries     => 20
