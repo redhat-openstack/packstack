@@ -3,10 +3,9 @@
     parent: base
     timeout: 3600
     nodeset: centos-7
-    pre-run: playbooks/packstack-pre
-    run: playbooks/packstack-integration-tempest
-    post-run: playbooks/upload-logs
-    nodeset: centos-7
+    pre-run: playbooks/packstack-pre.yaml
+    run: playbooks/packstack-integration-tempest.yaml
+    post-run: playbooks/upload-logs.yaml
     irrelevant-files:
       - ^docs/.*$
       - ^releasenotes/.*$
