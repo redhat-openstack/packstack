@@ -28,6 +28,10 @@ SELINUX_ENFORCING=${SELINUX_ENFORCING:-true}
 # If logs should be retrieved automatically
 COPY_LOGS=${COPY_LOGS:-true}
 
+# Let's add an option for a secondary node, to act as a compute
+CONTROLLER_NODE=${CONTROLLER_NODE:-}
+COMPUTE_NODE=${COMPUTE_NODE:-}
+
 # Install external Puppet modules with r10k
 # Uses the following variables:
 #

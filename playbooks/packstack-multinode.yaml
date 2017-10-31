@@ -1,0 +1,59 @@
+- hosts: compute
+  name: setup RDO Trunk repositories
+  vars:
+    delorean: "https://trunk.rdoproject.org/centos7-master/current-passed-ci/delorean.repo"
+    delorean_deps: "https://trunk.rdoproject.org/centos7-master/delorean-deps.repo"
+  tasks:
+    - name: Fetch DLRN repo
+      get_url:
+       url: "{{ delorean }}"
+       dest: /etc/yum.repos.d/delorean.repo
+       mode: 0640
+      become: true
+    - name: Fetch DLRN dependency repo
+      get_url:
+       url: "{{ delorean_deps }}"
+       dest: /etc/yum.repos.d/delorean-deps.repo
+       mode: 0640
+      become: true
+
+- hosts: controller
+  name: packstack-multinode
+  tasks:
+    - name: Generate SSH key on controller
+      shell: ssh-keygen -t rsa -f /root/.ssh/id_rsa -P ""
+      args:
+        creates: /root/.ssh/id_rsa
+      become: true
+
+    - name: Fetch SSH key
+      shell: cat /root/.ssh/id_rsa.pub
+      become: true
+      register: ssh_key
+
+    - name: Deploy SSH key on compute node
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ ssh_key.stdout }}"
+      delegate_to: "{{ hostvars['compute'].ansible_host }}"
+      become: true
+
+    - name: Deploy SSH key on controller
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ ssh_key.stdout }}"
+      become: true
+
+    - name: Run Packstack
+      shell:
+        cmd: |
+          set -e
+          set -x
+          export SCENARIO='{{ scenario }}'
+          export CONTROLLER_NODE="{{ hostvars['controller'].nodepool.public_ipv4 }}"
+          export COMPUTE_NODE="{{ hostvars['compute'].nodepool.public_ipv4 }}"
+          ./run_tests.sh
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace/packstack'
