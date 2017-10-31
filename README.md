@@ -179,7 +179,7 @@ This is the current matrix of available tests:
 | neutron        |      X      |      X      |      X      |
 | neutron plugin |     ovn     |     ovs     |     ovs     |
 | lbaasv2        |             |      X      |             |
-| vpnaas         |             |      X      |             |
+| vpnaas         |             |             |             |
 | cinder         |      X      |             |             |
 | ceilometer     |             |             |      X      |
 | aodh           |             |             |      X      |
