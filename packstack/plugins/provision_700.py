@@ -32,22 +32,22 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 DEMO_IMAGE_NAME = 'cirros'
 DEMO_IMAGE_URL = (
-    'http://trunk.rdoproject.org/cirros-0.3.4-%s-disk.img'
+    'http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-%s-disk.img'
     % (arch.cirros_arch())
 )
 DEMO_IMAGE_SSH_USER = 'cirros'
 DEMO_IMAGE_FORMAT = 'qcow2'
 UEC_IMAGE_NAME = 'cirros-uec'
 UEC_IMAGE_KERNEL_URL = (
-    'http://trunk.rdoproject.org/cirros-0.3.4-%s-kernel'
+    'http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-%s-kernel'
     % (arch.cirros_arch())
 )
 UEC_IMAGE_RAMDISK_URL = (
-    'http://trunk.rdoproject.org/cirros-0.3.4-%s-initramfs'
+    'http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-%s-initramfs'
     % (arch.cirros_arch())
 )
 UEC_IMAGE_DISK_URL = (
-    'http://trunk.rdoproject.org/cirros-0.3.4-%s-disk.img'
+    'http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-%s-disk.img'
     % (arch.cirros_arch())
 )
 
