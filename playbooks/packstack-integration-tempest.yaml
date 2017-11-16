@@ -1,13 +1,3 @@
 - hosts: all
-  name: packstack-integration-tempest
-  tasks:
-    - shell:
-        cmd: |
-          set -e
-          set -x
-          export SCENARIO='{{ scenario }}'
-          ./run_tests.sh
-        executable: /bin/bash
-        chdir: '{{ ansible_user_dir }}/workspace/packstack'
-      environment: '{{ zuul }}'
-
+  roles:
+    - packstack-integration-tempest

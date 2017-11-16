@@ -169,29 +169,30 @@ need to go inside those directories to run puppet-lint !
 Packstack is integration tested in the OpenStack gate and provides the means to
 reproduce these tests on your environment if you wish.
 
-This is the current matrix of available tests:
+Scenario000 installs packstack allinone only and doesn't run any tests. This is
+the current matrix of available tests:
 
-|     -          | scenario001 | scenario002 | scenario003 |
-|:--------------:|:-----------:|:-----------:|:------------:
-| keystone       |   FERNET    |    UUID     |    FERNET   |
-| glance         |    file     |    swift    |     file    |
-| nova           |      X      |      X      |      X      |
-| neutron        |      X      |      X      |      X      |
-| neutron plugin |     ovs     |     ovs     |     ovs     |
-| lbaasv2        |             |      X      |             |
-| vpnaas         |             |             |             |
-| cinder         |      X      |             |             |
-| ceilometer     |             |             |      X      |
-| aodh           |             |             |      X      |
-| gnocchi        |             |             |      X      |
-| panko          |             |             |      X      |
-| heat           |             |             |      X      |
-| swift          |             |      X      |             |
-| sahara         |             |      X      |             |
-| trove          |             |      X      |             |
-| horizon        |      X      |             |             |
-| manila         |      X      |             |             |
-| SSL            |      X      |             |             |
+|     -          | scenario000 | scenario001 | scenario002 | scenario003 |
+|:--------------:|:-----------:|:-----------:|:-----------:|:------------:
+| keystone       |   FERNET    |   FERNET    |    UUID     |    FERNET   |
+| glance         |             |    file     |    swift    |     file    |
+| nova           |      X      |      X      |      X      |      X      |
+| neutron        |      X      |      X      |      X      |      X      |
+| neutron plugin |     ovs     |     ovs     |     ovs     |     ovs     |
+| lbaasv2        |             |             |      X      |             |
+| vpnaas         |             |             |             |             |
+| cinder         |      X      |      X      |             |             |
+| ceilometer     |      X      |             |             |      X      |
+| aodh           |      X      |             |             |      X      |
+| gnocchi        |      X      |             |             |      X      |
+| panko          |             |             |             |      X      |
+| heat           |             |             |             |      X      |
+| swift          |      X      |             |      X      |             |
+| sahara         |             |             |      X      |             |
+| trove          |             |             |      X      |             |
+| horizon        |             |      X      |             |             |
+| manila         |             |      X      |             |             |
+| SSL            |             |      X      |             |             |
 
 To run these tests:
 
