@@ -10,7 +10,7 @@ class packstack::trove ()
 
     class { '::trove::keystone::authtoken':
       password => hiera('CONFIG_TROVE_KS_PW'),
-      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }
 
     class { '::trove::api':
@@ -24,13 +24,13 @@ class packstack::trove ()
     }
 
     class { '::trove::conductor':
-      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       debug    => hiera('CONFIG_DEBUG_MODE'),
       workers  => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
     class { '::trove::taskmanager':
-      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       debug    => hiera('CONFIG_DEBUG_MODE'),
     }
 }
