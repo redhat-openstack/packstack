@@ -59,7 +59,9 @@
       jobs:
         - packstack-integration-scenario001-tempest
         - packstack-integration-scenario002-tempest
+        - packstack-integration-scenario003-tempest
     gate:
       jobs:
         - packstack-integration-scenario001-tempest
         - packstack-integration-scenario002-tempest
+        - packstack-integration-scenario003-tempest

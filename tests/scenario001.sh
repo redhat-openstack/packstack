@@ -27,6 +27,9 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-horizon-ssl=y \
           --amqp-enable-ssl=y \
           --glance-backend=file \
+          --os-neutron-l2-agent=ovn \
+          --os-neutron-ml2-type-drivers="geneve,flat" \
+          --os-neutron-ml2-tenant-network-types="geneve" \
           --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.5-x86_64-vmlinuz" \
           --provision-uec-ramdisk-url="/tmp/cirros/cirros-0.3.5-x86_64-initrd" \
           --provision-uec-disk-url="/tmp/cirros/cirros-0.3.5-x86_64-disk.img" \
