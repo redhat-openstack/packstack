@@ -54,7 +54,6 @@
       scenario: scenario003
 
 - project:
-    name: openstack/packstack
     check:
       jobs:
         - packstack-integration-scenario001-tempest
