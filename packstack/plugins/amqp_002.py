@@ -142,7 +142,7 @@ def initConfig(controller):
     ]
     update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
     group = {"GROUP_NAME": "AMQPAUTH",
-             "DESCRIPTION": "AMQP Config Athentication parameters",
+             "DESCRIPTION": "AMQP Config Authentication parameters",
              "PRE_CONDITION": "CONFIG_AMQP_ENABLE_AUTH",
              "PRE_CONDITION_MATCH": "y",
              "POST_CONDITION": False,
