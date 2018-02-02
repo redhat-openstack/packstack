@@ -281,7 +281,7 @@ AMQP Config SSL parameters
     Password for the NSS certificate database of the AMQP service.
 
 AMQP Config Authentication parameters
-------------------------------------
+-------------------------------------
 
 **CONFIG_AMQP_AUTH_USER**
     User for AMQP authentication.
