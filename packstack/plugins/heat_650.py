@@ -74,18 +74,6 @@ def initConfig(controller):
          "NEED_CONFIRM": True,
          "CONDITION": False},
 
-        {"CMD_OPTION": "os-heat-cloudwatch-install",
-         "PROMPT": "Should Packstack install Heat CloudWatch API",
-         "OPTION_LIST": ["y", "n"],
-         "VALIDATORS": [validators.validate_options],
-         "DEFAULT_VALUE": "n",
-         "MASK_INPUT": False,
-         "LOOSE_VALIDATION": False,
-         "CONF_NAME": "CONFIG_HEAT_CLOUDWATCH_INSTALL",
-         "USE_DEFAULT": False,
-         "NEED_CONFIRM": False,
-         "CONDITION": False},
-
         {"CMD_OPTION": "os-heat-cfn-install",
          "PROMPT": "Should Packstack install Heat CloudFormation API",
          "OPTION_LIST": ["y", "n"],
@@ -155,10 +143,6 @@ def initSequences(controller):
          'functions': [create_manifest]},
     ]
 
-    if config.get('CONFIG_HEAT_CLOUDWATCH_INSTALL', 'n') == 'y':
-        steps.append(
-            {'title': 'Preparing Heat CloudWatch API entries',
-             'functions': [create_cloudwatch_manifest]})
     if config.get('CONFIG_HEAT_CFN_INSTALL', 'n') == 'y':
         steps.append(
             {'title': 'Preparing Heat CloudFormation API entries',
@@ -190,18 +174,6 @@ def create_manifest(config, messages):
     fw_details[key]['ports'] = ['8004']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_HEAT_RULES'] = fw_details
-
-
-def create_cloudwatch_manifest(config, messages):
-    fw_details = dict()
-    key = "heat_api_cloudwatch"
-    fw_details.setdefault(key, {})
-    fw_details[key]['host'] = "ALL"
-    fw_details[key]['service_name'] = "heat api cloudwatch"
-    fw_details[key]['chain'] = "INPUT"
-    fw_details[key]['ports'] = ['8003']
-    fw_details[key]['proto'] = "tcp"
-    config['FIREWALL_HEAT_CLOUDWATCH_RULES'] = fw_details
 
 
 def create_cfn_manifest(config, messages):

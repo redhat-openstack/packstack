@@ -1,0 +1,6 @@
+---
+deprecations:
+  - |
+    The Heat CloudWatch API was removed from the project in
+    https://review.openstack.org/534660. Packstack has also removed all
+    references to the API.

@@ -138,9 +138,6 @@ if hiera('CONFIG_HEAT_INSTALL') == 'y' {
   include '::packstack::keystone::heat'
   include '::packstack::heat::rabbitmq'
   include '::packstack::heat'
-  if hiera('CONFIG_HEAT_CLOUDWATCH_INSTALL') == 'y' {
-    include '::packstack::heat::cloudwatch'
-  }
   if hiera('CONFIG_HEAT_CFN_INSTALL') == 'y' {
     include '::packstack::heat::cfn'
   }

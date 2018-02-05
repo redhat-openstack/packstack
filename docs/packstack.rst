@@ -954,9 +954,6 @@ Heat Config parameters
 **CONFIG_HEAT_KS_PW**
     Password to use for the Orchestration service to authenticate with the Identity service.
 
-**CONFIG_HEAT_CLOUDWATCH_INSTALL**
-    Specify 'y' to install the Orchestration CloudWatch API. ['y', 'n']
-
 **CONFIG_HEAT_CFN_INSTALL**
     Specify 'y' to install the Orchestration CloudFormation API. ['y', 'n']
 
