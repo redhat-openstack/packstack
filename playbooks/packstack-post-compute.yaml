@@ -1,0 +1,20 @@
+- hosts: compute
+  name: store compute node logs
+  tasks:
+    - file:
+        path: /tmp/logs
+        state: directory
+        mode: 0755
+
+    - file:
+        path: /tmp/compute
+        state: directory
+        mode: 0755
+
+    - shell:
+        cmd: |
+          source /home/zuul/src/git.openstack.org/openstack/packstack/tools/copy-logs.sh
+          recover_default_logs
+          mv /tmp/logs/* /tmp/compute
+          mv /tmp/compute /tmp/logs
+      become: true

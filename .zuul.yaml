@@ -1,10 +1,8 @@
 - job:
     name: packstack-base
     parent: base
-    timeout: 3600
-    nodeset: centos-7
+    timeout: 7200
     pre-run: playbooks/packstack-pre.yaml
-    run: playbooks/packstack-integration-tempest.yaml
     post-run: playbooks/upload-logs.yaml
     irrelevant-files:
       - ^docs/.*$
@@ -36,22 +34,51 @@
       - openstack/puppet-vswitch
 
 - job:
-    name: packstack-integration-scenario001-tempest
+    name: packstack-allinone
     parent: packstack-base
+    nodeset:
+      nodes:
+        - name: allinone
+          label: centos-7
+    run: playbooks/packstack-integration-tempest.yaml
+
+- job:
+    name: packstack-multinode
+    parent: packstack-base
+    nodeset:
+      nodes:
+        - name: controller
+          label: centos-7
+        - name: compute
+          label: centos-7
+    run: playbooks/packstack-multinode.yaml
+
+- job:
+    name: packstack-integration-scenario001-tempest
+    parent: packstack-allinone
     vars:
       scenario: scenario001
 
 - job:
     name: packstack-integration-scenario002-tempest
-    parent: packstack-base
+    parent: packstack-allinone
     vars:
       scenario: scenario002
 
 - job:
     name: packstack-integration-scenario003-tempest
-    parent: packstack-base
+    parent: packstack-allinone
     vars:
       scenario: scenario003
+
+# We should have nested post-run jobs, according to
+# https://docs.openstack.org/infra/zuul/user/config.html#job
+- job:
+    name: packstack-multinode-scenario002-tempest
+    parent: packstack-multinode
+    post-run: playbooks/packstack-post-compute.yaml
+    vars:
+      scenario: scenario002
 
 - project:
     check:
@@ -59,8 +86,10 @@
         - packstack-integration-scenario001-tempest
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
+        - packstack-multinode-scenario002-tempest
     gate:
       jobs:
         - packstack-integration-scenario001-tempest
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
+        - packstack-multinode-scenario002-tempest
