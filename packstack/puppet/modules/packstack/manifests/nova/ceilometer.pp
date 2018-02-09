@@ -6,5 +6,9 @@ class packstack::nova::ceilometer ()
       auth_region   => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
+    ensure_packages(['openstack-ceilometer-ipmi'], {'ensure' => 'present'})
+
     class { '::ceilometer::agent::polling': }
+
+    Package['openstack-ceilometer-ipmi'] -> Service['ceilometer-polling']
 }
