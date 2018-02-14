@@ -40,7 +40,6 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-neutron-vpnaas-install=n \
           --os-sahara-install=y \
           --os-trove-install=y \
-          --keystone-token-format=UUID \
           --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.5-x86_64-vmlinuz" \
           --provision-uec-ramdisk-url="/tmp/cirros/cirros-0.3.5-x86_64-initrd" \
           --provision-uec-disk-url="/tmp/cirros/cirros-0.3.5-x86_64-disk.img" \

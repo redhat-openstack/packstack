@@ -174,7 +174,7 @@ the current matrix of available tests:
 
 |     -          | scenario000 | scenario001 | scenario002 | scenario003 |
 |:--------------:|:-----------:|:-----------:|:-----------:|:------------:
-| keystone       |   FERNET    |   FERNET    |    UUID     |    FERNET   |
+| keystone       |   FERNET    |   FERNET    |    FERNET   |    FERNET   |
 | glance         |             |    file     |    swift    |     file    |
 | nova           |      X      |      X      |      X      |      X      |
 | neutron        |      X      |      X      |      X      |      X      |

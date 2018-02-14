@@ -6,11 +6,6 @@ class packstack::keystone ()
     $keystone_cfg_ks_db_pw = hiera('CONFIG_KEYSTONE_DB_PW')
     $keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
     $keystone_token_provider_str = downcase(hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'))
-    if $keystone_token_provider_str == 'fernet' {
-      $enable_fernet_setup = true
-    } else {
-      $enable_fernet_setup = false
-    }
     $keystone_url = regsubst(regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
     $keystone_admin_url = hiera('CONFIG_KEYSTONE_ADMIN_URL')
 
@@ -39,7 +34,7 @@ class packstack::keystone ()
       admin_password      => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
       database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
       token_provider      => "${keystone_token_provider_str}",
-      enable_fernet_setup => $enable_fernet_setup,
+      enable_fernet_setup => true,
       debug               => hiera('CONFIG_DEBUG_MODE'),
       service_name        => 'httpd',
       enable_ssl          => $keystone_use_ssl,

@@ -1,0 +1,6 @@
+---
+deprecations:
+  - |
+    Keystone has removed support for token formats other than Fernet in
+    https://review.openstack.org/543060. Thus, support for those token
+    formats has been removed from Packstack.

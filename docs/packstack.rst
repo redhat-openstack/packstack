@@ -333,7 +333,7 @@ Keystone Config parameters
     Identity service API version string. ['v2.0', 'v3']
 
 **CONFIG_KEYSTONE_TOKEN_FORMAT**
-    Identity service token format (UUID, PKI or FERNET). The recommended format for new deployments is FERNET. ['UUID', 'PKI', 'FERNET']
+    Identity service token format (FERNET). Since Rocky, only FERNET is supported. ['FERNET']
 
 **CONFIG_KEYSTONE_IDENTITY_BACKEND**
     Type of Identity service backend (sql or ldap). ['sql', 'ldap']
