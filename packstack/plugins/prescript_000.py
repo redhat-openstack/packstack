@@ -1160,6 +1160,7 @@ def manage_rdo(host, config):
     # yum-config-manager returns 0 always, but returns current setup
     # if succeeds
     rc, out = server.execute()
+
     match = re.search('enabled\s*=\s*(1|True)', out)
     if not match:
         msg = ('Failed to set RDO repo on host %s:\nRPM file seems to be '

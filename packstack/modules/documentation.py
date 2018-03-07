@@ -69,7 +69,7 @@ def update_params_usage(path, params, opt_title='OPTIONS', sectioned=True):
 
     if not _rst_cache:
         tree = core.publish_doctree(
-            source=open(path).read().decode('utf-8'), source_path=path
+            source=open(path).read(), source_path=path
         )
         for key, value in _iter_options(_get_options(tree, opt_title)):
             _rst_cache.setdefault(key, value)

@@ -14,7 +14,7 @@
 
 import re
 import os
-import types
+import six
 import logging
 import subprocess
 
@@ -38,11 +38,12 @@ def execute(cmd, workdir=None, can_fail=True, mask_list=None,
     mask_list = mask_list or []
     repl_list = [("'", "'\\''")]
 
-    if not isinstance(cmd, types.StringType):
+    if not isinstance(cmd, six.string_types):
         import pipes
         masked = ' '.join((pipes.quote(i) for i in cmd))
     else:
         masked = cmd
+
     masked = mask_string(masked, mask_list, repl_list)
     if log:
         logging.info("Executing command:\n%s" % masked)
@@ -53,6 +54,11 @@ def execute(cmd, workdir=None, can_fail=True, mask_list=None,
                             shell=use_shell, close_fds=True,
                             env=environ)
     out, err = proc.communicate()
+
+    if not isinstance(out, six.text_type):
+        out = out.decode('utf-8')
+    if not isinstance(err, six.text_type):
+        err = err.decode('utf-8')
     masked_out = mask_string(out, mask_list, repl_list)
     masked_err = mask_string(err, mask_list, repl_list)
     if log:
@@ -102,11 +108,17 @@ class ScriptRunner(object):
             cmd = ["bash", "-x"]
         environ = os.environ
         environ['LANG'] = 'en_US.UTF8'
+
         obj = subprocess.Popen(cmd, stdin=_PIPE, stdout=_PIPE, stderr=_PIPE,
                                close_fds=True, shell=False, env=environ)
 
-        script = "function t(){ exit $? ; } \n trap t ERR \n" + script
-        out, err = obj.communicate(script)
+        script = "function t(){ exit $? ; } \n trap t ERR \n %s" % script
+
+        out, err = obj.communicate(script.encode('utf-8'))
+        if not isinstance(out, six.text_type):
+            out = out.decode('utf-8')
+        if not isinstance(err, six.text_type):
+            err = err.decode('utf-8')
         masked_out = mask_string(out, mask_list, repl_list)
         masked_err = mask_string(err, mask_list, repl_list)
         if log:

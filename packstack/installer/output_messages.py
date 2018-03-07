@@ -25,7 +25,7 @@ DONT CHANGE any of the params names (in UPPER-CASE)
 they are used in the engine-setup.py
 '''
 
-import basedefs
+from packstack.installer import basedefs
 
 INFO_HEADER = "Welcome to the %s setup utility" % basedefs.APP_NAME
 INFO_INSTALL_SUCCESS = "\n **** Installation completed successfully ******\n"

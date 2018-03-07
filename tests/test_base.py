@@ -49,7 +49,8 @@ class FakePopen(object):
         '''Register a fake script.'''
         if isinstance(args, list):
             args = '\n'.join(args)
-        prefix = "function t(){ exit $? ; } \n trap t ERR \n"
+
+        prefix = "function t(){ exit $? ; } \n trap t ERR \n "
         args = prefix + args
         cls.script_registry[args] = {'stdout': stdout,
                                      'stderr': stderr,
@@ -86,8 +87,8 @@ class FakePopen(object):
 
     def communicate(self, input=None):
         if self._is_script:
-            if input in self.script_registry:
-                this = self.script_registry[input]
+            if input.decode('utf-8') in self.script_registry:
+                this = self.script_registry[input.decode('utf-8')]
             else:
                 LOG.warning('call to unregistered script: %s', input)
                 this = {'stdout': '', 'stderr': '', 'returncode': 0}
@@ -128,7 +129,7 @@ class PackstackTestCaseMixin(object):
                 raise AssertionError(_msg)
 
     def assertListEqual(self, list1, list2, msg=None):
-        f, s = len(list1), len(list2)
+        f, s = len(list(list1)), len(list(list2))
         _msg = msg or ('Element counts were not equal. First has %s, '
                        'Second has %s' % (f, s))
         self.assertEqual(f, s, msg=_msg)

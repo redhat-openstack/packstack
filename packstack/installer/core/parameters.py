@@ -17,6 +17,7 @@ Container set for groups and parameters
 """
 
 from ..utils.datastructures import SortedDict
+import six
 
 
 class Parameter(object):
@@ -31,7 +32,7 @@ class Parameter(object):
         defaults = {}.fromkeys(self.allowed_keys)
         defaults.update(attributes)
 
-        for key, value in defaults.iteritems():
+        for key, value in six.iteritems(defaults):
             if key not in self.allowed_keys:
                 raise KeyError('Given attribute %s is not allowed' % key)
             self.__dict__[key] = value

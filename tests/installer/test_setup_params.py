@@ -19,6 +19,7 @@
 Test cases for packstack.installer.core.parameters module.
 """
 
+import six
 from unittest import TestCase
 
 from ..test_base import PackstackTestCaseMixin
@@ -49,7 +50,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
         initialization
         """
         param = Parameter(self.data)
-        for key, value in self.data.iteritems():
+        for key, value in six.iteritems(self.data):
             self.assertEqual(getattr(param, key), value)
 
     def test_default_attribute(self):
@@ -80,7 +81,7 @@ class GroupTestCase(PackstackTestCaseMixin, TestCase):
         Test packstack.installer.core.parameters.Group initialization
         """
         group = Group(attributes=self.attrs, parameters=self.params)
-        for key, value in self.attrs.iteritems():
+        for key, value in six.iteritems(self.attrs):
             self.assertEqual(getattr(group, key), value)
         for param in self.params:
             self.assertIn(param['CONF_NAME'], group.parameters)

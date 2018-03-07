@@ -36,6 +36,6 @@ def retry(count=1, delay=0, retry_on=Exception):
                     if delay:
                         time.sleep(delay)
                     tried += 1
-        wrapper.func_name = func.func_name
+        wrapper.__name__ = func.__name__
         return wrapper
     return decorator

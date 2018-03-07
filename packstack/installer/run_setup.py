@@ -11,15 +11,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import ConfigParser
+from six.moves import configparser
+from six.moves import StringIO
+from functools import cmp_to_key
+
 import copy
 import datetime
 import getpass
 import logging
 import os
 import re
+import six
 import sys
-from StringIO import StringIO
 import traceback
 import types
 import textwrap
@@ -27,17 +30,17 @@ import textwrap
 from optparse import OptionGroup
 from optparse import OptionParser
 
-import basedefs
-import validators
+from packstack.installer import basedefs
+from packstack.installer import validators
 from . import utils
-import processors
-import output_messages
+from packstack.installer import processors
+from packstack.installer import output_messages
 from .exceptions import FlagValidationError
 from .exceptions import ParamValidationError
 
 from packstack.modules.common import filtered_hosts
 from packstack.version import version_info
-from setup_controller import Controller
+from packstack.installer.setup_controller import Controller
 
 controller = Controller()
 commandLineValues = {}
@@ -238,21 +241,21 @@ def mask(input):
     If it finds, it replaces them with '********'
     """
     output = copy.deepcopy(input)
-    if isinstance(input, types.DictType):
+    if isinstance(input, dict):
         for key in input:
-            if isinstance(input[key], types.StringType):
+            if isinstance(input[key], six.string_types):
                 output[key] = utils.mask_string(input[key],
                                                 masked_value_set)
-    if isinstance(input, types.ListType):
+    if isinstance(input, list):
         for item in input:
             org = item
             orgIndex = input.index(org)
-            if isinstance(item, types.StringType):
+            if isinstance(item, six.string_types):
                 item = utils.mask_string(item, masked_value_set)
             if item != org:
                 output.remove(org)
                 output.insert(orgIndex, item)
-    if isinstance(input, types.StringType):
+    if isinstance(input, six.string_types):
             output = utils.mask_string(input, masked_value_set)
 
     return output
@@ -329,7 +332,7 @@ def _handleGroupCondition(config, conditionName, conditionValue):
 
     # If the condition is a string - just read it to global conf
     # We assume that if we get a string as a member it is the name of a member of conf_params
-    elif isinstance(conditionName, types.StringType):
+    elif isinstance(conditionName, six.string_types):
         conditionValue = _loadParamFromFile(config, "general", conditionName)
     else:
         # Any other type is invalid
@@ -349,14 +352,14 @@ def _loadParamFromFile(config, section, param_name):
     # Get value from answer file
     try:
         value = config.get(section, param_name)
-    except ConfigParser.NoOptionError:
+    except configparser.NoOptionError:
         value = None
         # Check for deprecated parameters
         deprecated = param.DEPRECATES if param.DEPRECATES is not None else []
         for old_name in deprecated:
             try:
                 val = config.get(section, old_name)
-            except ConfigParser.NoOptionError:
+            except configparser.NoOptionError:
                 continue
             if not val:
                 # value is empty string
@@ -406,7 +409,7 @@ def _handleAnswerFileParams(answerFile):
         logging.debug("Starting to handle config file")
 
         # Read answer file
-        fconf = ConfigParser.ConfigParser()
+        fconf = configparser.RawConfigParser()
         fconf.read(answerFile)
 
         # Iterate all the groups and check the pre/post conditions
@@ -545,7 +548,7 @@ def _getConditionValue(matchMember):
     returnValue = False
     if isinstance(matchMember, types.FunctionType):
         returnValue = matchMember(controller.CONF)
-    elif isinstance(matchMember, types.StringType):
+    elif isinstance(matchMember, six.string_types):
         # we assume that if we get a string as a member it is the name
         # of a member of conf_params
         if matchMember not in controller.CONF:
@@ -766,7 +769,7 @@ def validate_answer_file_options(answerfile_path):
         raise Exception(
             output_messages.ERR_NO_ANSWER_FILE % answerfile_path)
 
-    answerfile = ConfigParser.ConfigParser()
+    answerfile = configparser.RawConfigParser()
     answerfile.read(answerfile_path)
     sections = answerfile._sections
     general_sections = sections.get('general', None)
@@ -912,7 +915,7 @@ def loadPlugins():
     sys.path.append(basedefs.DIR_MODULES)
 
     fileList = [f for f in os.listdir(basedefs.DIR_PLUGINS) if f[0] != "_"]
-    fileList = sorted(fileList, cmp=plugin_compare)
+    fileList = sorted(fileList, key=cmp_to_key(plugin_compare))
     for item in fileList:
         # Looking for files that end with ###.py, example: a_plugin_100.py
         match = re.search("^(.+\_\d\d\d)\.py$", item)

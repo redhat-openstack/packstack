@@ -87,6 +87,8 @@
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
         - packstack-multinode-scenario002-tempest
+        - openstack-tox-py36:
+            voting: false
     gate:
       jobs:
         - packstack-integration-scenario001-tempest

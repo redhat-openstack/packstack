@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from functools import cmp_to_key
 import re
+import six
 
 
 STR_MASK = '*' * 8
@@ -29,6 +31,10 @@ def color_text(text, color):
     return '%s%s%s' % (COLORS[color], text, COLORS['nocolor'])
 
 
+def stringcmp(x, y):
+    return len(y) - len(x)
+
+
 def mask_string(unmasked, mask_list=None, replace_list=None):
     """
     Replaces words from mask_list with MASK in unmasked string.
@@ -39,14 +45,19 @@ def mask_string(unmasked, mask_list=None, replace_list=None):
     mask_list = mask_list or []
     replace_list = replace_list or []
 
-    masked = unmasked
-    for word in sorted(mask_list, lambda x, y: len(y) - len(x)):
+    if isinstance(unmasked, six.text_type):
+        masked = unmasked.encode('utf-8')
+    else:
+        masked = unmasked
+
+    for word in sorted(mask_list, key=cmp_to_key(stringcmp)):
         if not word:
             continue
+        word = word.encode('utf-8')
         for before, after in replace_list:
-            word = word.replace(before, after)
-        masked = masked.replace(word, STR_MASK)
-    return masked
+            word = word.replace(before.encode('utf-8'), after.encode('utf-8'))
+        masked = masked.replace(word, STR_MASK.encode('utf-8'))
+    return masked.decode('utf-8')
 
 
 def state_format(msg, state, color):
