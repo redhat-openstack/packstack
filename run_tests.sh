@@ -242,9 +242,6 @@ if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   export GEM_BIN_DIR=/tmp/packstackgems/bin/
   export PUPPETFILE_DIR=/usr/share/openstack-puppet/modules
   export GEM_HOME=/tmp/packstackgems
-  # puppet_forge 2.2.7 has a dependency on semantic_puppet ~> 1.0
-  # which is not compatible with dependency of latest r10k on semantic_puppet ~> 0.1.0
-  $SUDO gem install puppet_forge -v '= 2.2.6'
   $SUDO gem install r10k --no-ri --no-rdoc
   # make sure there is no puppet module pre-installed
   $SUDO rm -rf "${PUPPETFILE_DIR:?}/"*
