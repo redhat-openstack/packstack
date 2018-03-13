@@ -1,8 +1,7 @@
 - hosts: compute
   name: setup RDO Trunk repositories
   vars:
-# NOTE(dmsimard): Move from consistent to current-passed-ci ASAP.
-    delorean: "https://trunk.rdoproject.org/centos7-queens/consistent/delorean.repo"
+    delorean: "https://trunk.rdoproject.org/centos7-queens/current-passed-ci/delorean.repo"
     delorean_deps: "https://trunk.rdoproject.org/centos7-queens/delorean-deps.repo"
   tasks:
     - name: Fetch DLRN repo

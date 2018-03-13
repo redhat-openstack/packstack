@@ -20,8 +20,7 @@ SCENARIO=${SCENARIO:-scenario001}
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
-# NOTE(dmsimard): Move from consistent to current-passed-ci ASAP.
-DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/centos7-queens/consistent/delorean.repo}
+DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/centos7-queens/current-passed-ci/delorean.repo}
 DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/centos7-queens/delorean-deps.repo}
 GIT_BASE_URL=${GIT_BASE_URL:-git://git.openstack.org}
 ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
