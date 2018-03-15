@@ -37,7 +37,6 @@ class packstack::cinder ()
       nova_catalog_admin_info => 'compute:nova:adminURL',
       service_workers         => hiera('CONFIG_SERVICE_WORKERS'),
       default_volume_type     => $default_volume_type,
-      keymgr_api_class        => 'castellan.key_manager.barbican_key_manager.BarbicanKeyManager',
     }
 
     class { '::cinder::scheduler': }
