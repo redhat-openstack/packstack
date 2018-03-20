@@ -47,10 +47,10 @@ def initConfig(controller):
              "NEED_CONFIRM": True,
              "CONDITION": False},
 
-            {"CMD_OPTION": 'keystone-db-purge-enable',
+            {"CMD_OPTION": 'keystone-fernet-token-rotate-enable',
              "PROMPT": (
-                 "Enter y if cron job for removing soft deleted DB rows "
-                 "should be created"
+                 "Enter y if cron job to rotate Fernet tokens should be "
+                 "created"
              ),
              "OPTION_LIST": ['y', 'n'],
              "VALIDATORS": [validators.validate_not_empty],
@@ -58,7 +58,7 @@ def initConfig(controller):
              "DEFAULT_VALUE": 'y',
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_KEYSTONE_DB_PURGE_ENABLE',
+             "CONF_NAME": 'CONFIG_KEYSTONE_FERNET_TOKEN_ROTATE_ENABLE',
              "USE_DEFAULT": False,
              "NEED_CONFIRM": True,
              "CONDITION": False},

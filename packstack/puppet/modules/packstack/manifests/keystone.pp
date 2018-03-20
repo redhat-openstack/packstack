@@ -17,11 +17,9 @@ class packstack::keystone ()
 
     class { '::keystone::client': }
 
-    if hiera('CONFIG_KEYSTONE_DB_PURGE_ENABLE',false) {
-      class { '::keystone::cron::token_flush':
-        minute      => '*/1',
+    if hiera('CONFIG_KEYSTONE_FERNET_TOKEN_ROTATE_ENABLE',false) {
+      class { '::keystone::cron::fernet_rotate':
         require     => Service['crond'],
-        destination => '/dev/null',
       }
       service { 'crond':
         ensure => 'running',

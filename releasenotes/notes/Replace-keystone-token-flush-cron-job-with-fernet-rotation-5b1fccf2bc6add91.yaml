@@ -1,0 +1,12 @@
+---
+upgrade:
+  - |
+    A new CONFIG_KEYSTONE_FERNET_TOKEN_ROTATE_ENABLE option has been added to
+    the answer file. When enabled (default), it will create a cron job to
+    rotate Fernet keys.
+deprecations:
+  - |
+    Since Keystone has deprecated token formats requiring storage in the DB,
+    the CONFIG_KEYSTONE_DB_PURGE_ENABLE option has been removed. Instead, we
+    are implementing a cron job to rotate Fernet keys.
+
