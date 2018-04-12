@@ -39,9 +39,9 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-heat-install=y \
           --os-magnum-install=y \
           --os-panko-install=y \
-          --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.5-x86_64-vmlinuz" \
-          --provision-uec-ramdisk-url="/tmp/cirros/cirros-0.3.5-x86_64-initrd" \
-          --provision-uec-disk-url="/tmp/cirros/cirros-0.3.5-x86_64-disk.img" \
+          --provision-uec-kernel-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-vmlinuz" \
+          --provision-uec-ramdisk-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-initrd" \
+          --provision-uec-disk-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img" \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \

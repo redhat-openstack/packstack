@@ -179,30 +179,32 @@ which pip || $SUDO easy_install pip
 rm -rf /tmp/cirros
 mkdir /tmp/cirros
 
+# Select cirros arch and image version based on system architecture, and export them for use by the test scenarios.
+# As of April 2018, Packstack on x86 has kernel panics with the 0.4.0 cirros image. However, ppc64le requires it.
+# As such, for now, we set x86 boxes to use version 0.3.5, and ppc64le boxes to use 0.4.0.
+export CIRROS_ARCH="$(uname -p)"
 
-arch="$(uname -p)"
-
-case $arch in
+case $CIRROS_ARCH in
     x86_64)
-        cirros_version="0.3.5"
+        export CIRROS_VERSION="0.3.5"
         ;;
     ppc64le)
-        cirros_version="0.4.0"
+        export CIRROS_VERSION="0.4.0"
         ;;
 esac
 
-if [ -f ~/cache/files/cirros-$cirros_version-$arch-uec.tar.gz ]; then
-    tar -xzvf ~/cache/files/cirros-$cirros_version-$arch-uec.tar.gz -C /tmp/cirros/
+if [ -f ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz ]; then
+    tar -xzvf ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -C /tmp/cirros/
 else
     echo "No pre-cached uec archive found, downloading..."
-    wget --tries=10 http://download.cirros-cloud.net/$cirros_version/cirros-$cirros_version-$arch-uec.tar.gz -P /tmp/cirros/
-    tar -xzvf /tmp/cirros/cirros-$cirros_version-$arch-uec.tar.gz -C /tmp/cirros/
+    wget --tries=10 http://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -P /tmp/cirros/
+    tar -xzvf /tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -C /tmp/cirros/
 fi
-if [ -f ~/cache/files/cirros-$cirros_version-$arch-disk.img ]; then
-    cp -p ~/cache/files/cirros-$cirros_version-$arch-disk.img /tmp/cirros/
+if [ -f ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img ]; then
+    cp -p ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img /tmp/cirros/
 else
     echo "No pre-cached disk image found, downloading..."
-    wget --tries=10 http://download.cirros-cloud.net/$cirros_version/cirros-$cirros_version-$arch-disk.img -P /tmp/cirros/
+    wget --tries=10 http://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img -P /tmp/cirros/
 fi
 echo "Using pre-cached images:"
 find /tmp/cirros -type f -printf "%m %n %u %g %s  %t" -exec md5sum \{\} \;

@@ -40,9 +40,9 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-neutron-vpnaas-install=n \
           --os-sahara-install=y \
           --os-trove-install=y \
-          --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.5-x86_64-vmlinuz" \
-          --provision-uec-ramdisk-url="/tmp/cirros/cirros-0.3.5-x86_64-initrd" \
-          --provision-uec-disk-url="/tmp/cirros/cirros-0.3.5-x86_64-disk.img" \
+          --provision-uec-kernel-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-vmlinuz" \
+          --provision-uec-ramdisk-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-initrd" \
+          --provision-uec-disk-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img" \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \
