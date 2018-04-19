@@ -26,6 +26,7 @@ class packstack::neutron::ml2 ()
       class {'::neutron::plugins::ml2::ovn':
         ovn_nb_connection => "tcp:${hiera('CONFIG_CONTROLLER_HOST')}:6641",
         ovn_sb_connection => "tcp:${hiera('CONFIG_CONTROLLER_HOST')}:6642",
+        ovn_metadata_enabled => true,
       }
     }
 

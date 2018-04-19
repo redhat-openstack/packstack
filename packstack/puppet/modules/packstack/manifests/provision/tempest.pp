@@ -96,23 +96,12 @@ class packstack::provision::tempest ()
     $swift_available      = str2bool(hiera('CONFIG_SWIFT_INSTALL'))
     $configure_tempest    = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
 
-    # Metadata service is not supported with OVN plugin
-    # Some API extensions are not enabled by OVN plugin
+    # Some API extensions as l3_agent_scheduler are not enabled by OVN plugin
     $l2_agent  = hiera('CONFIG_NEUTRON_L2_AGENT')
     if $l2_agent == 'ovn' {
-      $neutron_api_extensions = 'ext-gw-mode,binding,agent,dhcp_agent_scheduler,external-net,quotas,provider,extraroute,router,extra_dhcp_opt,allowed-address-pairs,security-group'
-      # In last cirros version 0.3.5 there is an issue to use metadata from configdrive which make tempest to fail validation in some jobs. This is fixed in master
-      # but until a new version of cirros is published we have to disable run_validations. Note that connectivity validation is alwasys done by tempest even with
-      # run_ssh to false, but it doesn't do additional validation.
-      $run_ssh = false
-      tempest_config { 'compute-feature-enabled/metadata_service':
-        value => 'False',
-        path  => "${tempest_workspace}/etc/tempest.conf",
-      }
+      $neutron_api_extensions = 'ext-gw-mode,binding,agent,dhcp_agent_scheduler,external-net,quotas,provider,extraroute,router,extra_dhcp_opt,allowed-address-pairs,security-group,trunk'
     } else {
       $neutron_api_extensions = undef
-      # clients should be able to ssh to instances
-      $run_ssh = true
     }
 
     class { '::tempest':
@@ -141,7 +130,7 @@ class packstack::provision::tempest ()
       image_name_alt            => $image_name_alt,
       image_name                => $uec_image_name,
       image_ssh_user            => $image_ssh_user,
-      run_ssh                   => $run_ssh,
+      run_ssh                   => true,
       log_file                  => $log_file,
       neutron_available         => $neutron_available,
       nova_available            => $nova_available,

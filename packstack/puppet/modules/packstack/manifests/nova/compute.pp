@@ -21,7 +21,7 @@ class packstack::nova::compute ()
         group   => root,
         require => Package['openstack-nova-migration'],
       }
-    
+
       $key_type = hiera('NOVA_MIGRATION_KEY_TYPE')
       $key_content = hiera('NOVA_MIGRATION_KEY_PUBLIC')
 
@@ -72,13 +72,6 @@ class packstack::nova::compute ()
       $instance_usage_audit_period = 'month'
     }
 
-    # OVN neutron plugin doesn't support metadata
-    if hiera('CONFIG_NEUTRON_L2_AGENT') == 'ovn' {
-      $force_config_drive = true
-    } else {
-      $force_config_drive = false
-    }
-
     class { '::nova::compute':
       enabled                       => true,
       vncproxy_host                 => hiera('CONFIG_KEYSTONE_HOST_URL'),
@@ -87,7 +80,7 @@ class packstack::nova::compute ()
       instance_usage_audit          => $instance_usage_audit,
       instance_usage_audit_period   => $instance_usage_audit_period,
       allow_resize_to_same_host     => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
-      force_config_drive            => $force_config_drive
+      force_config_drive            => false,
     }
 
     class { '::nova::placement':

@@ -48,7 +48,9 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
   case hiera('CONFIG_NEUTRON_L2_AGENT') {
     'openvswitch': { include '::packstack::neutron::ovs_agent' }
     'linuxbridge': { include '::packstack::neutron::lb_agent' }
-    'ovn':         { include '::packstack::neutron::ovn_agent' }
+    'ovn':         { include '::packstack::neutron::ovn_agent'
+                     include '::packstack::neutron::ovn_metadata'
+                   }
     default:       { include '::packstack::neutron::ovs_agent' }
   }
   include '::packstack::neutron::bridge'
