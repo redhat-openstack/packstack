@@ -129,8 +129,8 @@ mod 'nssdb',
   :ref => 'master'
 
 mod 'rabbitmq',
-  :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq',
-  :ref => '5.6.0'
+  :git => 'https://github.com/voxpupuli/puppet-rabbitmq',
+  :ref => 'master'
 
 mod 'redis',
   :git => 'https://github.com/arioch/puppet-redis',

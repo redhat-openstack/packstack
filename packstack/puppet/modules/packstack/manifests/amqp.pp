@@ -28,11 +28,11 @@ define enable_rabbitmq {
       package_provider         => 'yum',
       repos_ensure             => false,
       admin_enable             => false,
+      loopback_users           => [],
       # FIXME: it's ugly to not to require client certs
       ssl_fail_if_no_peer_cert => true,
       config_variables         => {
      'tcp_listen_options' => '[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]',
-     'loopback_users'     => '[]',
       },
     }
   } else {
@@ -44,20 +44,11 @@ define enable_rabbitmq {
       package_provider => 'yum',
       repos_ensure     => false,
       admin_enable     => false,
+      loopback_users   => [],
       config_variables => {
      'tcp_listen_options' => '[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]',
-     'loopback_users'     => '[]',
       },
     }
-  }
-
-  # TO-DO: remove this workaround as soon as this is fixed in puppetlabs-rabbitmq module
-  #        https://github.com/puppetlabs/puppetlabs-rabbitmq/pull/454
-  File <| path == '/etc/rabbitmq/rabbitmq.config' |> {
-    ensure  => present,
-    owner   => 'rabbitmq',
-    group   => 'rabbitmq',
-    mode    => '0640',
   }
 }
 
