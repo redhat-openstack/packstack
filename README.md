@@ -177,7 +177,7 @@ This is the current matrix of available tests:
 | glance         |    file     |    swift    |     file    |
 | nova           |      X      |      X      |      X      |
 | neutron        |      X      |      X      |      X      |
-| neutron plugin |     ovn     |     ovs     |     ovs     |
+| neutron plugin |     ovs     |     ovs     |     ovs     |
 | lbaasv2        |             |      X      |             |
 | vpnaas         |             |      X      |             |
 | cinder         |      X      |             |             |
