@@ -8,13 +8,6 @@ class packstack::nova::api ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    $config_use_neutron = hiera('CONFIG_NEUTRON_INSTALL')
-    if $config_use_neutron == 'y' {
-        $default_floating_pool = 'public'
-    } else {
-        $default_floating_pool = 'nova'
-    }
-
     $auth_uri = hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS')
     $admin_password = hiera('CONFIG_NOVA_KS_PW')
 
@@ -35,12 +28,14 @@ class packstack::nova::api ()
       metadata_listen                      => $bind_host,
       enabled                              => true,
       neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
-      default_floating_pool                => $default_floating_pool,
-      pci_alias                            => $pci_alias,
       sync_db_api                          => true,
       osapi_compute_workers                => hiera('CONFIG_SERVICE_WORKERS'),
       metadata_workers                     => hiera('CONFIG_SERVICE_WORKERS'),
       allow_resize_to_same_host            => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
+    }
+
+    class { '::nova::pci':
+      aliases                              => $pci_alias,
     }
 
     class { '::nova::wsgi::apache_placement':
