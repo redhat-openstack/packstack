@@ -34,7 +34,6 @@ class packstack::sahara::rabbitmq ()
       identity_uri          => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       use_neutron           => ($sahara_cfg_config_neutron_install == 'y'),
       host                  => hiera('CONFIG_SAHARA_HOST'),
-      rpc_backend           => 'rabbit',
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,

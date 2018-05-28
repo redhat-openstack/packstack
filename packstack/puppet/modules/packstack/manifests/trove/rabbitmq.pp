@@ -25,7 +25,6 @@ class packstack::trove::rabbitmq ()
 
 
     class { '::trove':
-      rpc_backend                  => 'rabbit',
       rabbit_use_ssl               => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url        => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       database_connection          => "mysql+pymysql://trove:${trove_rabmq_cfg_trove_db_pw}@${trove_rabmq_cfg_mariadb_host}/trove",

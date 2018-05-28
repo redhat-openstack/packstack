@@ -36,7 +36,6 @@ class packstack::heat::rabbitmq ()
 
     class { '::heat':
       keystone_ec2_uri    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      rpc_backend         => 'rabbit',
       rabbit_use_ssl      => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       debug               => hiera('CONFIG_DEBUG_MODE'),

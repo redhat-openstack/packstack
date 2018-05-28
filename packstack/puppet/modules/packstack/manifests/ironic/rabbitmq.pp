@@ -23,7 +23,6 @@ class packstack::ironic::rabbitmq ()
     }
 
     class { '::ironic':
-      rpc_backend           => 'rabbit',
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       database_connection   => "mysql+pymysql://ironic:${ironic_rabbitmq_cfg_ironic_db_pw}@${ironic_rabbitmq_cfg_mariadb_host}/ironic",
