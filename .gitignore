@@ -2,8 +2,8 @@
 *.swp
 *.log
 .tox
-.testrepository/
 vendor/*
 Gemfile.lock
 packstack.egg-info
 releasenotes/build
+.stestr
