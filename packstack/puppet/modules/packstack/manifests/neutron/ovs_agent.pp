@@ -45,7 +45,6 @@ class packstack::neutron::ovs_agent ()
     class { '::neutron::agents::ml2::ovs':
       bridge_uplinks   => $bridge_uplinks,
       bridge_mappings  => $bridge_mappings,
-      enable_tunneling => hiera('CONFIG_NEUTRON_OVS_TUNNELING'),
       tunnel_types     => hiera_array('CONFIG_NEUTRON_OVS_TUNNEL_TYPES'),
       local_ip         => force_ip($localip),
       vxlan_udp_port   => hiera('CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT',undef),

@@ -820,9 +820,6 @@ Neutron ML2 plugin config
 **CONFIG_NEUTRON_ML2_VXLAN_GROUP**
     Comma-separated list of addresses for VXLAN multicast group. If left empty, disables VXLAN from sending allocate broadcast traffic (disables multicast VXLAN mode). Should be a Multicast IP (v4 or v6) address.
 
-**CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS**
-    Comma separated list of supported PCI vendor devices defined by vendor_id:product_id according to the PCI ID Repository.
-
 **CONFIG_NEUTRON_ML2_VNI_RANGES**
     Comma-separated list of <vni_min>:<vni_max> tuples enumerating ranges of VXLAN VNI IDs that are available for tenant network allocation. Minimum value is 0 and maximum value is 16777215.
 

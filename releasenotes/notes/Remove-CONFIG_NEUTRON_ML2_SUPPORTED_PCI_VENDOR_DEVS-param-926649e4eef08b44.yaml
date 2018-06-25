@@ -1,0 +1,6 @@
+---
+deprecations:
+  - |
+    The CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS is no longer needed in
+    the answers file. The upstream parameter was already removed, and all
+    PCI device ids are supported by Nova and Neutron.

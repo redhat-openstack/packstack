@@ -461,20 +461,6 @@ def initConfig(controller):
                          "Geneve will be used as encapsulation method for tenant networks"),
              "MESSAGE_VALUES": ["ovn"]},
 
-            {"CMD_OPTION": "os-neutron-ml2-supported-pci-vendor-devs",
-             "CONF_NAME": "CONFIG_NEUTRON_ML2_SUPPORTED_PCI_VENDOR_DEVS",
-             "PROMPT": ("Enter a comma separated list of supported PCI "
-                        "vendor devices, defined by vendor_id:product_id "
-                        "according to the PCI ID Repository."),
-             "OPTION_LIST": [],
-             "VALIDATORS": [],
-             "DEFAULT_VALUE": ['15b3:1004', '8086:10ca'],
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "os-neutron-ml2-sriov-interface-mappings",
              "PROMPT": ("Enter a comma separated list of interface mappings "
                         "for the Neutron ML2 sriov agent"),
@@ -968,8 +954,6 @@ def create_l2_agent_manifests(config, messages):
     if agent in ["openvswitch", "ovn"]:
         ovs_type = 'CONFIG_NEUTRON_ML2_TYPE_DRIVERS'
         ovs_type = config.get(ovs_type, 'local')
-        tunnel = use_openvswitch_vxlan(config) or use_openvswitch_gre(config)
-        config["CONFIG_NEUTRON_OVS_TUNNELING"] = tunnel
         tunnel_types = set(ovs_type) & set(['gre', 'vxlan'])
         config["CONFIG_NEUTRON_OVS_TUNNEL_TYPES"] = list(tunnel_types)
 
