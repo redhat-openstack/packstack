@@ -47,6 +47,16 @@ class packstack::nova ()
       $novahost = undef
     }
 
+    if hiera('CONFIG_HORIZON_SSL') == 'y' {
+      $ssl_only = true
+      $cert = hiera('CONFIG_VNC_SSL_CERT')
+      $key = hiera('CONFIG_VNC_SSL_KEY')
+    } else {
+      $ssl_only = false
+      $cert = undef
+      $key = undef
+    }
+
     class { '::nova':
       glance_api_servers            => "http://${nova_common_rabbitmq_cfg_storage_host}:9292",
       default_transport_url         => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
@@ -65,5 +75,9 @@ class packstack::nova ()
       cpu_allocation_ratio          => hiera('CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO'),
       ram_allocation_ratio          => hiera('CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO'),
       host                          => $novahost,
+      ssl_only                      => $ssl_only,
+      cert                          => $cert,
+      key                           => $key,
     }
+
 }
