@@ -48,16 +48,20 @@ class packstack::horizon ()
       ensure_packages(['openstack-magnum-ui'], {'ensure' => 'present'})
     }
 
-   if hiera('CONFIG_IRONIC_INSTALL') == 'y' {
+    if hiera('CONFIG_IRONIC_INSTALL') == 'y' {
       ensure_packages(['openstack-ironic-ui'], {'ensure' => 'present'})
     }
 
-   if hiera('CONFIG_TROVE_INSTALL') == 'y' {
+    if hiera('CONFIG_TROVE_INSTALL') == 'y' {
       ensure_packages(['openstack-trove-ui'], {'ensure' => 'present'})
     }
 
-   if hiera('CONFIG_SAHARA_INSTALL') == 'y' {
+    if hiera('CONFIG_SAHARA_INSTALL') == 'y' {
       ensure_packages(['openstack-sahara-ui'], {'ensure' => 'present'})
+    }
+
+    if hiera('CONFIG_HEAT_INSTALL') == 'y' {
+      ensure_packages(['openstack-heat-ui'], {'ensure' => 'present'})
     }
 
     include '::packstack::memcached'
