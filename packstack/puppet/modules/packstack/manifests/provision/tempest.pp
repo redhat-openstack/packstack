@@ -99,7 +99,7 @@ class packstack::provision::tempest ()
     # Some API extensions as l3_agent_scheduler are not enabled by OVN plugin
     $l2_agent  = hiera('CONFIG_NEUTRON_L2_AGENT')
     if $l2_agent == 'ovn' {
-      $neutron_api_extensions = 'ext-gw-mode,binding,agent,dhcp_agent_scheduler,external-net,quotas,provider,extraroute,router,extra_dhcp_opt,allowed-address-pairs,security-group,trunk'
+      $neutron_api_extensions = 'ext-gw-mode,binding,agent,external-net,quotas,provider,extraroute,router,extra_dhcp_opt,allowed-address-pairs,security-group,trunk'
     } else {
       $neutron_api_extensions = undef
     }
