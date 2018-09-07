@@ -33,8 +33,6 @@ class packstack::cinder ()
 
     class { '::cinder::api':
       bind_host               => $bind_host,
-      nova_catalog_info       => 'compute:nova:publicURL',
-      nova_catalog_admin_info => 'compute:nova:adminURL',
       service_workers         => hiera('CONFIG_SERVICE_WORKERS'),
       default_volume_type     => $default_volume_type,
     }
