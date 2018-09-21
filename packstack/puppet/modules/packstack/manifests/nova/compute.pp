@@ -17,8 +17,8 @@ class packstack::nova::compute ()
       file { '/etc/nova/migration/identity':
         content => hiera('NOVA_MIGRATION_KEY_SECRET'),
         mode    => '0600',
-        owner   => root,
-        group   => root,
+        owner   => nova,
+        group   => nova,
         require => Package['openstack-nova-migration'],
       }
 
