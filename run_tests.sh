@@ -245,7 +245,7 @@ if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   # puppet_forge 2.2.7 has a dependency on semantic_puppet ~> 1.0
   # which is not compatible with dependency of latest r10k on semantic_puppet ~> 0.1.0
   $SUDO gem install puppet_forge -v '= 2.2.6'
-  $SUDO gem install r10k --no-ri --no-rdoc
+  $SUDO gem install r10k -v 2.6.4 --no-ri --no-rdoc
   # make sure there is no puppet module pre-installed
   $SUDO rm -rf "${PUPPETFILE_DIR:?}/"*
   install_modules
