@@ -1,7 +1,20 @@
 class packstack::apache ()
 {
-    class {'::apache':
-      purge_configs => false,
+    # Use python3 for mod_wsg in fedora
+    if ($::operatingsystem == 'Fedora') or ($::osfamily == 'RedHat' and Integer.new($::operatingsystemmajrelease) > 7)  {
+      class { '::apache':
+        purge_configs => false,
+        mod_packages => merge($::apache::params::mod_packages, {
+          'wsgi' => 'python3-mod_wsgi',
+        }),
+        mod_libs     => merge($::apache::params::mod_libs, {
+          'wsgi' => 'mod_wsgi_python3.so',
+        })
+      }
+    }else{
+      class {'::apache':
+        purge_configs => false,
+      }
     }
 
     if hiera('CONFIG_HORIZON_SSL')  == 'y' {
