@@ -4,6 +4,9 @@
         set -e
         set -x
         export SCENARIO='{{ scenario }}'
+        export DELOREAN='{{ delorean | default('') }}'
+        export DELOREAN_DEPS='{{ delorean_deps | default('') }}'
+        export SELINUX_ENFORCING='{{ selinux_enforcing | default('true') }}'
         ./run_tests.sh
       executable: /bin/bash
       chdir: '{{ ansible_user_dir }}/workspace/packstack'

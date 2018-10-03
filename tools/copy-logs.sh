@@ -27,6 +27,9 @@ PROJECTS_URL="${GIT_URL}/openstack/governance/plain/reference/projects.yaml"
 if [ $(id -u) != 0 ]; then
     SUDO='sudo'
 fi
+
+type -p dnf && export PKG_MGR=dnf || export PKG_MGR=yum
+
 $SUDO mkdir -p "${DIAG_LOGDIR}"
 $SUDO mkdir -p "${CONF_LOGDIR}"
 
@@ -48,14 +51,14 @@ function get_diag_commands {
         'netstat -ntlp'
         'pstree -p'
         'sysctl -a'
-        'yum repolist -v'
+        "$PKG_MGR repolist -v"
         'rpm -qa'
         'journalctl --no-pager'
         'ulimit -n'
     )
 
     echo "Installing required RPM packages..."
-    $SUDO yum -y install coreutils curl file lsof net-tools psmisc
+    $SUDO $PKG_MGR -y install coreutils curl file lsof net-tools psmisc
 
     echo "Running diagnostic commands..."
     for ((i = 0; i < ${#commands[@]}; i++)); do

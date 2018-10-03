@@ -32,6 +32,9 @@ COPY_LOGS=${COPY_LOGS:-true}
 CONTROLLER_NODE=${CONTROLLER_NODE:-}
 COMPUTE_NODE=${COMPUTE_NODE:-}
 
+# Use dnf as package manager if it exist
+type -p dnf && export PKG_MGR=dnf || export PKG_MGR=yum
+
 # Install external Puppet modules with r10k
 # Uses the following variables:
 #
@@ -150,11 +153,11 @@ fi
 if [ "${MANAGE_REPOS}" = true ]; then
     $SUDO curl -L ${DELOREAN} -o /etc/yum.repos.d/delorean.repo
     $SUDO curl -L ${DELOREAN_DEPS} -o /etc/yum.repos.d/delorean-deps.repo
-    $SUDO yum update -y
+    $SUDO $PKG_MGR update -y
 fi
 
 # Install dependencies
-$SUDO yum -y install puppet \
+$SUDO $PKG_MGR -y install puppet \
                      yum-plugin-priorities \
                      iproute \
                      dstat \
@@ -170,7 +173,13 @@ $SUDO yum -y install puppet \
                      policycoreutils \
                      rubygems \
                      wget \
-                     "@Development Tools"
+                     gettext \
+                     diffstat \
+                     doxygen \
+                     patch \
+                     patchutils \
+                     subversion \
+                     systemtap
 
 # Don't assume pip is installed
 which pip || $SUDO easy_install pip
@@ -253,7 +262,12 @@ fi
 # Setup packstack
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   $SUDO pip install .
-  export GEM_BIN_DIR=/tmp/packstackgems/bin/
+  # In Fedora when running with sudo gems are installed at /usr/local/bin/ even when GEM_HOME/GEM_BIN_DIR are set
+  if [ "${PKG_MGR}" = "dnf" ]; then
+      export GEM_BIN_DIR=/usr/local/bin/
+  else
+      export GEM_BIN_DIR=/tmp/packstackgems/bin/
+  fi
   export PUPPETFILE_DIR=/usr/share/openstack-puppet/modules
   export GEM_HOME=/tmp/packstackgems
   $SUDO gem install r10k -v 2.6.4 --no-ri --no-rdoc
@@ -261,7 +275,7 @@ if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   $SUDO rm -rf "${PUPPETFILE_DIR:?}/"*
   install_modules
 else
-  $SUDO yum -y install openstack-packstack
+  $SUDO $PKG_MGR -y install openstack-packstack
 fi
 
 # Make sure there are no other puppet modules in the system (happens in gate)
