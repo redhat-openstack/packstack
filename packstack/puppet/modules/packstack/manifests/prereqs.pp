@@ -1,10 +1,7 @@
 class packstack::prereqs ()
 {
-    # We don't have openstack-selinux package for Fedora
-    if $::operatingsystem != 'Fedora' {
-      package{ 'openstack-selinux':
-        ensure => present,
-      }
+    package{ 'openstack-selinux':
+      ensure => present,
     }
 
     package { 'sos':
