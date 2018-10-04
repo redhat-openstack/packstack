@@ -84,9 +84,9 @@ class packstack::nova::compute ()
     }
 
     class { '::nova::placement':
-      auth_url       => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      password       => hiera('CONFIG_NOVA_KS_PW'),
-      os_region_name => hiera('CONFIG_KEYSTONE_REGION'),
+      auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      password    => hiera('CONFIG_NOVA_KS_PW'),
+      region_name => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
     class { '::nova::compute::pci':

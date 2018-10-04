@@ -46,9 +46,9 @@ class packstack::nova::api ()
     }
 
     class { '::nova::placement':
-      auth_url       => $auth_uri,
-      password       => $admin_password,
-      os_region_name => hiera('CONFIG_KEYSTONE_REGION'),
+      auth_url    => $auth_uri,
+      password    => $admin_password,
+      region_name => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
     $db_purge = hiera('CONFIG_NOVA_DB_PURGE_ENABLE')
