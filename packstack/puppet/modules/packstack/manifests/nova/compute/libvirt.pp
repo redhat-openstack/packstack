@@ -47,6 +47,7 @@ class packstack::nova::compute::libvirt ()
       libvirt_virt_type        => $libvirt_virt_type,
       vncserver_listen         => $libvirt_vnc_bind_host,
       migration_support        => true,
+      libvirt_inject_partition => '-1',
     }
 
     # Remove libvirt's default network (usually virbr0) as it's unnecessary and
