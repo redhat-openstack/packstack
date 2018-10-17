@@ -46,7 +46,7 @@
     name: packstack-fedora
     parent: packstack-base
     vars:
-      delorean: "https://trunk.rdoproject.org/fedora/consistent/delorean.repo"
+      delorean: "https://trunk.rdoproject.org/fedora/puppet-passed-ci/delorean.repo"
       delorean_deps: "https://trunk.rdoproject.org/fedora/delorean-deps.repo"
       selinux_enforcing: "false"
     pre-run: playbooks/packstack-fedora-pre.yaml
