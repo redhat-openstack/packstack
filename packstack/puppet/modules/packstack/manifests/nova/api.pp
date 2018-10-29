@@ -28,10 +28,19 @@ class packstack::nova::api ()
       metadata_listen                      => $bind_host,
       enabled                              => true,
       neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
-      sync_db_api                          => true,
+      sync_db                              => false,
+      sync_db_api                          => false,
       osapi_compute_workers                => hiera('CONFIG_SERVICE_WORKERS'),
       metadata_workers                     => hiera('CONFIG_SERVICE_WORKERS'),
       allow_resize_to_same_host            => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
+    }
+
+    class { '::nova::db::sync':
+      db_sync_timeout => 600,
+    }
+
+    class { '::nova::db::sync_api':
+      db_sync_timeout => 600,
     }
 
     class { '::nova::pci':
