@@ -5,8 +5,8 @@ class packstack::nova::compute ()
     create_resources(packstack::firewall, hiera($qemu_rule_name, {}))
     create_resources(packstack::firewall, hiera('FIREWALL_NOVA_COMPUTE_RULES', {}))
 
-    ensure_packages(['python-cinderclient'], {'ensure' => 'present'})
-    Package['python-cinderclient'] -> Class['nova']
+    ensure_packages(['/usr/bin/cinder'], {'ensure' => 'present'})
+    Package['/usr/bin/cinder'] -> Class['nova']
 
     # Install the private key to be used for live migration.  This needs to be
     # configured into libvirt/live_migration_uri in nova.conf.

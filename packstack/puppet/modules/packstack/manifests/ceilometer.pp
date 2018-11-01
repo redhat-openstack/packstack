@@ -6,13 +6,20 @@ class packstack::ceilometer ()
 
     $config_gnocchi_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
+    if ($::operatingsystem == 'Fedora') or
+       ($::osfamily == 'RedHat' and Integer.new($::operatingsystemmajrelease) > 7) {
+      $pyvers = '3'
+    } else {
+      $pyvers = ''
+    }
+
     if $config_ceilometer_coordination_backend == 'redis' {
       $redis_host = hiera('CONFIG_REDIS_HOST_URL')
       $redis_port = hiera('CONFIG_REDIS_PORT')
       $coordination_url = "redis://${redis_host}:${redis_port}"
 
-      ensure_resource('package', 'python-redis', {
-        name   => 'python-redis',
+      ensure_resource('package', "python${pyvers}-redis", {
+        name   => "python${pyvers}-redis",
         tag    => 'openstack',
       })
     } else {

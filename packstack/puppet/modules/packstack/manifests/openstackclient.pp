@@ -1,13 +1,13 @@
 class packstack::openstackclient ()
 {
-    $clientlibs = ['python-novaclient',
-      'python-glanceclient',
-      'python-cinderclient', 'python-openstackclient']
+    $clientlibs = ['/usr/bin/nova',
+      '/usr/bin/glance',
+      '/usr/bin/cinder', '/usr/bin/openstack']
 
     ensure_packages($clientlibs, {'ensure' => 'present'})
 
     if hiera('CONFIG_MANILA_INSTALL') == 'y' {
-      ensure_packages(['python-manilaclient'], {'ensure' => 'present'})
+      ensure_packages(['/usr/bin/manila'], {'ensure' => 'present'})
     }
 
     $ost_cl_keystone_admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
