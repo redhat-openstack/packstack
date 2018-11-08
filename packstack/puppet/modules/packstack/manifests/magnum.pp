@@ -13,19 +13,19 @@ class packstack::magnum ()
     $magnum_port = '9511'
     $magnum_url = "${magnum_protocol}://${magnum_host}:$magnum_port/v1"
     class { '::magnum::keystone::authtoken':
-      auth_uri                             => "${magnum_protocol}://${magnum_host}:5000/v3",
-      auth_url                             => "${magnum_protocol}://${magnum_host}:35357",
-      auth_version                         => 'v3',
-      username                             => 'magnum',
-      password                             => hiera('CONFIG_MAGNUM_KS_PW'),
-      auth_type                            => 'password',
-      memcached_servers                    => "${magnum_host}:11211",
-      project_name                         => 'services'
+      www_authenticate_uri => "${magnum_protocol}://${magnum_host}:5000/v3",
+      auth_url             => "${magnum_protocol}://${magnum_host}:35357",
+      auth_version         => 'v3',
+      username             => 'magnum',
+      password             => hiera('CONFIG_MAGNUM_KS_PW'),
+      auth_type            => 'password',
+      memcached_servers    => "${magnum_host}:11211",
+      project_name         => 'services'
     }
 
     class { '::magnum::api':
-      enabled                              => true,
-      host                                 => '0.0.0.0'
+      enabled => true,
+      host    => '0.0.0.0'
     }
 
     class { '::magnum::conductor':
@@ -35,7 +35,7 @@ class packstack::magnum ()
     }
 
     class { '::magnum::clients':
-      region_name                          => hiera('CONFIG_KEYSTONE_REGION')
+      region_name => hiera('CONFIG_KEYSTONE_REGION')
     }
 
     class { '::magnum::certificates':
