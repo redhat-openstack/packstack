@@ -22,11 +22,14 @@ class packstack::cinder::rabbitmq ()
       }
     }
 
+    class { '::cinder::logging':
+      debug => hiera('CONFIG_DEBUG_MODE'),
+    }
+
     class { '::cinder':
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       database_connection   => "mysql+pymysql://cinder:${cinder_rab_cfg_cinder_db_pw}@${cinder_rab_cfg_mariadb_host}/cinder",
-      debug                 => hiera('CONFIG_DEBUG_MODE'),
       kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,
       kombu_ssl_keyfile     => $kombu_ssl_keyfile,
       kombu_ssl_certfile    => $kombu_ssl_certfile,

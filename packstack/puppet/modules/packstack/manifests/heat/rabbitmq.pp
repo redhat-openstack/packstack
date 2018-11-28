@@ -34,11 +34,14 @@ class packstack::heat::rabbitmq ()
       auth_url   => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
+    class { '::heat::logging':
+      debug => hiera('CONFIG_DEBUG_MODE'),
+    }
+
     class { '::heat':
       keystone_ec2_uri    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       rabbit_use_ssl      => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
-      debug               => hiera('CONFIG_DEBUG_MODE'),
       database_connection => "mysql+pymysql://heat:${heat_rabbitmq_cfg_heat_db_pw}@${heat_rabbitmq_cfg_mariadb_host}/heat",
       kombu_ssl_ca_certs  => $kombu_ssl_ca_certs,
       kombu_ssl_keyfile   => $kombu_ssl_keyfile,

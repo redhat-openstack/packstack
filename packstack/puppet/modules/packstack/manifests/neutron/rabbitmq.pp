@@ -25,6 +25,9 @@ class packstack::neutron::rabbitmq ()
       File[$files_to_set_owner] ~> Service<| tag == 'neutron-service' |>
     }
 
+    class { '::neutron::logging':
+      debug => hiera('CONFIG_DEBUG_MODE'),
+    }
 
     class { '::neutron':
       bind_host             => $bind_host,
@@ -33,7 +36,6 @@ class packstack::neutron::rabbitmq ()
       core_plugin           => hiera('CONFIG_NEUTRON_CORE_PLUGIN'),
       allow_overlapping_ips => true,
       service_plugins       => hiera_array('SERVICE_PLUGINS'),
-      debug                 => hiera('CONFIG_DEBUG_MODE'),
       kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,
       kombu_ssl_keyfile     => $kombu_ssl_keyfile,
       kombu_ssl_certfile    => $kombu_ssl_certfile,

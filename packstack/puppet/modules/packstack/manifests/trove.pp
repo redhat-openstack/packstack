@@ -13,14 +13,17 @@ class packstack::trove ()
       auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }
 
+    class { '::trove::logging':
+      debug => hiera('CONFIG_DEBUG_MODE'),
+    }
+
     class { '::trove::api':
-      bind_host         => $bind_host,
-      enabled           => true,
-      cert_file         => false,
-      key_file          => false,
-      ca_file           => false,
-      debug             => hiera('CONFIG_DEBUG_MODE'),
-      workers           => hiera('CONFIG_SERVICE_WORKERS'),
+      bind_host => $bind_host,
+      enabled   => true,
+      cert_file => false,
+      key_file  => false,
+      ca_file   => false,
+      workers   => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
     class { '::trove::conductor':

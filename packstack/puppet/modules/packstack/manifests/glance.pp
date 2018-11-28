@@ -29,12 +29,15 @@ class packstack::glance ()
       password => hiera('CONFIG_GLANCE_KS_PW'),
     }
 
+    class { '::glance::api::logging':
+      debug => hiera('CONFIG_DEBUG_MODE'),
+    }
+
     class { '::glance::api':
       bind_host           => $bind_host,
       registry_host       => $registry_host,
       pipeline            => 'keystone',
       database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
-      debug               => hiera('CONFIG_DEBUG_MODE'),
       os_region_name      => hiera('CONFIG_KEYSTONE_REGION'),
       workers             => hiera('CONFIG_SERVICE_WORKERS'),
       stores              => ['file', 'http', 'swift'],

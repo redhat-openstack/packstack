@@ -57,11 +57,14 @@ class packstack::nova ()
       $key = undef
     }
 
+    class { '::nova::logging':
+      debug => hiera('CONFIG_DEBUG_MODE'),
+    }
+
     class { '::nova':
       glance_api_servers            => "http://${nova_common_rabbitmq_cfg_storage_host}:9292",
       default_transport_url         => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       rabbit_use_ssl                => hiera('CONFIG_AMQP_SSL_ENABLED'),
-      debug                         => hiera('CONFIG_DEBUG_MODE'),
       nova_public_key               => $public_key,
       nova_private_key              => $private_key,
       kombu_ssl_ca_certs            => $kombu_ssl_ca_certs,

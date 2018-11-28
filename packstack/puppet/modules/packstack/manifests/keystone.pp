@@ -27,13 +27,16 @@ class packstack::keystone ()
       }
     }
 
+    class { '::keystone::logging':
+      debug => hiera('CONFIG_DEBUG_MODE'),
+    }
+
     class { '::keystone':
       admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
       admin_password      => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
       database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
       token_provider      => "${keystone_token_provider_str}",
       enable_fernet_setup => true,
-      debug               => hiera('CONFIG_DEBUG_MODE'),
       service_name        => 'httpd',
       enable_ssl          => $keystone_use_ssl,
       public_bind_host    => $bind_host,
