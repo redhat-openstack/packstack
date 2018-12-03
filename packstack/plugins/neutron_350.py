@@ -828,12 +828,14 @@ def create_manifests(config, messages):
                     str.strip,
                     config['CONFIG_NEUTRON_OVS_TUNNEL_SUBNETS'].split(',')
                 )
-                cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s" % host)
+                cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s" %
+                                host.replace('.', '_'))
                 for subnet in tunnel_subnets:
                     tunnel_fw_details(config, host, subnet, fw_details)
                 config[cf_fw_nt_key] = fw_details
             else:
-                cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s" % host)
+                cf_fw_nt_key = ("FIREWALL_NEUTRON_TUNNEL_RULES_%s" %
+                                host.replace('.', '_'))
                 for n_host in network_hosts | compute_hosts:
                     if config['CONFIG_NEUTRON_OVS_TUNNEL_IF']:
                         if config['CONFIG_USE_SUBNETS'] == 'y':

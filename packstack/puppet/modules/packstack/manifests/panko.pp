@@ -23,10 +23,10 @@ class packstack::panko ()
     }
 
     class { '::panko::keystone::authtoken':
-      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      auth_version => hiera('CONFIG_KEYSTONE_API_VERSION'),
-      password     => hiera('CONFIG_PANKO_KS_PW')
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      auth_version         => hiera('CONFIG_KEYSTONE_API_VERSION'),
+      password             => hiera('CONFIG_PANKO_KS_PW')
     }
 
     class { '::panko::api':

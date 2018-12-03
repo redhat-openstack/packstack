@@ -29,9 +29,9 @@ class packstack::heat::rabbitmq ()
     }
 
     class { '::heat::keystone::authtoken':
-      password   => hiera('CONFIG_HEAT_KS_PW'),
-      auth_uri   => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url   => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password             => hiera('CONFIG_HEAT_KS_PW'),
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     class { '::heat::logging':

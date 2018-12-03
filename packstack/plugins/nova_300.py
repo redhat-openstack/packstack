@@ -374,7 +374,8 @@ def create_compute_manifest(config, messages):
 
     for host in compute_hosts:
         fw_details = dict()
-        cf_fw_qemu_mig_key = "FIREWALL_NOVA_QEMU_MIG_RULES_%s" % host
+        cf_fw_qemu_mig_key = ("FIREWALL_NOVA_QEMU_MIG_RULES_%s" %
+                              host.replace('.', '_'))
         for c_host in compute_hosts:
             key = "nova_qemu_migration_%s_%s" % (host, c_host)
             fw_details.setdefault(key, {})

@@ -8,13 +8,13 @@ class packstack::nova::api ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    $auth_uri = hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS')
+    $www_authenticate_uri = hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS')
     $admin_password = hiera('CONFIG_NOVA_KS_PW')
 
     class {'::nova::keystone::authtoken':
-      password => $admin_password,
-      auth_uri => $auth_uri,
-      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password             => $admin_password,
+      www_authenticate_uri => $www_authenticate_uri,
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     if hiera('CONFIG_NOVA_PCI_ALIAS') == '' {
@@ -55,7 +55,7 @@ class packstack::nova::api ()
     }
 
     class { '::nova::placement':
-      auth_url    => $auth_uri,
+      auth_url    => $www_authenticate_uri,
       password    => $admin_password,
       region_name => hiera('CONFIG_KEYSTONE_REGION'),
     }

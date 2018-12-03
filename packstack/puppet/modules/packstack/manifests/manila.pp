@@ -13,8 +13,8 @@ class packstack::manila ()
     }
 
     class { '::manila::keystone::authtoken':
-      password     => hiera('CONFIG_MANILA_KS_PW'),
-      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      password             => hiera('CONFIG_MANILA_KS_PW'),
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
     }
 
     class { '::manila::api':

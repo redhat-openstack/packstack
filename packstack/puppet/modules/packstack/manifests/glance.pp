@@ -24,9 +24,9 @@ class packstack::glance ()
     }
 
     class { '::glance::api::authtoken':
-      auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      password => hiera('CONFIG_GLANCE_KS_PW'),
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password             => hiera('CONFIG_GLANCE_KS_PW'),
     }
 
     class { '::glance::api::logging':
@@ -45,9 +45,9 @@ class packstack::glance ()
     }
 
     class { '::glance::registry::authtoken':
-      auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      password => hiera('CONFIG_GLANCE_KS_PW'),
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password             => hiera('CONFIG_GLANCE_KS_PW'),
     }
 
     class { '::glance::registry':

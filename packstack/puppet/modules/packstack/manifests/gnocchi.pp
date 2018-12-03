@@ -15,10 +15,10 @@ class packstack::gnocchi ()
     }
 
     class { '::gnocchi::keystone::authtoken':
-      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      auth_version => hiera('CONFIG_KEYSTONE_API_VERSION'),
-      password     => hiera('CONFIG_GNOCCHI_KS_PW')
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      auth_version         => hiera('CONFIG_KEYSTONE_API_VERSION'),
+      password             => hiera('CONFIG_GNOCCHI_KS_PW')
     }
 
     class { '::gnocchi::api':

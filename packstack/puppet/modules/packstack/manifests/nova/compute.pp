@@ -1,7 +1,8 @@
 class packstack::nova::compute ()
 {
     $my_ip = choose_my_ip(hiera('HOST_LIST'))
-    $qemu_rule_name = "FIREWALL_NOVA_QEMU_MIG_RULES_${my_ip}"
+    $my_ip_without_dot = regsubst($my_ip, '\.', '_', 'G')
+    $qemu_rule_name = "FIREWALL_NOVA_QEMU_MIG_RULES_${my_ip_without_dot}"
     create_resources(packstack::firewall, hiera($qemu_rule_name, {}))
     create_resources(packstack::firewall, hiera('FIREWALL_NOVA_COMPUTE_RULES', {}))
 

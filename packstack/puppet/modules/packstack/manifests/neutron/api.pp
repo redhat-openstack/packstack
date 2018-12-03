@@ -13,11 +13,11 @@ class packstack::neutron::api ()
     $neutron_lbaas_enabled   = str2bool(hiera('CONFIG_LBAAS_INSTALL'))
 
     class { '::neutron::keystone::authtoken':
-      username     => 'neutron',
-      password     => $neutron_user_password,
-      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      project_name => 'services',
+      username             => 'neutron',
+      password             => $neutron_user_password,
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      project_name         => 'services',
     }
 
     class { '::neutron::server':

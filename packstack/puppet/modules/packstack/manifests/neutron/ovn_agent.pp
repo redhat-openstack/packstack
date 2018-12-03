@@ -1,7 +1,8 @@
 class packstack::neutron::ovn_agent ()
 {
     $my_ip = choose_my_ip(hiera('HOST_LIST'))
-    $neutron_tunnel_rule_name = "FIREWALL_NEUTRON_TUNNEL_RULES_${my_ip}"
+    $my_ip_without_dot = regsubst($my_ip, '\.', '_', 'G')
+    $neutron_tunnel_rule_name = "FIREWALL_NEUTRON_TUNNEL_RULES_${my_ip_without_dot}"
     create_resources(packstack::firewall, hiera($neutron_tunnel_rule_name, {}))
 
     $neutron_ovn_tunnel_if = hiera('CONFIG_NEUTRON_OVN_TUNNEL_IF', undef)

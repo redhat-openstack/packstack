@@ -23,6 +23,14 @@ class packstack::sahara::rabbitmq ()
       File[$files_to_set_owner] ~> Service<| tag == 'sahara-service' |>
     }
 
+    class { '::sahara::keystone::authtoken':
+      username             => 'sahara',
+      password             => hiera('CONFIG_SAHARA_KS_PW'),
+      project_name         => 'services',
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+    }
+
     class { '::sahara::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
@@ -30,11 +38,6 @@ class packstack::sahara::rabbitmq ()
     class { '::sahara':
       database_connection   =>
         "mysql+pymysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
-      admin_user            => 'sahara',
-      admin_password        => hiera('CONFIG_SAHARA_KS_PW'),
-      admin_tenant_name     => 'services',
-      auth_uri              => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      identity_uri          => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       use_neutron           => ($sahara_cfg_config_neutron_install == 'y'),
       host                  => hiera('CONFIG_SAHARA_HOST'),
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),

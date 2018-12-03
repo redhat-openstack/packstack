@@ -15,11 +15,11 @@ class packstack::provision::bridge ()
     }
 
     class { '::neutron::keystone::authtoken':
-      username     => 'neutron',
-      password     => $neutron_user_password,
-      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      project_name => 'services',
+      username             => 'neutron',
+      password             => $neutron_user_password,
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      project_name         => 'services',
     }
 
     if $provision_neutron_br and $setup_ovs_bridge {

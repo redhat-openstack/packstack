@@ -26,9 +26,9 @@ class packstack::cinder ()
     }
 
     class { '::cinder::keystone::authtoken':
-      auth_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      password => hiera('CONFIG_CINDER_KS_PW'),
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password             => hiera('CONFIG_CINDER_KS_PW'),
     }
 
     class { '::cinder::api':
