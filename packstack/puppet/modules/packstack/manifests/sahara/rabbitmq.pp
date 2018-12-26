@@ -2,7 +2,6 @@ class packstack::sahara::rabbitmq ()
 {
     $sahara_cfg_sahara_db_pw = hiera('CONFIG_SAHARA_DB_PW')
     $sahara_cfg_sahara_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
-    $sahara_cfg_config_neutron_install = hiera('CONFIG_NEUTRON_INSTALL')
 
     $kombu_ssl_ca_certs = hiera('CONFIG_AMQP_SSL_CACERT_FILE', $::os_service_default)
     $kombu_ssl_keyfile = hiera('CONFIG_SAHARA_SSL_KEY', $::os_service_default)
@@ -38,7 +37,6 @@ class packstack::sahara::rabbitmq ()
     class { '::sahara':
       database_connection   =>
         "mysql+pymysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
-      use_neutron           => ($sahara_cfg_config_neutron_install == 'y'),
       host                  => hiera('CONFIG_SAHARA_HOST'),
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
