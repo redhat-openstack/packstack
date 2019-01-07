@@ -25,8 +25,6 @@ class packstack::apache ()
 
     # Keystone port
     apache::listen { '5000': }
-    # Keystone admin port
-    apache::listen { '35357': }
 
     if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
       if hiera('CONFIG_CEILOMETER_SERVICE_NAME') == 'httpd' {

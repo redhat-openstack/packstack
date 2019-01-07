@@ -117,20 +117,6 @@ if [ $(id -u) != 0 ]; then
     $SUDO service sshd restart
 fi
 
-# Sometimes keystone admin port is used as ephemeral port for other connections and gate jobs fail with httpd error 'Address already in use'.
-# We reserve port 35357 at the beginning of the job execution to mitigate this issue as much as possible.
-# Similar hack is done in devstack https://github.com/openstack-dev/devstack/blob/master/tools/fixup_stuff.sh#L53-L68
-
-# Get any currently reserved ports, strip off leading whitespace
-keystone_port=35357
-reserved_ports=$(sysctl net.ipv4.ip_local_reserved_ports | awk -F'=' '{print $2;}' | sed 's/^ //')
-
-if [[ -z "${reserved_ports}" ]]; then
-    $SUDO sysctl -w net.ipv4.ip_local_reserved_ports=${keystone_port}
-else
-    $SUDO sysctl -w net.ipv4.ip_local_reserved_ports=${keystone_port},${reserved_ports}
-fi
-
 # Make swap configuration consistent
 # TODO: REMOVE ME
 # https://review.openstack.org/#/c/300122/

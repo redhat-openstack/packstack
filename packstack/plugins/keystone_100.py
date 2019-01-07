@@ -776,7 +776,7 @@ def create_manifest(config, messages):
     config['CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'] = "http://%s:5000/" % (
         config['CONFIG_KEYSTONE_HOST_URL']
     )
-    config['CONFIG_KEYSTONE_ADMIN_URL'] = "http://%s:35357" % (
+    config['CONFIG_KEYSTONE_ADMIN_URL'] = "http://%s:5000" % (
         config['CONFIG_KEYSTONE_HOST_URL']
     )
 
@@ -786,6 +786,6 @@ def create_manifest(config, messages):
     fw_details[key]['host'] = "ALL"
     fw_details[key]['service_name'] = "keystone"
     fw_details[key]['chain'] = "INPUT"
-    fw_details[key]['ports'] = ['5000', '35357']
+    fw_details[key]['ports'] = ['5000']
     fw_details[key]['proto'] = "tcp"
     config['FIREWALL_KEYSTONE_RULES'] = fw_details
