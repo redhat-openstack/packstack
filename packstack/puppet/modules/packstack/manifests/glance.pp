@@ -50,10 +50,13 @@ class packstack::glance ()
       password             => hiera('CONFIG_GLANCE_KS_PW'),
     }
 
+    class { '::glance::registry::logging':
+      debug => hiera('CONFIG_DEBUG_MODE'),
+    }
+
     class { '::glance::registry':
       bind_host           => $bind_host,
       database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
-      debug               => hiera('CONFIG_DEBUG_MODE'),
       workers             => hiera('CONFIG_SERVICE_WORKERS'),
     }
 }
