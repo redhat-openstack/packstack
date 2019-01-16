@@ -277,6 +277,8 @@ result=$?
 
 # Print output and generate subunit if results exist
 if [ -d /var/lib/tempest ]; then
+    # FIXME(jpena): Work around Fedora image issues with umask
+    $SUDO chown -R $USER /var/lib/tempest
     pushd /var/lib/tempest
     if [ -d .testrepository ]; then
         $SUDO /usr/bin/testr last || true
