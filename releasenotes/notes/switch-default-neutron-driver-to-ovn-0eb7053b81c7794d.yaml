@@ -1,0 +1,11 @@
+---
+prelude: >
+    The default ML2 driver is replaced from ``openvswitch``to ``ovn``. This
+    means that, when deploying packstack with the default settings, OVN will
+    be used as the networking backend for Neutron.
+features:
+  - |
+    OVN is now used as the default networking backend for Neutron when
+    deploying packstack. Neutron agents such as L2, L3 or DHCP agents are no
+    longer used and get replaced by OVN services.
+    The encapsulation used will be ``geneve`` instead of ``vxlan``.

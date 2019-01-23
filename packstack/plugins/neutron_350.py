@@ -343,7 +343,7 @@ def initConfig(controller):
                         "entrypoints"),
              "OPTION_LIST": ["local", "flat", "vlan", "gre", "vxlan", "geneve"],
              "VALIDATORS": [validators.validate_multi_options],
-             "DEFAULT_VALUE": "vxlan,flat",
+             "DEFAULT_VALUE": "geneve,flat",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,
@@ -356,7 +356,7 @@ def initConfig(controller):
                         "network_types to allocate as tenant networks"),
              "OPTION_LIST": ["local", "vlan", "gre", "vxlan", "geneve"],
              "VALIDATORS": [validators.validate_multi_options],
-             "DEFAULT_VALUE": "vxlan",
+             "DEFAULT_VALUE": "geneve",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,
@@ -371,7 +371,7 @@ def initConfig(controller):
                              "hyperv", "ncs", "arista", "cisco_nexus",
                              "mlnx", "l2population", "sriovnicswitch", "ovn"],
              "VALIDATORS": [validators.validate_multi_options],
-             "DEFAULT_VALUE": "openvswitch",
+             "DEFAULT_VALUE": "ovn",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,
@@ -450,7 +450,7 @@ def initConfig(controller):
                         "with Neutron"),
              "OPTION_LIST": ["linuxbridge", "openvswitch", "ovn"],
              "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "openvswitch",
+             "DEFAULT_VALUE": "ovn",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_NEUTRON_L2_AGENT",
@@ -588,6 +588,10 @@ def initSequences(controller):
         ovs_external = 'CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET'
         ovn_external = 'CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET'
         config[ovs_external] = config[ovn_external]
+    elif use_ml2_with_ovs(config):
+        if ('openvswitch' not in config[
+                'CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']):
+            config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] = 'openvswitch'
 
     plugin_db = 'neutron'
     plugin_path = 'neutron.plugins.ml2.plugin.Ml2Plugin'
