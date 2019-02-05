@@ -757,9 +757,9 @@ def create_manifests(config, messages):
         service_plugins.append('metering')
 
     if config['CONFIG_NEUTRON_FWAAS'] == 'y':
-        service_plugins.append('firewall')
-        fwaas_sp = ('FIREWALL:Iptables:neutron.agent.linux.iptables_firewall.'
-                    'OVSHybridIptablesFirewallDriver:default')
+        service_plugins.append('firewall_v2')
+        fwaas_sp = ('FIREWALL_V2:fwaas_db:neutron_fwaas.services.firewall.'
+                    'service_drivers.agents.agents.FirewallAgentDriver:default')
         service_providers.append(fwaas_sp)
 
     if config['CONFIG_NEUTRON_VPNAAS'] == 'y':

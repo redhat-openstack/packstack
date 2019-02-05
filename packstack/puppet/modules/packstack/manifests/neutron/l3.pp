@@ -7,7 +7,7 @@ class packstack::neutron::l3 ()
 
     $neutron_fwaas_enabled   = str2bool(hiera('CONFIG_NEUTRON_FWAAS'))
     if $neutron_fwaas_enabled {
-      $extensions = 'fwaas'
+      $extensions = 'fwaas_v2'
     } else {
       $extensions = undef
     }
