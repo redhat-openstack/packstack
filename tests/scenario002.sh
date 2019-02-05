@@ -36,6 +36,9 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-cinder-install=n \
           --os-horizon-install=n \
           --glance-backend=swift \
+          --os-neutron-l2-agent=openvswitch \
+          --os-neutron-ml2-type-drivers="vxlan,flat" \
+          --os-neutron-ml2-tenant-network-types="vxlan" \
           --os-neutron-lbaas-install=y \
           --os-neutron-vpnaas-install=n \
           --os-sahara-install=y \
