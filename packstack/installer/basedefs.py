@@ -38,6 +38,8 @@ if os.path.exists(PACKSTACK_SRC_DOC):
     PACKSTACK_DOC = PACKSTACK_SRC_DOC
 elif os.path.exists(os.path.join(sys.prefix, 'share/packstack/packstack.rst')):
     PACKSTACK_DOC = os.path.join(sys.prefix, 'share/packstack/packstack.rst')
+elif os.path.exists('/usr/local/share/packstack/packstack.rst'):
+    PACKSTACK_DOC = '/usr/local/share/packstack/packstack.rst'
 else:
     PACKSTACK_DOC = '/usr/share/packstack/packstack.rst'
 

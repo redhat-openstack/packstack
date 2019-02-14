@@ -178,7 +178,16 @@ else
 fi
 
 # Don't assume pip is installed
-which pip || $SUDO easy_install pip
+which pip3 && PIP=pip3
+if [ -z $PIP ]; then
+    if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
+        $SUDO $PKG_MGR -y install python3-pip
+        PIP=pip3
+    else
+        which pip || $SUDO easy_install pip
+        PIP=pip
+    fi
+fi
 
 # Try to use pre-cached cirros images, if available, otherwise download them
 rm -rf /tmp/cirros
@@ -257,7 +266,7 @@ fi
 
 # Setup packstack
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
-  $SUDO pip install .
+  $SUDO $PIP install .
   # In Fedora when running with sudo gems are installed at /usr/local/bin/ even when GEM_HOME/GEM_BIN_DIR are set
   if [ "${PKG_MGR}" = "dnf" ]; then
       export GEM_BIN_DIR=/usr/local/bin/
