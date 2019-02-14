@@ -144,12 +144,9 @@ fi
 
 # Install dependencies
 $SUDO $PKG_MGR -y install puppet \
-                     yum-plugin-priorities \
                      iproute \
                      dstat \
-                     python-setuptools \
                      openssl-devel \
-                     python-devel \
                      libffi-devel \
                      libxml2-devel \
                      libxslt-devel \
@@ -166,6 +163,19 @@ $SUDO $PKG_MGR -y install puppet \
                      patchutils \
                      subversion \
                      systemtap
+
+# Some dependencies are not installed on RHEL/CentOS 8, or are renamed
+OS_NAME=$(facter operatingsystem)
+OS_VERSION=$(facter operatingsystemmajrelease)
+
+if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
+    $SUDO $PKG_MGR -y install python3-setuptools \
+                              python3-devel
+else
+    $SUDO $PKG_MGR -y install python-setuptools \
+                              python-devel \
+                              yum-plugin-priorities
+fi
 
 # Don't assume pip is installed
 which pip || $SUDO easy_install pip
