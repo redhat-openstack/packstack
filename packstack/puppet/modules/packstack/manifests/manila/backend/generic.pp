@@ -26,7 +26,7 @@ class packstack::manila::backend::generic ()
       ensure => present,
       id     => '66',
       ram    => '512',
-      disk   => '0',
+      disk   => '1',
       vcpus  => '1',
       require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
     } ->
