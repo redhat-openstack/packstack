@@ -145,6 +145,7 @@ fi
 # Install dependencies
 $SUDO $PKG_MGR -y install puppet \
                      iproute \
+                     iptables \
                      dstat \
                      openssl-devel \
                      libffi-devel \
@@ -266,7 +267,7 @@ fi
 
 # Setup packstack
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
-  $SUDO $PIP install .
+  $SUDO $PIP install --prefix=/usr .
   # In Fedora when running with sudo gems are installed at /usr/local/bin/ even when GEM_HOME/GEM_BIN_DIR are set
   if [ "${PKG_MGR}" = "dnf" ]; then
       export GEM_BIN_DIR=/usr/local/bin/

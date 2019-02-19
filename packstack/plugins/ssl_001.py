@@ -280,10 +280,10 @@ def create_self_signed_cert(config, messages):
 
         cert.sign(k, 'sha1')
 
-        open((CERT_FILE), "wt").write(
-            crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
-        open((KEY_FILE), "wt").write(
-            crypto.dump_privatekey(crypto.FILETYPE_PEM, k))
+        open((CERT_FILE), "w").write(
+            crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode())
+        open((KEY_FILE), "w").write(
+            crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode())
 
         messages.append(
             "%sNOTE%s : A selfsigned CA certificate was generated to be used "
