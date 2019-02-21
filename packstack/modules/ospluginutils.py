@@ -115,7 +115,11 @@ def generate_ssl_cert(config, host, service, ssl_key_file, ssl_cert_file):
         subject.L = config['CONFIG_SSL_CERT_SUBJECT_L']
         subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']
         subject.OU = config['CONFIG_SSL_CERT_SUBJECT_OU']
-        subject.CN = "%s/%s" % (service, fqdn)
+        cn = "%s/%s" % (service, fqdn)
+        # if subject.CN is more than 64 chars long, cert creation will fail
+        if len(cn) > 64:
+            cn = cn[0:63]
+        subject.CN = cn
         subject.emailAddress = mail
 
         cert.add_extensions([
