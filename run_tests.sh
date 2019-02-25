@@ -146,6 +146,7 @@ fi
 $SUDO $PKG_MGR -y install puppet \
                      iproute \
                      iptables \
+                     iptables-services \
                      dstat \
                      openssl-devel \
                      libffi-devel \
