@@ -132,7 +132,7 @@ executable without further intervention, and **Packstack** is ready to install.
 
 ## Puppet Style Guide
 
-**IMPORTANT** <https://docs.puppetlabs.com/guides/style_guide.html>
+**IMPORTANT** <https://puppet.com/docs/puppet/latest/style_guide.html>
 
 Please, respect the Puppet Style Guide as much as possible !
 
