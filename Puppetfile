@@ -4,95 +4,95 @@ moduledir '/usr/share/openstack-puppet/modules'
 
 mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'cinder',
   :git => 'https://github.com/openstack/puppet-cinder',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'glance',
   :git => 'https://github.com/openstack/puppet-glance',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'gnocchi',
   :git => 'https://github.com/openstack/puppet-gnocchi',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'magnum',
   :git => 'https://github.com/openstack/puppet-magnum',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'horizon',
   :git => 'https://github.com/openstack/puppet-horizon',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'ironic',
   :git => 'https://github.com/openstack/puppet-ironic',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'keystone',
   :git => 'https://github.com/openstack/puppet-keystone',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'manila',
   :git => 'https://github.com/openstack/puppet-manila',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'nova',
   :git => 'https://github.com/openstack/puppet-nova',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'openstacklib',
   :git => 'https://github.com/openstack/puppet-openstacklib',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'oslo',
   :git => 'https://github.com/openstack/puppet-oslo',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'ovn',
   :git => 'https://github.com/openstack/puppet-ovn',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'panko',
   :git => 'https://github.com/openstack/puppet-panko',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'sahara',
   :git => 'https://github.com/openstack/puppet-sahara',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'swift',
   :git => 'https://github.com/openstack/puppet-swift',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'tempest',
   :git => 'https://github.com/openstack/puppet-tempest',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'trove',
   :git => 'https://github.com/openstack/puppet-trove',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 mod 'vswitch',
   :git => 'https://github.com/openstack/puppet-vswitch',
-  :ref => 'master'
+  :ref => 'stable/rocky'
 
 ## Non-OpenStack modules
 
@@ -133,8 +133,8 @@ mod 'rabbitmq',
   :ref => 'master'
 
 mod 'redis',
-  :git => 'https://github.com/arioch/puppet-redis',
-  :ref => 'master'
+  :git => 'https://github.com/voxpupuli/puppet-redis',
+  :ref => 'v3.3.0'
 
 mod 'remote',
   :git => 'https://github.com/paramite/puppet-remote',
@@ -150,7 +150,7 @@ mod 'ssh',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => '4.18.0'
+  :ref => '4.25.1'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
