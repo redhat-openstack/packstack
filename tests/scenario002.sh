@@ -43,6 +43,7 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-neutron-vpnaas-install=n \
           --os-sahara-install=y \
           --os-trove-install=y \
+          --neutron-fwaas=y \
           --provision-uec-kernel-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-vmlinuz" \
           --provision-uec-ramdisk-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-initrd" \
           --provision-uec-disk-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img" \
