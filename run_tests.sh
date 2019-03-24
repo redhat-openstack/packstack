@@ -22,7 +22,7 @@ INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
 DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/centos7-pike/current-passed-ci/delorean.repo}
 DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/centos7-pike/delorean-deps.repo}
-GIT_BASE_URL=${GIT_BASE_URL:-git://git.openstack.org}
+GIT_BASE_URL=${GIT_BASE_URL:-https://git.openstack.org}
 ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
 SELINUX_ENFORCING=${SELINUX_ENFORCING:-true}
 # If logs should be retrieved automatically
@@ -53,7 +53,7 @@ EOF
   # Periodic jobs run without ref on master
   ZUUL_REF=${ZUUL_REF:-None}
   ZUUL_BRANCH=${ZUUL_BRANCH:-master}
-  GIT_BASE_URL=${GIT_BASE_URL:-git://git.openstack.org}
+  GIT_BASE_URL=${GIT_BASE_URL:-https://git.openstack.org}
 
   local project_names=$(awk '{ if ($1 == ":git") print $3 }' \
     Puppetfile0 | tr -d "'," | cut -d '/' -f 4- | xargs
@@ -62,7 +62,7 @@ EOF
     --cache-dir /opt/git \
     --zuul-ref $ZUUL_REF \
     --zuul-branch $ZUUL_BRANCH \
-    git://git.openstack.org $project_names
+    https://git.openstack.org $project_names
 }
 
 # Install all Puppet modules with r10k
