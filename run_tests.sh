@@ -20,8 +20,9 @@ SCENARIO=${SCENARIO:-scenario001}
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
-DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/centos7-master/current-passed-ci/delorean.repo}
-DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/centos7-master/delorean-deps.repo}
+#NOTE(jpena) switch to current-passed-ci once it is available
+DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/centos7-stein/current-tripleo/delorean.repo}
+DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/centos7-stein/delorean-deps.repo}
 GIT_BASE_URL=${GIT_BASE_URL:-https://git.openstack.org}
 ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
 SELINUX_ENFORCING=${SELINUX_ENFORCING:-true}
