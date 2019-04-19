@@ -8,7 +8,7 @@
       - ^docs/.*$
       - ^releasenotes/.*$
     required-projects:
-      - openstack/packstack
+      - x/packstack
       - openstack/puppet-aodh
       - openstack/puppet-ceilometer
       - openstack/puppet-cinder
