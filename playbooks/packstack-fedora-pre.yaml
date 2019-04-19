@@ -8,7 +8,7 @@
 
     - shell:
         cmd: |
-          cp -pr /home/zuul/src/git.openstack.org/openstack/packstack {{ ansible_user_dir }}/workspace
+          cp -pr /home/zuul/src/opendev.org/x/packstack {{ ansible_user_dir }}/workspace
 
     - shell:
         cmd: |
