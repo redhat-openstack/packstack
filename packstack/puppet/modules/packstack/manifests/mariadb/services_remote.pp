@@ -396,7 +396,7 @@ class packstack::mariadb::services_remote () {
           require     => Remote_database_user['nova_api@%'],
         }
 
-        remote_database { 'nova_placement':
+        remote_database { 'placement':
           ensure      => 'present',
           charset     => 'utf8',
           db_host     => hiera('CONFIG_MARIADB_HOST'),
@@ -405,22 +405,22 @@ class packstack::mariadb::services_remote () {
           provider    => 'mysql',
         }
 
-        remote_database_user { 'nova_placement@%':
+        remote_database_user { 'placement@%':
           password_hash => mysql_password($mariadb_nova_noinstall_db_pw),
           db_host       => hiera('CONFIG_MARIADB_HOST'),
           db_user       => hiera('CONFIG_MARIADB_USER'),
           db_password   => hiera('CONFIG_MARIADB_PW'),
           provider      => 'mysql',
-          require       => Remote_database['nova_placement'],
+          require       => Remote_database['placement'],
         }
 
-        remote_database_grant { 'nova_placement@%/nova_placement':
+        remote_database_grant { 'placement@%/placement':
           privileges  => 'all',
           db_host     => hiera('CONFIG_MARIADB_HOST'),
           db_user     => hiera('CONFIG_MARIADB_USER'),
           db_password => hiera('CONFIG_MARIADB_PW'),
           provider    => 'mysql',
-          require     => Remote_database_user['nova_placement@%'],
+          require     => Remote_database_user['placement@%'],
         }
 
         remote_database { 'nova_cell0':

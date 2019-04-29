@@ -47,13 +47,6 @@ class packstack::nova::api ()
       aliases                              => $pci_alias,
     }
 
-    class { '::nova::wsgi::apache_placement':
-      bind_host => $bind_host,
-      api_port  => '8778',
-      ssl       => false,
-      workers   => hiera('CONFIG_SERVICE_WORKERS'),
-    }
-
     class { '::nova::placement':
       auth_url    => $www_authenticate_uri,
       password    => $admin_password,

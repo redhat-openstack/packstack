@@ -1,0 +1,5 @@
+---
+features:
+  - |
+    Packstack has added support for the extracted Placement service in the
+    Train cycle, following its upstream support and deprecation in Nova.

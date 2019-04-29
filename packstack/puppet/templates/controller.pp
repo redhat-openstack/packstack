@@ -83,6 +83,7 @@ if hiera('CONFIG_NOVA_INSTALL') == 'y' {
   if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
     include '::packstack::nova::neutron'
   }
+  include '::packstack::placement'
 }
 
 if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {

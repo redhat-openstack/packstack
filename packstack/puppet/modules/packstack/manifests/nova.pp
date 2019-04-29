@@ -74,7 +74,6 @@ class packstack::nova ()
       notify_on_state_change        => $notify_on_state_change,
       database_connection           => "mysql+pymysql://nova:${nova_db_pw}@${nova_mariadb_host}/nova",
       api_database_connection       => "mysql+pymysql://nova_api:${nova_db_pw}@${nova_mariadb_host}/nova_api",
-      placement_database_connection => "mysql+pymysql://nova_placement:${nova_db_pw}@${nova_mariadb_host}/nova_placement",
       cpu_allocation_ratio          => hiera('CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO'),
       ram_allocation_ratio          => hiera('CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO'),
       host                          => $novahost,

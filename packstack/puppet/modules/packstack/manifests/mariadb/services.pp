@@ -100,7 +100,7 @@ class packstack::mariadb::services ()
           allowed_hosts => '%',
           charset       => 'utf8',
         }
-        class { '::nova::db::mysql_placement':
+        class { '::placement::db::mysql':
           password      => hiera('CONFIG_NOVA_DB_PW'),
           host          => '%',
           allowed_hosts => '%',
