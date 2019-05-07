@@ -81,6 +81,86 @@
     vars:
       scenario: scenario002
 
+- secret:
+    name: packstack_git_mirror_credentials
+    data:
+      user: git
+      host: github.com
+      host_key: github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+      ssh_key: !encrypted/pkcs1-oaep
+        - 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
+
+- job:
+    name: packstack-upload-git-mirror
+    parent: upload-git-mirror
+    description: Mirrors x/packstack to redhat-openstack/packstack
+    allowed-projects: x/packstack
+    vars:
+      git_mirror_repository: redhat-openstack/packstack
+    secrets:
+      - name: git_mirror_credentials
+        secret: packstack_git_mirror_credentials
+        pass-to-parent: true
+
 - project:
     check:
       jobs:
@@ -96,3 +176,6 @@
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
         - packstack-multinode-scenario002-tempest
+    post:
+      jobs:
+        - packstack-upload-git-mirror
