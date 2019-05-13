@@ -130,7 +130,7 @@ mod 'nssdb',
 
 mod 'rabbitmq',
   :git => 'https://github.com/voxpupuli/puppet-rabbitmq',
-  :ref => 'master'
+  :ref => '1ccddad57e4d53bb3861754a1712b78f3a0fb13f'
 
 mod 'redis',
   :git => 'https://github.com/voxpupuli/puppet-redis',
