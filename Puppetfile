@@ -134,7 +134,7 @@ mod 'rabbitmq',
 
 mod 'redis',
   :git => 'https://github.com/arioch/puppet-redis',
-  :ref => 'master'
+  :ref => 'bfcc2120f7b83342b03241d1429028a6defdd0da'
 
 mod 'remote',
   :git => 'https://github.com/paramite/puppet-remote',
@@ -150,7 +150,7 @@ mod 'ssh',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => '4.18.0'
+  :ref => '4.24.0'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
