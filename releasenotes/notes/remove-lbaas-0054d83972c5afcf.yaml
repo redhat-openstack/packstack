@@ -1,0 +1,4 @@
+---
+upgrade:
+  - |
+    Neutron LBaaS has been removed from upstream and is now removed from Packstack.

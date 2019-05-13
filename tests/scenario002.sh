@@ -11,7 +11,6 @@ echo -e "Generating packstack config for:
 - glance (swift backend)
 - nova
 - neutron (ovs+vxlan)
-- lbaasv2
 - swift
 - sahara
 - trove
@@ -39,7 +38,6 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-neutron-l2-agent=openvswitch \
           --os-neutron-ml2-type-drivers="vxlan,flat" \
           --os-neutron-ml2-tenant-network-types="vxlan" \
-          --os-neutron-lbaas-install=y \
           --os-neutron-vpnaas-install=n \
           --os-sahara-install=y \
           --os-trove-install=y \

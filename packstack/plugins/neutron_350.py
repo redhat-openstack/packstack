@@ -90,18 +90,6 @@ def initConfig(controller):
              "NEED_CONFIRM": True,
              "CONDITION": False},
 
-            {"CMD_OPTION": "os-neutron-lbaas-install",
-             "PROMPT": "Should Packstack install Neutron LBaaS",
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_LBAAS_INSTALL",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "os-neutron-metering-agent-install",
              "PROMPT": ("Should Packstack install Neutron L3 Metering agent"),
              "OPTION_LIST": ["y", "n"],
@@ -457,7 +445,7 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False,
-             "MESSAGE": ("You have choosen OVN neutron backend. Note that this backend does not support LBaaS, VPNaaS or FWaaS services. "
+             "MESSAGE": ("You have choosen OVN neutron backend. Note that this backend does not support the VPNaaS or FWaaS services. "
                          "Geneve will be used as encapsulation method for tenant networks"),
              "MESSAGE_VALUES": ["ovn"]},
 
@@ -562,10 +550,9 @@ def initSequences(controller):
         if ('geneve' not in config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS']):
             config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS'] += ', geneve'
         config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'] = 'geneve'
-        # VPNaaS, LBaaS and FWaaS are not supported with OVN
+        # VPNaaS and FWaaS are not supported with OVN
         config['CONFIG_NEUTRON_FWAAS'] = 'n'
         config['CONFIG_NEUTRON_VPNAAS'] = 'n'
-        config['CONFIG_LBAAS_INSTALL'] = 'n'
         config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] = 'n'
         # When using OVN we need to create the same L2 infrastucture as
         # for OVS, so I'm copying value for required variables and use
@@ -622,8 +609,6 @@ def initSequences(controller):
     q_hosts = api_hosts | network_hosts | compute_hosts
 
     neutron_steps = [
-        {'title': 'Preparing Neutron LBaaS Agent entries',
-         'functions': [create_lbaas_manifests]},
         {'title': 'Preparing Neutron API entries',
          'functions': [create_manifests]},
         {'title': 'Preparing Neutron L3 entries',
@@ -739,13 +724,6 @@ def create_manifests(config, messages):
 
     service_plugins = ['qos', 'trunk']
     service_providers = []
-    if config['CONFIG_LBAAS_INSTALL'] == 'y':
-        lbaas_plugin = ('neutron_lbaas.services.loadbalancer.plugin.'
-                        'LoadBalancerPluginv2')
-        service_plugins.append(lbaas_plugin)
-        lbaas_sp = ('LOADBALANCERV2:Haproxy:neutron_lbaas.drivers.haproxy.'
-                    'plugin_driver.HaproxyOnHostPluginDriver:default')
-        service_providers.append(lbaas_sp)
 
     if use_ml2_with_ovn(config):
         service_plugins.append('ovn-router')
@@ -917,18 +895,6 @@ def create_dhcp_manifests(config, messages):
         fw_details[key]['ports'] = ['68']
         fw_details[key]['proto'] = "udp"
         config['FIREWALL_NEUTRON_DHCPOUT_RULES'] = fw_details
-
-
-def create_lbaas_manifests(config, messages):
-    if use_ml2_with_ovn(config):
-        return
-    global network_hosts
-
-    if not config['CONFIG_LBAAS_INSTALL'] == 'y':
-        return
-
-    for host in network_hosts:
-        config['CONFIG_NEUTRON_LBAAS_INTERFACE_DRIVER'] = get_if_driver(config)
 
 
 def create_metering_agent_manifests(config, messages):

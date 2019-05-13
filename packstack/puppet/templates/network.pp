@@ -22,9 +22,6 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
   if hiera('CONFIG_NEUTRON_FWAAS') == 'y' {
     include '::packstack::neutron::fwaas'
   }
-  if hiera('CONFIG_LBAAS_INSTALL') == 'y' {
-    include '::packstack::neutron::lbaas'
-  }
   if hiera('CONFIG_NEUTRON_L2_AGENT') != 'ovn' {
     include '::packstack::neutron::l3'
   }

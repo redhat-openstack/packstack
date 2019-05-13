@@ -197,8 +197,6 @@ def create_manifest(config, messages):
     config["CONFIG_HORIZON_NEUTRON_VPN"] = False
 
     if config['CONFIG_NEUTRON_INSTALL'] == 'y':
-        if config["CONFIG_LBAAS_INSTALL"] == 'y':
-            config["CONFIG_HORIZON_NEUTRON_LB"] = True
         if config["CONFIG_NEUTRON_FWAAS"] == 'y':
             config["CONFIG_HORIZON_NEUTRON_FW"] = True
         if config["CONFIG_NEUTRON_VPNAAS"] == 'y':

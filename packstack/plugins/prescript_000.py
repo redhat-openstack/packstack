@@ -388,7 +388,6 @@ def initConfig(controller):
                             'CONFIG_KEYSTONE_HOST',
                             'CONFIG_NAGIOS_HOST',
                             'CONFIG_NEUTRON_SERVER_HOST',
-                            'CONFIG_NEUTRON_LBAAS_HOSTS',
                             'CONFIG_NOVA_API_HOST',
                             'CONFIG_NOVA_CERT_HOST',
                             'CONFIG_NOVA_VNCPROXY_HOST',

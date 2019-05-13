@@ -784,9 +784,6 @@ Neutron config
 **CONFIG_NEUTRON_METADATA_PW**
     Password for the OpenStack Networking metadata agent.
 
-**CONFIG_LBAAS_INSTALL**
-    Specify 'y' to install OpenStack Networking's Load-Balancing-as-a-Service (LBaaS). ['y', 'n']
-
 **CONFIG_NEUTRON_METERING_AGENT_INSTALL**
     Specify 'y' to install OpenStack Networking's L3 Metering agent ['y', 'n']
 
