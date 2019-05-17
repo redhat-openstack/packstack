@@ -21,8 +21,8 @@ LOGROOT=${WORKSPACE:-/tmp}
 LOGDIR="${LOGROOT}/logs"
 DIAG_LOGDIR="${LOGDIR}/diag"
 CONF_LOGDIR="${LOGDIR}/etc"
-GIT_URL="http://git.openstack.org/cgit"
-PROJECTS_URL="${GIT_URL}/openstack/governance/plain/reference/projects.yaml"
+GIT_URL="https://opendev.org"
+PROJECTS_URL="${GIT_URL}/openstack/governance/raw/branch/master/reference/projects.yaml"
 
 if [ $(id -u) != 0 ]; then
     SUDO='sudo'
@@ -103,7 +103,7 @@ function get_config_and_logs {
         '/var/log/mariadb'
         '/etc/httpd/conf.d/'
         '/var/log/httpd'
-        '/var/tmp/packstack/latest'
+        '/var/tmp/packstack'
         '/var/tmp/packstack/latest/testrepository.subunit' # So we're copying it
         '/var/log/audit'                                   # to the root of
         '/var/log/secure'                                  # /logs
