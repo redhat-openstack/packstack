@@ -7,11 +7,9 @@ class packstack::nova::neutron ()
       default_floating_pool => 'public',
       neutron_password      => hiera('CONFIG_NEUTRON_KS_PW'),
       neutron_auth_type     => 'v3password',
-      neutron_url           => "http://${nova_neutron_cfg_ctrl_host}:9696",
       neutron_project_name  => 'services',
       neutron_auth_url      => "${neutron_auth_url}/v3",
       neutron_region_name   => hiera('CONFIG_KEYSTONE_REGION'),
-      neutron_url_timeout   => '60',
     }
 
     class { '::nova::compute::neutron':
