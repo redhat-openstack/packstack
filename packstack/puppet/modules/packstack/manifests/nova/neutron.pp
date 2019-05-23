@@ -11,8 +11,4 @@ class packstack::nova::neutron ()
       neutron_auth_url      => "${neutron_auth_url}/v3",
       neutron_region_name   => hiera('CONFIG_KEYSTONE_REGION'),
     }
-
-    class { '::nova::compute::neutron':
-      libvirt_vif_driver => hiera('CONFIG_NOVA_LIBVIRT_VIF_DRIVER'),
-    }
 }
