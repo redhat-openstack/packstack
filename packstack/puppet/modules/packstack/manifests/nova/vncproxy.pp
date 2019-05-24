@@ -11,10 +11,6 @@ class packstack::nova::vncproxy ()
       host    => $vnc_bind_host,
     }
 
-    class { '::nova::consoleauth':
-      enabled => true,
-    }
-
     firewall { '001 novncproxy incoming':
       proto  => 'tcp',
       dport  => ['6080'],
