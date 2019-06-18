@@ -534,7 +534,7 @@ def initSequences(controller):
         config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS'] += ', flat'
         config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'] += ', flat'
         if 'openvswitch' not in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']:
-            config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += 'openvswitch'
+            config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += ', openvswitch'
         config['CONFIG_NEUTRON_ML2_FLAT_NETWORKS'] = 'extnet'
 
     if use_ml2_with_sriovnicswitch(config):
