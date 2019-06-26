@@ -445,8 +445,8 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False,
-             "MESSAGE": ("You have choosen OVN neutron backend. Note that this backend does not support the VPNaaS or FWaaS services. "
-                         "Geneve will be used as encapsulation method for tenant networks"),
+             "MESSAGE": ("You have chosen OVN Neutron backend. Note that this backend does not support the VPNaaS or FWaaS services. "
+                         "Geneve will be used as the encapsulation method for tenant networks"),
              "MESSAGE_VALUES": ["ovn"]},
 
             {"CMD_OPTION": "os-neutron-ml2-sriov-interface-mappings",
