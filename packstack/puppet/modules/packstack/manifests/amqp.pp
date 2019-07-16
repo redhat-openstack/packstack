@@ -1,4 +1,4 @@
-define enable_rabbitmq {
+define packstack::amqp::enable_rabbitmq {
   create_resources(packstack::firewall, hiera('FIREWALL_AMQP_RULES', {}))
   $amqp_enable_ssl = hiera('CONFIG_AMQP_SSL_ENABLED')
 
@@ -58,7 +58,7 @@ class packstack::amqp ()
 
      case $amqp  {
        'rabbitmq': {
-         enable_rabbitmq { 'rabbitmq': }
+         packstack::amqp::enable_rabbitmq { 'rabbitmq': }
 
           # The following kernel parameters help alleviate some RabbitMQ
           # connection issues
