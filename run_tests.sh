@@ -17,6 +17,8 @@ export PATH=$PATH:/usr/local/sbin:/usr/sbin
 
 SCENARIO=${SCENARIO:-scenario001}
 
+BRANCH=queens
+
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
@@ -240,9 +242,7 @@ fi
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   # pycparser 2.19 seems to have trouble with older setuptools versions
   $SUDO pip install pycparser==2.18
-  # PyYAML > 5 has some issue with setuptools queens version(22.0.5), try installing stable version
-  $SUDO pip install PyYAML==3.12
-  $SUDO pip install .
+  $SUDO pip install --ignore-installed -c https://opendev.org/openstack/requirements/raw/branch/stable/$BRANCH/upper-constraints.txt .
   export GEM_BIN_DIR=/tmp/packstackgems/bin/
   export PUPPETFILE_DIR=/usr/share/openstack-puppet/modules
   export GEM_HOME=/tmp/packstackgems
