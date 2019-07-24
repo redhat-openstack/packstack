@@ -1,0 +1,6 @@
+---
+deprecations:
+  - |
+    Ram/Disk/Core Filter Scheduler were deprecated since
+    stein and are recently removed in nova, hence removing
+    it from Packstack.
