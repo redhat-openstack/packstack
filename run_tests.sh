@@ -240,6 +240,8 @@ fi
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   # pycparser 2.19 seems to have trouble with older setuptools versions
   $SUDO pip install pycparser==2.18
+  # PyYAML > 5 has some issue with setuptools queens version(22.0.5), try installing stable version
+  $SUDO pip install PyYAML==3.12
   $SUDO pip install .
   export GEM_BIN_DIR=/tmp/packstackgems/bin/
   export PUPPETFILE_DIR=/usr/share/openstack-puppet/modules

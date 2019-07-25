@@ -4,95 +4,95 @@ moduledir '/usr/share/openstack-puppet/modules'
 
 mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'cinder',
   :git => 'https://github.com/openstack/puppet-cinder',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'glance',
   :git => 'https://github.com/openstack/puppet-glance',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'gnocchi',
   :git => 'https://github.com/openstack/puppet-gnocchi',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'magnum',
   :git => 'https://github.com/openstack/puppet-magnum',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'horizon',
   :git => 'https://github.com/openstack/puppet-horizon',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'ironic',
   :git => 'https://github.com/openstack/puppet-ironic',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'keystone',
   :git => 'https://github.com/openstack/puppet-keystone',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'manila',
   :git => 'https://github.com/openstack/puppet-manila',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'nova',
   :git => 'https://github.com/openstack/puppet-nova',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'openstacklib',
   :git => 'https://github.com/openstack/puppet-openstacklib',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'oslo',
   :git => 'https://github.com/openstack/puppet-oslo',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'ovn',
   :git => 'https://github.com/openstack/puppet-ovn',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'panko',
   :git => 'https://github.com/openstack/puppet-panko',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'sahara',
   :git => 'https://github.com/openstack/puppet-sahara',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'swift',
   :git => 'https://github.com/openstack/puppet-swift',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'tempest',
   :git => 'https://github.com/openstack/puppet-tempest',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'trove',
   :git => 'https://github.com/openstack/puppet-trove',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 mod 'vswitch',
   :git => 'https://github.com/openstack/puppet-vswitch',
-  :ref => 'master'
+  :ref => 'stable/queens'
 
 ## Non-OpenStack modules
 
@@ -129,8 +129,8 @@ mod 'nssdb',
   :ref => 'master'
 
 mod 'rabbitmq',
-  :git => 'https://github.com/puppetlabs/puppetlabs-rabbitmq',
-  :ref => '5.6.0'
+  :git => 'https://github.com/voxpupuli/puppet-rabbitmq',
+  :ref => '7613f08657d6640b22ec0f4cb55cf5b3c2f2e397'
 
 mod 'redis',
   :git => 'https://github.com/arioch/puppet-redis',
