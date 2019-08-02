@@ -14,9 +14,11 @@ module Puppet::Parser::Functions
     if not host_list.kind_of?(Array)
       host_list = [host_list]
     end
-    my_ips = lookupvar('interfaces').split(',').map do |interface|
+    my_ips = Array.new
+    lookupvar('interfaces').split(',').each do |interface|
         interface.strip!
-        lookupvar("ipaddress_#{interface}")
+        my_ips.push(lookupvar("ipaddress_#{interface}"))
+        my_ips.push(lookupvar("ipaddress6_#{interface}"))
     end
 
     result = nil
