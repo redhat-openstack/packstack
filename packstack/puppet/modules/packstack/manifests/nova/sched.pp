@@ -11,4 +11,8 @@ class packstack::nova::sched ()
     class { '::nova::scheduler':
       enabled => true,
     }
+
+    Keystone_endpoint <||> -> Service['nova-scheduler']
+    Keystone_service <||> -> Service['nova-scheduler']
+
 }
