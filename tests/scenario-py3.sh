@@ -35,6 +35,7 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-horizon-ssl=n \
           --amqp-enable-ssl=n \
           --glance-backend=file \
+          --nova-libvirt-virt-type=qemu \
           --provision-uec-kernel-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-vmlinuz" \
           --provision-uec-ramdisk-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-initrd" \
           --provision-uec-disk-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img" \

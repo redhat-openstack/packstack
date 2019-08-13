@@ -55,6 +55,7 @@ function get_diag_commands {
         'rpm -qa'
         'journalctl --no-pager'
         'ulimit -n'
+        'dmidecode'
     )
 
     echo "Installing required RPM packages..."
