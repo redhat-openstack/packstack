@@ -17,6 +17,8 @@ export PATH=$PATH:/usr/local/sbin:/usr/sbin
 
 SCENARIO=${SCENARIO:-scenario001}
 
+BRANCH=master
+
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
@@ -268,7 +270,7 @@ fi
 
 # Setup packstack
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
-  $SUDO $PIP install --prefix=/usr .
+  $SUDO $PIP install --ignore-installed -c https://opendev.org/openstack/requirements/raw/branch/$BRANCH/upper-constraints.txt --prefix=/usr .
   # In Fedora when running with sudo gems are installed at /usr/local/bin/ even when GEM_HOME/GEM_BIN_DIR are set
   if [ "${PKG_MGR}" = "dnf" ]; then
       export GEM_BIN_DIR=/usr/local/bin/
