@@ -49,7 +49,8 @@ class packstack::ceilometer ()
       auth_region   => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
-    class { '::ceilometer::agent::central':
+    class { '::ceilometer::agent::polling':
+      manage_polling    => true,
       coordination_url => $coordination_url,
     }
 
