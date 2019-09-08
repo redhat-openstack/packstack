@@ -44,20 +44,6 @@
     run: playbooks/packstack-integration-tempest.yaml
 
 - job:
-    name: packstack-fedora
-    parent: packstack-base
-    vars:
-      delorean: "https://trunk.rdoproject.org/fedora/puppet-passed-ci/delorean.repo"
-      delorean_deps: "https://trunk.rdoproject.org/fedora/delorean-deps.repo"
-      selinux_enforcing: "false"
-    pre-run: playbooks/packstack-fedora-pre.yaml
-    nodeset:
-      nodes:
-        - name: fedora
-          label: fedora-28
-    run: playbooks/packstack-integration-tempest.yaml
-
-- job:
     name: packstack-multinode
     parent: packstack-base
     pre-run: playbooks/packstack-pre.yaml
@@ -86,12 +72,6 @@
     parent: packstack-allinone
     vars:
       scenario: scenario003
-
-- job:
-    name: packstack-fedora-integration-scenario-py3-tempest
-    parent: packstack-fedora
-    vars:
-      scenario: scenario-py3
 
 # We should have nested post-run jobs, according to
 # https://docs.openstack.org/infra/zuul/user/config.html#job
@@ -189,8 +169,6 @@
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
         - packstack-multinode-scenario002-tempest
-        - packstack-fedora-integration-scenario-py3-tempest:
-            voting: false
         - openstack-tox-py36:
             voting: false
     gate:
