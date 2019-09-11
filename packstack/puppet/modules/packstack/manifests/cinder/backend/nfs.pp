@@ -8,9 +8,9 @@ class packstack::cinder::backend::nfs ()
       nfs_shares_config => '/etc/cinder/nfs_shares.conf',
     }
 
-    cinder::type { 'nfs':
-      set_key   => 'volume_backend_name',
-      set_value => 'nfs',
+    cinder_type { 'nfs':
+      ensure     => present,
+      properties => ["volume_backend_name=nfs"],
       require   => Class['cinder::api'],
     }
 }

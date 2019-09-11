@@ -6,9 +6,9 @@ class packstack::cinder::backend::vmdk ()
       host_password => hiera('CONFIG_VCENTER_PASSWORD'),
     }
 
-    cinder::type { 'vmdk':
-      set_key   => 'volume_backend_name',
-      set_value => 'vmdk',
-      require   => Class['cinder::api'],
+    cinder_type { 'vmdk':
+      ensure     => present,
+      properties => ["volume_backend_name=vmdk"],
+      require    => Class['cinder::api'],
     }
 }

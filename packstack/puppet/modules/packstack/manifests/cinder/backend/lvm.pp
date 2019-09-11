@@ -85,14 +85,14 @@ class packstack::cinder::backend::lvm ()
     }
 
     cinder::backend::iscsi { 'lvm':
-      iscsi_ip_address => hiera('CONFIG_STORAGE_HOST_URL'),
-      require          => Package['lvm2'],
-      volume_group     => $cinder_volume_name,
+      target_ip_address => hiera('CONFIG_STORAGE_HOST_URL'),
+      require           => Package['lvm2'],
+      volume_group      => $cinder_volume_name,
     }
 
-    cinder::type { 'iscsi':
-      set_key   => 'volume_backend_name',
-      set_value => 'lvm',
-      require   => Class['cinder::api'],
+    cinder_type { 'iscsi':
+      ensure     => present,
+      properties => ["volume_backend_name=lvm"],
+      require    => Class['cinder::api'],
     }
 }

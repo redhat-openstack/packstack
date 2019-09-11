@@ -12,9 +12,9 @@ class packstack::cinder::backend::solidfire ()
 
     ensure_packages(['iscsi-initiator-utils'], {'ensure' => 'present'})
 
-    cinder::type { $solidfire_backend_name:
-      set_key   => 'volume_backend_name',
-      set_value => $solidfire_backend_name,
-      require   => Class['cinder::api'],
+    cinder_type { $solidfire_backend_name:
+      ensure     => present,
+      properties => ["volume_backend_name=${solidfire_backend_name}"],
+      require    => Class['cinder::api'],
     }
 }

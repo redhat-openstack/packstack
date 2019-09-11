@@ -125,9 +125,9 @@ class packstack::cinder::backend::netapp ()
         ensure_packages(['iscsi-initiator-utils'], {'ensure' => 'present'})
     }
 
-    cinder::type { $netapp_backend_name:
-      set_key   => 'volume_backend_name',
-      set_value => $netapp_backend_name,
-      require   => Class['cinder::api'],
+    cinder_type { $netapp_backend_name:
+      ensure     => present,
+      properties => ["volume_backend_name=${netapp_backend_name}"],
+      require    => Class['cinder::api'],
     }
 }

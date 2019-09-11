@@ -8,9 +8,9 @@ class packstack::cinder::backend::gluster ()
       glusterfs_shares_config => '/etc/cinder/glusterfs_shares.conf',
     }
 
-    cinder::type { 'glusterfs':
-      set_key   => 'volume_backend_name',
-      set_value => 'gluster',
-      require   => Class['cinder::api'],
+    cinder_type { 'glusterfs':
+      ensure     => present,
+      properties => ["volume_backend_name=gluster"],
+      require    => Class['cinder::api'],
     }
 }
