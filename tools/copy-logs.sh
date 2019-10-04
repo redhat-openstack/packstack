@@ -42,6 +42,7 @@ function get_diag_commands {
         'iptables -vnL -t mangle'
         'ifconfig -a'
         'ip addr show'
+        'ip netns'
         'lsmod'
         'timeout 15 lsof' # High potential of getting stuck
         'lsof -Pni'
@@ -100,7 +101,7 @@ function get_config_and_logs {
         '/var/log/mariadb'
         '/etc/httpd/conf.d/'
         '/var/log/httpd'
-        '/var/tmp/packstack'
+        '/var/tmp/packstack/latest'
         '/var/tmp/packstack/latest/testrepository.subunit' # So we're copying it
         '/var/log/audit'                                   # to the root of
         '/var/log/secure'                                  # /logs
