@@ -17,13 +17,13 @@ export PATH=$PATH:/usr/local/sbin:/usr/sbin
 
 SCENARIO=${SCENARIO:-scenario001}
 
-BRANCH=master
+BRANCH=stable/train
 
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
-DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/centos7-master/current-passed-ci/delorean.repo}
-DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/centos7-master/delorean-deps.repo}
+DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/centos7-train/current-tripleo/delorean.repo}
+DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/centos7-train/delorean-deps.repo}
 GIT_BASE_URL=${GIT_BASE_URL:-https://git.openstack.org}
 ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
 SELINUX_ENFORCING=${SELINUX_ENFORCING:-true}
