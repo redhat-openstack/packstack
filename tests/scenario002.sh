@@ -45,6 +45,7 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --provision-uec-kernel-url="/tmp/cirros/cirros-0.3.5-x86_64-vmlinuz" \
           --provision-uec-ramdisk-url="/tmp/cirros/cirros-0.3.5-x86_64-initrd" \
           --provision-uec-disk-url="/tmp/cirros/cirros-0.3.5-x86_64-disk.img" \
+          --provision-image-url="/tmp/cirros/cirros-0.3.5-x86_64-disk.img" \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \

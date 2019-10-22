@@ -185,14 +185,14 @@ if [ -f ~/cache/files/cirros-0.3.5-x86_64-uec.tar.gz ]; then
     tar -xzvf ~/cache/files/cirros-0.3.5-x86_64-uec.tar.gz -C /tmp/cirros/
 else
     echo "No pre-cached uec archive found, downloading..."
-    wget --tries=10 http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-uec.tar.gz -P /tmp/cirros/
+    wget --tries=10 https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-uec.tar.gz -P /tmp/cirros/
     tar -xzvf /tmp/cirros/cirros-0.3.5-x86_64-uec.tar.gz -C /tmp/cirros/
 fi
 if [ -f ~/cache/files/cirros-0.3.5-x86_64-disk.img ]; then
     cp -p ~/cache/files/cirros-0.3.5-x86_64-disk.img /tmp/cirros/
 else
     echo "No pre-cached disk image found, downloading..."
-    wget --tries=10 http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img -P /tmp/cirros/
+    wget --tries=10 https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img -P /tmp/cirros/
 fi
 echo "Using pre-cached images:"
 find /tmp/cirros -type f -printf "%m %n %u %g %s  %t" -exec md5sum \{\} \;
