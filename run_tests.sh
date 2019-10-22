@@ -197,14 +197,14 @@ if [ -f ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz ]; then
     tar -xzvf ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -C /tmp/cirros/
 else
     echo "No pre-cached uec archive found, downloading..."
-    wget --tries=10 http://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -P /tmp/cirros/
+    wget --tries=10 https://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -P /tmp/cirros/
     tar -xzvf /tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -C /tmp/cirros/
 fi
 if [ -f ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img ]; then
     cp -p ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img /tmp/cirros/
 else
     echo "No pre-cached disk image found, downloading..."
-    wget --tries=10 http://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img -P /tmp/cirros/
+    wget --tries=10 https://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img -P /tmp/cirros/
 fi
 echo "Using pre-cached images:"
 find /tmp/cirros -type f -printf "%m %n %u %g %s  %t" -exec md5sum \{\} \;
