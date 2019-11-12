@@ -27,6 +27,7 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           ${NODE_FLAGS} \
           --cinder-volume-name="aVolume" \
           --debug \
+          --os-debug-mode=y \
           --service-workers=2 \
           --default-password="packstack" \
           --os-aodh-install=n \
