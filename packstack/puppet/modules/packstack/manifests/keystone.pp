@@ -32,8 +32,6 @@ class packstack::keystone ()
     }
 
     class { '::keystone':
-      admin_token         => hiera('CONFIG_KEYSTONE_ADMIN_TOKEN'),
-      admin_password      => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
       database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
       token_provider      => "${keystone_token_provider_str}",
       enable_fernet_setup => true,
@@ -49,31 +47,23 @@ class packstack::keystone ()
       ssl     => $keystone_use_ssl
     }
 
-    if hiera('CONFIG_HEAT_INSTALL') == 'y' {
-      $keystone_admin_roles = ['admin', '_member_']
-    } else {
-      $keystone_admin_roles = ['admin']
-    }
+    $username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
 
     # Ensure the default _member_ role is present
     keystone_role { '_member_':
       ensure => present,
-    } ->
-    class { '::keystone::roles::admin':
-      email        => hiera('CONFIG_KEYSTONE_ADMIN_EMAIL'),
-      admin        => hiera('CONFIG_KEYSTONE_ADMIN_USERNAME'),
-      password     => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
-      admin_tenant => 'admin',
-      admin_roles  => $keystone_admin_roles,
     }
 
-    class { '::keystone::endpoint':
-      default_domain => 'Default',
-      public_url     => $keystone_url,
-      internal_url   => $keystone_url,
-      admin_url      => $keystone_admin_url,
-      region         => hiera('CONFIG_KEYSTONE_REGION'),
-      version        => 'v3',
+    class { '::keystone::bootstrap':
+      password     => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
+      username     => $username,
+      email        => hiera('CONFIG_KEYSTONE_ADMIN_EMAIL'),
+      project_name => 'admin',
+      role_name    => 'admin',
+      admin_url    => $keystone_admin_url,
+      public_url   => $keystone_url,
+      internal_url => $keystone_url,
+      region       => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
     # default assignment driver is SQL

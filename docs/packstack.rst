@@ -314,9 +314,6 @@ Keystone Config parameters
 **CONFIG_KEYSTONE_REGION**
     Default region name to use when creating tenants in the Identity service.
 
-**CONFIG_KEYSTONE_ADMIN_TOKEN**
-    Token to use for the Identity service API.
-
 **CONFIG_KEYSTONE_ADMIN_USERNAME**
     User name for the Identity service 'admin' user.  Defaults to 'admin'.
 

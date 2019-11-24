@@ -1,0 +1,5 @@
+---
+upgrade:
+  - |
+    The config option CONFIG_KEYSTONE_ADMIN_TOKEN to configure the admin token
+    is removed. You must specify a admin password with CONFIG_KEYSTONE_ADMIN_PW.

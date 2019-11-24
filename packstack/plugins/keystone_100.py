@@ -16,8 +16,6 @@
 Installs and configures Keystone
 """
 
-import uuid
-
 from packstack.installer import basedefs
 from packstack.installer import validators
 from packstack.installer import processors
@@ -72,18 +70,6 @@ def initConfig(controller):
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_KEYSTONE_REGION",
              "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "keystone-admin-token",
-             "PROMPT": "The token to use for the Keystone service api",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": uuid.uuid4().hex,
-             "MASK_INPUT": True,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_KEYSTONE_ADMIN_TOKEN",
-             "USE_DEFAULT": True,
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
