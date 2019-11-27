@@ -10,6 +10,7 @@ class packstack::redis ()
       port       => $redis_port,
       appendonly => true,
       daemonize  => false,
-      unixsocket => false,
+      unixsocket => undef,
+      unixsocketperm => '0700',
     }
 }
