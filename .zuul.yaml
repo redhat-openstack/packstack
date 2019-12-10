@@ -44,6 +44,20 @@
     run: playbooks/packstack-integration-tempest.yaml
 
 - job:
+    name: packstack-centos8
+    parent: packstack-base
+    vars:
+      selinux_enforcing: "false"
+      delorean: "https://trunk.rdoproject.org/centos8-train/consistent/delorean.repo"
+      delorean_deps: "https://trunk.rdoproject.org/centos8-train/delorean-deps.repo"
+    pre-run: playbooks/packstack-centos8-pre.yaml
+    nodeset:
+      nodes:
+        - name: centos8
+          label: centos-8
+    run: playbooks/packstack-integration-tempest.yaml
+
+- job:
     name: packstack-multinode
     parent: packstack-base
     pre-run: playbooks/packstack-pre.yaml
@@ -53,6 +67,22 @@
           label: centos-7
         - name: compute
           label: centos-7
+    run: playbooks/packstack-multinode.yaml
+
+- job:
+    name: packstack-multinode-centos8
+    parent: packstack-base
+    vars:
+      selinux_enforcing: "false"
+      delorean: "https://trunk.rdoproject.org/centos8-train/consistent/delorean.repo"
+      delorean_deps: "https://trunk.rdoproject.org/centos8-train/delorean-deps.repo"
+    pre-run: playbooks/packstack-centos8-pre.yaml
+    nodeset:
+      nodes:
+        - name: controller
+          label: centos-8
+        - name: compute
+          label: centos-8
     run: playbooks/packstack-multinode.yaml
 
 - job:
@@ -73,11 +103,36 @@
     vars:
       scenario: scenario003
 
+- job:
+    name: packstack-centos8-integration-scenario001
+    parent: packstack-centos8
+    vars:
+      scenario: scenario001
+
+- job:
+    name: packstack-centos8-integration-scenario002
+    parent: packstack-centos8
+    vars:
+      scenario: scenario002
+
+- job:
+    name: packstack-centos8-integration-scenario003
+    parent: packstack-centos8
+    vars:
+      scenario: scenario003
+
 # We should have nested post-run jobs, according to
 # https://docs.openstack.org/infra/zuul/user/config.html#job
 - job:
     name: packstack-multinode-scenario002-tempest
     parent: packstack-multinode
+    post-run: playbooks/packstack-post-compute.yaml
+    vars:
+      scenario: scenario002
+
+- job:
+    name: packstack-centos8-multinode-scenario002-tempest
+    parent: packstack-multinode-centos8
     post-run: playbooks/packstack-post-compute.yaml
     vars:
       scenario: scenario002
@@ -169,6 +224,15 @@
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
         - packstack-multinode-scenario002-tempest
+        # We can't make centos8 jobs voting until we have promotion pipeline
+        - packstack-centos8-integration-scenario001:
+            voting: false
+        - packstack-centos8-integration-scenario002:
+            voting: false
+        - packstack-centos8-integration-scenario003:
+            voting: false
+        - packstack-centos8-multinode-scenario002-tempest:
+            voting: false
         - openstack-tox-py36:
             voting: false
     gate:

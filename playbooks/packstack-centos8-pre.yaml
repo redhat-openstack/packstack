@@ -1,0 +1,28 @@
+- hosts: all
+  name: packstack-centos8-pre
+  tasks:
+    - name: Ensure legacy workspace directory
+      file:
+        path: '{{ ansible_user_dir }}/workspace'
+        state: directory
+
+    - shell:
+        cmd: |
+          cp -pr /home/zuul/src/opendev.org/x/packstack {{ ansible_user_dir }}/workspace
+
+    - shell:
+        cmd: |
+          set -e
+          set -x
+          rm -rf /etc/yum.repos.d/delorean*
+          # Remove epel repos
+          rm -rf /etc/yum.repos.d/epel*
+          dnf clean all
+          sudo sed -i '/^exclude.*/d' /etc/dnf/dnf.conf
+          dnf -y install libxml2-devel libxslt-devel ruby-devel zlib-devel
+          dnf -y install gcc gettext diffstat doxygen patch patchutils subversion systemtap git python3-setuptools wget redhat-lsb-core python3-libselinux virt-what yum
+          pip uninstall requests -y || true
+        executable: /bin/bash
+        chdir: '{{ ansible_user_dir }}/workspace'
+      become: true
+      environment: '{{ zuul }}'
