@@ -31,9 +31,9 @@ define packstack::amqp::enable_rabbitmq {
       loopback_users           => [],
       # FIXME: it's ugly to not to require client certs
       ssl_fail_if_no_peer_cert => true,
-      config_variables         => {
-     'tcp_listen_options' => '[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]',
-      },
+      config_ranch             => false,
+      tcp_keepalive            => true,
+      tcp_backlog              => 128,
     }
   } else {
     class { '::rabbitmq':
@@ -45,9 +45,9 @@ define packstack::amqp::enable_rabbitmq {
       repos_ensure     => false,
       admin_enable     => false,
       loopback_users   => [],
-      config_variables => {
-     'tcp_listen_options' => '[binary,{packet, raw},{reuseaddr, true},{backlog, 128},{nodelay, true},{exit_on_close, false},{keepalive, true}]',
-      },
+      config_ranch             => false,
+      tcp_keepalive            => true,
+      tcp_backlog              => 128,
     }
   }
 }
