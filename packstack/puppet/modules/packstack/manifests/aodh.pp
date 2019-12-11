@@ -20,6 +20,7 @@ class packstack::aodh ()
     class { '::aodh::api':
       enabled      => true,
       service_name => 'httpd',
+      sync_db      => true,
     }
 
     class { '::aodh::wsgi::apache':
