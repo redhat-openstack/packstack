@@ -15,6 +15,12 @@ define packstack::amqp::enable_rabbitmq {
       notify  => Service['rabbitmq-server'],
     }
 
+    file { $kombu_ssl_ca_certs:
+      mode   => '0644',
+      require => Package['rabbitmq-server'],
+      notify  => Service['rabbitmq-server'],
+    }
+
     class { '::rabbitmq':
       port                     => undef,
       ssl_port                 => 0 + hiera('CONFIG_AMQP_CLIENTS_PORT'),
