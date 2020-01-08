@@ -256,6 +256,7 @@ if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   export GEM_BIN_DIR=/tmp/packstackgems/bin/
   export PUPPETFILE_DIR=/usr/share/openstack-puppet/modules
   export GEM_HOME=/tmp/packstackgems
+  $SUDO gem install gettext -v 3.2.9 --no-ri --no-rdoc
   $SUDO gem install r10k -v 2.6.4 --no-ri --no-rdoc
   # make sure there is no puppet module pre-installed
   $SUDO rm -rf "${PUPPETFILE_DIR:?}/"*
