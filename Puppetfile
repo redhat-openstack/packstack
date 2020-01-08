@@ -134,7 +134,7 @@ mod 'rabbitmq',
 
 mod 'redis',
   :git => 'https://github.com/arioch/puppet-redis',
-  :ref => 'master'
+  :ref => '5464b335f9bd05fc0dd412bdd9dad97d4539a1f6'
 
 mod 'remote',
   :git => 'https://github.com/paramite/puppet-remote',
