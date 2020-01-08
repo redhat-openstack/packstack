@@ -50,7 +50,7 @@ class packstack::keystone ()
     }
 
     if hiera('CONFIG_HEAT_INSTALL') == 'y' {
-      $keystone_admin_roles = ['admin', '_member_', 'heat_stack_owner']
+      $keystone_admin_roles = ['admin', '_member_']
     } else {
       $keystone_admin_roles = ['admin']
     }
