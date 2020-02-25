@@ -150,12 +150,6 @@ function ensure_log_properties {
             $SUDO mv ${file} ${file}.txt
         fi
     done
-
-    echo "Compressing all text files..."
-    # Compress all files
-    $FIND -iname '*.txt' -execdir gzip -f -9 {} \+
-
-    echo "Compressed log and configuration can be found in ${LOGDIR}."
 }
 
 function recover_default_logs {
