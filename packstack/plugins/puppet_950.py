@@ -153,7 +153,8 @@ def copy_puppet_modules(config, messages):
                            'openstacklib', 'oslo', 'ovn', 'packstack', 'panko',
                            'placement', 'rabbitmq', 'redis', 'remote', 'rsync',
                            'sahara', 'ssh', 'stdlib', 'swift', 'sysctl',
-                           'tempest', 'trove', 'vcsrepo', 'vswitch', 'xinetd'))
+                           'systemd', 'tempest', 'trove', 'vcsrepo',
+                           'vswitch', 'xinetd'))
 
     # write puppet manifest to disk
     manifestfiles.writeManifests()

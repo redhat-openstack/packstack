@@ -160,6 +160,10 @@ mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
   :ref => 'v0.0.12'
 
+mod 'systemd',
+  :git => 'https://github.com/camptocamp/puppet-systemd',
+  :ref => 'master'
+
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
   :ref => '2.3.0'
