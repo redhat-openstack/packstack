@@ -83,7 +83,7 @@ EOF
 #
 # - ``GEM_BIN_DIR`` must be set to Gem bin directory
 install_all() {
-  $SUDO ${GEM_BIN_DIR}r10k puppetfile install -v --puppetfile Puppetfile-${OS_NAME_VERS}
+  $SUDO ${GEM_BIN_DIR}r10k puppetfile install -v --puppetfile Puppetfile
 }
 
 # Install Puppet OpenStack modules and dependencies by using
@@ -96,7 +96,7 @@ install_all() {
 install_modules() {
   # If zuul-cloner is there, have it install modules using zuul refs
   if [ -e /usr/zuul-env/bin/zuul-cloner ] ; then
-    csplit Puppetfile-%{OS_NAME_VERS} /'Non-OpenStack modules'/ \
+    csplit Puppetfile /'Non-OpenStack modules'/ \
       --prefix Puppetfile \
       --suffix '%d'
     install_external
