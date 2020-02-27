@@ -178,7 +178,8 @@ OS_VERSION=$(facter operatingsystemmajrelease)
 
 if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
     $SUDO $PKG_MGR -y install python3-setuptools \
-                              python3-devel
+                              python3-devel \
+                              python3-pyyaml
 else
     $SUDO $PKG_MGR -y install python-setuptools \
                               python-devel \
