@@ -103,6 +103,7 @@ function get_config_and_logs {
         '/etc/my.cnf.d'
         '/var/log/mariadb'
         '/etc/httpd/conf.d/'
+        '/etc/yum.repos.d/'
         '/var/log/httpd'
         '/var/tmp/packstack/latest'
         '/var/tmp/packstack/latest/testrepository.subunit' # So we're copying it
@@ -110,6 +111,9 @@ function get_config_and_logs {
         '/var/log/secure'                                  # /logs
         '/var/log/messages'
         '/var/log/dstat.log'
+        '/var/log/dnf.log'
+        '/var/log/dnf.rpm.log'
+        '/var/log/dnf.librepo.log'
         '/etc/puppet/puppet.conf'
         '/etc/puppet/hiera.yaml'
     )
