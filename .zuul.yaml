@@ -34,16 +34,6 @@
       - openstack/puppet-vswitch
 
 - job:
-    name: packstack-allinone
-    parent: packstack-base
-    pre-run: playbooks/packstack-pre.yaml
-    nodeset:
-      nodes:
-        - name: allinone
-          label: centos-7
-    run: playbooks/packstack-integration-tempest.yaml
-
-- job:
     name: packstack-centos8
     parent: packstack-base
     vars:
@@ -56,18 +46,6 @@
         - name: centos8
           label: centos-8
     run: playbooks/packstack-integration-tempest.yaml
-
-- job:
-    name: packstack-multinode
-    parent: packstack-base
-    pre-run: playbooks/packstack-pre.yaml
-    nodeset:
-      nodes:
-        - name: controller
-          label: centos-7
-        - name: compute
-          label: centos-7
-    run: playbooks/packstack-multinode.yaml
 
 - job:
     name: packstack-multinode-centos8
@@ -86,24 +64,6 @@
     run: playbooks/packstack-multinode.yaml
 
 - job:
-    name: packstack-integration-scenario001-tempest
-    parent: packstack-allinone
-    vars:
-      scenario: scenario001
-
-- job:
-    name: packstack-integration-scenario002-tempest
-    parent: packstack-allinone
-    vars:
-      scenario: scenario002
-
-- job:
-    name: packstack-integration-scenario003-tempest
-    parent: packstack-allinone
-    vars:
-      scenario: scenario003
-
-- job:
     name: packstack-centos8-integration-scenario001
     parent: packstack-centos8
     vars:
@@ -120,15 +80,6 @@
     parent: packstack-centos8
     vars:
       scenario: scenario003
-
-# We should have nested post-run jobs, according to
-# https://docs.openstack.org/infra/zuul/user/config.html#job
-- job:
-    name: packstack-multinode-scenario002-tempest
-    parent: packstack-multinode
-    post-run: playbooks/packstack-post-compute.yaml
-    vars:
-      scenario: scenario002
 
 - job:
     name: packstack-centos8-multinode-scenario002-tempest
@@ -220,10 +171,6 @@
 - project:
     check:
       jobs:
-        - packstack-integration-scenario001-tempest
-        - packstack-integration-scenario002-tempest
-        - packstack-integration-scenario003-tempest
-        - packstack-multinode-scenario002-tempest
         - packstack-centos8-integration-scenario001
         - packstack-centos8-integration-scenario002
         - packstack-centos8-integration-scenario003
@@ -231,10 +178,6 @@
         - openstack-tox-py36
     gate:
       jobs:
-        - packstack-integration-scenario001-tempest
-        - packstack-integration-scenario002-tempest
-        - packstack-integration-scenario003-tempest
-        - packstack-multinode-scenario002-tempest
         - packstack-centos8-integration-scenario001
         - packstack-centos8-integration-scenario002
         - packstack-centos8-integration-scenario003
