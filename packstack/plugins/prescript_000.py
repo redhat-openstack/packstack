@@ -1133,10 +1133,14 @@ def manage_rdo(host, config):
         # RDO repo is not installed, so we don't need to continue
         return
 
-    match = re.match(r'^(?P<version>\w+)\-(?P<release>\d+\.[\d\w]+)\n', out)
-    version, release = match.group('version'), match.group('release')
+    match = re.match(r'^(?P<version>\w+)\-.*\n', out)
+    version = match.group('version')
+    if re.match(r'^(.*\.el8.*\n)', out):
+        dist_tag = '.el8'
+    else:
+        dist_tag = ''
     rdo_url = ("https://www.rdoproject.org/repos/openstack-%(version)s/"
-               "rdo-release-%(version)s.rpm" % locals())
+               "rdo-release-%(version)s%(dist_tag)s.rpm" % locals())
 
     server = utils.ScriptRunner(host)
     server.append("(rpm -q 'rdo-release-%(version)s' ||"
@@ -1156,12 +1160,13 @@ def manage_rdo(host, config):
         server.append('yum-config-manager --disable %(reponame)s' % locals())
         server.append('yum-config-manager --enable %(reponame)s-testing' % locals())
 
-    # yum-config-manager returns 0 always, but returns current setup
-    # if succeeds
     rc, out = server.execute()
-
     match = re.search('enabled\s*=\s*(1|True)', out)
-    if not match:
+    # In CentOS 7 yum-config-manager returns 0 always, but returns current setup
+    # if succeeds
+    # In CentOS 8 yum-config-manager returns 1 when failing but doesn't return current
+    # setup if succeeds
+    if (dist_tag == '.el8' and rc != 0) or (dist_tag == '' and not match):
         msg = ('Failed to set RDO repo on host %s:\nRPM file seems to be '
                'installed, but appropriate repo file is probably missing '
                'in /etc/yum.repos.d/' % host)
