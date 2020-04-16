@@ -38,7 +38,6 @@ class packstack::glance ()
       registry_host       => $registry_host,
       pipeline            => 'keystone',
       database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
-      os_region_name      => hiera('CONFIG_KEYSTONE_REGION'),
       workers             => hiera('CONFIG_SERVICE_WORKERS'),
       stores              => ['file', 'http', 'swift'],
       default_store       => $default_store,
