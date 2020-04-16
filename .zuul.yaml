@@ -186,3 +186,6 @@
     post:
       jobs:
         - packstack-upload-git-mirror
+    release:
+      jobs:
+        - packstack-upload-git-mirror
