@@ -12,7 +12,6 @@ class packstack::heat ()
     class { '::heat::engine':
       heat_metadata_server_url      => "http://${heat_cfg_ctrl_host}:8000",
       heat_waitcondition_server_url => "http://${heat_cfg_ctrl_host}:8000/v1/waitcondition",
-      heat_watch_server_url         => "http://${heat_cfg_ctrl_host}:8003",
       auth_encryption_key           => hiera('CONFIG_HEAT_AUTH_ENC_KEY'),
       num_engine_workers            => hiera('CONFIG_SERVICE_WORKERS'),
     }

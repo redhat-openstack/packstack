@@ -10,13 +10,6 @@ class packstack::manila::backend::generic ()
 
     packstack::manila::network{ 'generic': }
 
-    if ($::manila_network_type == 'neutron'){
-      $service_instance_network_helper_type = 'neutron'
-    }
-    elsif ($::manila_network_type == 'nova-network'){
-      $service_instance_network_helper_type = 'nova'
-    }
-
     $admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
     $admin_password = hiera('CONFIG_KEYSTONE_ADMIN_PW')
     $admin_tenant   = 'admin'
@@ -34,17 +27,18 @@ class packstack::manila::backend::generic ()
       service_image_location               => hiera('CONFIG_MANILA_SERVICE_IMAGE_LOCATION'),
       service_instance_user                => hiera('CONFIG_MANILA_SERVICE_INSTANCE_USER'),
       service_instance_password            => hiera('CONFIG_MANILA_SERVICE_INSTANCE_PASSWORD'),
-      service_instance_network_helper_type => $service_instance_network_helper_type,
       service_instance_flavor_id           => 66,
     }
 
     class { '::manila::compute::nova':
-      nova_admin_password    => hiera('CONFIG_NOVA_KS_PW'),
-      nova_admin_tenant_name => 'services',
+      auth_type => 'password',
+      auth_url  => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      password  => hiera('CONFIG_NOVA_KS_PW'),
     }
 
     class { '::manila::volume::cinder':
-      cinder_admin_password    => hiera('CONFIG_CINDER_KS_PW'),
-      cinder_admin_tenant_name => 'services',
+      auth_type => 'password',
+      auth_url  => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      password    => hiera('CONFIG_CINDER_KS_PW'),
     }
 }

@@ -4,8 +4,9 @@ define packstack::manila::network ($backend_name = $name) {
 
   if ($manila_network_type == 'neutron'){
     class { '::manila::network::neutron':
-      neutron_admin_password     => hiera('CONFIG_NEUTRON_KS_PW'),
-      neutron_admin_tenant_name  => 'services',
+      auth_type => 'password',
+      auth_url  => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      password  => hiera('CONFIG_NEUTRON_KS_PW'),
     }
   }
   elsif ($manila_network_type == 'nova-network'){
