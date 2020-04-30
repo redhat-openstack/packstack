@@ -4,10 +4,10 @@ class packstack::cinder::backend::solidfire ()
     $solidfire_backend_name = 'solidfire'
 
     cinder::backend::solidfire { $solidfire_backend_name :
-        san_ip               => hiera('CONFIG_CINDER_SOLIDFIRE_LOGIN'),
-        san_login            => hiera('CONFIG_CINDER_SOLIDFIRE_PASSWORD'),
-        san_password         => hiera('CONFIG_CINDER_SOLIDFIRE_HOSTNAME'),
-        volume_backend_name  => $solidfire_backend_name,
+        san_ip              => hiera('CONFIG_CINDER_SOLIDFIRE_LOGIN'),
+        san_login           => hiera('CONFIG_CINDER_SOLIDFIRE_PASSWORD'),
+        san_password        => hiera('CONFIG_CINDER_SOLIDFIRE_HOSTNAME'),
+        volume_backend_name => $solidfire_backend_name,
     }
 
     ensure_packages(['iscsi-initiator-utils'], {'ensure' => 'present'})

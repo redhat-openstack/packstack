@@ -25,8 +25,8 @@ class packstack::provision::bridge ()
     if $provision_neutron_br and $setup_ovs_bridge {
       Neutron_config<||> -> Neutron_l3_ovs_bridge['demo_bridge']
       neutron_l3_ovs_bridge { 'demo_bridge':
-        name        => $public_bridge_name,
         ensure      => present,
+        name        => $public_bridge_name,
         subnet_name => 'public_subnet',
       }
 

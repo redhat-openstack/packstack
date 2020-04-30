@@ -10,15 +10,14 @@ class packstack::provision ()
       $password             = hiera('CONFIG_KEYSTONE_DEMO_PW')
       $tenant_name          = 'demo'
       $floating_range       = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
-      $allocation_pools     = hiera(
-                              'CONFIG_PROVISION_DEMO_ALLOCATION_POOLS')
+      $allocation_pools     = hiera('CONFIG_PROVISION_DEMO_ALLOCATION_POOLS')
     } elsif $provision_tempest {
       $username             = hiera('CONFIG_PROVISION_TEMPEST_USER')
       $password             = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
       $tenant_name          = 'tempest'
       $floating_range       = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
       $allocation_pools     = []
-      if (empty($tempest_user) or empty($tempest_password)) {
+      if (empty($username) or empty($password)) {
         fail("Both CONFIG_PROVISION_TEMPEST_USER and
         CONFIG_PROVISION_TEMPEST_USER_PW need to be configured.")
       }

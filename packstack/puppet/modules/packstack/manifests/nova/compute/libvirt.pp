@@ -15,16 +15,16 @@ class packstack::nova::compute::libvirt ()
         # Workaround for bad /dev/kvm permissions
         # https://bugzilla.redhat.com/show_bug.cgi?id=950436
         file { '/dev/kvm':
-          owner  => 'root',
-          group  => 'kvm',
-          mode   => '666',
+          owner => 'root',
+          group => 'kvm',
+          mode  => '0666',
         }
 
         # We have to fix the permissions after the installation has been done
         # and before the service is started.
-        Package <| title == 'libvirt' |> ->
-        File['/dev/kvm'] ->
-        Service <| title == 'libvirt' |>
+        Package <| title == 'libvirt' |>
+        -> File['/dev/kvm']
+        -> Service <| title == 'libvirt' |>
     }
 
     $migrate_transport = hiera('CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL')
@@ -37,16 +37,16 @@ class packstack::nova::compute::libvirt ()
     }
 
     class { '::nova::migration::libvirt':
-      transport   => $migrate_transport,
-      client_user => 'nova_migration',
+      transport          => $migrate_transport,
+      client_user        => 'nova_migration',
       client_extraparams => $client_extraparams,
-      require => Class['::nova::compute::libvirt']
+      require            => Class['::nova::compute::libvirt']
     }
 
     class { '::nova::compute::libvirt':
-      libvirt_virt_type        => $libvirt_virt_type,
-      vncserver_listen         => $libvirt_vnc_bind_host,
-      migration_support        => true,
+      libvirt_virt_type => $libvirt_virt_type,
+      vncserver_listen  => $libvirt_vnc_bind_host,
+      migration_support => true,
     }
 
     # Remove libvirt's default network (usually virbr0) as it's unnecessary and
@@ -65,7 +65,6 @@ class packstack::nova::compute::libvirt ()
 
     $libvirt_debug = hiera('CONFIG_DEBUG_MODE')
     if $libvirt_debug {
-
       file_line { '/etc/libvirt/libvirt.conf log_filters':
         path   => '/etc/libvirt/libvirtd.conf',
         line   => 'log_filters = "1:libvirt 1:qemu 1:conf 1:security 3:event 3:json 3:file 1:util"',
@@ -79,6 +78,5 @@ class packstack::nova::compute::libvirt ()
         match  => 'log_outputs =',
         notify => Service['libvirt'],
       }
-
     }
 }

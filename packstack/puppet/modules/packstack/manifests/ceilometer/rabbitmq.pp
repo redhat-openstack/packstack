@@ -24,11 +24,11 @@ class packstack::ceilometer::rabbitmq ()
     }
 
     class { '::ceilometer':
-      telemetry_secret   => hiera('CONFIG_CEILOMETER_SECRET'),
-      rabbit_use_ssl     => hiera('CONFIG_AMQP_SSL_ENABLED'),
+      telemetry_secret      => hiera('CONFIG_CEILOMETER_SECRET'),
+      rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
-      kombu_ssl_ca_certs => $kombu_ssl_ca_certs,
-      kombu_ssl_keyfile  => $kombu_ssl_keyfile,
-      kombu_ssl_certfile => $kombu_ssl_certfile,
+      kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,
+      kombu_ssl_keyfile     => $kombu_ssl_keyfile,
+      kombu_ssl_certfile    => $kombu_ssl_certfile,
     }
 }

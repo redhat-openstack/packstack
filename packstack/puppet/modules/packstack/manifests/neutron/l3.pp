@@ -13,11 +13,11 @@ class packstack::neutron::l3 ()
     }
 
     class { '::neutron::agents::l3':
-      interface_driver        => hiera('CONFIG_NEUTRON_L3_INTERFACE_DRIVER'),
-      manage_service          => $start_l3_agent,
-      enabled                 => $start_l3_agent,
-      debug                   => hiera('CONFIG_DEBUG_MODE'),
-      extensions              => $extensions
+      interface_driver => hiera('CONFIG_NEUTRON_L3_INTERFACE_DRIVER'),
+      manage_service   => $start_l3_agent,
+      enabled          => $start_l3_agent,
+      debug            => hiera('CONFIG_DEBUG_MODE'),
+      extensions       => $extensions
     }
 
     if defined(Class['neutron::services::fwaas']) {

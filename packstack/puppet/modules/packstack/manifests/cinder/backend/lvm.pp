@@ -20,8 +20,8 @@ class packstack::cinder::backend::lvm ()
 
           file_line{ 'rc.local_losetup_cinder_volume':
             path  => '/etc/rc.d/rc.local',
-            match => "^.*/var/lib/cinder/$cinder_volume_name.*$",
-            line  => "losetup -f /var/lib/cinder/$cinder_volume_name && service openstack-cinder-volume restart",
+            match => "^.*/var/lib/cinder/${cinder_volume_name}.*$",
+            line  => "losetup -f /var/lib/cinder/${cinder_volume_name} && service openstack-cinder-volume restart",
           }
 
           file { '/etc/rc.d/rc.local':
@@ -42,8 +42,8 @@ class packstack::cinder::backend::lvm ()
 
     [Service]
     Type=oneshot
-    ExecStart=/usr/bin/sh -c \'/usr/sbin/losetup -j /var/lib/cinder/$cinder_volume_name | /usr/bin/grep /var/lib/cinder/$cinder_volume_name || /usr/sbin/losetup -f /var/lib/cinder/$cinder_volume_name\'
-    ExecStop=/usr/bin/sh -c \'/usr/sbin/losetup -j /var/lib/cinder/$cinder_volume_name | /usr/bin/cut -d : -f 1 | /usr/bin/xargs /usr/sbin/losetup -d\'
+    ExecStart=/usr/bin/sh -c \'/usr/sbin/losetup -j /var/lib/cinder/${cinder_volume_name} | /usr/bin/grep /var/lib/cinder/${cinder_volume_name} || /usr/sbin/losetup -f /var/lib/cinder/${cinder_volume_name}\'
+    ExecStop=/usr/bin/sh -c \'/usr/sbin/losetup -j /var/lib/cinder/${cinder_volume_name} | /usr/bin/cut -d : -f 1 | /usr/bin/xargs /usr/sbin/losetup -d\'
     TimeoutSec=60
     RemainAfterExit=yes
 
@@ -92,7 +92,7 @@ class packstack::cinder::backend::lvm ()
 
     cinder_type { 'iscsi':
       ensure     => present,
-      properties => ["volume_backend_name=lvm"],
+      properties => ['volume_backend_name=lvm'],
       require    => Class['cinder::api'],
     }
 }

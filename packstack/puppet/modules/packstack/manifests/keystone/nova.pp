@@ -7,10 +7,10 @@ class packstack::keystone::nova ()
 
 
     class { '::nova::keystone::auth':
-      region          => hiera('CONFIG_KEYSTONE_REGION'),
-      password        => hiera('CONFIG_NOVA_KS_PW'),
-      public_url      => $nova_url,
-      admin_url       => $nova_url,
-      internal_url    => $nova_url,
+      region       => hiera('CONFIG_KEYSTONE_REGION'),
+      password     => hiera('CONFIG_NOVA_KS_PW'),
+      public_url   => $nova_url,
+      admin_url    => $nova_url,
+      internal_url => $nova_url,
     }
 }

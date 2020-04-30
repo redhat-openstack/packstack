@@ -16,8 +16,8 @@ class packstack::trove::rabbitmq ()
     if $kombu_ssl_keyfile {
       $files_to_set_owner = [ $kombu_ssl_keyfile, $kombu_ssl_certfile ]
       file { $files_to_set_owner:
-        owner   => 'trove',
-        group   => 'trove',
+        owner => 'trove',
+        group => 'trove',
       }
       Package<|tag=='trove'|> -> File[$files_to_set_owner]
       File[$files_to_set_owner] ~> Service<| tag == 'trove-service' |>

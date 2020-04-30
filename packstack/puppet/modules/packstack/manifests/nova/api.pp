@@ -24,14 +24,14 @@ class packstack::nova::api ()
     }
 
     class { '::nova::api':
-      api_bind_address                     => $bind_host,
-      enabled                              => true,
-      sync_db                              => false,
-      sync_db_api                          => false,
-      osapi_compute_workers                => hiera('CONFIG_SERVICE_WORKERS'),
-      allow_resize_to_same_host            => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
-      nova_metadata_wsgi_enabled           => true,
-      service_name                         => 'httpd',
+      api_bind_address           => $bind_host,
+      enabled                    => true,
+      sync_db                    => false,
+      sync_db_api                => false,
+      osapi_compute_workers      => hiera('CONFIG_SERVICE_WORKERS'),
+      allow_resize_to_same_host  => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
+      nova_metadata_wsgi_enabled => true,
+      service_name               => 'httpd',
     }
 
     class { '::nova::metadata':
@@ -84,47 +84,47 @@ class packstack::nova::api ()
       Class['::keystone'] -> Nova_flavor<||>
 
       nova_flavor { 'm1.tiny':
-        ensure => present,
-        id     => '1',
-        ram    => '512',
-        disk   => '1',
-        vcpus  => '1',
+        ensure  => present,
+        id      => '1',
+        ram     => '512',
+        disk    => '1',
+        vcpus   => '1',
         require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
       }
 
       nova_flavor { 'm1.small':
-        ensure => present,
-        id     => '2',
-        ram    => '2048',
-        disk   => '20',
-        vcpus  => '1',
+        ensure  => present,
+        id      => '2',
+        ram     => '2048',
+        disk    => '20',
+        vcpus   => '1',
         require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
       }
 
       nova_flavor { 'm1.medium':
-        ensure => present,
-        id     => '3',
-        ram    => '4096',
-        disk   => '40',
-        vcpus  => '2',
+        ensure  => present,
+        id      => '3',
+        ram     => '4096',
+        disk    => '40',
+        vcpus   => '2',
         require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
       }
 
       nova_flavor { 'm1.large':
-        ensure => present,
-        id     => '4',
-        ram    => '8192',
-        disk   => '80',
-        vcpus  => '4',
+        ensure  => present,
+        id      => '4',
+        ram     => '8192',
+        disk    => '80',
+        vcpus   => '4',
         require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
       }
 
       nova_flavor { 'm1.xlarge':
-        ensure => present,
-        id     => '5',
-        ram    => '16384',
-        disk   => '160',
-        vcpus  => '8',
+        ensure  => present,
+        id      => '5',
+        ram     => '16384',
+        disk    => '160',
+        vcpus   => '8',
         require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
       }
     }

@@ -44,12 +44,12 @@ class packstack::neutron::ovs_agent ()
     }
 
     class { '::neutron::agents::ml2::ovs':
-      bridge_uplinks   => $bridge_uplinks,
-      bridge_mappings  => $bridge_mappings,
-      tunnel_types     => hiera_array('CONFIG_NEUTRON_OVS_TUNNEL_TYPES'),
-      local_ip         => force_ip($localip),
-      vxlan_udp_port   => hiera('CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT',undef),
-      l2_population    => hiera('CONFIG_NEUTRON_USE_L2POPULATION'),
-      firewall_driver  => hiera('FIREWALL_DRIVER'),
+      bridge_uplinks  => $bridge_uplinks,
+      bridge_mappings => $bridge_mappings,
+      tunnel_types    => hiera_array('CONFIG_NEUTRON_OVS_TUNNEL_TYPES'),
+      local_ip        => force_ip($localip),
+      vxlan_udp_port  => hiera('CONFIG_NEUTRON_OVS_VXLAN_UDP_PORT',undef),
+      l2_population   => hiera('CONFIG_NEUTRON_USE_L2POPULATION'),
+      firewall_driver => hiera('FIREWALL_DRIVER'),
     }
 }

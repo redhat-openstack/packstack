@@ -17,8 +17,8 @@ class packstack::heat ()
     }
 
     class { '::heat::keystone::domain':
-      domain_name       => hiera('CONFIG_HEAT_DOMAIN'),
-      domain_admin      => hiera('CONFIG_HEAT_DOMAIN_ADMIN'),
-      domain_password   => hiera('CONFIG_HEAT_DOMAIN_PASSWORD'),
+      domain_name     => hiera('CONFIG_HEAT_DOMAIN'),
+      domain_admin    => hiera('CONFIG_HEAT_DOMAIN_ADMIN'),
+      domain_password => hiera('CONFIG_HEAT_DOMAIN_PASSWORD'),
     }
 }

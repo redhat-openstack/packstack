@@ -6,11 +6,11 @@ class packstack::redis ()
     $redis_host = hiera('CONFIG_REDIS_HOST')
 
     class { '::redis':
-      bind       => $redis_host,
-      port       => $redis_port,
-      appendonly => true,
-      daemonize  => false,
-      unixsocket => undef,
+      bind           => $redis_host,
+      port           => $redis_port,
+      appendonly     => true,
+      daemonize      => false,
+      unixsocket     => undef,
       unixsocketperm => '0700',
     }
 }

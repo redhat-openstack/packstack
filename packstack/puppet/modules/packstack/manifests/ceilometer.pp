@@ -7,7 +7,7 @@ class packstack::ceilometer ()
     $config_gnocchi_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
     if ($::operatingsystem == 'Fedora') or
-       ($::osfamily == 'RedHat' and Integer.new($::operatingsystemmajrelease) > 7) {
+      ($::osfamily == 'RedHat' and Integer.new($::operatingsystemmajrelease) > 7) {
       $pyvers = '3'
     } else {
       $pyvers = ''
@@ -18,7 +18,7 @@ class packstack::ceilometer ()
       $redis_port = hiera('CONFIG_REDIS_PORT')
       $coordination_url = "redis://${redis_host}:${redis_port}"
 
-      ensure_resource('package', "python-redis", {
+      ensure_resource('package', 'python-redis', {
         name   => "python${pyvers}-redis",
         tag    => 'openstack',
       })
@@ -35,12 +35,12 @@ class packstack::ceilometer ()
       tries     => 20
     }
 
-    Keystone::Resource::Service_identity<||> -> Exec['ceilometer-db-upgrade'] ~>
-      Service['ceilometer-agent-notification']
+    Keystone::Resource::Service_identity<||> -> Exec['ceilometer-db-upgrade']
+      ~> Service['ceilometer-agent-notification']
 
     class { '::ceilometer::agent::notification':
       manage_event_pipeline     => true,
-      event_pipeline_publishers => ["gnocchi://", "panko://"],
+      event_pipeline_publishers => ['gnocchi://', 'panko://'],
     }
 
     class { '::ceilometer::agent::auth':
@@ -50,7 +50,7 @@ class packstack::ceilometer ()
     }
 
     class { '::ceilometer::agent::polling':
-      manage_polling    => true,
+      manage_polling   => true,
       coordination_url => $coordination_url,
     }
 

@@ -10,8 +10,8 @@ class packstack::prereqs ()
 
     package { 'audit':
       ensure => present,
-    } ->
-    service { 'auditd':
+    }
+    -> service { 'auditd':
       ensure => running,
       enable => true,
     }

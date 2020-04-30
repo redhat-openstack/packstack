@@ -3,7 +3,7 @@ class packstack::keystone::cinder ()
     $cinder_protocol = 'http'
     $cinder_host = hiera('CONFIG_STORAGE_HOST_URL')
     $cinder_port = '8776'
-    $cinder_url = "${cinder_protocol}://${cinder_host}:$cinder_port"
+    $cinder_url = "${cinder_protocol}://${cinder_host}:${cinder_port}"
 
     class { '::cinder::keystone::auth':
       region          => hiera('CONFIG_KEYSTONE_REGION'),

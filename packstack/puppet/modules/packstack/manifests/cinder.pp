@@ -32,9 +32,9 @@ class packstack::cinder ()
     }
 
     class { '::cinder::api':
-      bind_host               => $bind_host,
-      service_workers         => hiera('CONFIG_SERVICE_WORKERS'),
-      default_volume_type     => $default_volume_type,
+      bind_host           => $bind_host,
+      service_workers     => hiera('CONFIG_SERVICE_WORKERS'),
+      default_volume_type => $default_volume_type,
     }
 
     class { '::cinder::scheduler': }

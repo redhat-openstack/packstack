@@ -8,7 +8,7 @@ class packstack::cinder::backend::vmdk ()
 
     cinder_type { 'vmdk':
       ensure     => present,
-      properties => ["volume_backend_name=vmdk"],
+      properties => ['volume_backend_name=vmdk'],
       require    => Class['cinder::api'],
     }
 }

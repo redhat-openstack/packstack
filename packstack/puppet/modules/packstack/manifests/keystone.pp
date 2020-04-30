@@ -33,7 +33,7 @@ class packstack::keystone ()
 
     class { '::keystone':
       database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
-      token_provider      => "${keystone_token_provider_str}",
+      token_provider      => $keystone_token_provider_str,
       enable_fernet_setup => true,
       service_name        => 'httpd',
       enable_ssl          => $keystone_use_ssl,

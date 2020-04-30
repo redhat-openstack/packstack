@@ -91,11 +91,11 @@ class packstack::chrony ()
       hasrestart => true,
     }
 
-    Package['chrony'] ->
-    Package['ntpdate'] ->
-    File['chrony_conf'] ->
-    Exec['stop-chronyd'] ->
-    Service['ntpd'] ->
-    Exec['ntpdate'] ->
-    Service['chronyd']
+    Package['chrony']
+    -> Package['ntpdate']
+    -> File['chrony_conf']
+    -> Exec['stop-chronyd']
+    -> Service['ntpd']
+    -> Exec['ntpdate']
+    -> Service['chronyd']
 }

@@ -18,8 +18,8 @@ class packstack::neutron::lb_agent ()
     if ( 'vxlan' in hiera_array('CONFIG_NEUTRON_ML2_TYPE_DRIVERS') ){
       class { '::neutron::agents::ml2::linuxbridge':
         physical_interface_mappings => force_interface($neutron_lb_interface_mappings, $use_subnets),
-        tunnel_types  => ['vxlan'],
-        local_ip      => $bind_host,
+        tunnel_types                => ['vxlan'],
+        local_ip                    => $bind_host,
       }
     }
     else {

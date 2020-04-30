@@ -11,7 +11,7 @@ class packstack::magnum ()
     $magnum_protocol = 'http'
     $magnum_host = hiera('CONFIG_KEYSTONE_HOST_URL')
     $magnum_port = '9511'
-    $magnum_url = "${magnum_protocol}://${magnum_host}:$magnum_port/v1"
+    $magnum_url = "${magnum_protocol}://${magnum_host}:${magnum_port}/v1"
     class { '::magnum::keystone::authtoken':
       www_authenticate_uri => "${magnum_protocol}://${magnum_host}:5000/v3",
       auth_url             => "${magnum_protocol}://${magnum_host}:5000",

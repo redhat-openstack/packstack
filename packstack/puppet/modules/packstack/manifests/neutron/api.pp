@@ -31,8 +31,8 @@ class packstack::neutron::api ()
     }
 
     file { '/etc/neutron/api-paste.ini':
-      ensure  => file,
-      mode    => '0640',
+      ensure => file,
+      mode   => '0640',
     }
 
     if $neutron_vpnaas_enabled {

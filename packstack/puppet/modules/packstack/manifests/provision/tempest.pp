@@ -54,31 +54,31 @@ class packstack::provision::tempest ()
     $tempest_password      = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
 
     $tempest_flavor_name = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_NAME')
-    $tempest_flavor_ref  = "42"
+    $tempest_flavor_ref  = '42'
     $tempest_flavor_ram  = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_RAM')
     $tempest_flavor_disk = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_DISK')
     $tempest_flavor_vcpus= hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_VCPUS')
 
     $tempest_flavor_alt_name = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_NAME')
-    $tempest_flavor_alt_ref  = "84"
+    $tempest_flavor_alt_ref  = '84'
     $tempest_flavor_alt_ram  = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_RAM')
     $tempest_flavor_alt_disk = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_DISK')
     $tempest_flavor_alt_vcpus= hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_VCPUS')
 
     nova_flavor { $tempest_flavor_name :
-      ensure => present,
-      id     => $tempest_flavor_ref,
-      ram    => $tempest_flavor_ram,
-      disk   => $tempest_flavor_disk,
-      vcpus  => $tempest_flavor_vcpus,
+      ensure  => present,
+      id      => $tempest_flavor_ref,
+      ram     => $tempest_flavor_ram,
+      disk    => $tempest_flavor_disk,
+      vcpus   => $tempest_flavor_vcpus,
       require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
     }
     nova_flavor { $tempest_flavor_alt_name :
-      ensure => present,
-      id     => $tempest_flavor_alt_ref,
-      ram    => $tempest_flavor_alt_ram,
-      disk   => $tempest_flavor_alt_disk,
-      vcpus  => $tempest_flavor_alt_vcpus,
+      ensure  => present,
+      id      => $tempest_flavor_alt_ref,
+      ram     => $tempest_flavor_alt_ram,
+      disk    => $tempest_flavor_alt_disk,
+      vcpus   => $tempest_flavor_alt_vcpus,
       require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
     }
 

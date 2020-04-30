@@ -28,11 +28,11 @@ class packstack::aodh::rabbitmq ()
     }
 
     class { '::aodh':
-      rabbit_use_ssl     => hiera('CONFIG_AMQP_SSL_ENABLED'),
+      rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
-      kombu_ssl_ca_certs => $kombu_ssl_ca_certs,
-      kombu_ssl_keyfile  => $kombu_ssl_keyfile,
-      kombu_ssl_certfile => $kombu_ssl_certfile,
-      database_connection => "mysql+pymysql://aodh:${aodh_db_pw}@${aodh_mariadb_host}/aodh",
+      kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,
+      kombu_ssl_keyfile     => $kombu_ssl_keyfile,
+      kombu_ssl_certfile    => $kombu_ssl_certfile,
+      database_connection   => "mysql+pymysql://aodh:${aodh_db_pw}@${aodh_mariadb_host}/aodh",
     }
 }

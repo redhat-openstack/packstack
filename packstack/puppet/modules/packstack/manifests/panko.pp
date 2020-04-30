@@ -18,8 +18,8 @@ class packstack::panko ()
     }
 
     $bind_host = hiera('CONFIG_IP_VERSION') ? {
-     'ipv6'  => '::0',
-     default => '0.0.0.0',
+      'ipv6'  => '::0',
+      default => '0.0.0.0',
     }
 
     class { '::panko::keystone::authtoken':

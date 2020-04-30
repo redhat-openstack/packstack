@@ -4,10 +4,10 @@ class packstack::apache ()
     if ($::operatingsystem == 'Fedora') or ($::osfamily == 'RedHat' and Integer.new($::operatingsystemmajrelease) > 7)  {
       class { '::apache':
         purge_configs => false,
-        mod_packages => merge($::apache::params::mod_packages, {
+        mod_packages  => merge($::apache::params::mod_packages, {
           'wsgi' => 'python3-mod_wsgi',
         }),
-        mod_libs     => merge($::apache::params::mod_libs, {
+        mod_libs      => merge($::apache::params::mod_libs, {
           'wsgi' => 'mod_wsgi_python3.so',
         })
       }

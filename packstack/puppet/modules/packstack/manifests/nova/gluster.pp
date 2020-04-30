@@ -1,4 +1,4 @@
 class packstack::nova::gluster ()
 {
- ensure_packages(['glusterfs-fuse'], {'ensure' => 'present'})
+  ensure_packages(['glusterfs-fuse'], {'ensure' => 'present'})
 }

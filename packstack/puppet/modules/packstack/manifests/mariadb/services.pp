@@ -8,12 +8,12 @@ class packstack::mariadb::services ()
     }
 
     if hiera('CONFIG_CINDER_INSTALL') == 'y' {
-         class { '::cinder::db::mysql':
-           password      => hiera('CONFIG_CINDER_DB_PW'),
-           host          => '%',
-           allowed_hosts => '%',
-           charset       => 'utf8',
-         }
+      class { '::cinder::db::mysql':
+        password      => hiera('CONFIG_CINDER_DB_PW'),
+        host          => '%',
+        allowed_hosts => '%',
+        charset       => 'utf8',
+      }
     }
 
     if hiera('CONFIG_GLANCE_INSTALL') == 'y' {
@@ -34,7 +34,7 @@ class packstack::mariadb::services ()
     }
 
     if hiera('CONFIG_AODH_INSTALL') == 'y' and
-       hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+      hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
         class { '::aodh::db::mysql':
           password      => hiera('CONFIG_AODH_DB_PW'),
           host          => '%',
@@ -43,30 +43,30 @@ class packstack::mariadb::services ()
     }
 
     if hiera('CONFIG_HEAT_INSTALL') == 'y' {
-        class { '::heat::db::mysql':
-          password      => hiera('CONFIG_HEAT_DB_PW'),
-          host          => '%',
-          allowed_hosts => '%',
-          charset       => 'utf8',
-       }
+      class { '::heat::db::mysql':
+        password      => hiera('CONFIG_HEAT_DB_PW'),
+        host          => '%',
+        allowed_hosts => '%',
+        charset       => 'utf8',
+      }
     }
 
     if hiera('CONFIG_MAGNUM_INSTALL') == 'y' {
-        class { '::magnum::db::mysql':
-          password      => hiera('CONFIG_MAGNUM_DB_PW'),
-          host          => '%',
-          allowed_hosts => '%',
-          charset       => 'utf8',
-       }
+      class { '::magnum::db::mysql':
+        password      => hiera('CONFIG_MAGNUM_DB_PW'),
+        host          => '%',
+        allowed_hosts => '%',
+        charset       => 'utf8',
+      }
     }
 
     if hiera('CONFIG_IRONIC_INSTALL') == 'y' {
-        class { '::ironic::db::mysql':
-          password      => hiera('CONFIG_IRONIC_DB_PW'),
-          host          => '%',
-          allowed_hosts => '%',
-          charset       => 'utf8',
-        }
+      class { '::ironic::db::mysql':
+        password      => hiera('CONFIG_IRONIC_DB_PW'),
+        host          => '%',
+        allowed_hosts => '%',
+        charset       => 'utf8',
+      }
     }
 
     if hiera('CONFIG_MANILA_INSTALL') == 'y' {
@@ -109,7 +109,7 @@ class packstack::mariadb::services ()
     }
 
     if hiera('CONFIG_PANKO_INSTALL') == 'y' and
-       hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+      hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
         class { '::panko::db::mysql':
           password      => hiera('CONFIG_PANKO_DB_PW'),
           host          => '%',

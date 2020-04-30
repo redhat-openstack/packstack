@@ -10,7 +10,7 @@ class packstack::cinder::backend::gluster ()
 
     cinder_type { 'glusterfs':
       ensure     => present,
-      properties => ["volume_backend_name=gluster"],
+      properties => ['volume_backend_name=gluster'],
       require    => Class['cinder::api'],
     }
 }

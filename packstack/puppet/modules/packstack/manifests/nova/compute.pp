@@ -43,9 +43,9 @@ class packstack::nova::compute ()
           'set Match[Condition/User = "nova_migration"]/Settings/ForceCommand /bin/nova-migration-wrapper',
           'set Match[Condition/User = "nova_migration"]/Settings/PasswordAuthentication no',
           'set Match[Condition/User = "nova_migration"]/Settings/X11Forwarding no',
-         ],
-        onlyif => 'match Match[Condition/User = "nova_migration"] size == 0',
-        notify => Service['sshd']
+        ],
+        onlyif  => 'match Match[Condition/User = "nova_migration"] size == 0',
+        notify  => Service['sshd']
       }
 
       service {'sshd':
