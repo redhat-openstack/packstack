@@ -11,7 +11,6 @@ class packstack::swift::ceilometer ()
       control_exchange      => 'swift',
       driver                => 'messaging',
       ignore_projects       => ['service'],
-      auth_uri              => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       auth_url              => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       password              => hiera('CONFIG_SWIFT_KS_PW'),
     }

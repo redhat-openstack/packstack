@@ -93,12 +93,12 @@ class packstack::swift::proxy ()
     }
 
     class { '::swift::proxy::authtoken':
-      username     => 'swift',
-      project_name => 'services',
-      password     => hiera('CONFIG_SWIFT_KS_PW'),
+      username             => 'swift',
+      project_name         => 'services',
+      password             => hiera('CONFIG_SWIFT_KS_PW'),
       # assume that the controller host is the swift api server
-      auth_uri     => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     class { '::swift::objectexpirer': }
