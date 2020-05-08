@@ -37,8 +37,7 @@ class packstack::manila::backend::generic ()
     }
 
     class { '::manila::volume::cinder':
-      auth_type => 'password',
-      auth_url  => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      password    => hiera('CONFIG_CINDER_KS_PW'),
+      cinder_admin_password    => hiera('CONFIG_CINDER_KS_PW'),
+      cinder_admin_tenant_name => 'services',
     }
 }
