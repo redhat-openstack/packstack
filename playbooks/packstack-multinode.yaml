@@ -19,7 +19,7 @@
       become: true
 
 - hosts: controller
-  name: packstack-multinode
+  name: packstack-ssh-preparation-1
   tasks:
     - name: Generate SSH key on controller
       shell: ssh-keygen -t rsa -f /root/.ssh/id_rsa -P ""
@@ -32,14 +32,6 @@
       become: true
       register: ssh_key
 
-    - name: Deploy SSH key on compute node
-      authorized_key:
-        user: root
-        state: present
-        key: "{{ ssh_key.stdout }}"
-      delegate_to: "{{ hostvars['compute'].ansible_host }}"
-      become: true
-
     - name: Deploy SSH key on controller
       authorized_key:
         user: root
@@ -47,6 +39,23 @@
         key: "{{ ssh_key.stdout }}"
       become: true
 
+    - name: Set SSH key fact to be used by the compute node
+      set_fact:
+        sshkey: "{{ ssh_key.stdout }}"
+
+- hosts: compute
+  name: packstack-ssh-preparation-2
+  tasks:
+    - name: Deploy SSH key on compute node
+      authorized_key:
+        user: root
+        state: present
+        key: "{{ hostvars['controller'].sshkey }}"
+      become: true
+
+- hosts: controller
+  name: packstack-multinode
+  tasks:
     - name: Run Packstack
       shell:
         cmd: |

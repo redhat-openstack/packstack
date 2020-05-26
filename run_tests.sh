@@ -183,7 +183,7 @@ else
 fi
 
 # Don't assume pip is installed
-which pip3 && PIP=pip3
+which pip && PIP=pip
 if [ -z $PIP ]; then
     if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
         $SUDO $PKG_MGR -y install python3-pip
