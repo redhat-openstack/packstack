@@ -172,18 +172,26 @@
 - project:
     check:
       jobs:
+        - openstack-tox-pep8
+        - openstack-tox-py36
+        - build-openstack-releasenotes:
+            vars:
+              sphinx_python: python3
         - packstack-centos8-integration-scenario001
         - packstack-centos8-integration-scenario002
         - packstack-centos8-integration-scenario003
         - packstack-centos8-multinode-scenario002-tempest
-        - openstack-tox-py36
     gate:
       jobs:
+        - openstack-tox-pep8
+        - openstack-tox-py36
+        - build-openstack-releasenotes:
+            vars:
+              sphinx_python: python3
         - packstack-centos8-integration-scenario001
         - packstack-centos8-integration-scenario002
         - packstack-centos8-integration-scenario003
         - packstack-centos8-multinode-scenario002-tempest
-        - openstack-tox-py36
     post:
       jobs:
         - packstack-upload-git-mirror

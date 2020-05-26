@@ -102,7 +102,7 @@ mod 'vswitch',
 
 mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
-  :ref => 'b4cbc858a61ba2eea4a1178c261a982a59db963d'
+  :ref => 'v5.4.0'
 
 mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger',
