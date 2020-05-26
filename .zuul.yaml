@@ -165,6 +165,11 @@
 - project:
     check:
       jobs:
+        - openstack-tox-pep8
+        - openstack-tox-py27
+        - build-openstack-releasenotes:
+            vars:
+              sphinx_python: python3
         - packstack-integration-scenario001-tempest
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
@@ -173,6 +178,11 @@
             voting: false
     gate:
       jobs:
+        - openstack-tox-pep8
+        - openstack-tox-py27
+        - build-openstack-releasenotes:
+            vars:
+              sphinx_python: python3
         - packstack-integration-scenario001-tempest
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
