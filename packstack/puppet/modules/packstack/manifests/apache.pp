@@ -3,7 +3,6 @@ class packstack::apache ()
     # Use python3 for mod_wsg in fedora
     if ($::operatingsystem == 'Fedora') or ($::osfamily == 'RedHat' and Integer.new($::operatingsystemmajrelease) > 7)  {
       class { '::apache':
-        purge_configs => false,
         mod_packages  => merge($::apache::params::mod_packages, {
           'wsgi' => 'python3-mod_wsgi',
         }),
@@ -13,7 +12,6 @@ class packstack::apache ()
       }
     }else{
       class {'::apache':
-        purge_configs => false,
       }
     }
 
