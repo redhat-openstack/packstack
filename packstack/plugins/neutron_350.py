@@ -102,18 +102,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "neutron-fwaas",
-             "PROMPT": "Would you like to configure neutron FWaaS?",
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NEUTRON_FWAAS",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "os-neutron-vpnaas-install",
              "PROMPT": "Would you like to configure neutron VPNaaS?",
              "OPTION_LIST": ["y", "n"],
@@ -445,7 +433,7 @@ def initConfig(controller):
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False,
-             "MESSAGE": ("You have chosen OVN Neutron backend. Note that this backend does not support the VPNaaS or FWaaS services. "
+             "MESSAGE": ("You have chosen OVN Neutron backend. Note that this backend does not support the VPNaaS plugin. "
                          "Geneve will be used as the encapsulation method for tenant networks"),
              "MESSAGE_VALUES": ["ovn"]},
 
@@ -550,8 +538,7 @@ def initSequences(controller):
         if ('geneve' not in config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS']):
             config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS'] += ', geneve'
         config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'] = 'geneve'
-        # VPNaaS and FWaaS are not supported with OVN
-        config['CONFIG_NEUTRON_FWAAS'] = 'n'
+        # VPNaaS is not supported with OVN
         config['CONFIG_NEUTRON_VPNAAS'] = 'n'
         config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] = 'n'
         # When using OVN we need to create the same L2 infrastucture as
@@ -733,12 +720,6 @@ def create_manifests(config, messages):
 
     if config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
         service_plugins.append('metering')
-
-    if config['CONFIG_NEUTRON_FWAAS'] == 'y':
-        service_plugins.append('firewall_v2')
-        fwaas_sp = ('FIREWALL_V2:fwaas_db:neutron_fwaas.services.firewall.'
-                    'service_drivers.agents.agents.FirewallAgentDriver:default')
-        service_providers.append(fwaas_sp)
 
     if config['CONFIG_NEUTRON_VPNAAS'] == 'y':
         service_plugins.append('vpnaas')

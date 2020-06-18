@@ -34,7 +34,6 @@ class packstack::horizon ()
       horizon_key           => hiera('CONFIG_HORIZON_SSL_KEY', undef),
       horizon_ca            => hiera('CONFIG_HORIZON_SSL_CACERT', undef),
       neutron_options       => {
-        'enable_firewall' => hiera('CONFIG_HORIZON_NEUTRON_FW'),
         'enable_vpn'      => hiera('CONFIG_HORIZON_NEUTRON_VPN'),
         'enable_lb'       => hiera('CONFIG_HORIZON_NEUTRON_LB'),
       },

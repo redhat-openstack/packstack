@@ -1,0 +1,7 @@
+---
+prelude: >
+    Neutron FWaaS has been removed in Victoria release.
+other:
+  - |
+    Packstack does not longer support deployment of Neutron FWaaS extension as it
+    has been removed upstream. Option CONFIG_NEUTRON_FWAAS has been removed.
