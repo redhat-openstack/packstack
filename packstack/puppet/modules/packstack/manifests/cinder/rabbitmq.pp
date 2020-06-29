@@ -33,5 +33,6 @@ class packstack::cinder::rabbitmq ()
       kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,
       kombu_ssl_keyfile     => $kombu_ssl_keyfile,
       kombu_ssl_certfile    => $kombu_ssl_certfile,
+      notification_driver   => 'messagingv2',
     }
 }

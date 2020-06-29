@@ -42,9 +42,6 @@ if hiera('CONFIG_CINDER_INSTALL') == 'y' {
   include '::packstack::keystone::cinder'
   include '::packstack::cinder::rabbitmq'
   include '::packstack::cinder'
-  if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
-    include '::packstack::cinder::ceilometer'
-  }
   if hiera('CONFIG_SWIFT_INSTALL') == 'y' {
     include '::packstack::cinder::backup'
   }

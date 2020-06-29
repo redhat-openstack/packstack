@@ -15,6 +15,8 @@
           set -e
           set -x
           rm -rf /etc/yum.repos.d/delorean*
+          # Remove epel repos
+          rm -rf /etc/yum.repos.d/epel*
           dnf clean all
           sudo sed -i '/^exclude.*/d' /etc/dnf/dnf.conf
           dnf -y install libxml2-devel libxslt-devel ruby-devel zlib-devel
