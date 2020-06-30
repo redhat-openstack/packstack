@@ -19,11 +19,15 @@ SCENARIO=${SCENARIO:-scenario001}
 
 BRANCH=stable/train
 
+# Find OS version and release
+source /etc/os-release
+OS_NAME_VERS=${REDHAT_SUPPORT_PRODUCT}${REDHAT_SUPPORT_PRODUCT_VERSION}
+
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
-DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/centos7-train/current-tripleo/delorean.repo}
-DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/centos7-train/delorean-deps.repo}
+DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/${OS_NAME_VERS}-train/current-passed-ci/delorean.repo}
+DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/${OS_NAME_VERS}-train/delorean-deps.repo}
 GIT_BASE_URL=${GIT_BASE_URL:-https://git.openstack.org}
 ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
 SELINUX_ENFORCING=${SELINUX_ENFORCING:-true}
@@ -79,7 +83,7 @@ EOF
 #
 # - ``GEM_BIN_DIR`` must be set to Gem bin directory
 install_all() {
-  $SUDO ${GEM_BIN_DIR}r10k puppetfile install -v --puppetfile Puppetfile
+  $SUDO ${GEM_BIN_DIR}r10k puppetfile install -v --puppetfile Puppetfile-${OS_NAME_VERS}
 }
 
 # Install Puppet OpenStack modules and dependencies by using
@@ -92,7 +96,7 @@ install_all() {
 install_modules() {
   # If zuul-cloner is there, have it install modules using zuul refs
   if [ -e /usr/zuul-env/bin/zuul-cloner ] ; then
-    csplit Puppetfile /'Non-OpenStack modules'/ \
+    csplit Puppetfile-%{OS_NAME_VERS} /'Non-OpenStack modules'/ \
       --prefix Puppetfile \
       --suffix '%d'
     install_external

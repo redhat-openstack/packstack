@@ -1,21 +1,36 @@
 - hosts: compute
   name: setup RDO Trunk repositories
   vars:
-    delorean: "https://trunk.rdoproject.org/centos7-train/current-tripleo/delorean.repo"
-    delorean_deps: "https://trunk.rdoproject.org/centos7-train/delorean-deps.repo"
+    delorean_default: "https://trunk.rdoproject.org/centos7-train/current-tripleo/delorean.repo"
+    delorean_deps_default: "https://trunk.rdoproject.org/centos7-train/delorean-deps.repo"
   tasks:
     - name: Fetch DLRN repo
       get_url:
-       url: "{{ delorean }}"
+       url: "{{ delorean | default(delorean_default) }}"
        dest: /etc/yum.repos.d/delorean.repo
        mode: 0640
       become: true
+
     - name: Fetch DLRN dependency repo
       get_url:
-       url: "{{ delorean_deps }}"
+       url: "{{ delorean_deps | default(delorean_deps_default) }}"
        dest: /etc/yum.repos.d/delorean-deps.repo
        mode: 0640
       become: true
+
+    - name: Update installed packages from RDO repos
+      package:
+        name: '*'
+        state: latest
+      become: true
+
+    - name: Disable selinux in Compute node
+      shell:
+        cmd: |
+          setenforce 0
+      become: true
+      when: not selinux_enforcing|default("true")|bool
+
 
 - hosts: controller
   name: packstack-ssh-preparation-1
@@ -61,8 +76,11 @@
           set -e
           set -x
           export SCENARIO='{{ scenario }}'
+          export DELOREAN='{{ delorean | default('') }}'
+          export DELOREAN_DEPS='{{ delorean_deps | default('') }}'
           export CONTROLLER_NODE="{{ hostvars['controller'].nodepool.public_ipv4 }}"
           export COMPUTE_NODE="{{ hostvars['compute'].nodepool.public_ipv4 }}"
+          export SELINUX_ENFORCING='{{ selinux_enforcing | default('true') }}'
           ./run_tests.sh
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace/packstack'
