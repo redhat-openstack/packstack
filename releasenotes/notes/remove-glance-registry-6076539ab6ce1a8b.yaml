@@ -1,0 +1,5 @@
+---
+other:
+  - |
+    Glance Registry service was deprecated in the Queens release and has been removed in Victoria.
+    Accordingly, packstack is not longer deploying glance-registry.
