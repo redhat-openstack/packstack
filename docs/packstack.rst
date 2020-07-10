@@ -483,7 +483,7 @@ Cinder Config parameters
     Password to use for the Block Storage service to authenticate with the Identity service.
 
 **CONFIG_CINDER_BACKEND**
-    Storage backend to use for the Block Storage service; valid options are: lvm, gluster, nfs, vmdk, netapp, solidfire. ['lvm', 'gluster', 'nfs', 'vmdk', 'netapp', 'solidfire']
+    Storage backend to use for the Block Storage service; valid options are: lvm, nfs, vmdk, netapp, solidfire. ['lvm', 'nfs', 'vmdk', 'netapp', 'solidfire']
 
 Cinder volume create Config parameters
 --------------------------------------
@@ -502,12 +502,6 @@ Cinder lvm Config parameters
 
 **CONFIG_CINDER_VOLUME_NAME**
     Specify a custom name for the lvm cinder volume group
-
-Cinder gluster Config parameters
---------------------------------
-
-**CONFIG_CINDER_GLUSTER_MOUNTS**
-    A single or comma-separated list of Red Hat Storage (gluster) volume shares to mount. Example: 'ip-address:/vol-name', 'domain:/vol-name'
 
 Cinder NFS Config parameters
 ----------------------------

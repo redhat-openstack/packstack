@@ -85,7 +85,7 @@ def initConfig(controller):
 
             {"CMD_OPTION": "cinder-backend",
              "PROMPT": "Enter the Cinder backend to be configured",
-             "OPTION_LIST": ["lvm", "gluster", "nfs", "vmdk", "netapp",
+             "OPTION_LIST": ["lvm", "nfs", "vmdk", "netapp",
                              "solidfire"],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "lvm",
@@ -135,23 +135,6 @@ def initConfig(controller):
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_CINDER_VOLUME_NAME",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
-
-        "CINDERGLUSTERMOUNTS": [
-            {"CMD_OPTION": "cinder-gluster-mounts",
-             "PROMPT": ("Enter a single or comma separated list of gluster "
-                        "volume shares to use with Cinder"),
-             "OPTION_LIST": ["^([\d]{1,3}\.){3}[\d]{1,3}:/.*",
-                             "^[a-zA-Z0-9][\-\.\w]*:/.*"],
-             "VALIDATORS": [validators.validate_multi_regexp],
-             "PROCESSORS": [],
-             "DEFAULT_VALUE": "",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_CINDER_GLUSTER_MOUNTS",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
@@ -528,13 +511,6 @@ def initConfig(controller):
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
 
-        {"GROUP_NAME": "CINDERGLUSTERMOUNTS",
-         "DESCRIPTION": "Cinder gluster Config parameters",
-         "PRE_CONDITION": check_gluster_options,
-         "PRE_CONDITION_MATCH": True,
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
         {"GROUP_NAME": "CINDERNFSMOUNTS",
          "DESCRIPTION": "Cinder NFS Config parameters",
          "PRE_CONDITION": check_nfs_options,
@@ -613,7 +589,6 @@ def initSequences(controller):
     )
 
     for key in ('CONFIG_CINDER_NETAPP_VOLUME_LIST',
-                'CONFIG_CINDER_GLUSTER_MOUNTS',
                 'CONFIG_CINDER_NFS_MOUNTS'):
         if key in config:
             config[key] = [i.strip() for i in config[key].split(',') if i]
@@ -642,11 +617,6 @@ def check_lvm_options(config):
 def check_lvm_vg_options(config):
     return (config['CONFIG_CINDER_INSTALL'] == 'y' and
             'lvm' in config['CONFIG_CINDER_BACKEND'])
-
-
-def check_gluster_options(config):
-    return (config['CONFIG_CINDER_INSTALL'] == 'y' and
-            'gluster' in config['CONFIG_CINDER_BACKEND'])
 
 
 def check_nfs_options(config):

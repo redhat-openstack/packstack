@@ -1,0 +1,7 @@
+---
+upgrade:
+  - |
+    The GlusterFS volume driver was removed from Cinder in Ocata release. The options to
+    enable it in Packstack have been removed:
+    - `gluster` is not longer accepted in CONFIG_CINDER_BACKEND parameter.
+    - Parameter `CONFIG_CINDER_GLUSTER_MOUNTS` has been removed.

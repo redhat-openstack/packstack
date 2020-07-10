@@ -34,9 +34,6 @@ if hiera('CONFIG_VMWARE_BACKEND') == 'y' {
 
 if hiera('CONFIG_CINDER_INSTALL') == 'y' and
    hiera('CONFIG_VMWARE_BACKEND') != 'y' {
-   if 'gluster' in hiera_array('CONFIG_CINDER_BACKEND') {
-    include '::packstack::nova::gluster'
-   }
    if 'nfs' in hiera_array('CONFIG_CINDER_BACKEND') {
     include '::packstack::nova::nfs'
    }
