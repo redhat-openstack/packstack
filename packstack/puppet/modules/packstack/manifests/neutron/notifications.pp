@@ -4,10 +4,10 @@ class packstack::neutron::notifications ()
 
     # Configure nova notifications system
     class { '::neutron::server::notifications':
-      username    => 'nova',
-      password    => hiera('CONFIG_NOVA_KS_PW'),
-      tenant_name => 'services',
-      auth_url    => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      region_name => hiera('CONFIG_KEYSTONE_REGION'),
+      username     => 'nova',
+      password     => hiera('CONFIG_NOVA_KS_PW'),
+      project_name => 'services',
+      auth_url     => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      region_name  => hiera('CONFIG_KEYSTONE_REGION'),
     }
 }
