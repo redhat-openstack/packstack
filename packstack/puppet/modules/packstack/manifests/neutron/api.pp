@@ -18,8 +18,11 @@ class packstack::neutron::api ()
       project_name         => 'services',
     }
 
-    class { '::neutron::server':
+    class { 'neutron::db':
       database_connection   => $neutron_sql_connection,
+    }
+
+    class { '::neutron::server':
       sync_db               => true,
       enabled               => true,
       api_workers           => hiera('CONFIG_SERVICE_WORKERS'),
