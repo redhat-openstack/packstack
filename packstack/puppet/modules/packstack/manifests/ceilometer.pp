@@ -53,10 +53,4 @@ class packstack::ceilometer ()
       manage_polling   => true,
       coordination_url => $coordination_url,
     }
-
-    class { '::ceilometer::keystone::authtoken':
-      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      password             => hiera('CONFIG_CEILOMETER_KS_PW'),
-    }
 }
