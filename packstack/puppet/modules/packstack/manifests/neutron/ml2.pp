@@ -16,7 +16,6 @@ class packstack::neutron::ml2 ()
       vxlan_group           => $vxlan_group_value,
       vni_ranges            => hiera_array('CONFIG_NEUTRON_ML2_VNI_RANGES'),
       enable_security_group => true,
-      firewall_driver       => hiera('FIREWALL_DRIVER'),
       extension_drivers     => 'port_security,qos',
       max_header_size       => 38,
     }
