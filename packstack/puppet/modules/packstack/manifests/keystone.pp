@@ -9,12 +9,6 @@ class packstack::keystone ()
     $keystone_url = regsubst(regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
     $keystone_admin_url = hiera('CONFIG_KEYSTONE_ADMIN_URL')
 
-    $bind_host = hiera('CONFIG_IP_VERSION') ? {
-      'ipv6'  => '::0',
-      default => '0.0.0.0',
-      # TO-DO(mmagr): Add IPv6 support when hostnames are used
-    }
-
     class { '::keystone::client': }
 
     if hiera('CONFIG_KEYSTONE_FERNET_TOKEN_ROTATE_ENABLE',false) {
@@ -37,8 +31,6 @@ class packstack::keystone ()
       enable_fernet_setup => true,
       service_name        => 'httpd',
       enable_ssl          => $keystone_use_ssl,
-      public_bind_host    => $bind_host,
-      admin_bind_host     => $bind_host,
       default_domain      => 'Default',
     }
 
