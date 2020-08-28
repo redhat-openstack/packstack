@@ -1,0 +1,6 @@
+---
+deprecations:
+  - |
+    Retry Filter Scheduler was deprecated since Train
+    and is recently removed in nova, hence removing
+    it from Packstack.

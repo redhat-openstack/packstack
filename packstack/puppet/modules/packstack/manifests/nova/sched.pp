@@ -1,7 +1,7 @@
 class packstack::nova::sched ()
 {
     class {'::nova::scheduler::filter':
-      scheduler_default_filters => ['RetryFilter', 'AvailabilityZoneFilter',
+      scheduler_default_filters => ['AvailabilityZoneFilter',
                                     'ComputeFilter',
                                     'ComputeCapabilitiesFilter', 'ImagePropertiesFilter',
                                     'ServerGroupAntiAffinityFilter',
