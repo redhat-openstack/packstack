@@ -11,7 +11,6 @@ class packstack::gnocchi ()
     }
 
     class { '::gnocchi':
-      database_connection => "mysql+pymysql://gnocchi:${gnocchi_cfg_db_pw}@${gnocchi_cfg_mariadb_host}/gnocchi?charset=utf8",
     }
 
     class { '::gnocchi::keystone::authtoken':
@@ -19,6 +18,10 @@ class packstack::gnocchi ()
       auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       auth_version         => hiera('CONFIG_KEYSTONE_API_VERSION'),
       password             => hiera('CONFIG_GNOCCHI_KS_PW')
+    }
+
+    class { '::gnocchi::db':
+      database_connection => "mysql+pymysql://gnocchi:${gnocchi_cfg_db_pw}@${gnocchi_cfg_mariadb_host}/gnocchi?charset=utf8",
     }
 
     class { '::gnocchi::api':
