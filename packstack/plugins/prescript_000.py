@@ -1161,7 +1161,7 @@ def manage_rdo(host, config):
         server.append('yum-config-manager --enable %(reponame)s-testing' % locals())
 
     rc, out = server.execute()
-    match = re.search('enabled\s*=\s*(1|True)', out)
+    match = re.search(r'enabled\s*=\s*(1|True)', out)
     # In CentOS 7 yum-config-manager returns 0 always, but returns current setup
     # if succeeds
     # In CentOS 8 yum-config-manager returns 1 when failing but doesn't return current

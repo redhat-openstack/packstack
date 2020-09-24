@@ -23,7 +23,7 @@ you can relocate %s position in the text as long as the context is kept.
 
 DONT CHANGE any of the params names (in UPPER-CASE)
 they are used in the engine-setup.py
-'''
+'''     # noqa: W605
 
 from packstack.installer import basedefs
 

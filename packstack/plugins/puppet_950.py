@@ -270,7 +270,7 @@ def finalize(config, messages):
     for hostname in filtered_hosts(config):
         server = utils.ScriptRunner(hostname)
         server.append("installed=$(rpm -q kernel --last | head -n1 | "
-                      "sed 's/kernel-\([a-z0-9\.\_\-]*\).*/\\1/g')")
+                      "sed 's/kernel-\([a-z0-9\.\_\-]*\).*/\\1/g')")    # noqa: W605
         server.append("loaded=$(uname -r | head -n1)")
         server.append('[ "$loaded" == "$installed" ]')
         try:

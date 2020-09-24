@@ -808,7 +808,7 @@ def create_manifests(config, messages):
                         else:
                             iface = config['CONFIG_NEUTRON_OVS_TUNNEL_IF']
                         ifip = ("ipaddress_%s" % iface)
-                        ifip = re.sub('[\.\-\:]', '_', ifip)
+                        ifip = re.sub(r'[\.\-\:]', '_', ifip)
                         try:
                             src_host = config['HOST_DETAILS'][n_host][ifip]
                         except KeyError:

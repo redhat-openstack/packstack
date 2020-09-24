@@ -251,7 +251,7 @@ def create_self_signed_cert(config, messages):
         subject.C = config['CONFIG_SSL_CERT_SUBJECT_C']
         subject.ST = config['CONFIG_SSL_CERT_SUBJECT_ST']
         subject.L = config['CONFIG_SSL_CERT_SUBJECT_L']
-        subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']
+        subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']     # noqa: E741
         subject.OU = config['CONFIG_SSL_CERT_SUBJECT_OU']
         subject.CN = config['CONFIG_SSL_CERT_SUBJECT_CN']
         subject.emailAddress = mail

@@ -66,6 +66,8 @@ class ManifestFiles(object):
             fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
             with os.fdopen(fd, 'w') as fp:
                 fp.write(data)
+
+
 manifestfiles = ManifestFiles()
 
 
@@ -113,7 +115,7 @@ def generate_ssl_cert(config, host, service, ssl_key_file, ssl_cert_file):
         subject.C = config['CONFIG_SSL_CERT_SUBJECT_C']
         subject.ST = config['CONFIG_SSL_CERT_SUBJECT_ST']
         subject.L = config['CONFIG_SSL_CERT_SUBJECT_L']
-        subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']
+        subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']      # noqa: E741
         subject.OU = config['CONFIG_SSL_CERT_SUBJECT_OU']
         cn = "%s/%s" % (service, fqdn)
         # if subject.CN is more than 64 chars long, cert creation will fail

@@ -22,15 +22,15 @@ from packstack.installer.exceptions import PuppetError
 # TODO: Fill logger name when logging system will be refactored
 logger = logging.getLogger()
 
-re_color = re.compile('\x1b.*?\d\dm')
+re_color = re.compile(r'\x1b.*?\d\dm')
 re_error = re.compile(
-    'err:|Syntax error at|^Duplicate definition:|^Invalid tag|'
-    '^No matching value for selector param|^Parameter name failed:|Error:|'
-    '^Invalid parameter|^Duplicate declaration:|^Could not find resource|'
-    '^Could not parse for|^/usr/bin/puppet:\d+: .+|.+\(LoadError\)|'
-    '^Could not autoload|'
-    '^\/usr\/bin\/env\: jruby\: No such file or directory|'
-    'failed to execute puppet'
+    r'err:|Syntax error at|^Duplicate definition:|^Invalid tag|'
+    r'^No matching value for selector param|^Parameter name failed:|Error:|'
+    r'^Invalid parameter|^Duplicate declaration:|^Could not find resource|'
+    r'^Could not parse for|^/usr/bin/puppet:\d+: .+|.+\(LoadError\)|'
+    r'^Could not autoload|'
+    r'^\/usr\/bin\/env\: jruby\: No such file or directory|'
+    r'failed to execute puppet'
 )
 re_ignore = re.compile(
     # Puppet preloads a provider using the mysql command before it is installed
@@ -45,23 +45,23 @@ re_ignore = re.compile(
     # https://tickets.puppetlabs.com/browse/FACT-697
     'NetworkManager is not running'
 )
-re_notice = re.compile(r"notice: .*Notify\[packstack_info\]"
-                       "\/message: defined \'message\' as "
-                       "\'(?P<message>.*)\'")
+re_notice = re.compile(r'notice: .*Notify\[packstack_info\]'
+                       r'\/message: defined \'message\' as '
+                       r'\'(?P<message>.*)\'')
 
 surrogates = [
     # Value in /etc/sysctl.conf cannot be changed
-    ('Sysctl::Value\[.*\]\/Sysctl\[(?P<arg1>.*)\].*Field \'val\' is required',
+    (r'Sysctl::Value\[.*\]\/Sysctl\[(?P<arg1>.*)\].*Field \'val\' is required',
         'Cannot change value of %(arg1)s in /etc/sysctl.conf'),
     # Package is not found in yum repos
-    ('Package\[.*\]\/ensure.*yum.*install (?P<arg1>.*)\'.*Nothing to do',
+    (r'Package\[.*\]\/ensure.*yum.*install (?P<arg1>.*)\'.*Nothing to do',
         'Package %(arg1)s has not been found in enabled Yum repos.'),
-    ('Execution of \'.*yum.*install (?P<arg1>.*)\'.*Nothing to do',
+    (r'Execution of \'.*yum.*install (?P<arg1>.*)\'.*Nothing to do',
         'Package %(arg1)s has not been found in enabled Yum repos.'),
     # Packstack does not cooperate with jruby
-    ('jruby', 'Your Puppet installation uses jruby instead of ruby. Package '
-              'jruby does not cooperate with Packstack well. You will have to '
-              'fix this manually.'),
+    (r'jruby', 'Your Puppet installation uses jruby instead of ruby. Package '
+               'jruby does not cooperate with Packstack well. You will have to '
+               'fix this manually.'),
 ]
 
 

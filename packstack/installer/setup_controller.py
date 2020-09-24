@@ -44,7 +44,7 @@ class Controller(object):
         instance from a class which inherit Controller.
         did not use isinstance because inheritence makes it behave erratically.
         """
-        if self != type(self.__single):  # flake8: noqa
+        if self != type(self.__single):  # noqa: E721
             self.__single = object.__new__(self, *args, **kwargs)
         return self.__single
 

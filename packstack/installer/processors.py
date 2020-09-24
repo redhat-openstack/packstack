@@ -154,6 +154,7 @@ def process_bool(param, param_name, config=None):
     elif param.lower() in ('n', 'no', 'false'):
         return False
 
+
 # Define silent processors
 for proc_func in (process_bool, process_add_quotes_around_values):
     proc_func.silent = True

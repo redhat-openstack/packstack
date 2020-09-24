@@ -40,9 +40,9 @@ class ValidatorsTestCase(PackstackTestCaseMixin, TestCase):
 
     def test_validate_regexp(self):
         """Test packstack.installer.validators.validate_regexp."""
-        validate_regexp('Test_123', options=['\w'])
+        validate_regexp('Test_123', options=[r'\w'])
         self.assertRaises(ParamValidationError, validate_regexp,
-                          '!#$%', options=['\w'])
+                          '!#$%', options=[r'\w'])
 
     def test_validate_port(self):
         """Test packstack.installer.validators.validate_port."""

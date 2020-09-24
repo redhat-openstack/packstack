@@ -689,7 +689,7 @@ def check_cinder_vg(config, messages):
         if not have_cinders_volume:
             raise exceptions.MissingRequirements("The cinder server should "
                                                  "contain a volume group")
-    match = re.match('^(?P<size>\d+)G$',
+    match = re.match(r'^(?P<size>\d+)G$',
                      config['CONFIG_CINDER_VOLUMES_SIZE'].strip())
     if not match:
         msg = 'Invalid Cinder volumes VG size.'

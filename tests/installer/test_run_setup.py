@@ -126,5 +126,5 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
             sys.exit = orig_sys_exit
             try:
                 shutil.rmtree(basedefs.VAR_DIR)
-            except:
+            except Exception:
                 pass

@@ -73,7 +73,7 @@ def initLogging(debug):
         logging.root.handlers = []
         logging.root.addHandler(hdlr)
         logging.root.setLevel(level)
-    except:
+    except Exception:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_FAILED_INIT_LOGGER)
 
@@ -150,7 +150,7 @@ def _getInputFromUser(param):
         # add the new line so messages wont be displayed in the same line as the question
         print("")
         raise
-    except:
+    except Exception:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_READ_INPUT_PARAM % (param.CONF_NAME))
 
@@ -256,7 +256,7 @@ def mask(input):
                 output.remove(org)
                 output.insert(orgIndex, item)
     if isinstance(input, six.string_types):
-            output = utils.mask_string(input, masked_value_set)
+        output = utils.mask_string(input, masked_value_set)
 
     return output
 
@@ -531,7 +531,7 @@ def _handleInteractiveParams():
     except Exception:
         logging.error(traceback.format_exc())
         raise
-    except:
+    except Exception:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_EXP_HANDLE_PARAMS)
 
@@ -570,16 +570,16 @@ def _displaySummary():
         for param in group.parameters.itervalues():
             if not param.USE_DEFAULT and param.CONF_NAME in controller.CONF:
                 cmdOption = param.CMD_OPTION
-                l = 30 - len(cmdOption)
+                length = 30 - len(cmdOption)
                 maskParam = param.MASK_INPUT
                 # Only call mask on a value if the param has MASK_INPUT set to True
                 if maskParam:
                     logging.info("%s: %s" % (cmdOption, mask(controller.CONF[param.CONF_NAME])))
-                    print("%s:" % (cmdOption) + " " * l + mask(controller.CONF[param.CONF_NAME]))
+                    print("%s:" % (cmdOption) + " " * length + mask(controller.CONF[param.CONF_NAME]))
                 else:
                     # Otherwise, log & display it as it is
                     logging.info("%s: %s" % (cmdOption, str(controller.CONF[param.CONF_NAME])))
-                    print("%s:" % (cmdOption) + " " * l + str(controller.CONF[param.CONF_NAME]))
+                    print("%s:" % (cmdOption) + " " * length + str(controller.CONF[param.CONF_NAME]))
     logging.info("*** User input summary ***")
     answer = _askYesNo(output_messages.INFO_USE_PARAMS)
     if not answer:
@@ -900,9 +900,9 @@ def plugin_compare(x, y):
     Used to sort the plugin file list
     according to the number at the end of the plugin module
     """
-    x_match = re.search(".+\_(\d\d\d)", x)
+    x_match = re.search(r'.+\_(\d\d\d)', x)
     x_cmp = x_match.group(1)
-    y_match = re.search(".+\_(\d\d\d)", y)
+    y_match = re.search(r'.+\_(\d\d\d)', y)
     y_cmp = y_match.group(1)
     return int(x_cmp) - int(y_cmp)
 
@@ -918,7 +918,7 @@ def loadPlugins():
     fileList = sorted(fileList, key=cmp_to_key(plugin_compare))
     for item in fileList:
         # Looking for files that end with ###.py, example: a_plugin_100.py
-        match = re.search("^(.+\_\d\d\d)\.py$", item)
+        match = re.search(r'^(.+\_\d\d\d)\.py$', item)
         if match:
             try:
                 moduleToLoad = match.group(1)
@@ -928,7 +928,7 @@ def loadPlugins():
                 globals()[moduleToLoad] = moduleobj
                 checkPlugin(moduleobj)
                 controller.addPlugin(moduleobj)
-            except:
+            except Exception:
                 logging.error("Failed to load plugin from file %s", item)
                 logging.error(traceback.format_exc())
                 raise Exception("Failed to load plugin from file %s" % item)
@@ -1046,9 +1046,9 @@ def main():
                 # If using an answer file, setting a default password
                 # does not really make sense
                 if getattr(options, 'default_password', None):
-                        msg = ('Please do not set --default-password '
-                               'when specifying an answer file.')
-                        raise FlagValidationError(msg)
+                    msg = ('Please do not set --default-password '
+                           'when specifying an answer file.')
+                    raise FlagValidationError(msg)
                 confFile = os.path.expanduser(options.answer_file)
                 if not os.path.exists(confFile):
                     raise Exception(output_messages.ERR_NO_ANSWER_FILE % confFile)

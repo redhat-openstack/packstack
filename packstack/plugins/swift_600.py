@@ -232,7 +232,7 @@ def get_storage_size(config):
     ranges = {'G': 1048576, 'M': 1024, 'K': 1}
     size = config['CONFIG_SWIFT_STORAGE_SIZE'].strip()
     for measure in ['G', 'M', 'K']:
-        if re.match('\d+' + measure, size, re.IGNORECASE):
+        if re.match(r'\d+' + measure, size, re.IGNORECASE):
             intsize = int(size.rstrip(measure)) * ranges[measure]
             return intsize
 
