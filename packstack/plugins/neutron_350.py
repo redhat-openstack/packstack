@@ -16,7 +16,7 @@
 Installs and configures Neutron
 """
 
-import re
+import netifaces
 from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer import validators
@@ -807,11 +807,10 @@ def create_manifests(config, messages):
                                 n_host, config)
                         else:
                             iface = config['CONFIG_NEUTRON_OVS_TUNNEL_IF']
-                        ifip = ("ipaddress_%s" % iface)
-                        ifip = re.sub(r'[\.\-\:]', '_', ifip)
                         try:
-                            src_host = config['HOST_DETAILS'][n_host][ifip]
-                        except KeyError:
+                            src_host = (netifaces.ifaddresses(iface)
+                                        [netifaces.AF_INET][0]['addr'])
+                        except Exception:
                             raise KeyError('Couldn\'t detect ipaddress of '
                                            'interface %s on node %s' %
                                            (iface, n_host))
