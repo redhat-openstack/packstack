@@ -202,19 +202,8 @@ fi
 rm -rf /tmp/cirros
 mkdir /tmp/cirros
 
-# Select cirros arch and image version based on system architecture, and export them for use by the test scenarios.
-# As of April 2018, Packstack on x86 has kernel panics with the 0.4.0 cirros image. However, ppc64le requires it.
-# As such, for now, we set x86 boxes to use version 0.3.5, and ppc64le boxes to use 0.4.0.
 export CIRROS_ARCH="$(uname -p)"
-
-case $CIRROS_ARCH in
-    x86_64)
-        export CIRROS_VERSION="0.3.5"
-        ;;
-    ppc64le)
-        export CIRROS_VERSION="0.4.0"
-        ;;
-esac
+export CIRROS_VERSION="0.5.1"
 
 if [ -f ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz ]; then
     tar -xzvf ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -C /tmp/cirros/

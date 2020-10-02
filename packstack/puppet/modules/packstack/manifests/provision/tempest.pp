@@ -27,9 +27,8 @@ class packstack::provision::tempest ()
     $configure_networks        = true
 
     # Image
-    $uec_image_name     = hiera('CONFIG_PROVISION_UEC_IMAGE_NAME')
     $image_ssh_user     = hiera('CONFIG_PROVISION_IMAGE_SSH_USER')
-    $image_name_alt     = "${uec_image_name}_alt"
+    $image_name         = hiera('CONFIG_PROVISION_IMAGE_NAME')
     $image_alt_ssh_user = hiera('CONFIG_PROVISION_IMAGE_SSH_USER')
     $image_source       = hiera('CONFIG_PROVISION_IMAGE_URL')
     $image_format       = hiera('CONFIG_PROVISION_IMAGE_FORMAT')
@@ -127,8 +126,8 @@ class packstack::provision::tempest ()
       identity_uri_v3           => $identity_uri_v3,
       keystone_v2               => false,
       image_alt_ssh_user        => $image_alt_ssh_user,
-      image_name_alt            => $image_name_alt,
-      image_name                => $uec_image_name,
+      image_name_alt            => $image_name,
+      image_name                => $image_name,
       image_ssh_user            => $image_ssh_user,
       run_ssh                   => true,
       log_file                  => $log_file,
