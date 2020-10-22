@@ -30,9 +30,10 @@ class packstack::horizon ()
       cache_server_port     => '11211',
       file_upload_temp_dir  => '/var/tmp',
       listen_ssl            => $horizon_ssl,
-      horizon_cert          => hiera('CONFIG_HORIZON_SSL_CERT', undef),
-      horizon_key           => hiera('CONFIG_HORIZON_SSL_KEY', undef),
-      horizon_ca            => hiera('CONFIG_HORIZON_SSL_CACERT', undef),
+      ssl_cert              => hiera('CONFIG_HORIZON_SSL_CERT', undef),
+      ssl_key               => hiera('CONFIG_HORIZON_SSL_KEY', undef),
+      ssl_ca                => hiera('CONFIG_HORIZON_SSL_CACERT', undef),
+      ssl_verify_client     => false,
       neutron_options       => {
         'enable_vpn'      => hiera('CONFIG_HORIZON_NEUTRON_VPN'),
         'enable_lb'       => hiera('CONFIG_HORIZON_NEUTRON_LB'),
