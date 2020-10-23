@@ -32,24 +32,11 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 DEMO_IMAGE_NAME = 'cirros'
 DEMO_IMAGE_URL = (
-    'https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-%s-disk.img'
+    'https://download.cirros-cloud.net/0.5.1/cirros-0.5.1-%s-disk.img'
     % (arch.cirros_arch())
 )
 DEMO_IMAGE_SSH_USER = 'cirros'
 DEMO_IMAGE_FORMAT = 'qcow2'
-UEC_IMAGE_NAME = 'cirros-uec'
-UEC_IMAGE_KERNEL_URL = (
-    'https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-%s-kernel'
-    % (arch.cirros_arch())
-)
-UEC_IMAGE_RAMDISK_URL = (
-    'https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-%s-initramfs'
-    % (arch.cirros_arch())
-)
-UEC_IMAGE_DISK_URL = (
-    'https://download.cirros-cloud.net/0.3.5/cirros-0.3.5-%s-disk.img'
-    % (arch.cirros_arch())
-)
 
 
 def initConfig(controller):
@@ -176,57 +163,6 @@ def initConfig(controller):
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_PROVISION_IMAGE_SSH_USER",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "provision-uec-image-name",
-             "PROMPT": "Enter the name to be assigned to the uec image used for tempest",
-             "OPTION_LIST": False,
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": UEC_IMAGE_NAME,
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_UEC_IMAGE_NAME",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "provision-uec-kernel-url",
-             "PROMPT": ("Enter the location of a uec kernel to be loaded "
-                        "into Glance"),
-             "OPTION_LIST": False,
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": UEC_IMAGE_KERNEL_URL,
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_UEC_IMAGE_KERNEL_URL",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "provision-uec-ramdisk-url",
-             "PROMPT": ("Enter the location of a uec ramdisk to be loaded "
-                        "into Glance"),
-             "OPTION_LIST": False,
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": UEC_IMAGE_RAMDISK_URL,
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_UEC_IMAGE_RAMDISK_URL",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "provision-uec-disk-url",
-             "PROMPT": ("Enter the location of a uec disk image to be loaded "
-                        "into Glance"),
-             "OPTION_LIST": False,
-             "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": UEC_IMAGE_DISK_URL,
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_PROVISION_UEC_IMAGE_DISK_URL",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
              "CONDITION": False},
