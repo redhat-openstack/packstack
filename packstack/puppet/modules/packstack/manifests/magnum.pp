@@ -23,6 +23,15 @@ class packstack::magnum ()
       project_name         => 'services'
     }
 
+    class { '::magnum::keystone::keystone_auth':
+      username            => 'magnum',
+      password            => hiera('CONFIG_MAGNUM_KS_PW'),
+      auth_url            => "${magnum_protocol}://${magnum_host}:5000",
+      project_name        => 'services',
+      user_domain_name    => 'Default',
+      project_domain_name => 'Default',
+    }
+
     class { '::magnum::api':
       enabled => true,
       host    => '0.0.0.0'
