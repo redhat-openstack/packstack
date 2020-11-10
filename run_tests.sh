@@ -179,6 +179,7 @@ OS_VERSION=$(facter operatingsystemmajrelease)
 if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
     $SUDO $PKG_MGR -y install python3-setuptools \
                               python3-devel \
+                              python3-wheel \
                               python3-pyyaml
 else
     $SUDO $PKG_MGR -y install python-setuptools \
@@ -190,7 +191,7 @@ fi
 which pip3 && PIP=pip3
 if [ -z $PIP ]; then
     if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
-        $SUDO $PKG_MGR -y install python3-pip
+        $SUDO $PKG_MGR -y install python3-pip python3-wheel
         PIP=pip3
     else
         which pip || $SUDO easy_install pip

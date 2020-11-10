@@ -23,6 +23,10 @@ class packstack::nova::api ()
       $pci_alias = hiera('CONFIG_NOVA_PCI_ALIAS')
     }
 
+    class { '::nova::pci':
+      aliases                              => $pci_alias,
+    }
+
     class { '::nova::api':
       api_bind_address           => $bind_host,
       enabled                    => true,
@@ -56,10 +60,6 @@ class packstack::nova::api ()
 
     class { '::nova::db::sync_api':
       db_sync_timeout => 600,
-    }
-
-    class { '::nova::pci':
-      aliases                              => $pci_alias,
     }
 
     class { '::nova::placement':
