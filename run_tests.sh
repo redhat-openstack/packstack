@@ -17,7 +17,7 @@ export PATH=$PATH:/usr/local/sbin:/usr/sbin
 
 SCENARIO=${SCENARIO:-scenario001}
 
-BRANCH=master
+BRANCH=stable/victoria
 
 # Find OS version and release
 source /etc/os-release
@@ -26,8 +26,8 @@ OS_NAME_VERS=${REDHAT_SUPPORT_PRODUCT}${REDHAT_SUPPORT_PRODUCT_VERSION}
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
 MANAGE_REPOS=${MANAGE_REPOS:-true}
-DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/${OS_NAME_VERS}-master/current-passed-ci/delorean.repo}
-DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/${OS_NAME_VERS}-master/delorean-deps.repo}
+DELOREAN=${DELOREAN:-https://trunk.rdoproject.org/${OS_NAME_VERS}-victoria/current-passed-ci/delorean.repo}
+DELOREAN_DEPS=${DELOREAN_DEPS:-https://trunk.rdoproject.org/${OS_NAME_VERS}-victoria/delorean-deps.repo}
 GIT_BASE_URL=${GIT_BASE_URL:-https://git.openstack.org}
 ADDITIONAL_ARGS=${ADDITIONAL_ARGS:-}
 SELINUX_ENFORCING=${SELINUX_ENFORCING:-true}
@@ -179,6 +179,7 @@ OS_VERSION=$(facter operatingsystemmajrelease)
 if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
     $SUDO $PKG_MGR -y install python3-setuptools \
                               python3-devel \
+                              python3-wheel \
                               python3-pyyaml
 else
     $SUDO $PKG_MGR -y install python-setuptools \
@@ -190,7 +191,7 @@ fi
 which pip3 && PIP=pip3
 if [ -z $PIP ]; then
     if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
-        $SUDO $PKG_MGR -y install python3-pip
+        $SUDO $PKG_MGR -y install python3-pip python3-wheel
         PIP=pip3
     else
         which pip || $SUDO easy_install pip
