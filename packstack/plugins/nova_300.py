@@ -277,7 +277,7 @@ def create_ssh_keys(config, messages):
 
     config['NOVA_MIGRATION_KEY_TYPE'] = 'ssh-rsa'
     config['NOVA_MIGRATION_KEY_PUBLIC'] = public.split()[1]
-    config['NOVA_MIGRATION_KEY_SECRET'] = secret
+    config['NOVA_MIGRATION_KEY_SECRET'] = secret + '\n'
 
 
 def gather_host_keys(config, messages):
