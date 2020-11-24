@@ -265,6 +265,10 @@ def prepare_puppet_modules(config, messages):
         manifestfile = "%s_compute.pp" % host
         appendManifestFile(manifestfile, manifestdata, marker='compute')
 
+    manifestdata = getManifestTemplate("controller_post")
+    manifestfile = "%s_controller_post.pp" % config['CONFIG_CONTROLLER_HOST']
+    appendManifestFile(manifestfile, manifestdata, marker='controller')
+
 
 def finalize(config, messages):
     for hostname in filtered_hosts(config):

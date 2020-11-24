@@ -94,10 +94,6 @@ class packstack::nova::compute ()
       passthrough => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST')
     }
 
-    include ::nova::cell_v2::discover_hosts
-
-    Class['nova::compute'] ~> Class['nova::cell_v2::discover_hosts']
-
     # Tune the host with a virtual hosts profile
     ensure_packages(['tuned'], {'ensure' => 'present'})
 
