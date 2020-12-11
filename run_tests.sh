@@ -21,7 +21,7 @@ BRANCH=stable/train
 
 # Find OS version and release
 source /etc/os-release
-OS_NAME_VERS=${REDHAT_SUPPORT_PRODUCT}${REDHAT_SUPPORT_PRODUCT_VERSION}
+OS_NAME_VERS=${ID}${VERSION_ID}
 
 # We could want to override the default repositories or install behavior
 INSTALL_FROM_SOURCE=${INSTALL_FROM_SOURCE:-true}
