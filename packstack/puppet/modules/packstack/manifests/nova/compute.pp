@@ -73,6 +73,10 @@ class packstack::nova::compute ()
       $instance_usage_audit_period = 'month'
     }
 
+    class { '::nova::compute::pci':
+      passthrough => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST')
+    }
+
     class { '::nova::compute':
       enabled                       => true,
       vncproxy_host                 => hiera('CONFIG_KEYSTONE_HOST_URL'),
@@ -88,10 +92,6 @@ class packstack::nova::compute ()
       auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       password    => hiera('CONFIG_NOVA_KS_PW'),
       region_name => hiera('CONFIG_KEYSTONE_REGION'),
-    }
-
-    class { '::nova::compute::pci':
-      passthrough => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST')
     }
 
     # Tune the host with a virtual hosts profile
