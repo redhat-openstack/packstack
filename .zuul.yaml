@@ -228,7 +228,8 @@
         - packstack-integration-scenario001-tempest
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
-        - packstack-multinode-scenario002-tempest
+        - packstack-multinode-scenario002-tempest:
+            voting: false
         # We can't make centos8 jobs voting until we have promotion pipeline
         - packstack-centos8-integration-scenario001:
             voting: false
@@ -250,7 +251,6 @@
         - packstack-integration-scenario001-tempest
         - packstack-integration-scenario002-tempest
         - packstack-integration-scenario003-tempest
-        - packstack-multinode-scenario002-tempest
     post:
       jobs:
         - packstack-upload-git-mirror
