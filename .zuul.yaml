@@ -48,6 +48,21 @@
     run: playbooks/packstack-integration-tempest.yaml
 
 - job:
+    name: packstack-centos8s
+    parent: packstack-base
+    voting: false
+    vars:
+      selinux_enforcing: "false"
+      delorean: "https://trunk.rdoproject.org/centos8-master/puppet-passed-ci/delorean.repo"
+      delorean_deps: "https://trunk.rdoproject.org/centos8-master/delorean-deps.repo"
+    pre-run: playbooks/packstack-centos8-pre.yaml
+    nodeset:
+      nodes:
+        - name: centos8s
+          label: centos-8-stream
+    run: playbooks/packstack-integration-tempest.yaml
+
+- job:
     name: packstack-multinode-centos8
     parent: packstack-base
     vars:
@@ -61,6 +76,23 @@
           label: centos-8
         - name: compute
           label: centos-8
+    run: playbooks/packstack-multinode.yaml
+
+- job:
+    name: packstack-multinode-centos8s
+    parent: packstack-base
+    voting: false
+    vars:
+      selinux_enforcing: "false"
+      delorean: "https://trunk.rdoproject.org/centos8-master/puppet-passed-ci/delorean.repo"
+      delorean_deps: "https://trunk.rdoproject.org/centos8-master/delorean-deps.repo"
+    pre-run: playbooks/packstack-centos8-pre.yaml
+    nodeset:
+      nodes:
+        - name: controller
+          label: centos-8-stream
+        - name: compute
+          label: centos-8-stream
     run: playbooks/packstack-multinode.yaml
 
 - job:
@@ -84,6 +116,31 @@
 - job:
     name: packstack-centos8-multinode-scenario002-tempest
     parent: packstack-multinode-centos8
+    post-run: playbooks/packstack-post-compute.yaml
+    vars:
+      scenario: scenario002
+
+- job:
+    name: packstack-centos8s-integration-scenario001
+    parent: packstack-centos8s
+    vars:
+      scenario: scenario001
+
+- job:
+    name: packstack-centos8s-integration-scenario002
+    parent: packstack-centos8s
+    vars:
+      scenario: scenario002
+
+- job:
+    name: packstack-centos8s-integration-scenario003
+    parent: packstack-centos8s
+    vars:
+      scenario: scenario003
+
+- job:
+    name: packstack-centos8s-multinode-scenario002-tempest
+    parent: packstack-multinode-centos8s
     post-run: playbooks/packstack-post-compute.yaml
     vars:
       scenario: scenario002
@@ -180,6 +237,10 @@
         - packstack-centos8-integration-scenario002
         - packstack-centos8-integration-scenario003
         - packstack-centos8-multinode-scenario002-tempest
+        - packstack-centos8s-integration-scenario001
+        - packstack-centos8s-integration-scenario002
+        - packstack-centos8s-integration-scenario003
+        - packstack-centos8s-multinode-scenario002-tempest
     gate:
       jobs:
         - openstack-tox-pep8
