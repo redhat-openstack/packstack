@@ -32,7 +32,6 @@ class packstack::nova ()
       File[$files_to_set_owner] ~> Service<| tag == 'nova-service' |>
     }
 
-    $nova_common_rabbitmq_cfg_storage_host = hiera('CONFIG_STORAGE_HOST_URL')
     if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
       $nova_common_notification_driver = 'messagingv2'
       $notify_on_state_change = 'vm_and_task_state'
@@ -62,7 +61,6 @@ class packstack::nova ()
     }
 
     class { '::nova':
-      glance_api_servers      => "http://${nova_common_rabbitmq_cfg_storage_host}:9292",
       default_transport_url   => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       rabbit_use_ssl          => hiera('CONFIG_AMQP_SSL_ENABLED'),
       nova_public_key         => $public_key,
