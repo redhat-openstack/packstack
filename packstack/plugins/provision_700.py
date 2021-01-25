@@ -406,6 +406,19 @@ def initConfig(controller):
              "CONF_NAME": "CONFIG_RUN_TEMPEST_TESTS",
              "USE_DEFAULT": False,
              "NEED_CONFIRM": False,
+             "CONDITION": False},
+
+            {"CMD_OPTION": "skip-tempest-tests",
+             "PROMPT": ("What tempest tests should skipped ?"
+                        " (If blank, Tempest will not skip any tests)"),
+             "OPTION_LIST": [],
+             "VALIDATORS": False,
+             "DEFAULT_VALUE": "",
+             "MASK_INPUT": False,
+             "LOOSE_VALIDATION": True,
+             "CONF_NAME": "CONFIG_SKIP_TEMPEST_TESTS",
+             "USE_DEFAULT": False,
+             "NEED_CONFIRM": False,
              "CONDITION": False}
         ],
 

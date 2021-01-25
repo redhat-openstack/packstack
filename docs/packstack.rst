@@ -1032,6 +1032,9 @@ Provisioning tempest config
 **CONFIG_RUN_TEMPEST_TESTS**
     Test suites to run, example: "smoke dashboard TelemetryAlarming". Optional, defaults to "smoke".
 
+**CONFIG_SKIP_TEMPEST_TESTS**
+    Tests to skip, example: "test_basic_scenario test_volume". Optional, defaults to "".
+
 **CONFIG_PROVISION_UEC_IMAGE_NAME**
     Name of the uec image created in Glance used in tempest tests (default "cirros-uec").
 
