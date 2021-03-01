@@ -162,7 +162,7 @@ mod 'sysctl',
 
 mod 'systemd',
   :git => 'https://github.com/camptocamp/puppet-systemd',
-  :ref => 'master'
+  :ref => '8f68b0dcf3bbbafc60c025879a28004fc9815aab'
 
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',

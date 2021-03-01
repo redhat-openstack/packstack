@@ -5,10 +5,10 @@ class packstack::nova::neutron ()
 
     class { '::nova::network::neutron':
       default_floating_pool => 'public',
-      neutron_password      => hiera('CONFIG_NEUTRON_KS_PW'),
-      neutron_auth_type     => 'v3password',
-      neutron_project_name  => 'services',
-      neutron_auth_url      => "${neutron_auth_url}/v3",
-      neutron_region_name   => hiera('CONFIG_KEYSTONE_REGION'),
+      password              => hiera('CONFIG_NEUTRON_KS_PW'),
+      auth_type             => 'v3password',
+      project_name          => 'services',
+      auth_url              => "${neutron_auth_url}/v3",
+      region_name           => hiera('CONFIG_KEYSTONE_REGION'),
     }
 }

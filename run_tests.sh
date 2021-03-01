@@ -265,6 +265,7 @@ fi
 
 # Setup packstack
 if [ "${INSTALL_FROM_SOURCE}" = true ]; then
+  $SUDO $PIP install -U pip
   $SUDO $PIP install --ignore-installed -c https://opendev.org/openstack/requirements/raw/branch/$BRANCH/upper-constraints.txt --prefix=/usr .
   # In Fedora when running with sudo gems are installed at /usr/local/bin/ even when GEM_HOME/GEM_BIN_DIR are set
   if [ "${PKG_MGR}" = "dnf" ]; then
