@@ -102,73 +102,73 @@ mod 'vswitch',
 
 mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
-  :ref => 'v5.4.0'
+  :ref => 'afbaf1981abcdd052e7ec9056b5d5a5a78eec576'
 
 mod 'certmonger',
-  :git => 'https://github.com/rcritten/puppet-certmonger',
-  :ref => 'master'
+  :git => 'https://github.com/saltedsignal/puppet-certmonger',
+  :ref => 'v2.6.0'
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
-  :ref => '4.2.1'
+  :ref => 'dfeabb98d6493a647e1ffab333d0b64ba3c5df35'
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
-  :ref => '1.12.0'
+  :ref => '71a1773be37d30dd7ad4cd51172161dd28542c89'
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
-  :ref => '2.2.0'
+  :ref => 'df46d2a0293687a157c70dab128bb5f2a53ef837'
 
 mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached',
-  :ref => 'v3.3.0'
+  :ref => 'v6.0.0'
 
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
-  :ref => 'v10.3.0'
+  :ref => '937d0443c6da5a4080ef977f8979f7d10fdb0253'
 
 mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
-  :ref => 'master'
+  :ref => '2ed2a2df59bbeaf9cf628e1a4a499476842282fd'
 
 mod 'rabbitmq',
   :git => 'https://github.com/voxpupuli/puppet-rabbitmq',
-  :ref => 'master'
+  :ref => 'v10.1.2'
 
 mod 'redis',
   :git => 'https://github.com/arioch/puppet-redis',
-  :ref => 'master'
+  :ref => 'd44386133a7c524ba0f31d375cf91533f78db1cc'
 
 mod 'remote',
   :git => 'https://github.com/paramite/puppet-remote',
-  :ref => 'master'
+  :ref => '7420908328b832f4b20e1eba44bcccd926da8faa'
 
 mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync',
-  :ref => '1.1.0'
+  :ref => 'b3ee352a0bffbfa521c93ab1aa9e80861c4533d9'
 
 mod 'ssh',
   :git => 'https://github.com/saz/puppet-ssh',
-  :ref => 'master'
+  :ref => '6e0f430034cf349c8b613d16cf9e3a52f63183e0'
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => '5.0.0'
+  :ref => '7c1ae256a70045473ebf2f50a61c8c082b926f29'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
-  :ref => 'v0.0.12'
+  :ref => 'a3d160d7c79cc905fc1d10a4fd8b4c1488e017b4'
 
 mod 'systemd',
   :git => 'https://github.com/camptocamp/puppet-systemd',
-  :ref => 'master'
+  :ref => '415d84a9f5ee2c041ec7787c5ae5ef0ae714abb7'
 
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
-  :ref => '2.3.0'
+  :ref => 'a36ee18f8f70343f22c7c9471f27e1b3efec99ee'
 
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',
-  :ref => '3.1.0'
+  :ref => '8d460c4b64e357bd0ba0f2ca78509d999b59b21c'
 
