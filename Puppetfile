@@ -102,7 +102,7 @@ mod 'vswitch',
 
 mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
-  :ref => 'v5.4.0'
+  :ref => 'master'
 
 mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger',
@@ -110,23 +110,23 @@ mod 'certmonger',
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
-  :ref => '4.2.1'
+  :ref => 'master'
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
-  :ref => '1.12.0'
+  :ref => 'master'
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
-  :ref => '2.2.0'
+  :ref => 'master'
 
 mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached',
-  :ref => 'v3.3.0'
+  :ref => 'master'
 
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
-  :ref => 'v10.3.0'
+  :ref => 'master'
 
 mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
@@ -146,7 +146,7 @@ mod 'remote',
 
 mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync',
-  :ref => '1.1.0'
+  :ref => 'master'
 
 mod 'ssh',
   :git => 'https://github.com/saz/puppet-ssh',
@@ -154,11 +154,11 @@ mod 'ssh',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => '5.0.0'
+  :ref => 'master'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
-  :ref => 'v0.0.12'
+  :ref => 'master'
 
 mod 'systemd',
   :git => 'https://github.com/camptocamp/puppet-systemd',
@@ -166,9 +166,9 @@ mod 'systemd',
 
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
-  :ref => '2.3.0'
+  :ref => 'master'
 
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',
-  :ref => '3.1.0'
+  :ref => 'master'
 
