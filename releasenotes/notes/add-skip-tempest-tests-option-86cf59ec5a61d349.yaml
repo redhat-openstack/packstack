@@ -1,0 +1,6 @@
+---
+features:
+  - |
+    Add new config option "CONFIG_SKIP_TEMPEST_TESTS" to allow
+    skipping of some of tempest tests which are running as part
+    of "CONFIG_RUN_TEMPEST_TESTS".
