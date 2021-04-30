@@ -1,12 +1,6 @@
 class packstack::nova::sched ()
 {
-    class {'::nova::scheduler::filter':
-      scheduler_default_filters => ['AvailabilityZoneFilter',
-                                    'ComputeFilter',
-                                    'ComputeCapabilitiesFilter', 'ImagePropertiesFilter',
-                                    'ServerGroupAntiAffinityFilter',
-                                    'ServerGroupAffinityFilter'],
-    }
+    include '::nova::scheduler::filter'
 
     class { '::nova::scheduler':
       enabled => true,

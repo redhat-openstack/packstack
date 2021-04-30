@@ -102,7 +102,7 @@ mod 'vswitch',
 
 mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger',
@@ -110,15 +110,15 @@ mod 'certmonger',
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached',
@@ -126,7 +126,7 @@ mod 'memcached',
 
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
@@ -154,7 +154,7 @@ mod 'ssh',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
@@ -166,7 +166,7 @@ mod 'systemd',
 
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',
