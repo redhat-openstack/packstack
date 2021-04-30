@@ -43,10 +43,10 @@ class packstack::ceilometer ()
       event_pipeline_publishers => ['gnocchi://', 'panko://'],
     }
 
-    class { '::ceilometer::agent::auth':
-      auth_url      => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      auth_password => hiera('CONFIG_CEILOMETER_KS_PW'),
-      auth_region   => hiera('CONFIG_KEYSTONE_REGION'),
+    class { '::ceilometer::agent::service_credentials':
+      auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      password    => hiera('CONFIG_CEILOMETER_KS_PW'),
+      region_name => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
     class { '::ceilometer::agent::polling':
