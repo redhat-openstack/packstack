@@ -5,7 +5,7 @@ class packstack::keystone::cinder ()
     $cinder_port = '8776'
     $cinder_url = "${cinder_protocol}://${cinder_host}:${cinder_port}"
 
-    class { '::cinder::keystone::auth':
+    class { 'cinder::keystone::auth':
       region          => hiera('CONFIG_KEYSTONE_REGION'),
       password        => hiera('CONFIG_CINDER_KS_PW'),
       public_url_v2   => "${cinder_url}/v2/%(tenant_id)s",

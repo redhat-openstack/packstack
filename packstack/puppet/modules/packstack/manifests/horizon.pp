@@ -16,7 +16,7 @@ class packstack::horizon ()
       'n' => false,
     }
 
-    class {'::horizon':
+    class { 'horizon':
       secret_key            => hiera('CONFIG_HORIZON_SECRET_KEY'),
       keystone_url          => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       keystone_default_role => '_member_',
@@ -60,7 +60,7 @@ class packstack::horizon ()
       ensure_packages(['openstack-heat-ui'], {'ensure' => 'present'})
     }
 
-    include '::packstack::memcached'
+    include packstack::memcached
 
     $firewall_port = hiera('CONFIG_HORIZON_PORT')
 

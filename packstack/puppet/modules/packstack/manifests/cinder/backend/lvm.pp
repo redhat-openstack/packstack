@@ -7,7 +7,7 @@ class packstack::cinder::backend::lvm ()
         # Find an available loop device
         $loop_dev = chomp(generate('/usr/sbin/losetup', '-f'))
 
-        class { '::cinder::setup_test_volume':
+        class { 'cinder::setup_test_volume':
           size            => hiera('CONFIG_CINDER_VOLUMES_SIZE'),
           loopback_device => $loop_dev,
           volume_path     => '/var/lib/cinder',

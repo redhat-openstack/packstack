@@ -5,7 +5,7 @@ class packstack::keystone::ceilometer ()
     $ceilometer_api_host = hiera('CONFIG_KEYSTONE_HOST_URL')
     $ceilometer_url = "${ceilometer_protocol}://${ceilometer_api_host}:${ceilometer_port}"
 
-    class { '::ceilometer::keystone::auth':
+    class { 'ceilometer::keystone::auth':
       region       => hiera('CONFIG_KEYSTONE_REGION'),
       password     => hiera('CONFIG_CEILOMETER_KS_PW'),
       public_url   => $ceilometer_url,

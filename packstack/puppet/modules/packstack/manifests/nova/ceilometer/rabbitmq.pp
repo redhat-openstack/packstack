@@ -19,11 +19,11 @@ class packstack::nova::ceilometer::rabbitmq ()
       File[$ceilometer_files_to_set_owner] ~> Service<| tag == 'ceilometer-service' |>
     }
 
-    class { '::ceilometer::logging':
+    class { 'ceilometer::logging':
         debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::ceilometer':
+    class { 'ceilometer':
         telemetry_secret      => hiera('CONFIG_CEILOMETER_SECRET'),
         rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
         default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",

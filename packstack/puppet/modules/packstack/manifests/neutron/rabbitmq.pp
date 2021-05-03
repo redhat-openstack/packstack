@@ -25,11 +25,11 @@ class packstack::neutron::rabbitmq ()
       File[$files_to_set_owner] ~> Service<| tag == 'neutron-service' |>
     }
 
-    class { '::neutron::logging':
+    class { 'neutron::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::neutron':
+    class { 'neutron':
       bind_host             => $bind_host,
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",

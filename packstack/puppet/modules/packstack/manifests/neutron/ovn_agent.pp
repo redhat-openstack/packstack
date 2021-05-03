@@ -45,7 +45,7 @@ class packstack::neutron::ovn_agent ()
 
     $ovn_southd = "tcp:${hiera('CONFIG_CONTROLLER_HOST')}:6642"
 
-    class { '::ovn::controller':
+    class { 'ovn::controller':
       ovn_remote                => $ovn_southd,
       ovn_bridge_mappings       => $bridge_mappings,
       bridge_interface_mappings => $bridge_uplinks,

@@ -43,7 +43,7 @@ class packstack::neutron::ovs_agent ()
       $bridge_mappings = []
     }
 
-    class { '::neutron::agents::ml2::ovs':
+    class { 'neutron::agents::ml2::ovs':
       bridge_uplinks  => $bridge_uplinks,
       bridge_mappings => $bridge_mappings,
       tunnel_types    => hiera_array('CONFIG_NEUTRON_OVS_TUNNEL_TYPES'),

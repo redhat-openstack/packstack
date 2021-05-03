@@ -1,6 +1,6 @@
 class packstack::nova::sched::ironic ()
 {
-  class { '::nova::scheduler':
+  class { 'nova::scheduler':
     enabled => true,
   }
 }

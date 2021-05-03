@@ -23,11 +23,11 @@ class packstack::aodh::rabbitmq ()
       File[$files_to_set_owner] ~> Service<| tag == 'aodh-service' |>
     }
 
-    class { '::aodh::logging':
+    class { 'aodh::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::aodh':
+    class { 'aodh':
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,

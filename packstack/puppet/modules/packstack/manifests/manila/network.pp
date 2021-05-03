@@ -3,7 +3,7 @@ define packstack::manila::network ($backend_name = $name) {
   $manila_network_type = hiera('CONFIG_MANILA_NETWORK_TYPE')
 
   if ($manila_network_type == 'neutron'){
-    class { '::manila::network::neutron':
+    class { 'manila::network::neutron':
       auth_type => 'password',
       auth_url  => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       password  => hiera('CONFIG_NEUTRON_KS_PW'),

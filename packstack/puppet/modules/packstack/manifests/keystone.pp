@@ -9,10 +9,10 @@ class packstack::keystone ()
     $keystone_url = regsubst(regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
     $keystone_admin_url = hiera('CONFIG_KEYSTONE_ADMIN_URL')
 
-    class { '::keystone::client': }
+    class { 'keystone::client': }
 
     if hiera('CONFIG_KEYSTONE_FERNET_TOKEN_ROTATE_ENABLE',false) {
-      class { '::keystone::cron::fernet_rotate':
+      class { 'keystone::cron::fernet_rotate':
         require     => Service['crond'],
       }
       service { 'crond':
@@ -21,11 +21,11 @@ class packstack::keystone ()
       }
     }
 
-    class { '::keystone::logging':
+    class { 'keystone::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::keystone':
+    class { 'keystone':
       database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
       token_provider      => $keystone_token_provider_str,
       enable_fernet_setup => true,
@@ -34,7 +34,7 @@ class packstack::keystone ()
       default_domain      => 'Default',
     }
 
-    class { '::keystone::wsgi::apache':
+    class { 'keystone::wsgi::apache':
       workers => hiera('CONFIG_SERVICE_WORKERS'),
       ssl     => $keystone_use_ssl
     }
@@ -46,7 +46,7 @@ class packstack::keystone ()
       ensure => present,
     }
 
-    class { '::keystone::bootstrap':
+    class { 'keystone::bootstrap':
       password     => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
       username     => $username,
       email        => hiera('CONFIG_KEYSTONE_ADMIN_EMAIL'),
@@ -69,7 +69,7 @@ class packstack::keystone ()
         $user_enabled_emulation = false
       }
 
-      class { '::keystone::ldap':
+      class { 'keystone::ldap':
         url                                => hiera_undef('CONFIG_KEYSTONE_LDAP_URL', undef),
         user                               => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_DN', undef),
         password                           => hiera_undef('CONFIG_KEYSTONE_LDAP_USER_PASSWORD', undef),

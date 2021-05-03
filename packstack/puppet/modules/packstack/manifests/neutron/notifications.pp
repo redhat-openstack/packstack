@@ -3,7 +3,7 @@ class packstack::neutron::notifications ()
     $neutron_notif_cfg_ctrl_host = hiera('CONFIG_KEYSTONE_HOST_URL')
 
     # Configure nova notifications system
-    class { '::neutron::server::notifications':
+    class { 'neutron::server::notifications':
       username     => 'nova',
       password     => hiera('CONFIG_NOVA_KS_PW'),
       project_name => 'services',

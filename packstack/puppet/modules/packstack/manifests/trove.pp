@@ -8,16 +8,16 @@ class packstack::trove ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    class { '::trove::keystone::authtoken':
+    class { 'trove::keystone::authtoken':
       password => hiera('CONFIG_TROVE_KS_PW'),
       auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }
 
-    class { '::trove::logging':
+    class { 'trove::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::trove::api':
+    class { 'trove::api':
       bind_host => $bind_host,
       enabled   => true,
       cert_file => false,
@@ -26,13 +26,13 @@ class packstack::trove ()
       workers   => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
-    class { '::trove::conductor':
+    class { 'trove::conductor':
       auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       debug    => hiera('CONFIG_DEBUG_MODE'),
       workers  => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
-    class { '::trove::taskmanager':
+    class { 'trove::taskmanager':
       auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       debug    => hiera('CONFIG_DEBUG_MODE'),
     }

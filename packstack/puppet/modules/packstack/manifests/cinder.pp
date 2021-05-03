@@ -24,23 +24,23 @@ class packstack::cinder ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    class { '::cinder::keystone::authtoken':
+    class { 'cinder::keystone::authtoken':
       www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       password             => hiera('CONFIG_CINDER_KS_PW'),
     }
 
-    class { '::cinder::api':
+    class { 'cinder::api':
       bind_host           => $bind_host,
       service_workers     => hiera('CONFIG_SERVICE_WORKERS'),
       default_volume_type => $default_volume_type,
     }
 
-    class { '::cinder::scheduler': }
+    class { 'cinder::scheduler': }
 
-    class { '::cinder::volume': }
+    class { 'cinder::volume': }
 
-    class { '::cinder::client': }
+    class { 'cinder::client': }
 
     $cinder_keystone_admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
     $cinder_keystone_admin_password = hiera('CONFIG_KEYSTONE_ADMIN_PW')
@@ -55,13 +55,13 @@ class packstack::cinder ()
       os_auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
     }
 
-    class { '::cinder::backends':
+    class { 'cinder::backends':
       enabled_backends => hiera_array('CONFIG_CINDER_BACKEND'),
     }
 
     $db_purge = hiera('CONFIG_CINDER_DB_PURGE_ENABLE')
     if $db_purge {
-      class { '::cinder::cron::db_purge':
+      class { 'cinder::cron::db_purge':
         hour        => '*/24',
         destination => '/dev/null',
         age         => 1

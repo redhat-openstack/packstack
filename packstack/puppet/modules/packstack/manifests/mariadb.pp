@@ -23,7 +23,7 @@ class packstack::mariadb ()
 
     $mysql_root_password = hiera('CONFIG_MARIADB_PW')
 
-    class { '::mysql::server':
+    class { 'mysql::server':
       package_name     => $mariadb_package_name,
       restart          => true,
       root_password    => $mysql_root_password,
@@ -64,6 +64,6 @@ class packstack::mariadb ()
       }
     }
   } else {
-        class { '::remote::db': }
+        class { 'remote::db': }
   }
 }

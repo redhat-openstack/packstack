@@ -3,7 +3,7 @@ class packstack::swift::storage ()
     create_resources(packstack::firewall, hiera('FIREWALL_SWIFT_STORAGE_RULES', {}))
 
     # install all swift storage servers together
-    class { '::swift::storage::all':
+    class { 'swift::storage::all':
       # looks like ipv6 address without brackets is required here
       storage_local_net_ip => hiera('CONFIG_STORAGE_HOST'),
       allow_versions       => true,

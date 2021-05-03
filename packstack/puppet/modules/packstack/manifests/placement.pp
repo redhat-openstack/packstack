@@ -8,20 +8,20 @@ class packstack::placement ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    include ::packstack::keystone::placement
-    include ::placement
+    include packstack::keystone::placement
+    include placement
 
-    class { '::placement::logging':
+    class { 'placement::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::placement::db':
+    class { 'placement::db':
       database_connection => "mysql+pymysql://placement:${placement_db_pw}@${placement_mariadb_host}/placement",
     }
 
-    include ::placement::db::sync
+    include placement::db::sync
 
-    class { '::placement::wsgi::apache':
+    class { 'placement::wsgi::apache':
       bind_host => $bind_host,
       api_port  => '8778',
       ssl       => false,

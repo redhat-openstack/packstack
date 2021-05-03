@@ -18,7 +18,7 @@ class packstack::glance::ceilometer ()
         notify  => Service['glance-api'],
       }
     }
-    class { '::glance::notify::rabbitmq':
+    class { 'glance::notify::rabbitmq':
       rabbit_notification_exchange => 'glance',
       rabbit_notification_topic    => 'notifications',
       rabbit_use_ssl               => hiera('CONFIG_AMQP_SSL_ENABLED'),

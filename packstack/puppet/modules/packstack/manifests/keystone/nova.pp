@@ -6,7 +6,7 @@ class packstack::keystone::nova ()
     $nova_url = "${nova_protocol}://${nova_host}:${nova_port}/v2.1/%(tenant_id)s"
 
 
-    class { '::nova::keystone::auth':
+    class { 'nova::keystone::auth':
       region       => hiera('CONFIG_KEYSTONE_REGION'),
       password     => hiera('CONFIG_NOVA_KS_PW'),
       public_url   => $nova_url,

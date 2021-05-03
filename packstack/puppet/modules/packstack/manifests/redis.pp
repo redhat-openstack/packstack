@@ -5,7 +5,7 @@ class packstack::redis ()
     $redis_port = Integer(hiera('CONFIG_REDIS_PORT'))
     $redis_host = hiera('CONFIG_REDIS_HOST')
 
-    class { '::redis':
+    class { 'redis':
       bind           => $redis_host,
       port           => $redis_port,
       appendonly     => true,

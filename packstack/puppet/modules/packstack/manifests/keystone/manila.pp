@@ -6,7 +6,7 @@ class packstack::keystone::manila ()
     $manila_url = "${manila_protocol}://${manila_host}:${manila_port}/v1/%(tenant_id)s"
     $manila_url_v2 = "${manila_protocol}://${manila_host}:${manila_port}/v2/%(tenant_id)s"
 
-    class { '::manila::keystone::auth':
+    class { 'manila::keystone::auth':
       password        => hiera('CONFIG_MANILA_KS_PW'),
       public_url      => $manila_url,
       admin_url       => $manila_url,

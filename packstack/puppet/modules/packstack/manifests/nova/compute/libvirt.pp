@@ -36,14 +36,14 @@ class packstack::nova::compute::libvirt ()
       $client_extraparams = {}
     }
 
-    class { '::nova::migration::libvirt':
+    class { 'nova::migration::libvirt':
       transport          => $migrate_transport,
       client_user        => 'nova_migration',
       client_extraparams => $client_extraparams,
       require            => Class['::nova::compute::libvirt']
     }
 
-    class { '::nova::compute::libvirt':
+    class { 'nova::compute::libvirt':
       libvirt_virt_type => $libvirt_virt_type,
       vncserver_listen  => $libvirt_vnc_bind_host,
       migration_support => true,

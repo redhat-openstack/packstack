@@ -23,11 +23,11 @@ class packstack::manila::rabbitmq ()
     $db_pw = hiera('CONFIG_MANILA_DB_PW')
     $mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
 
-    class { '::manila::logging':
+    class { 'manila::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::manila':
+    class { 'manila':
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       sql_connection        => "mysql+pymysql://manila:${db_pw}@${mariadb_host}/manila",

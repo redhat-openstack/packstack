@@ -18,17 +18,17 @@ class packstack::glance ()
       default => 'file',
     }
 
-    class { '::glance::api::authtoken':
+    class { 'glance::api::authtoken':
       www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       password             => hiera('CONFIG_GLANCE_KS_PW'),
     }
 
-    class { '::glance::api::logging':
+    class { 'glance::api::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::glance::api':
+    class { 'glance::api':
       bind_host           => $bind_host,
       pipeline            => 'keystone',
       database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",

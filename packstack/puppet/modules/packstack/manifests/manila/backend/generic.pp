@@ -30,13 +30,13 @@ class packstack::manila::backend::generic ()
       service_instance_flavor_id => 66,
     }
 
-    class { '::manila::compute::nova':
+    class { 'manila::compute::nova':
       auth_type => 'password',
       auth_url  => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       password  => hiera('CONFIG_NOVA_KS_PW'),
     }
 
-    class { '::manila::volume::cinder':
+    class { 'manila::volume::cinder':
       auth_type => 'password',
       auth_url  => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       password  => hiera('CONFIG_CINDER_KS_PW'),

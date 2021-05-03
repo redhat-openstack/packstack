@@ -9,7 +9,7 @@ class packstack::swift::proxy ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    include '::packstack::memcached'
+    include packstack::memcached
 
     if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and
       hiera('CONFIG_ENABLE_CEILOMETER_MIDDLEWARE') == 'y' {
@@ -51,7 +51,7 @@ class packstack::swift::proxy ()
       ]
     }
 
-    class { '::swift::proxy':
+    class { 'swift::proxy':
       # swift seems to require ipv6 address without brackets
       proxy_local_net_ip => hiera('CONFIG_STORAGE_HOST'),
       pipeline           => $swift_pipeline,
@@ -73,14 +73,14 @@ class packstack::swift::proxy ()
       '::swift::proxy::container_quotas',
     ]: }
 
-    class { '::swift::proxy::bulk':
+    class { 'swift::proxy::bulk':
       max_containers_per_extraction => 10000,
       max_failed_extractions        => 1000,
       max_deletes_per_request       => 10000,
       yield_frequency               => 60,
     }
 
-    class { '::swift::proxy::ratelimit':
+    class { 'swift::proxy::ratelimit':
       clock_accuracy         => 1000,
       max_sleep_time_seconds => 60,
       log_sleep_time_seconds => 0,
@@ -88,11 +88,11 @@ class packstack::swift::proxy ()
       account_ratelimit      => 0,
     }
 
-    class { '::swift::proxy::keystone':
+    class { 'swift::proxy::keystone':
       operator_roles => ['admin', 'SwiftOperator', '_member_'],
     }
 
-    class { '::swift::proxy::authtoken':
+    class { 'swift::proxy::authtoken':
       username             => 'swift',
       project_name         => 'services',
       password             => hiera('CONFIG_SWIFT_KS_PW'),
@@ -101,5 +101,5 @@ class packstack::swift::proxy ()
       auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
-    class { '::swift::objectexpirer': }
+    class { 'swift::objectexpirer': }
 }

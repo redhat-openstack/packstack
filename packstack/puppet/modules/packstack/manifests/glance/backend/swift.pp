@@ -7,7 +7,7 @@ class packstack::glance::backend::swift ()
       default => '3',
     }
 
-    class { '::glance::backend::swift':
+    class { 'glance::backend::swift':
       swift_store_user                    => 'services:glance',
       swift_store_key                     => hiera('CONFIG_GLANCE_KS_PW'),
       swift_store_auth_address            => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),

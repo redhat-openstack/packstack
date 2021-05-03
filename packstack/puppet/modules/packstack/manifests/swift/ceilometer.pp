@@ -5,7 +5,7 @@ class packstack::swift::ceilometer ()
     $rabbit_userid = hiera('CONFIG_AMQP_AUTH_USER')
     $rabbit_password = hiera('CONFIG_AMQP_AUTH_PASSWORD')
 
-    class { '::swift::proxy::ceilometer':
+    class { 'swift::proxy::ceilometer':
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       topic                 => 'notifications',
       control_exchange      => 'swift',

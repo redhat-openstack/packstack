@@ -22,7 +22,7 @@ class packstack::sahara::rabbitmq ()
       File[$files_to_set_owner] ~> Service<| tag == 'sahara-service' |>
     }
 
-    class { '::sahara::keystone::authtoken':
+    class { 'sahara::keystone::authtoken':
       username             => 'sahara',
       password             => hiera('CONFIG_SAHARA_KS_PW'),
       project_name         => 'services',
@@ -30,11 +30,11 @@ class packstack::sahara::rabbitmq ()
       auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
-    class { '::sahara::logging':
+    class { 'sahara::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::sahara':
+    class { 'sahara':
       database_connection   =>
         "mysql+pymysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
       host                  => hiera('CONFIG_SAHARA_HOST'),

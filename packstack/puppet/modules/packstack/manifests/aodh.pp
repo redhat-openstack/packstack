@@ -12,31 +12,31 @@ class packstack::aodh ()
       $coordination_url = ''
     }
 
-    class { '::aodh::keystone::authtoken':
+    class { 'aodh::keystone::authtoken':
       password => hiera('CONFIG_AODH_KS_PW'),
       auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
-    class { '::aodh::api':
+    class { 'aodh::api':
       enabled      => true,
       service_name => 'httpd',
       sync_db      => true,
     }
 
-    class { '::aodh::wsgi::apache':
+    class { 'aodh::wsgi::apache':
       workers => hiera('CONFIG_SERVICE_WORKERS'),
       ssl     => false
     }
 
-    class { '::aodh::service_credentials':
+    class { 'aodh::service_credentials':
       password    => hiera('CONFIG_AODH_KS_PW'),
       auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       region_name => hiera('CONFIG_KEYSTONE_REGION'),
     }
-    class { '::aodh::evaluator':
+    class { 'aodh::evaluator':
       coordination_url => $coordination_url,
     }
-    class { '::aodh::notifier': }
-    class { '::aodh::listener': }
-    class { '::aodh::client': }
+    class { 'aodh::notifier': }
+    class { 'aodh::listener': }
+    class { 'aodh::client': }
 }

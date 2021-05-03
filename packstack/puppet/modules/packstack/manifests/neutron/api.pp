@@ -10,7 +10,7 @@ class packstack::neutron::api ()
     $neutron_user_password   = hiera('CONFIG_NEUTRON_KS_PW')
     $neutron_vpnaas_enabled  = str2bool(hiera('CONFIG_NEUTRON_VPNAAS'))
 
-    class { '::neutron::keystone::authtoken':
+    class { 'neutron::keystone::authtoken':
       username             => 'neutron',
       password             => $neutron_user_password,
       www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
@@ -22,7 +22,7 @@ class packstack::neutron::api ()
       database_connection   => $neutron_sql_connection,
     }
 
-    class { '::neutron::server':
+    class { 'neutron::server':
       sync_db               => true,
       enabled               => true,
       api_workers           => hiera('CONFIG_SERVICE_WORKERS'),
@@ -37,7 +37,7 @@ class packstack::neutron::api ()
     }
 
     if $neutron_vpnaas_enabled {
-      class { '::neutron::services::vpnaas': }
+      class { 'neutron::services::vpnaas': }
     }
 
     Class['::neutron::server'] -> File['/etc/neutron/api-paste.ini']

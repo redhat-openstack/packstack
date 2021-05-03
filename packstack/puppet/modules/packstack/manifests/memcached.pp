@@ -6,7 +6,7 @@ class packstack::memcached ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    class { '::memcached':
+    class { 'memcached':
       listen_ip  => $memcached_bind_host,
       max_memory => '10%',
     }

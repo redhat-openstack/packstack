@@ -6,7 +6,7 @@ class packstack::nova::vncproxy ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    class { '::nova::vncproxy':
+    class { 'nova::vncproxy':
       enabled => true,
       host    => $vnc_bind_host,
     }

@@ -2,7 +2,7 @@ class packstack::neutron::ovn_metadata ()
 {
     $ovn_southd = "tcp:${hiera('CONFIG_CONTROLLER_HOST')}:6642"
 
-    class { '::neutron::agents::ovn_metadata':
+    class { 'neutron::agents::ovn_metadata':
       ovn_sb_connection => $ovn_southd,
       shared_secret     => hiera('CONFIG_NEUTRON_METADATA_PW'),
       metadata_host     => force_ip(hiera('CONFIG_KEYSTONE_HOST_URL')),

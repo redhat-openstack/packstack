@@ -6,7 +6,7 @@ class packstack::neutron::ml2 ()
       $vxlan_group_value = hiera('CONFIG_NEUTRON_ML2_VXLAN_GROUP')
     }
 
-    class { '::neutron::plugins::ml2':
+    class { 'neutron::plugins::ml2':
       type_drivers          => hiera_array('CONFIG_NEUTRON_ML2_TYPE_DRIVERS'),
       tenant_network_types  => hiera_array('CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'),
       mechanism_drivers     => hiera_array('CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'),
@@ -21,7 +21,7 @@ class packstack::neutron::ml2 ()
     }
 
     if hiera('CONFIG_NEUTRON_L2_AGENT') == 'ovn' {
-      class {'::neutron::plugins::ml2::ovn':
+      class { 'neutron::plugins::ml2::ovn':
         ovn_nb_connection    => "tcp:${hiera('CONFIG_CONTROLLER_HOST')}:6641",
         ovn_sb_connection    => "tcp:${hiera('CONFIG_CONTROLLER_HOST')}:6642",
         ovn_metadata_enabled => true,

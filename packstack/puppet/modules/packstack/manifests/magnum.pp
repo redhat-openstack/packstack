@@ -4,7 +4,7 @@ class packstack::magnum ()
 
     $magnum_cfg_magnum_db_pw = hiera('CONFIG_MAGNUM_DB_PW')
     $magnum_cfg_magnum_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
-    class { '::magnum::db':
+    class { 'magnum::db':
       database_connection => "mysql+pymysql://magnum:${magnum_cfg_magnum_db_pw}@${magnum_cfg_magnum_mariadb_host}/magnum",
     }
 
@@ -12,7 +12,7 @@ class packstack::magnum ()
     $magnum_host = hiera('CONFIG_KEYSTONE_HOST_URL')
     $magnum_port = '9511'
     $magnum_url = "${magnum_protocol}://${magnum_host}:${magnum_port}/v1"
-    class { '::magnum::keystone::authtoken':
+    class { 'magnum::keystone::authtoken':
       www_authenticate_uri => "${magnum_protocol}://${magnum_host}:5000/v3",
       auth_url             => "${magnum_protocol}://${magnum_host}:5000",
       auth_version         => 'v3',
@@ -23,7 +23,7 @@ class packstack::magnum ()
       project_name         => 'services'
     }
 
-    class { '::magnum::keystone::keystone_auth':
+    class { 'magnum::keystone::keystone_auth':
       username            => 'magnum',
       password            => hiera('CONFIG_MAGNUM_KS_PW'),
       auth_url            => "${magnum_protocol}://${magnum_host}:5000",
@@ -32,22 +32,22 @@ class packstack::magnum ()
       project_domain_name => 'Default',
     }
 
-    class { '::magnum::api':
+    class { 'magnum::api':
       enabled => true,
       host    => '0.0.0.0'
     }
 
-    class { '::magnum::conductor':
+    class { 'magnum::conductor':
     }
 
-    class { '::magnum::client':
+    class { 'magnum::client':
     }
 
-    class { '::magnum::clients':
+    class { 'magnum::clients':
       region_name => hiera('CONFIG_KEYSTONE_REGION')
     }
 
-    class { '::magnum::certificates':
+    class { 'magnum::certificates':
       cert_manager_type => 'local'
     }
 }

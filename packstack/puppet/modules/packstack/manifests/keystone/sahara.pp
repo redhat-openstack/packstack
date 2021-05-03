@@ -5,7 +5,7 @@ class packstack::keystone::sahara ()
     $sahara_port = '8386'
     $sahara_url = "${sahara_protocol}://${sahara_host}:${sahara_port}"
 
-    class { '::sahara::keystone::auth':
+    class { 'sahara::keystone::auth':
       password     => hiera('CONFIG_SAHARA_KS_PW'),
       public_url   => $sahara_url,
       admin_url    => $sahara_url,

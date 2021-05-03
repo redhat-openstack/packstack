@@ -12,22 +12,22 @@ class packstack::manila ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    class { '::manila::keystone::authtoken':
+    class { 'manila::keystone::authtoken':
       password             => hiera('CONFIG_MANILA_KS_PW'),
       www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
     }
 
-    class { '::manila::api':
+    class { 'manila::api':
       bind_host          => $bind_host,
     }
 
-    class { '::manila::scheduler':
+    class { 'manila::scheduler':
     }
 
-    class { '::manila::share':
+    class { 'manila::share':
     }
 
-    class { '::manila::backends':
+    class { 'manila::backends':
       enabled_share_backends => hiera('CONFIG_MANILA_BACKEND'),
     }
 }

@@ -103,7 +103,7 @@ class packstack::provision::tempest ()
       $neutron_api_extensions = undef
     }
 
-    class { '::tempest':
+    class { 'tempest':
       admin_domain_name         => $admin_domain_name,
       admin_password            => $admin_password,
       admin_tenant_name         => $admin_tenant_name,

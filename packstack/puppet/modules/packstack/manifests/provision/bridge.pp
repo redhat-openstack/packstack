@@ -14,7 +14,7 @@ class packstack::provision::bridge ()
       $floating_range_br = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
     }
 
-    class { '::neutron::keystone::authtoken':
+    class { 'neutron::keystone::authtoken':
       username             => 'neutron',
       password             => $neutron_user_password,
       www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),

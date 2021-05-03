@@ -1,6 +1,6 @@
 class packstack::sahara::ceilometer ()
 {
-    class { '::sahara::notify':
+    class { 'sahara::notify':
       notification_driver  => 'messagingv2',
     }
 }

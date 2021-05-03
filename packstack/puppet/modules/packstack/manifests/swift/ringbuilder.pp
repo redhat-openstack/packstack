@@ -1,6 +1,6 @@
 class packstack::swift::ringbuilder ()
 {
-    class { '::swift::ringbuilder':
+    class { 'swift::ringbuilder':
       part_power     => '18',
       replicas       => hiera('CONFIG_SWIFT_STORAGE_REPLICAS'),
       min_part_hours => 1,
@@ -8,7 +8,7 @@ class packstack::swift::ringbuilder ()
     }
 
     # sets up an rsync db that can be used to sync the ring DB
-    class { '::swift::ringserver':
+    class { 'swift::ringserver':
       local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
     }
 

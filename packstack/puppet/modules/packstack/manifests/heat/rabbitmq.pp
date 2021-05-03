@@ -28,17 +28,17 @@ class packstack::heat::rabbitmq ()
       $heat_notification_driver = $::os_service_default
     }
 
-    class { '::heat::keystone::authtoken':
+    class { 'heat::keystone::authtoken':
       password             => hiera('CONFIG_HEAT_KS_PW'),
       www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
-    class { '::heat::logging':
+    class { 'heat::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::heat':
+    class { 'heat':
       keystone_ec2_uri      => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",

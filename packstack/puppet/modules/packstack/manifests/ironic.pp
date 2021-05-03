@@ -6,14 +6,14 @@ class packstack::ironic ()
       'glance/glance_host': value => hiera('CONFIG_STORAGE_HOST_URL');
     }
 
-    class { '::ironic::api::authtoken':
+    class { 'ironic::api::authtoken':
       www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       password             => hiera('CONFIG_IRONIC_KS_PW'),
     }
 
-    class { '::ironic::api': }
+    class { 'ironic::api': }
 
-    class { '::ironic::client': }
+    class { 'ironic::client': }
 
-    class { '::ironic::conductor': }
+    class { 'ironic::conductor': }
 }

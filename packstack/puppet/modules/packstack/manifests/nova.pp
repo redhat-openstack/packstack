@@ -56,11 +56,11 @@ class packstack::nova ()
       $key = undef
     }
 
-    class { '::nova::logging':
+    class { 'nova::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
-    class { '::nova':
+    class { 'nova':
       default_transport_url   => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       rabbit_use_ssl          => hiera('CONFIG_AMQP_SSL_ENABLED'),
       nova_public_key         => $public_key,

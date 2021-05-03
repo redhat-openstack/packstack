@@ -21,7 +21,7 @@ define packstack::amqp::enable_rabbitmq {
       notify  => Service['rabbitmq-server'],
     }
 
-    class { '::rabbitmq':
+    class { 'rabbitmq':
       port                     => undef,
       ssl_port                 => 0 + hiera('CONFIG_AMQP_CLIENTS_PORT'),
       ssl_only                 => true,
@@ -42,7 +42,7 @@ define packstack::amqp::enable_rabbitmq {
       tcp_backlog              => 128,
     }
   } else {
-    class { '::rabbitmq':
+    class { 'rabbitmq':
       port             => 0 + hiera('CONFIG_AMQP_CLIENTS_PORT'),
       ssl              => false,
       default_user     => hiera('CONFIG_AMQP_AUTH_USER'),

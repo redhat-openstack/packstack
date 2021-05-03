@@ -26,7 +26,7 @@ class packstack::ceilometer ()
       $coordination_url = ''
     }
 
-    include ::ceilometer
+    include ceilometer
 
     exec {'ceilometer-db-upgrade':
       command   => 'ceilometer-upgrade',
@@ -38,18 +38,18 @@ class packstack::ceilometer ()
     Keystone::Resource::Service_identity<||> -> Exec['ceilometer-db-upgrade']
       ~> Service['ceilometer-agent-notification']
 
-    class { '::ceilometer::agent::notification':
+    class { 'ceilometer::agent::notification':
       manage_event_pipeline     => true,
       event_pipeline_publishers => ['gnocchi://', 'panko://'],
     }
 
-    class { '::ceilometer::agent::service_credentials':
+    class { 'ceilometer::agent::service_credentials':
       auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       password    => hiera('CONFIG_CEILOMETER_KS_PW'),
       region_name => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
-    class { '::ceilometer::agent::polling':
+    class { 'ceilometer::agent::polling':
       manage_polling   => true,
       coordination_url => $coordination_url,
     }

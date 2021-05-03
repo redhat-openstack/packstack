@@ -11,7 +11,7 @@ class packstack::nova::api ()
     $www_authenticate_uri = hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS')
     $admin_password = hiera('CONFIG_NOVA_KS_PW')
 
-    class {'::nova::keystone::authtoken':
+    class { 'nova::keystone::authtoken':
       password             => $admin_password,
       www_authenticate_uri => $www_authenticate_uri,
       auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
@@ -23,11 +23,11 @@ class packstack::nova::api ()
       $pci_alias = hiera('CONFIG_NOVA_PCI_ALIAS')
     }
 
-    class { '::nova::pci':
+    class { 'nova::pci':
       aliases                              => $pci_alias,
     }
 
-    class { '::nova::api':
+    class { 'nova::api':
       api_bind_address           => $bind_host,
       enabled                    => true,
       sync_db                    => false,
@@ -38,31 +38,31 @@ class packstack::nova::api ()
       service_name               => 'httpd',
     }
 
-    class { '::nova::metadata':
+    class { 'nova::metadata':
       neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
     }
 
-    class { '::nova::wsgi::apache_api':
+    class { 'nova::wsgi::apache_api':
       bind_host => $bind_host,
       ssl       => false,
       workers   => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
-    class { '::nova::wsgi::apache_metadata':
+    class { 'nova::wsgi::apache_metadata':
       bind_host => $bind_host,
       ssl       => false,
       workers   => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
-    class { '::nova::db::sync':
+    class { 'nova::db::sync':
       db_sync_timeout => 600,
     }
 
-    class { '::nova::db::sync_api':
+    class { 'nova::db::sync_api':
       db_sync_timeout => 600,
     }
 
-    class { '::nova::placement':
+    class { 'nova::placement':
       auth_url    => $www_authenticate_uri,
       password    => $admin_password,
       region_name => hiera('CONFIG_KEYSTONE_REGION'),
@@ -70,13 +70,13 @@ class packstack::nova::api ()
 
     $db_purge = hiera('CONFIG_NOVA_DB_PURGE_ENABLE')
     if $db_purge {
-      class { '::nova::cron::archive_deleted_rows':
+      class { 'nova::cron::archive_deleted_rows':
         hour        => '*/12',
         destination => '/dev/null',
       }
     }
 
-    include ::nova::cell_v2::simple_setup
+    include nova::cell_v2::simple_setup
 
     $manage_flavors = str2bool(hiera('CONFIG_NOVA_MANAGE_FLAVORS'))
     if $manage_flavors {

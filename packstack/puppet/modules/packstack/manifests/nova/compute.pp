@@ -73,11 +73,11 @@ class packstack::nova::compute ()
       $instance_usage_audit_period = 'month'
     }
 
-    class { '::nova::compute::pci':
+    class { 'nova::compute::pci':
       passthrough => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST')
     }
 
-    class { '::nova::compute':
+    class { 'nova::compute':
       enabled                       => true,
       vncproxy_host                 => hiera('CONFIG_KEYSTONE_HOST_URL'),
       vncproxy_protocol             => hiera('CONFIG_VNCPROXY_PROTOCOL'),
@@ -88,7 +88,7 @@ class packstack::nova::compute ()
       force_config_drive            => false,
     }
 
-    class { '::nova::placement':
+    class { 'nova::placement':
       auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
       password    => hiera('CONFIG_NOVA_KS_PW'),
       region_name => hiera('CONFIG_KEYSTONE_REGION'),
