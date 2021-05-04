@@ -54,11 +54,6 @@ class packstack::chrony ()
       name   => 'chrony',
     }
 
-    package { 'ntpdate':
-      ensure => 'installed',
-      name   => 'ntpdate',
-    }
-
     file { 'chrony_conf':
       ensure  => file,
       path    => '/etc/chrony.conf',
@@ -72,14 +67,8 @@ class packstack::chrony ()
       onlyif  => 'systemctl status chronyd.service'
     }
 
-    # for cases where ntpd is running instead of default chronyd
-    service { 'ntpd':
-      ensure => stopped,
-      enable => false,
-    }
-
     exec { 'ntpdate':
-      command => "/usr/sbin/ntpdate ${cfg_ntp_servers}",
+      command => "/usr/bin/chronyc makestep",
       tries   => 3,
     }
 
@@ -92,10 +81,8 @@ class packstack::chrony ()
     }
 
     Package['chrony']
-    -> Package['ntpdate']
     -> File['chrony_conf']
     -> Exec['stop-chronyd']
-    -> Service['ntpd']
-    -> Exec['ntpdate']
     -> Service['chronyd']
+    -> Exec['ntpdate']
 }
