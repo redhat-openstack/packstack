@@ -1,0 +1,8 @@
+---
+deprecations:
+  - |
+    The CONFIG_KEYSTONE_LDAP_USER_ALLOW_* and
+    CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_* parameters have been removed from the
+    answer file. Their corresponding options were removed from Keystone long
+    ago, and they are no longer valid in puppet-keystone since the Rocky
+    release.
