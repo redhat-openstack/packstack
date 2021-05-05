@@ -4,105 +4,105 @@ moduledir '/usr/share/openstack-puppet/modules'
 
 mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'cinder',
   :git => 'https://github.com/openstack/puppet-cinder',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'glance',
   :git => 'https://github.com/openstack/puppet-glance',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'gnocchi',
   :git => 'https://github.com/openstack/puppet-gnocchi',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'magnum',
   :git => 'https://github.com/openstack/puppet-magnum',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'horizon',
   :git => 'https://github.com/openstack/puppet-horizon',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'ironic',
   :git => 'https://github.com/openstack/puppet-ironic',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'keystone',
   :git => 'https://github.com/openstack/puppet-keystone',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'manila',
   :git => 'https://github.com/openstack/puppet-manila',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'nova',
   :git => 'https://github.com/openstack/puppet-nova',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'openstacklib',
   :git => 'https://github.com/openstack/puppet-openstacklib',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'oslo',
   :git => 'https://github.com/openstack/puppet-oslo',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'ovn',
   :git => 'https://github.com/openstack/puppet-ovn',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'panko',
   :git => 'https://github.com/openstack/puppet-panko',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'placement',
   :git => 'https://github.com/openstack/puppet-placement',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'sahara',
   :git => 'https://github.com/openstack/puppet-sahara',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'swift',
   :git => 'https://github.com/openstack/puppet-swift',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'tempest',
   :git => 'https://github.com/openstack/puppet-tempest',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'trove',
   :git => 'https://github.com/openstack/puppet-trove',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 mod 'vswitch',
   :git => 'https://github.com/openstack/puppet-vswitch',
-  :ref => 'master'
+  :ref => 'stable/wallaby'
 
 ## Non-OpenStack modules
 
 mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'certmonger',
   :git => 'https://github.com/rcritten/puppet-certmonger',
@@ -110,15 +110,15 @@ mod 'certmonger',
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached',
@@ -126,7 +126,7 @@ mod 'memcached',
 
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
@@ -154,7 +154,7 @@ mod 'ssh',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
@@ -166,7 +166,7 @@ mod 'systemd',
 
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',

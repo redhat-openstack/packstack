@@ -18,7 +18,7 @@ class packstack::ceilometer ()
       $redis_port = hiera('CONFIG_REDIS_PORT')
       $coordination_url = "redis://${redis_host}:${redis_port}"
 
-      ensure_resource('package', 'python-redis', {
+      ensure_packages('python-redis', {
         name   => "python${pyvers}-redis",
         tag    => 'openstack',
       })
