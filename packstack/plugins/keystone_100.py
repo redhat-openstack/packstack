@@ -384,48 +384,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "keystone-ldap-user-allow-create",
-             "PROMPT": (
-                 "Do you want to allow user create through Keystone (n or y)."
-             ),
-             "OPTION_LIST": ['n', 'y'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'n',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_KEYSTONE_LDAP_USER_ALLOW_CREATE',
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "keystone-ldap-user-allow-update",
-             "PROMPT": (
-                 "Do you want to allow user update through Keystone (n or y)."
-             ),
-             "OPTION_LIST": ['n', 'y'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'n',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_KEYSTONE_LDAP_USER_ALLOW_UPDATE',
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "keystone-ldap-user-allow-delete",
-             "PROMPT": (
-                 "Do you want to allow user delete through Keystone (n or y)."
-             ),
-             "OPTION_LIST": ['n', 'y'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'n',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_KEYSTONE_LDAP_USER_ALLOW_DELETE',
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "keystone-ldap-user-pass-attribute",
              "PROMPT": "Enter the Keystone LDAP user password attribute.",
              "OPTION_LIST": [],
@@ -564,48 +522,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "keystone-ldap-group-allow-create",
-             "PROMPT": (
-                 "Do you want to allow group create through Keystone (n or y)."
-             ),
-             "OPTION_LIST": ['n', 'y'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'n',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_CREATE',
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "keystone-ldap-group-allow-update",
-             "PROMPT": (
-                 "Do you want to allow group update through Keystone (n or y)."
-             ),
-             "OPTION_LIST": ['n', 'y'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'n',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_UPDATE',
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "keystone-ldap-group-allow-delete",
-             "PROMPT": (
-                 "Do you want to allow group delete through Keystone (n or y)."
-             ),
-             "OPTION_LIST": ['n', 'y'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": 'n',
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_DELETE',
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "keystone-ldap-group-additional-attribute-mapping",
              "PROMPT": (
                  "Enter the comma separated Keystone LDAP group additional "
@@ -723,12 +639,6 @@ def munge_ldap_config_params(config, messages):
     def is_bool(keyname):
         return keyname in (
             'CONFIG_KEYSTONE_LDAP_USER_ENABLED_INVERT',
-            'CONFIG_KEYSTONE_LDAP_USER_ALLOW_CREATE',
-            'CONFIG_KEYSTONE_LDAP_USER_ALLOW_UPDATE',
-            'CONFIG_KEYSTONE_LDAP_USER_ALLOW_DELETE',
-            'CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_CREATE',
-            'CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_UPDATE',
-            'CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_DELETE',
             'CONFIG_KEYSTONE_LDAP_USE_TLS'
         )
 

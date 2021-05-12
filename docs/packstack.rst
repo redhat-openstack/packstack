@@ -392,15 +392,6 @@ Keystone LDAP Identity Backend Config parameters
 **CONFIG_KEYSTONE_LDAP_USER_DEFAULT_PROJECT_ID_ATTRIBUTE**
     Identity service LDAP attribute mapped to default_project_id for users.
 
-**CONFIG_KEYSTONE_LDAP_USER_ALLOW_CREATE**
-    Specify 'y' if you want to be able to create Identity service users through the Identity service interface; specify 'n' if you will create directly in the LDAP backend. ['n', 'y']
-
-**CONFIG_KEYSTONE_LDAP_USER_ALLOW_UPDATE**
-    Specify 'y' if you want to be able to update Identity service users through the Identity service interface; specify 'n' if you will update directly in the LDAP backend. ['n', 'y']
-
-**CONFIG_KEYSTONE_LDAP_USER_ALLOW_DELETE**
-    Specify 'y' if you want to be able to delete Identity service users through the Identity service interface; specify 'n' if you will delete directly in the LDAP backend. ['n', 'y']
-
 **CONFIG_KEYSTONE_LDAP_USER_PASS_ATTRIBUTE**
     Identity service LDAP attribute mapped to password.
 
@@ -433,15 +424,6 @@ Keystone LDAP Identity Backend Config parameters
 
 **CONFIG_KEYSTONE_LDAP_GROUP_ATTRIBUTE_IGNORE**
     Comma-separated list of attributes stripped from LDAP group entry upon update.
-
-**CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_CREATE**
-    Specify 'y' if you want to be able to create Identity service groups through the Identity service interface; specify 'n' if you will create directly in the LDAP backend. ['n', 'y']
-
-**CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_UPDATE**
-    Specify 'y' if you want to be able to update Identity service groups through the Identity service interface; specify 'n' if you will update directly in the LDAP backend. ['n', 'y']
-
-**CONFIG_KEYSTONE_LDAP_GROUP_ALLOW_DELETE**
-    Specify 'y' if you want to be able to delete Identity service groups through the Identity service interface; specify 'n' if you will delete directly in the LDAP backend. ['n', 'y']
 
 **CONFIG_KEYSTONE_LDAP_GROUP_ADDITIONAL_ATTRIBUTE_MAPPING**
     List of additional LDAP attributes used for mapping additional attribute mappings for groups. The attribute=mapping format is <ldap_attr>:<group_attr>, where ldap_attr is the attribute in the LDAP entry and group_attr is the Identity API attribute.
