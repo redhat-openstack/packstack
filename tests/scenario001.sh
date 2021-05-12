@@ -44,4 +44,5 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --provision-demo=y \
           --provision-tempest=y \
           --run-tempest=y \
-          --run-tempest-tests="smoke dashboard" || export FAILURE=true
+          --run-tempest-tests="smoke dashboard" \
+          --skip-tempest-tests="test_dashboard_basic_ops" || export FAILURE=true
