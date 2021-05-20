@@ -44,7 +44,7 @@ class packstack::nova::compute::libvirt ()
     }
 
     class { 'nova::compute::libvirt':
-      libvirt_virt_type => $libvirt_virt_type,
+      virt_type         => $libvirt_virt_type,
       vncserver_listen  => $libvirt_vnc_bind_host,
       migration_support => true,
     }
