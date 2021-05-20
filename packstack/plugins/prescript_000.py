@@ -16,10 +16,10 @@
 Plugin responsible for setting OpenStack global options
 """
 
+import distro
 import os
 import re
 import logging
-import platform
 import glob
 import os
 import uuid
@@ -949,16 +949,16 @@ def initSequences(controller):
 
 
 def is_rhel():
-    return 'Red Hat Enterprise Linux' in platform.linux_distribution()[0]
+    return 'Red Hat Enterprise Linux' in distro.linux_distribution()[0]
 
 
 def detect_os_and_version(host):
     server = utils.ScriptRunner(host)
     server.append(
-        'python -c "import platform; '
-        'print platform.linux_distribution(full_distribution_name=0)[0]'
+        'python -c "import distro; '
+        'print distro.linux_distribution(full_distribution_name=0)[0]'
         '+\',\'+'
-        'platform.linux_distribution()[1]"'
+        'distro.linux_distribution()[1]"'
     )
     try:
         rc, out = server.execute()

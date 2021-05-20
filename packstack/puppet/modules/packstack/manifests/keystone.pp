@@ -15,9 +15,14 @@ class packstack::keystone ()
       class { '::keystone::cron::fernet_rotate':
         require     => Service['crond'],
       }
+      package { 'cronie':
+        ensure => 'installed',
+        name   => 'cronie',
+      }
       service { 'crond':
-        ensure => 'running',
-        enable => true,
+        ensure  => 'running',
+        enable  => true,
+        require => Package['cronie'],
       }
     }
 
