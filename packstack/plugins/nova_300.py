@@ -16,8 +16,8 @@
 Installs and configures Nova
 """
 
+import distro
 import os
-import platform
 import socket
 
 from packstack.installer import basedefs
@@ -38,7 +38,7 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 
 def initConfig(controller):
-    if platform.linux_distribution()[0] == "Fedora":
+    if distro.linux_distribution()[0] == "Fedora":
         primary_netif = "em1"
         secondary_netif = "em2"
     else:

@@ -9,8 +9,8 @@ class packstack::mariadb ()
       $mariadb_package_name = 'mariadb-server-galera'
       $mariadb_present      = 'present'
     } else  {
-      # Package mariadb-server conflicts with mariadb-galera-server
-      $mariadb_package_name = 'mariadb-galera-server'
+      # Package mariadb-server conflicts with mariadb-server-galera
+      $mariadb_package_name = 'mariadb-server-galera'
       $mariadb_present      = 'absent'
     }
     ensure_packages(['mariadb-server'], {'ensure' => $mariadb_present})

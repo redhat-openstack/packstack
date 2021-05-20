@@ -26,6 +26,7 @@ from packstack.modules import puppet
 from packstack.installer import basedefs
 from packstack.installer import run_setup
 from packstack.installer import validators
+from packstack.plugins.nova_300 import distro
 
 from ..test_base import FakePopen
 from ..test_base import PackstackTestCaseMixin
@@ -109,6 +110,10 @@ class CommandLineTestCase(PackstackTestCaseMixin, TestCase):
         orig_validate_logfile = puppet.validate_logfile
         puppet.validate_logfile = lambda a: None
         puppet.scan_logfile = lambda a: []
+
+        # mock distro.linux_distribution, it's does subprocess.check_output
+        # lsb_release -a
+        distro.linux_distribution = lambda: "CentOS"
 
         # If there is a error in a plugin sys.exit() gets called, this masks
         # the actual error that should be reported, so we replace it to

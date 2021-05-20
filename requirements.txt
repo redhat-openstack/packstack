@@ -4,3 +4,4 @@ PyYAML>=3.10
 docutils>=0.11
 pyOpenSSL>=16.2.0
 netifaces
+distro
