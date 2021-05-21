@@ -141,7 +141,7 @@ def generate_ssl_cert(config, host, service, ssl_key_file, ssl_cert_file):
         cert.set_pubkey(k)
         serial = int(time())
         cert.set_serial_number(serial)
-        cert.sign(ca_key, 'sha1')
+        cert.sign(ca_key, 'sha256')
 
         final_cert = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
         final_key = crypto.dump_privatekey(crypto.FILETYPE_PEM, k)
