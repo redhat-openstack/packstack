@@ -278,7 +278,7 @@ def create_self_signed_cert(config, messages):
                 "keyid:always".encode('ascii'), issuer=cert)
         ])
 
-        cert.sign(k, 'sha1')
+        cert.sign(k, 'sha256')
 
         open((CERT_FILE), "w").write(
             crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode())
