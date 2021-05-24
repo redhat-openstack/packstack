@@ -35,7 +35,7 @@ define packstack::amqp::enable_rabbitmq {
       repos_ensure             => false,
       admin_enable             => false,
       loopback_users           => [],
-      # FIXME: it's ugly to not to require client certs
+      ssl_verify               => 'verify_peer',
       ssl_fail_if_no_peer_cert => true,
       config_ranch             => false,
       tcp_keepalive            => true,
