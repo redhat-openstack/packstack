@@ -14,7 +14,6 @@ echo -e "Generating packstack config for:
 - ceilometer
 - aodh
 - gnocchi
-- panko
 - heat
 - magnum
 - tempest (regex: 'smoke TelemetryAlarming')"
@@ -38,7 +37,6 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --glance-backend=file \
           --os-heat-install=y \
           --os-magnum-install=y \
-          --os-panko-install=y \
           --nova-libvirt-virt-type=qemu \
           --provision-image-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img" \
           --provision-demo=y \

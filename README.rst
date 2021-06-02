@@ -248,7 +248,6 @@ cinder         X           X
 ceilometer     X                                   X
 aodh           X                                   X
 gnocchi        X                                   X
-panko                                              X
 heat                                               X
 swift          X                       X          
 sahara                                 X          

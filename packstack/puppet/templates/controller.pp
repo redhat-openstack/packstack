@@ -163,11 +163,6 @@ if hiera('CONFIG_PROVISION_TEMPEST') == 'y' {
 }
 
 
-if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' and hiera('CONFIG_PANKO_INSTALL') == 'y' {
-  include 'packstack::keystone::panko'
-  include 'packstack::panko'
-}
-
 if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
   # setup gnocchi
   include 'packstack::keystone::gnocchi'

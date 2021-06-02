@@ -231,20 +231,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "os-panko-install",
-             "PROMPT": (
-                 "Should Packstack install OpenStack Events Service (Panko)"
-             ),
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_PANKO_INSTALL",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "os-sahara-install",
              "PROMPT": (
                  "Should Packstack install OpenStack Clustering (Sahara)."

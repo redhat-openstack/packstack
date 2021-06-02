@@ -40,7 +40,7 @@ class packstack::ceilometer ()
 
     class { 'ceilometer::agent::notification':
       manage_event_pipeline     => true,
-      event_pipeline_publishers => ['gnocchi://', 'panko://'],
+      event_pipeline_publishers => ['gnocchi://'],
     }
 
     class { 'ceilometer::agent::service_credentials':

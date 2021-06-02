@@ -1,0 +1,10 @@
+---
+other:
+  - |
+    Service panko has been removed in OpenStack project
+    in Xena. Packstack has removed support to deploying
+    this service, what implies some changes:
+
+      * CONFIG_PANKO_INSTALL option has been removed.
+      * CONFIG_PANKO_DB_PW option has been removed.
+      * CONFIG_PANKO_KS_PW option has been removed.

@@ -108,15 +108,6 @@ class packstack::mariadb::services ()
         }
     }
 
-    if hiera('CONFIG_PANKO_INSTALL') == 'y' and
-      hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
-        class { 'panko::db::mysql':
-          password      => hiera('CONFIG_PANKO_DB_PW'),
-          host          => '%',
-          allowed_hosts => '%',
-        }
-    }
-
     if hiera('CONFIG_SAHARA_INSTALL') == 'y' {
         class { 'sahara::db::mysql':
           password      => hiera('CONFIG_SAHARA_DB_PW'),

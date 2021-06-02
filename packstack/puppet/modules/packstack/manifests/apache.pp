@@ -40,10 +40,5 @@ class packstack::apache ()
       # Gnocchi port
       apache::listen { '8041': }
     }
-
-    if hiera('CONFIG_PANKO_INSTALL') == 'y' {
-      # Panko port
-      apache::listen { '8977': }
-    }
 }
 
