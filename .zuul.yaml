@@ -62,6 +62,16 @@
     run: playbooks/packstack-integration-tempest.yaml
 
 - job:
+    name: packstack-centos9
+    parent: packstack-base
+    vars:
+      selinux_enforcing: "false"
+      delorean: "https://trunk.rdoproject.org/centos9-master/current/delorean.repo"
+      delorean_deps: "https://trunk.rdoproject.org/centos9-master/delorean-deps.repo"
+    pre-run: playbooks/packstack-centos9-pre.yaml
+    run: playbooks/packstack-integration-tempest.yaml
+
+- job:
     name: packstack-multinode-centos8s
     parent: packstack-base
     vars:
@@ -75,6 +85,17 @@
           label: centos-8-stream
         - name: compute
           label: centos-8-stream
+    run: playbooks/packstack-multinode.yaml
+
+- job:
+    name: packstack-multinode-centos9
+    parent: packstack-base
+    vars:
+      selinux_enforcing: "false"
+      delorean: "https://trunk.rdoproject.org/centos9-master/current/delorean.repo"
+      delorean_deps: "https://trunk.rdoproject.org/centos9-master/delorean-deps.repo"
+    pre-run: playbooks/packstack-centos9-pre.yaml
+    post-run: playbooks/packstack-post-compute.yaml
     run: playbooks/packstack-multinode.yaml
 
 - job:

@@ -13,7 +13,7 @@
 
     - shell:
         cmd: |
-          source /home/zuul/src/opendev.org/x/packstack/tools/copy-logs.sh
+          source {{ ansible_user_dir }}/src/opendev.org/x/packstack/tools/copy-logs.sh
           recover_default_logs
           mv /tmp/logs/* /tmp/compute
           mv /tmp/compute /tmp/logs

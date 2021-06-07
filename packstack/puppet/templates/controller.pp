@@ -39,9 +39,10 @@ if hiera('CONFIG_GLANCE_INSTALL') == 'y' {
 }
 
 if hiera('CONFIG_CINDER_INSTALL') == 'y' {
-  include '::packstack::keystone::cinder'
-  include '::packstack::cinder::rabbitmq'
-  include '::packstack::cinder'
+  include 'openstacklib::iscsid'
+  include 'packstack::keystone::cinder'
+  include 'packstack::cinder::rabbitmq'
+  include 'packstack::cinder'
   if hiera('CONFIG_SWIFT_INSTALL') == 'y' {
     include '::packstack::cinder::backup'
   }
