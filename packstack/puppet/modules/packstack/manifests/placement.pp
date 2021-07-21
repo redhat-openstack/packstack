@@ -20,6 +20,7 @@ class packstack::placement ()
     }
 
     include placement::db::sync
+    include placement::api
 
     class { 'placement::wsgi::apache':
       bind_host => $bind_host,
