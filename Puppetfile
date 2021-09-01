@@ -146,7 +146,7 @@ mod 'remote',
 
 mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync',
-  :ref => 'master'
+  :ref => 'main'
 
 mod 'ssh',
   :git => 'https://github.com/saz/puppet-ssh',
