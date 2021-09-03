@@ -4,12 +4,12 @@ class packstack::provision::tempest ()
     if $provision_demo {
       $username             = 'demo'
       $password             = hiera('CONFIG_KEYSTONE_DEMO_PW')
-      $tenant_name          = 'demo'
+      $project_name         = 'demo'
       $floating_range       = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
     } else {
       $username             = hiera('CONFIG_PROVISION_TEMPEST_USER')
       $password             = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
-      $tenant_name          = 'tempest'
+      $project_name         = 'tempest'
       $floating_range       = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
     }
 
@@ -19,7 +19,7 @@ class packstack::provision::tempest ()
     $auth_version          = regsubst(hiera('CONFIG_KEYSTONE_API_VERSION'), '.0', '')
     $admin_username        = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
     $admin_password        = hiera('CONFIG_KEYSTONE_ADMIN_PW')
-    $admin_tenant_name     = 'admin'
+    $admin_project_name    = 'admin'
     $admin_domain_name     = 'Default'
 
     # get image and network id
@@ -40,7 +40,7 @@ class packstack::provision::tempest ()
     $resize_available          = true
 
     $change_password_available = undef
-    $allow_tenant_isolation    = true
+    $use_dynamic_credentials   = true
     $dir_log                   = hiera('DIR_LOG')
     $log_file                  = "${dir_log}/tempest.log"
     $use_stderr                = false
@@ -106,9 +106,9 @@ class packstack::provision::tempest ()
     class { 'tempest':
       admin_domain_name         => $admin_domain_name,
       admin_password            => $admin_password,
-      admin_tenant_name         => $admin_tenant_name,
+      admin_project_name        => $admin_project_name,
       admin_username            => $admin_username,
-      allow_tenant_isolation    => $allow_tenant_isolation,
+      use_dynamic_credentials   => $use_dynamic_credentials,
       aodh_available            => $aodh_available,
       auth_version              => $auth_version,
       ceilometer_available      => $ceilometer_available,
@@ -141,7 +141,7 @@ class packstack::provision::tempest ()
       swift_available           => $swift_available,
       tempest_workspace         => $tempest_workspace,
       install_from_source       => false,
-      tenant_name               => $tenant_name,
+      project_name              => $project_name,
       trove_available           => $trove_available,
       username                  => $username,
       use_stderr                => $use_stderr,
