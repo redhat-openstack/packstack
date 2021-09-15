@@ -192,7 +192,7 @@ if [ -z $PIP ]; then
         $SUDO $PKG_MGR -y install python3-pip
         PIP=pip3
     else
-        which pip || $SUDO easy_install pip
+        which pip || $SUDO easy_install pip==20.3.4
         PIP=pip
     fi
 fi
