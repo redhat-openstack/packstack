@@ -163,7 +163,7 @@ $SUDO $PKG_MGR -y install puppet \
                      openstack-selinux \
                      policycoreutils \
                      rubygems \
-                     wget \
+                     curl \
                      gettext \
                      diffstat \
                      doxygen \
@@ -210,14 +210,14 @@ if [ -f ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz ]; then
     tar -xzvf ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -C /tmp/cirros/
 else
     echo "No pre-cached uec archive found, downloading..."
-    wget --tries=10 https://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -P /tmp/cirros/
+    curl -Lo /tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz --retry 10 https://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz
     tar -xzvf /tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -C /tmp/cirros/
 fi
 if [ -f ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img ]; then
     cp -p ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img /tmp/cirros/
 else
     echo "No pre-cached disk image found, downloading..."
-    wget --tries=10 https://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img -P /tmp/cirros/
+    curl -Lo /tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img --retry 10 https://download.cirros-cloud.net/$CIRROS_VERSION/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img
 fi
 echo "Using pre-cached images:"
 find /tmp/cirros -type f -printf "%m %n %u %g %s  %t" -exec md5sum \{\} \;
@@ -275,8 +275,12 @@ if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   fi
   export PUPPETFILE_DIR=/usr/share/openstack-puppet/modules
   export GEM_HOME=/tmp/packstackgems
-  $SUDO gem install gettext -v 3.2.9 --no-ri --no-rdoc
-  $SUDO gem install r10k -v 2.6.4 --no-ri --no-rdoc
+  if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 8 ]; then
+      $SUDO gem install r10k
+  else
+      $SUDO gem install gettext -v 3.2.9 --no-ri --no-rdoc
+      $SUDO gem install r10k -v 2.6.4 --no-ri --no-rdoc
+  fi
   # make sure there is no puppet module pre-installed
   $SUDO rm -rf "${PUPPETFILE_DIR:?}/"*
   install_modules

@@ -32,6 +32,10 @@ if hiera('CONFIG_VMWARE_BACKEND') == 'y' {
   include 'packstack::nova::compute::libvirt'
 }
 
+if hiera('CONFIG_CINDER_INSTALL') == 'y' {
+  include 'openstacklib::iscsid'
+}
+
 if hiera('CONFIG_CINDER_INSTALL') == 'y' and
    hiera('CONFIG_VMWARE_BACKEND') != 'y' {
    if 'nfs' in hiera_array('CONFIG_CINDER_BACKEND') {

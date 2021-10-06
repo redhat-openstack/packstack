@@ -7,9 +7,17 @@ class packstack::swift::ringbuilder ()
       require        => Class['swift'],
     }
 
-    # sets up an rsync db that can be used to sync the ring DB
-    class { 'swift::ringserver':
-      local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
+    if ($::operatingsystem == 'CentOS') and (versioncmp($::operatingsystemmajrelease, '9') == 0) {
+      # sets up an rsync db that can be used to sync the ring DB
+      class { 'swift::ringserver':
+        local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
+        rsync_use_xinetd => false,
+      }
+    } else {
+      # sets up an rsync db that can be used to sync the ring DB
+      class { 'swift::ringserver':
+        local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
+      }
     }
 
     if str2bool($::selinux) {
