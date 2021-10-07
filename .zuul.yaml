@@ -231,3 +231,6 @@
     release:
       jobs:
         - packstack-upload-git-mirror
+    pre-release:
+      jobs:
+        - packstack-upload-git-mirror
