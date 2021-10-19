@@ -33,9 +33,10 @@ class packstack::aodh ()
       auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       region_name => hiera('CONFIG_KEYSTONE_REGION'),
     }
-    class { 'aodh::evaluator':
-      coordination_url => $coordination_url,
+    class { 'aodh::coordination':
+      backend_url => $coordination_url,
     }
+    class { 'aodh::evaluator': }
     class { 'aodh::notifier': }
     class { 'aodh::listener': }
     class { 'aodh::client': }
