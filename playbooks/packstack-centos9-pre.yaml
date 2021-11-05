@@ -19,8 +19,10 @@
           rm -rf /etc/yum.repos.d/epel*
           dnf clean all
           sudo sed -i '/^exclude.*/d' /etc/dnf/dnf.conf
+          dnf -y install dnf-plugins-core
+          dnf config-manager --set-enabled crb
           dnf -y install libxml2-devel libxslt-devel ruby-devel zlib-devel
-          dnf -y install gcc gettext diffstat doxygen patch patchutils subversion systemtap git python3-setuptools wget redhat-lsb-core python3-libselinux virt-what yum
+          dnf -y install gcc gettext diffstat doxygen patch patchutils subversion systemtap git python3-setuptools wget python3-libselinux virt-what yum
         executable: /bin/bash
         chdir: '{{ ansible_user_dir }}/workspace'
       become: true

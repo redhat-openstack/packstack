@@ -234,6 +234,7 @@ def apply_puppet_manifest(config, messages):
             server.append("touch %s" % running_logfile)
             server.append("chmod 600 %s" % running_logfile)
             server.append("export PACKSTACK_VAR_DIR=%s" % host_dir)
+            server.append("export LANG=C.UTF-8")
             cmd = ("( flock %s/ps.lock "
                    "puppet apply %s --modulepath %s/modules %s > %s "
                    "2>&1 < /dev/null ; "

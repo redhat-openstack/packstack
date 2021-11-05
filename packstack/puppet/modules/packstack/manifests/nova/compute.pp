@@ -86,6 +86,7 @@ class packstack::nova::compute ()
       instance_usage_audit_period   => $instance_usage_audit_period,
       allow_resize_to_same_host     => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
       force_config_drive            => false,
+      mkisofs_cmd                   => 'mkisofs',
     }
 
     class { 'nova::placement':

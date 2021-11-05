@@ -68,7 +68,12 @@
       delorean: "https://trunk.rdoproject.org/centos9-master/current/delorean.repo"
       delorean_deps: "https://trunk.rdoproject.org/centos9-master/delorean-deps.repo"
     pre-run: playbooks/packstack-centos9-pre.yaml
+    nodeset:
+      nodes:
+        - name: centos9s
+          label: centos-9-stream
     run: playbooks/packstack-integration-tempest.yaml
+    voting: false
 
 - job:
     name: packstack-multinode-centos8s
@@ -95,7 +100,14 @@
       delorean_deps: "https://trunk.rdoproject.org/centos9-master/delorean-deps.repo"
     pre-run: playbooks/packstack-centos9-pre.yaml
     post-run: playbooks/packstack-post-compute.yaml
+    nodeset:
+      nodes:
+        - name: controller
+          label: centos-9-stream
+        - name: compute
+          label: centos-9-stream
     run: playbooks/packstack-multinode.yaml
+    voting: false
 
 - job:
     name: packstack-centos8s-integration-scenario001
@@ -118,6 +130,31 @@
 - job:
     name: packstack-centos8s-multinode-scenario002-tempest
     parent: packstack-multinode-centos8s
+    post-run: playbooks/packstack-post-compute.yaml
+    vars:
+      scenario: scenario002
+
+- job:
+    name: packstack-centos9s-integration-scenario001
+    parent: packstack-centos9
+    vars:
+      scenario: scenario001
+
+- job:
+    name: packstack-centos9s-integration-scenario002
+    parent: packstack-centos9
+    vars:
+      scenario: scenario002
+
+- job:
+    name: packstack-centos9s-integration-scenario003
+    parent: packstack-centos9
+    vars:
+      scenario: scenario003
+
+- job:
+    name: packstack-centos9s-multinode-scenario002-tempest
+    parent: packstack-multinode-centos9
     post-run: playbooks/packstack-post-compute.yaml
     vars:
       scenario: scenario002
@@ -214,6 +251,10 @@
         - packstack-centos8s-integration-scenario002
         - packstack-centos8s-integration-scenario003
         - packstack-centos8s-multinode-scenario002-tempest
+        - packstack-centos9s-integration-scenario001
+        - packstack-centos9s-integration-scenario002
+        - packstack-centos9s-integration-scenario003
+        - packstack-centos9s-multinode-scenario002-tempest
     gate:
       jobs:
         - openstack-tox-pep8
