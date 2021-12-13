@@ -18,6 +18,7 @@ class packstack::magnum::rabbitmq ()
       }
       File[$files_to_set_owner] ~> Service<| tag == 'magnum-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'magnum-service' |>
 
     class { 'magnum':
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),

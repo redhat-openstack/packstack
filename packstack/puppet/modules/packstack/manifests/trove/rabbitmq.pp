@@ -22,7 +22,7 @@ class packstack::trove::rabbitmq ()
       Package<|tag=='trove'|> -> File[$files_to_set_owner]
       File[$files_to_set_owner] ~> Service<| tag == 'trove-service' |>
     }
-
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'trove-service' |>
 
     class { 'trove':
       rabbit_use_ssl               => hiera('CONFIG_AMQP_SSL_ENABLED'),

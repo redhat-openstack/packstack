@@ -24,6 +24,7 @@ class packstack::neutron::rabbitmq ()
       }
       File[$files_to_set_owner] ~> Service<| tag == 'neutron-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'neutron-service' |>
 
     class { 'neutron::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),

@@ -21,6 +21,7 @@ class packstack::heat::rabbitmq ()
       }
       File[$files_to_set_owner] ~> Service<| tag == 'heat-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'heat-service' |>
 
     if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
       $heat_notification_driver = 'messagingv2'

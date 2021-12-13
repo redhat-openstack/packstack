@@ -31,6 +31,7 @@ class packstack::nova ()
       }
       File[$files_to_set_owner] ~> Service<| tag == 'nova-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'nova-service' |>
 
     if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
       $nova_common_notification_driver = 'messagingv2'

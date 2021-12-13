@@ -3,7 +3,7 @@ class packstack::keystone::placement ()
     $placement_protocol = 'http'
     $placement_host = hiera('CONFIG_KEYSTONE_HOST_URL')
     $placement_port = '8778'
-    $placement_url = "${placement_protocol}://${placement_host}:${placement_port}/placement"
+    $placement_url = "${placement_protocol}://${placement_host}:${placement_port}"
 
     class { 'placement::keystone::authtoken':
       password             => hiera('CONFIG_NOVA_KS_PW'),

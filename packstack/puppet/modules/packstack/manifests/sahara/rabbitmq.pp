@@ -21,6 +21,7 @@ class packstack::sahara::rabbitmq ()
       }
       File[$files_to_set_owner] ~> Service<| tag == 'sahara-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'sahara-service' |>
 
     class { 'sahara::keystone::authtoken':
       username             => 'sahara',

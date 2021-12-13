@@ -18,9 +18,10 @@ class packstack::cinder::rabbitmq ()
         owner   => 'cinder',
         group   => 'cinder',
         require => Class['cinder'],
-        notify  => Service['cinder-api'],
       }
+      File[$files_to_set_owner] ~> Service<| tag == 'cinder-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'cinder-service' |>
 
     class { 'cinder::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),

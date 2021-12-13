@@ -22,6 +22,7 @@ class packstack::aodh::rabbitmq ()
       }
       File[$files_to_set_owner] ~> Service<| tag == 'aodh-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'aodh-service' |>
 
     class { 'aodh::logging':
       debug => hiera('CONFIG_DEBUG_MODE'),

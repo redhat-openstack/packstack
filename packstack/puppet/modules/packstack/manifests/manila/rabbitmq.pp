@@ -19,6 +19,7 @@ class packstack::manila::rabbitmq ()
       }
       File[$files_to_set_owner] ~> Service<| tag == 'manila-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'manila-service' |>
 
     $db_pw = hiera('CONFIG_MANILA_DB_PW')
     $mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')

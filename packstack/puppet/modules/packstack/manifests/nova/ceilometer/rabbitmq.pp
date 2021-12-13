@@ -18,6 +18,7 @@ class packstack::nova::ceilometer::rabbitmq ()
       }
       File[$ceilometer_files_to_set_owner] ~> Service<| tag == 'ceilometer-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'ceilometer-service' |>
 
     class { 'ceilometer::logging':
         debug => hiera('CONFIG_DEBUG_MODE'),

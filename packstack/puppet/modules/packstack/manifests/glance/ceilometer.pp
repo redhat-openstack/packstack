@@ -18,6 +18,8 @@ class packstack::glance::ceilometer ()
         notify  => Service['glance-api'],
       }
     }
+    Service<| name == 'rabbitmq-server' |> -> Service['glance-api']
+
     class { 'glance::notify::rabbitmq':
       rabbit_notification_exchange => 'glance',
       rabbit_notification_topic    => 'notifications',

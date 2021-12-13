@@ -21,6 +21,7 @@ class packstack::ironic::rabbitmq ()
       }
       File[$files_to_set_owner] ~> Service<| tag == 'ironic-service' |>
     }
+    Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'ironic-service' |>
 
     class { 'ironic::logging':
       debug => true,

@@ -5,6 +5,8 @@ class packstack::swift::ceilometer ()
     $rabbit_userid = hiera('CONFIG_AMQP_AUTH_USER')
     $rabbit_password = hiera('CONFIG_AMQP_AUTH_PASSWORD')
 
+    Service<| name == 'rabbitmq-server' |> -> Service['swift-proxy-server']
+
     class { 'swift::proxy::ceilometer':
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       topic                 => 'notifications',
