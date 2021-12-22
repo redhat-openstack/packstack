@@ -4,6 +4,9 @@ class packstack::neutron::notifications ()
 
     # Configure nova notifications system
     class { 'neutron::server::notifications':
+    }
+
+    class { 'neutron::server::notifications::nova':
       username     => 'nova',
       password     => hiera('CONFIG_NOVA_KS_PW'),
       project_name => 'services',
