@@ -33,7 +33,9 @@ class packstack::glance ()
       pipeline            => 'keystone',
       database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
       workers             => hiera('CONFIG_SERVICE_WORKERS'),
-      stores              => ['file', 'http', 'swift'],
-      default_store       => $default_store,
+      enabled_backends    => ["${default_store}:${default_store}", "http:http"],
+      default_backend     => $default_store,
     }
+
+    glance::backend::multistore::http { 'http': }
 }
