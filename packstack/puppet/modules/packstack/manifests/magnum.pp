@@ -8,13 +8,10 @@ class packstack::magnum ()
       database_connection => "mysql+pymysql://magnum:${magnum_cfg_magnum_db_pw}@${magnum_cfg_magnum_mariadb_host}/magnum",
     }
 
-    $magnum_protocol = 'http'
     $magnum_host = hiera('CONFIG_KEYSTONE_HOST_URL')
-    $magnum_port = '9511'
-    $magnum_url = "${magnum_protocol}://${magnum_host}:${magnum_port}/v1"
     class { 'magnum::keystone::authtoken':
-      www_authenticate_uri => "${magnum_protocol}://${magnum_host}:5000/v3",
-      auth_url             => "${magnum_protocol}://${magnum_host}:5000",
+      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       auth_version         => 'v3',
       username             => 'magnum',
       password             => hiera('CONFIG_MAGNUM_KS_PW'),
@@ -26,7 +23,7 @@ class packstack::magnum ()
     class { 'magnum::keystone::keystone_auth':
       username            => 'magnum',
       password            => hiera('CONFIG_MAGNUM_KS_PW'),
-      auth_url            => "${magnum_protocol}://${magnum_host}:5000",
+      auth_url            => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
       project_name        => 'services',
       user_domain_name    => 'Default',
       project_domain_name => 'Default',
