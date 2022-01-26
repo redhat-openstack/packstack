@@ -61,6 +61,11 @@ class packstack::nova ()
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
+    class { 'nova::db':
+      database_connection     => "mysql+pymysql://nova:${nova_db_pw}@${nova_mariadb_host}/nova",
+      api_database_connection => "mysql+pymysql://nova_api:${nova_db_pw}@${nova_mariadb_host}/nova_api",
+    }
+
     class { 'nova':
       default_transport_url   => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       rabbit_use_ssl          => hiera('CONFIG_AMQP_SSL_ENABLED'),
@@ -71,8 +76,6 @@ class packstack::nova ()
       kombu_ssl_certfile      => $kombu_ssl_certfile,
       notification_driver     => $nova_common_notification_driver,
       notify_on_state_change  => $notify_on_state_change,
-      database_connection     => "mysql+pymysql://nova:${nova_db_pw}@${nova_mariadb_host}/nova",
-      api_database_connection => "mysql+pymysql://nova_api:${nova_db_pw}@${nova_mariadb_host}/nova_api",
       cpu_allocation_ratio    => hiera('CONFIG_NOVA_SCHED_CPU_ALLOC_RATIO'),
       ram_allocation_ratio    => hiera('CONFIG_NOVA_SCHED_RAM_ALLOC_RATIO'),
       host                    => $novahost,
