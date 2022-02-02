@@ -28,10 +28,13 @@ class packstack::glance ()
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
+    class { 'glance::api::db':
+      database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
+    }
+
     class { 'glance::api':
       bind_host           => $bind_host,
       pipeline            => 'keystone',
-      database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
       workers             => hiera('CONFIG_SERVICE_WORKERS'),
       enabled_backends    => ["${default_store}:${default_store}", "http:http"],
       default_backend     => $default_store,
