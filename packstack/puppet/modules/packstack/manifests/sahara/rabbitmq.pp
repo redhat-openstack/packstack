@@ -35,9 +35,11 @@ class packstack::sahara::rabbitmq ()
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
+    class { 'sahara::db':
+      database_connection => "mysql+pymysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
+    }
+
     class { 'sahara':
-      database_connection   =>
-        "mysql+pymysql://sahara:${sahara_cfg_sahara_db_pw}@${sahara_cfg_sahara_mariadb_host}/sahara",
       host                  => hiera('CONFIG_SAHARA_HOST'),
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",

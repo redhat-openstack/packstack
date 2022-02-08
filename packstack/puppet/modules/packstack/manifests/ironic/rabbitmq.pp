@@ -27,10 +27,13 @@ class packstack::ironic::rabbitmq ()
       debug => true,
     }
 
+    class { 'ironic::db':
+      database_connection => "mysql+pymysql://ironic:${ironic_rabbitmq_cfg_ironic_db_pw}@${ironic_rabbitmq_cfg_mariadb_host}/ironic",
+    }
+
     class { 'ironic':
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
-      database_connection   => "mysql+pymysql://ironic:${ironic_rabbitmq_cfg_ironic_db_pw}@${ironic_rabbitmq_cfg_mariadb_host}/ironic",
       kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,
       kombu_ssl_keyfile     => $kombu_ssl_keyfile,
       kombu_ssl_certfile    => $kombu_ssl_certfile,
