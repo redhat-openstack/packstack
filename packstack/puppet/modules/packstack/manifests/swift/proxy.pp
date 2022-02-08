@@ -118,5 +118,9 @@ class packstack::swift::proxy ()
       auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
+    class { 'swift::proxy::versioned_writes':
+      allow_versioned_writes => true,
+    }
+
     class { 'swift::objectexpirer': }
 }

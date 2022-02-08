@@ -6,7 +6,6 @@ class packstack::swift::storage ()
     class { 'swift::storage::all':
       # looks like ipv6 address without brackets is required here
       storage_local_net_ip => hiera('CONFIG_STORAGE_HOST'),
-      allow_versions       => true,
       require              => Class['swift'],
     }
 

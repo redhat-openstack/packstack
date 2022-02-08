@@ -49,8 +49,11 @@ class packstack::ceilometer ()
       region_name => hiera('CONFIG_KEYSTONE_REGION'),
     }
 
+    class { 'ceilometer::coordination':
+      backend_url => $coordination_url,
+    }
+
     class { 'ceilometer::agent::polling':
       manage_polling   => true,
-      coordination_url => $coordination_url,
     }
 }

@@ -35,7 +35,6 @@ class packstack::neutron::rabbitmq ()
       rabbit_use_ssl        => hiera('CONFIG_AMQP_SSL_ENABLED'),
       default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
       core_plugin           => hiera('CONFIG_NEUTRON_CORE_PLUGIN'),
-      allow_overlapping_ips => true,
       service_plugins       => hiera_array('SERVICE_PLUGINS'),
       kombu_ssl_ca_certs    => $kombu_ssl_ca_certs,
       kombu_ssl_keyfile     => $kombu_ssl_keyfile,
