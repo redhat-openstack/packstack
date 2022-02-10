@@ -43,7 +43,10 @@ re_ignore = re.compile(
     'yum.*?install swift-plugin-s3|'
     # facter gives a weird NM error when it's disabled, due to
     # https://tickets.puppetlabs.com/browse/FACT-697
-    'NetworkManager is not running'
+    'NetworkManager is not running|'
+    # facter logs Error even though the repository is set to be skipped
+    # if unavailable
+    'Failed to download metadata for repo'
 )
 re_notice = re.compile(r'notice: .*Notify\[packstack_info\]'
                        r'\/message: defined \'message\' as '
