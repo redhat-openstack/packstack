@@ -47,14 +47,6 @@ class packstack::cinder ()
     $cinder_keystone_auth_url = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
     $cinder_keystone_api = hiera('CONFIG_KEYSTONE_API_VERSION')
 
-    # Cinder::Type requires keystone credentials
-    Cinder::Type {
-      os_password    => hiera('CONFIG_CINDER_KS_PW'),
-      os_tenant_name => 'services',
-      os_username    => 'cinder',
-      os_auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-    }
-
     class { 'cinder::backends':
       enabled_backends => hiera_array('CONFIG_CINDER_BACKEND'),
     }
