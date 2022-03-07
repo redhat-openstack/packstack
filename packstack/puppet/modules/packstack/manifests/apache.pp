@@ -24,13 +24,6 @@ class packstack::apache ()
     # Keystone port
     apache::listen { '5000': }
 
-    if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
-      if hiera('CONFIG_CEILOMETER_SERVICE_NAME') == 'httpd' {
-        # Ceilometer port
-        apache::listen { '8777': }
-      }
-    }
-
     if hiera('CONFIG_AODH_INSTALL') == 'y' {
       # Aodh port
       apache::listen { '8042': }
