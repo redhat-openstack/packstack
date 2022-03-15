@@ -8,8 +8,8 @@ class packstack::keystone::cinder ()
     class { 'cinder::keystone::auth':
       region          => hiera('CONFIG_KEYSTONE_REGION'),
       password        => hiera('CONFIG_CINDER_KS_PW'),
-      public_url_v3   => "${cinder_url}/v3/%(tenant_id)s",
-      internal_url_v3 => "${cinder_url}/v3/%(tenant_id)s",
-      admin_url_v3    => "${cinder_url}/v3/%(tenant_id)s",
+      public_url_v3   => "${cinder_url}/v3",
+      internal_url_v3 => "${cinder_url}/v3",
+      admin_url_v3    => "${cinder_url}/v3",
     }
 }
