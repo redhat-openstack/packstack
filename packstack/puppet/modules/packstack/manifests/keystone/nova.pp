@@ -3,7 +3,7 @@ class packstack::keystone::nova ()
     $nova_protocol = 'http'
     $nova_host = hiera('CONFIG_KEYSTONE_HOST_URL')
     $nova_port = '8774'
-    $nova_url = "${nova_protocol}://${nova_host}:${nova_port}/v2.1/%(tenant_id)s"
+    $nova_url = "${nova_protocol}://${nova_host}:${nova_port}/v2.1"
 
 
     class { 'nova::keystone::auth':

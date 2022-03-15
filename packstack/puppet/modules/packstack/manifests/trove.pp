@@ -17,6 +17,11 @@ class packstack::trove ()
       debug => hiera('CONFIG_DEBUG_MODE'),
     }
 
+    class { 'trove::api::service_credentials':
+      password => hiera('CONFIG_TROVE_KS_PW'),
+      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+    }
+
     class { 'trove::api':
       bind_host => $bind_host,
       enabled   => true,
