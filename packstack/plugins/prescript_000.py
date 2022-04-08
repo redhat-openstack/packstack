@@ -1123,6 +1123,8 @@ def manage_rdo(host, config):
     version = match.group('version')
     if re.match(r'^(.*\.el8.*\n)', out):
         dist_tag = '.el8'
+    elif re.match(r'^(.*\.el9s.*\n)', out):
+        dist_tag = '.el9s'
     else:
         dist_tag = ''
     rdo_url = ("https://www.rdoproject.org/repos/openstack-%(version)s/"
@@ -1152,7 +1154,10 @@ def manage_rdo(host, config):
     # if succeeds
     # In CentOS 8 yum-config-manager returns 1 when failing but doesn't return current
     # setup if succeeds
-    if (dist_tag == '.el8' and rc != 0) or (dist_tag == '' and not match):
+    # In CentOS 9 yum-config-manager returns 1 when failing but doesn't return current
+    # setup if succeeds
+    if ((dist_tag == '.el9s' and rc != 0) or (dist_tag == '.el8' and rc != 0) or
+            (dist_tag == '' and not match)):
         msg = ('Failed to set RDO repo on host %s:\nRPM file seems to be '
                'installed, but appropriate repo file is probably missing '
                'in /etc/yum.repos.d/' % host)
