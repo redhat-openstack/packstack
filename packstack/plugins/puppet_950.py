@@ -145,16 +145,15 @@ def run_cleanup(config, messages):
 
 
 def copy_puppet_modules(config, messages):
-    os_modules = ' '.join(('aodh', 'apache', 'ceilometer', 'certmonger',
-                           'cinder', 'concat', 'firewall', 'glance',
-                           'gnocchi', 'heat', 'horizon', 'inifile', 'ironic',
-                           'keystone', 'magnum', 'manila', 'memcached',
-                           'mysql', 'neutron', 'nova', 'nssdb', 'openstack',
-                           'openstacklib', 'oslo', 'ovn', 'packstack',
-                           'placement', 'rabbitmq', 'redis', 'remote', 'rsync',
-                           'sahara', 'ssh', 'stdlib', 'swift', 'sysctl',
-                           'systemd', 'tempest', 'trove', 'vcsrepo',
-                           'vswitch', 'xinetd'))
+    os_modules = ' '.join(('aodh', 'apache', 'ceilometer', 'cinder', 'concat',
+                           'firewall', 'glance', 'gnocchi', 'heat', 'horizon',
+                           'inifile', 'ironic', 'keystone', 'magnum', 'manila',
+                           'memcached', 'mysql', 'neutron', 'nova', 'nssdb',
+                           'openstack', 'openstacklib', 'oslo', 'ovn',
+                           'packstack', 'placement', 'rabbitmq', 'redis',
+                           'remote', 'rsync', 'sahara', 'ssh', 'stdlib',
+                           'swift', 'sysctl', 'systemd', 'tempest', 'trove',
+                           'vcsrepo', 'vswitch', 'xinetd'))
 
     # write puppet manifest to disk
     manifestfiles.writeManifests()
