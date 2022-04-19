@@ -39,7 +39,6 @@ class packstack::provision::tempest ()
     # nova should be able to resize with packstack setup
     $resize_available          = true
 
-    $change_password_available = undef
     $use_dynamic_credentials   = true
     $dir_log                   = hiera('DIR_LOG')
     $log_file                  = "${dir_log}/tempest.log"
@@ -122,7 +121,6 @@ class packstack::provision::tempest ()
       auth_version              => $auth_version,
       ceilometer_available      => $ceilometer_available,
       cinder_available          => $cinder_available,
-      change_password_available => $change_password_available,
       configure_images          => $configure_images,
       configure_networks        => $configure_networks,
       debug                     => $debug,

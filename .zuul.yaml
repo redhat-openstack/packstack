@@ -241,7 +241,7 @@
     check:
       jobs:
         - openstack-tox-pep8
-        - openstack-tox-py36
+        - openstack-tox-py39
         - build-openstack-releasenotes:
             vars:
               sphinx_python: python3
@@ -256,7 +256,7 @@
     gate:
       jobs:
         - openstack-tox-pep8
-        - openstack-tox-py36
+        - openstack-tox-py39
         - build-openstack-releasenotes:
             vars:
               sphinx_python: python3

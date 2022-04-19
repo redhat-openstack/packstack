@@ -32,13 +32,14 @@ class packstack::trove ()
     }
 
     class { 'trove::conductor':
-      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      debug    => hiera('CONFIG_DEBUG_MODE'),
-      workers  => hiera('CONFIG_SERVICE_WORKERS'),
+      workers => hiera('CONFIG_SERVICE_WORKERS'),
     }
 
-    class { 'trove::taskmanager':
+    class { 'trove::guestagent::service_credentials':
+      password => hiera('CONFIG_TROVE_KS_PW'),
       auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      debug    => hiera('CONFIG_DEBUG_MODE'),
+    }
+    class { 'trove::taskmanager':
+      use_guestagent_template => false,
     }
 }
