@@ -2,6 +2,16 @@ class packstack::gnocchi ()
 {
     create_resources(packstack::firewall, lookup('FIREWALL_GNOCCHI_RULES', undef, undef, {}))
 
+    $config_gnocchi_coordination_backend = lookup('CONFIG_CEILOMETER_COORDINATION_BACKEND')
+
+    if $config_gnocchi_coordination_backend == 'redis' {
+      $redis_host = hiera('CONFIG_REDIS_HOST_URL')
+      $redis_port = hiera('CONFIG_REDIS_PORT')
+      $coordination_url = "redis://${redis_host}:${redis_port}"
+    } else {
+      $coordination_url = ''
+    }
+
     $gnocchi_cfg_db_pw = lookup('CONFIG_GNOCCHI_DB_PW')
     $gnocchi_cfg_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
 
@@ -11,6 +21,7 @@ class packstack::gnocchi ()
     }
 
     class { 'gnocchi':
+      coordination_url => $coordination_url,
     }
 
     class { 'gnocchi::keystone::authtoken':
