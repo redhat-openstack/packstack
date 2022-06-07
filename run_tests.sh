@@ -257,10 +257,17 @@ $SUDO puppet config set hiera_config /etc/puppet/hiera.yaml
 
 # Setup dstat for resource usage tracing
 if type "dstat" 2>/dev/null; then
-  $SUDO dstat -tcmndrylpg \
-              --top-cpu-adv \
-              --top-io-adv \
-              --nocolor | $SUDO tee -a /var/log/dstat.log > /dev/null &
+    DSTAT_OPTS=""
+    set -e
+    if dstat --help 2>&1 | grep -q "top-io-adv"; then
+        DSTAT_OPTS="${DSTAT_OPTS} --top-io-adv"
+    fi
+
+    if dstat --help 2>&1 | grep -q "top-cpu-adv"; then
+        DSTAT_OPTS="${DSTAT_OPTS} --top-cpu-adv"
+    fi
+    set +e
+    $SUDO dstat -tcmndrylpg $DSTAT_OPTS --nocolor | $SUDO tee --append /var/log/dstat.log > /dev/null &
 fi
 
 # Setup packstack
