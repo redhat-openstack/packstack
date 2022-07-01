@@ -15,7 +15,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import six
+import io
 import sys
 from unittest import TestCase
 
@@ -29,7 +29,7 @@ class StepTestCase(PackstackTestCaseMixin, TestCase):
     def setUp(self):
         super(StepTestCase, self).setUp()
         self._stdout = sys.stdout
-        sys.stdout = six.StringIO()
+        sys.stdout = io.StringIO()
 
     def tearDown(self):
         super(StepTestCase, self).tearDown()
@@ -57,7 +57,7 @@ class SequenceTestCase(PackstackTestCaseMixin, TestCase):
     def setUp(self):
         super(SequenceTestCase, self).setUp()
         self._stdout = sys.stdout
-        sys.stdout = six.StringIO()
+        sys.stdout = io.StringIO()
 
         self.steps = [{'name': '1', 'function': lambda x, y: True,
                        'title': 'Step 1'},

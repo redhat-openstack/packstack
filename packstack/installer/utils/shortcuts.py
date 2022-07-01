@@ -15,11 +15,10 @@
 import grp
 import os
 import pwd
-import six
 
 
 def host_iter(config):
-    for key, value in six.iteritems(config):
+    for key, value in config.items():
         if key.endswith("_HOST"):
             host = value.split('/')[0]
             if host:
