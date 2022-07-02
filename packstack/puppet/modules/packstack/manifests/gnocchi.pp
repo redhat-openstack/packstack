@@ -1,12 +1,12 @@
 class packstack::gnocchi ()
 {
-    create_resources(packstack::firewall, hiera('FIREWALL_GNOCCHI_RULES', {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_GNOCCHI_RULES', undef, undef, {}))
 
-    $gnocchi_cfg_db_pw = hiera('CONFIG_GNOCCHI_DB_PW')
-    $gnocchi_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
+    $gnocchi_cfg_db_pw = lookup('CONFIG_GNOCCHI_DB_PW')
+    $gnocchi_cfg_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
 
     class { 'gnocchi::wsgi::apache':
-      workers => hiera('CONFIG_SERVICE_WORKERS'),
+      workers => lookup('CONFIG_SERVICE_WORKERS'),
       ssl     => false
     }
 
@@ -14,10 +14,10 @@ class packstack::gnocchi ()
     }
 
     class { 'gnocchi::keystone::authtoken':
-      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
-      auth_version         => hiera('CONFIG_KEYSTONE_API_VERSION'),
-      password             => hiera('CONFIG_GNOCCHI_KS_PW')
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
+      auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
+      auth_version         => lookup('CONFIG_KEYSTONE_API_VERSION'),
+      password             => lookup('CONFIG_GNOCCHI_KS_PW')
     }
 
     class { 'gnocchi::db':

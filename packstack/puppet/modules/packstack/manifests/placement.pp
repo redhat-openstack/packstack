@@ -1,8 +1,8 @@
 class packstack::placement ()
 {
-    $placement_db_pw = hiera('CONFIG_NOVA_DB_PW')
-    $placement_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
-    $bind_host = hiera('CONFIG_IP_VERSION') ? {
+    $placement_db_pw = lookup('CONFIG_NOVA_DB_PW')
+    $placement_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
+    $bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
@@ -12,7 +12,7 @@ class packstack::placement ()
     include placement
 
     class { 'placement::logging':
-      debug => hiera('CONFIG_DEBUG_MODE'),
+      debug => lookup('CONFIG_DEBUG_MODE'),
     }
 
     class { 'placement::db':
@@ -26,6 +26,6 @@ class packstack::placement ()
       bind_host => $bind_host,
       api_port  => '8778',
       ssl       => false,
-      workers   => hiera('CONFIG_SERVICE_WORKERS'),
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 }

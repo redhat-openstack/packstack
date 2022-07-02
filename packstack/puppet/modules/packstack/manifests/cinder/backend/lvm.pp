@@ -1,14 +1,14 @@
 class packstack::cinder::backend::lvm ()
 {
-    $create_cinder_volume = hiera('CONFIG_CINDER_VOLUMES_CREATE')
-    $cinder_volume_name = hiera('CONFIG_CINDER_VOLUME_NAME')
+    $create_cinder_volume = lookup('CONFIG_CINDER_VOLUMES_CREATE')
+    $cinder_volume_name = lookup('CONFIG_CINDER_VOLUME_NAME')
 
     if $create_cinder_volume == 'y' {
         # Find an available loop device
         $loop_dev = chomp(generate('/usr/sbin/losetup', '-f'))
 
         class { 'cinder::setup_test_volume':
-          size            => hiera('CONFIG_CINDER_VOLUMES_SIZE'),
+          size            => lookup('CONFIG_CINDER_VOLUMES_SIZE'),
           loopback_device => $loop_dev,
           volume_path     => '/var/lib/cinder',
           volume_name     => $cinder_volume_name,
@@ -85,7 +85,7 @@ class packstack::cinder::backend::lvm ()
     }
 
     cinder::backend::iscsi { 'lvm':
-      target_ip_address => hiera('CONFIG_STORAGE_HOST_URL'),
+      target_ip_address => lookup('CONFIG_STORAGE_HOST_URL'),
       require           => Package['lvm2'],
       volume_group      => $cinder_volume_name,
     }

@@ -1,8 +1,8 @@
 class packstack::mariadb ()
 {
-  if hiera('CONFIG_MARIADB_INSTALL') == 'y' {
-    create_resources(packstack::firewall, hiera('FIREWALL_MARIADB_RULES', {}))
-    $max_connections = hiera('CONFIG_SERVICE_WORKERS') * 128
+  if lookup('CONFIG_MARIADB_INSTALL') == 'y' {
+    create_resources(packstack::firewall, lookup('FIREWALL_MARIADB_RULES', undef, undef, {}))
+    $max_connections = lookup('CONFIG_SERVICE_WORKERS') * 128
 
     if ($::mariadb_provides_galera) {
       # Since mariadb 10.1 galera is included in main mariadb
@@ -15,13 +15,13 @@ class packstack::mariadb ()
     }
     ensure_packages(['mariadb-server'], {'ensure' => $mariadb_present})
 
-    $bind_address = hiera('CONFIG_IP_VERSION') ? {
+    $bind_address = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    $mysql_root_password = hiera('CONFIG_MARIADB_PW')
+    $mysql_root_password = lookup('CONFIG_MARIADB_PW')
 
     class { 'mysql::server':
       package_name     => $mariadb_package_name,

@@ -1,25 +1,25 @@
 class packstack::trove ()
 {
-    create_resources(packstack::firewall, hiera('FIREWALL_TROVE_API_RULES', {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_TROVE_API_RULES', undef, undef, {}))
 
-    $bind_host = hiera('CONFIG_IP_VERSION') ? {
+    $bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
     class { 'trove::keystone::authtoken':
-      password => hiera('CONFIG_TROVE_KS_PW'),
-      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      password => lookup('CONFIG_TROVE_KS_PW'),
+      auth_url => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }
 
     class { 'trove::logging':
-      debug => hiera('CONFIG_DEBUG_MODE'),
+      debug => lookup('CONFIG_DEBUG_MODE'),
     }
 
     class { 'trove::api::service_credentials':
-      password => hiera('CONFIG_TROVE_KS_PW'),
-      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      password => lookup('CONFIG_TROVE_KS_PW'),
+      auth_url => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }
 
     class { 'trove::api':
@@ -28,16 +28,16 @@ class packstack::trove ()
       cert_file => false,
       key_file  => false,
       ca_file   => false,
-      workers   => hiera('CONFIG_SERVICE_WORKERS'),
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     class { 'trove::conductor':
-      workers => hiera('CONFIG_SERVICE_WORKERS'),
+      workers => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     class { 'trove::guestagent::service_credentials':
-      password => hiera('CONFIG_TROVE_KS_PW'),
-      auth_url => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      password => lookup('CONFIG_TROVE_KS_PW'),
+      auth_url => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }
     class { 'trove::taskmanager':
       use_guestagent_template => false,

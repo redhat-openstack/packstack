@@ -4,13 +4,13 @@ class packstack::nova::compute::libvirt ()
     # preventing a clash with rules being set by libvirt
     Firewall <| |> -> Class['::nova::compute::libvirt']
 
-    $libvirt_vnc_bind_host = hiera('CONFIG_IP_VERSION') ? {
+    $libvirt_vnc_bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    $libvirt_virt_type = hiera('CONFIG_NOVA_LIBVIRT_VIRT_TYPE')
+    $libvirt_virt_type = lookup('CONFIG_NOVA_LIBVIRT_VIRT_TYPE')
     if $libvirt_virt_type == 'kvm' {
         # Workaround for bad /dev/kvm permissions
         # https://bugzilla.redhat.com/show_bug.cgi?id=950436
@@ -27,7 +27,7 @@ class packstack::nova::compute::libvirt ()
         -> Service <| title == 'libvirt' |>
     }
 
-    $migrate_transport = hiera('CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL')
+    $migrate_transport = lookup('CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL')
     if $migrate_transport == 'ssh' {
       $client_extraparams = {
         keyfile   => '/etc/nova/migration/identity',
@@ -63,7 +63,7 @@ class packstack::nova::compute::libvirt ()
       require => Exec['virsh-net-destroy-default'],
     }
 
-    $libvirt_debug = hiera('CONFIG_DEBUG_MODE')
+    $libvirt_debug = lookup('CONFIG_DEBUG_MODE')
     if $libvirt_debug {
       file_line { '/etc/libvirt/libvirt.conf log_filters':
         path   => '/etc/libvirt/libvirtd.conf',

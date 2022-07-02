@@ -2,7 +2,7 @@ class packstack::swift::ringbuilder ()
 {
     class { 'swift::ringbuilder':
       part_power     => '18',
-      replicas       => hiera('CONFIG_SWIFT_STORAGE_REPLICAS'),
+      replicas       => lookup('CONFIG_SWIFT_STORAGE_REPLICAS'),
       min_part_hours => 1,
       require        => Class['swift'],
     }
@@ -10,13 +10,13 @@ class packstack::swift::ringbuilder ()
     if ($::operatingsystem == 'CentOS') and (versioncmp($::operatingsystemmajrelease, '9') == 0) {
       # sets up an rsync db that can be used to sync the ring DB
       class { 'swift::ringserver':
-        local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
+        local_net_ip => lookup('CONFIG_STORAGE_HOST_URL'),
         rsync_use_xinetd => false,
       }
     } else {
       # sets up an rsync db that can be used to sync the ring DB
       class { 'swift::ringserver':
-        local_net_ip => hiera('CONFIG_STORAGE_HOST_URL'),
+        local_net_ip => lookup('CONFIG_STORAGE_HOST_URL'),
       }
     }
 
@@ -27,7 +27,7 @@ class packstack::swift::ringbuilder ()
       }
     }
 
-    create_resources(ring_account_device, hiera('SWIFT_RING_ACCOUNT_DEVICES', {}))
-    create_resources(ring_object_device, hiera('SWIFT_RING_OBJECT_DEVICES', {}))
-    create_resources(ring_container_device, hiera('SWIFT_RING_CONTAINER_DEVICES', {}))
+    create_resources(ring_account_device, lookup('SWIFT_RING_ACCOUNT_DEVICES', undef, undef, {}))
+    create_resources(ring_object_device, lookup('SWIFT_RING_OBJECT_DEVICES', undef, undef, {}))
+    create_resources(ring_container_device, lookup('SWIFT_RING_CONTAINER_DEVICES', undef, undef, {}))
 }

@@ -1,30 +1,30 @@
 class packstack::nova::compute ()
 {
-    $my_ip = choose_my_ip(hiera('HOST_LIST'))
+    $my_ip = choose_my_ip(lookup('HOST_LIST'))
     $my_ip_without_dot = regsubst($my_ip, '\.', '_', 'G')
     $qemu_rule_name = "FIREWALL_NOVA_QEMU_MIG_RULES_${my_ip_without_dot}"
-    create_resources(packstack::firewall, hiera($qemu_rule_name, {}))
-    create_resources(packstack::firewall, hiera('FIREWALL_NOVA_COMPUTE_RULES', {}))
+    create_resources(packstack::firewall, lookup($qemu_rule_name, undef, undef, {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_NOVA_COMPUTE_RULES', undef, undef, {}))
 
     ensure_packages(['/usr/bin/cinder'], {'ensure' => 'present'})
     Package['/usr/bin/cinder'] -> Class['nova']
 
     # Install the private key to be used for live migration.  This needs to be
     # configured into libvirt/live_migration_uri in nova.conf.
-    $migrate_transport = hiera('CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL')
+    $migrate_transport = lookup('CONFIG_NOVA_COMPUTE_MIGRATE_PROTOCOL')
     if $migrate_transport == 'ssh' {
       ensure_packages(['openstack-nova-migration'], {'ensure' => 'present'})
 
       file { '/etc/nova/migration/identity':
-        content => hiera('NOVA_MIGRATION_KEY_SECRET'),
+        content => lookup('NOVA_MIGRATION_KEY_SECRET'),
         mode    => '0600',
         owner   => nova,
         group   => nova,
         require => Package['openstack-nova-migration'],
       }
 
-      $key_type = hiera('NOVA_MIGRATION_KEY_TYPE')
-      $key_content = hiera('NOVA_MIGRATION_KEY_PUBLIC')
+      $key_type = lookup('NOVA_MIGRATION_KEY_TYPE')
+      $key_content = lookup('NOVA_MIGRATION_KEY_PUBLIC')
 
       file { '/etc/nova/migration/authorized_keys':
         content => "${key_type} ${key_content}",
@@ -60,12 +60,12 @@ class packstack::nova::compute ()
 
     if ($::fqdn == '' or $::fqdn =~ /localhost/) {
       # For cases where FQDNs have not been correctly set
-      $vncproxy_server = choose_my_ip(hiera('HOST_LIST'))
+      $vncproxy_server = choose_my_ip(lookup('HOST_LIST'))
     } else {
       $vncproxy_server = $::fqdn
     }
 
-    if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+    if lookup('CONFIG_CEILOMETER_INSTALL') == 'y' {
       $instance_usage_audit = true
       $instance_usage_audit_period = 'hour'
     } else {
@@ -74,13 +74,13 @@ class packstack::nova::compute ()
     }
 
     class { 'nova::compute::pci':
-      passthrough => hiera('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST')
+      passthrough => lookup('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST')
     }
 
     class { 'nova::compute':
       enabled                       => true,
-      vncproxy_host                 => hiera('CONFIG_KEYSTONE_HOST_URL'),
-      vncproxy_protocol             => hiera('CONFIG_VNCPROXY_PROTOCOL'),
+      vncproxy_host                 => lookup('CONFIG_KEYSTONE_HOST_URL'),
+      vncproxy_protocol             => lookup('CONFIG_VNCPROXY_PROTOCOL'),
       vncserver_proxyclient_address => $vncproxy_server,
       instance_usage_audit          => $instance_usage_audit,
       instance_usage_audit_period   => $instance_usage_audit_period,
@@ -89,9 +89,9 @@ class packstack::nova::compute ()
     }
 
     class { 'nova::placement':
-      auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
-      password    => hiera('CONFIG_NOVA_KS_PW'),
-      region_name => hiera('CONFIG_KEYSTONE_REGION'),
+      auth_url    => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
+      password    => lookup('CONFIG_NOVA_KS_PW'),
+      region_name => lookup('CONFIG_KEYSTONE_REGION'),
     }
 
     # Tune the host with a virtual hosts profile

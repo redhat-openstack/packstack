@@ -9,7 +9,7 @@ define packstack::firewall (
   $ports = undef,
   $proto = 'tcp'
 ) {
-  $ip_version = hiera('CONFIG_IP_VERSION')
+  $ip_version = lookup('CONFIG_IP_VERSION')
 
   $provider = $ip_version ? {
     'ipv6'  => 'ip6tables',

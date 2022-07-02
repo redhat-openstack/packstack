@@ -1,21 +1,21 @@
 class packstack::provision ()
 {
-    $provision_demo            = str2bool(hiera('CONFIG_PROVISION_DEMO'))
-    $provision_tempest         = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
-    $provision_neutron         = str2bool(hiera('CONFIG_NEUTRON_INSTALL'))
-    $heat_available            = str2bool(hiera('CONFIG_HEAT_INSTALL'))
+    $provision_demo            = str2bool(lookup('CONFIG_PROVISION_DEMO'))
+    $provision_tempest         = str2bool(lookup('CONFIG_PROVISION_TEMPEST'))
+    $provision_neutron         = str2bool(lookup('CONFIG_NEUTRON_INSTALL'))
+    $heat_available            = str2bool(lookup('CONFIG_HEAT_INSTALL'))
 
     if $provision_demo {
       $username             = 'demo'
-      $password             = hiera('CONFIG_KEYSTONE_DEMO_PW')
+      $password             = lookup('CONFIG_KEYSTONE_DEMO_PW')
       $tenant_name          = 'demo'
-      $floating_range       = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
-      $allocation_pools     = hiera('CONFIG_PROVISION_DEMO_ALLOCATION_POOLS')
+      $floating_range       = lookup('CONFIG_PROVISION_DEMO_FLOATRANGE')
+      $allocation_pools     = lookup('CONFIG_PROVISION_DEMO_ALLOCATION_POOLS')
     } elsif $provision_tempest {
-      $username             = hiera('CONFIG_PROVISION_TEMPEST_USER')
-      $password             = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
+      $username             = lookup('CONFIG_PROVISION_TEMPEST_USER')
+      $password             = lookup('CONFIG_PROVISION_TEMPEST_USER_PW')
       $tenant_name          = 'tempest'
-      $floating_range       = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
+      $floating_range       = lookup('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
       $allocation_pools     = []
       if (empty($username) or empty($password)) {
         fail("Both CONFIG_PROVISION_TEMPEST_USER and
@@ -59,7 +59,7 @@ class packstack::provision ()
         $private_subnet_name  = 'private_subnet'
         $fixed_range          = '10.0.0.0/24'
         $router_name          = 'router1'
-        $public_physnet       = hiera('CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET')
+        $public_physnet       = lookup('CONFIG_NEUTRON_OVS_EXTERNAL_PHYSNET')
 
         $neutron_deps = [Neutron_network[$public_network_name]]
 

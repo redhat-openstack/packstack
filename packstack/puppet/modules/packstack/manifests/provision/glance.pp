@@ -1,9 +1,9 @@
 class packstack::provision::glance ()
 {
-    $image_name               = hiera('CONFIG_PROVISION_IMAGE_NAME')
-    $image_source             = hiera('CONFIG_PROVISION_IMAGE_URL')
-    $image_format             = hiera('CONFIG_PROVISION_IMAGE_FORMAT')
-    $image_properties         = hiera('CONFIG_PROVISION_IMAGE_PROPERTIES')
+    $image_name               = lookup('CONFIG_PROVISION_IMAGE_NAME')
+    $image_source             = lookup('CONFIG_PROVISION_IMAGE_URL')
+    $image_format             = lookup('CONFIG_PROVISION_IMAGE_FORMAT')
+    $image_properties         = lookup('CONFIG_PROVISION_IMAGE_PROPERTIES')
 
     glance_image { $image_name:
       ensure           => present,

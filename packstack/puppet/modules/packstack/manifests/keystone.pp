@@ -1,17 +1,17 @@
 class packstack::keystone ()
 {
-    create_resources(packstack::firewall, hiera('FIREWALL_KEYSTONE_RULES', {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_KEYSTONE_RULES', undef, undef, {}))
 
     $keystone_use_ssl = false
-    $keystone_cfg_ks_db_pw = hiera('CONFIG_KEYSTONE_DB_PW')
-    $keystone_cfg_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
-    $keystone_token_provider_str = downcase(hiera('CONFIG_KEYSTONE_TOKEN_FORMAT'))
-    $keystone_url = regsubst(regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
-    $keystone_admin_url = hiera('CONFIG_KEYSTONE_ADMIN_URL')
+    $keystone_cfg_ks_db_pw = lookup('CONFIG_KEYSTONE_DB_PW')
+    $keystone_cfg_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
+    $keystone_token_provider_str = downcase(lookup('CONFIG_KEYSTONE_TOKEN_FORMAT'))
+    $keystone_url = regsubst(regsubst(lookup('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
+    $keystone_admin_url = lookup('CONFIG_KEYSTONE_ADMIN_URL')
 
     class { 'keystone::client': }
 
-    if hiera('CONFIG_KEYSTONE_FERNET_TOKEN_ROTATE_ENABLE',false) {
+    if lookup('CONFIG_KEYSTONE_FERNET_TOKEN_ROTATE_ENABLE', undef, undef, false) {
       class { 'keystone::cron::fernet_rotate':
         require     => Service['crond'],
       }
@@ -27,7 +27,7 @@ class packstack::keystone ()
     }
 
     class { 'keystone::logging':
-      debug => hiera('CONFIG_DEBUG_MODE'),
+      debug => lookup('CONFIG_DEBUG_MODE'),
     }
 
     class { 'keystone::db':
@@ -43,11 +43,11 @@ class packstack::keystone ()
     }
 
     class { 'keystone::wsgi::apache':
-      workers => hiera('CONFIG_SERVICE_WORKERS'),
+      workers => lookup('CONFIG_SERVICE_WORKERS'),
       ssl     => $keystone_use_ssl
     }
 
-    $username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
+    $username = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
 
     # Ensure the default _member_ role is present
     keystone_role { '_member_':
@@ -55,21 +55,21 @@ class packstack::keystone ()
     }
 
     class { 'keystone::bootstrap':
-      password     => hiera('CONFIG_KEYSTONE_ADMIN_PW'),
+      password     => lookup('CONFIG_KEYSTONE_ADMIN_PW'),
       username     => $username,
-      email        => hiera('CONFIG_KEYSTONE_ADMIN_EMAIL'),
+      email        => lookup('CONFIG_KEYSTONE_ADMIN_EMAIL'),
       project_name => 'admin',
       role_name    => 'admin',
       admin_url    => $keystone_admin_url,
       public_url   => $keystone_url,
       internal_url => $keystone_url,
-      region       => hiera('CONFIG_KEYSTONE_REGION'),
+      region       => lookup('CONFIG_KEYSTONE_REGION'),
     }
 
     # default assignment driver is SQL
     $assignment_driver = 'keystone.assignment.backends.sql.Assignment'
 
-    if hiera('CONFIG_KEYSTONE_IDENTITY_BACKEND') == 'ldap' {
+    if lookup('CONFIG_KEYSTONE_IDENTITY_BACKEND') == 'ldap' {
 
       if hiera_undef('CONFIG_KEYSTONE_LDAP_USER_ENABLED_EMULATION_DN', undef) {
         $user_enabled_emulation = true
