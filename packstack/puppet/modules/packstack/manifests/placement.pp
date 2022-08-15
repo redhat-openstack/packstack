@@ -24,7 +24,6 @@ class packstack::placement ()
 
     class { 'placement::wsgi::apache':
       bind_host => $bind_host,
-      api_port  => '8778',
       ssl       => false,
       workers   => hiera('CONFIG_SERVICE_WORKERS'),
     }
