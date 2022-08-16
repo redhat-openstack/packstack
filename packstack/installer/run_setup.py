@@ -11,17 +11,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from six.moves import configparser
-from six.moves import StringIO
-from functools import cmp_to_key
-
+import configparser
 import copy
 import datetime
+from functools import cmp_to_key
 import getpass
 import logging
+from io import StringIO
 import os
 import re
-import six
 import sys
 import traceback
 import types
@@ -243,19 +241,19 @@ def mask(input):
     output = copy.deepcopy(input)
     if isinstance(input, dict):
         for key in input:
-            if isinstance(input[key], six.string_types):
+            if isinstance(input[key], str):
                 output[key] = utils.mask_string(input[key],
                                                 masked_value_set)
     if isinstance(input, list):
         for item in input:
             org = item
             orgIndex = input.index(org)
-            if isinstance(item, six.string_types):
+            if isinstance(item, str):
                 item = utils.mask_string(item, masked_value_set)
             if item != org:
                 output.remove(org)
                 output.insert(orgIndex, item)
-    if isinstance(input, six.string_types):
+    if isinstance(input, str):
         output = utils.mask_string(input, masked_value_set)
 
     return output
@@ -332,7 +330,7 @@ def _handleGroupCondition(config, conditionName, conditionValue):
 
     # If the condition is a string - just read it to global conf
     # We assume that if we get a string as a member it is the name of a member of conf_params
-    elif isinstance(conditionName, six.string_types):
+    elif isinstance(conditionName, str):
         conditionValue = _loadParamFromFile(config, "general", conditionName)
     else:
         # Any other type is invalid
@@ -548,7 +546,7 @@ def _getConditionValue(matchMember):
     returnValue = False
     if isinstance(matchMember, types.FunctionType):
         returnValue = matchMember(controller.CONF)
-    elif isinstance(matchMember, six.string_types):
+    elif isinstance(matchMember, str):
         # we assume that if we get a string as a member it is the name
         # of a member of conf_params
         if matchMember not in controller.CONF:

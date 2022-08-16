@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import os
-import six
 import stat
 import uuid
 import time
@@ -76,7 +75,7 @@ class SshTarballTransferMixin(object):
             dest = self.recipe_dir[len(self.resource_dir):].lstrip('/')
         else:
             dest = ''
-        for marker, recipes in six.iteritems(self._recipes):
+        for marker, recipes in self._recipes.items():
             for path in recipes:
                 _dest = os.path.join(dest, os.path.basename(path))
                 pack.add(path, arcname=_dest)
@@ -279,7 +278,7 @@ class Drone(object):
         logger = logging.getLogger()
         skip = skip or []
         lastmarker = None
-        for mark, recipelist in six.iteritems(self._recipes):
+        for mark, recipelist in self._recipes.items():
             if marker and marker != mark:
                 logger.debug('Skipping marker %s for node %s.' %
                              (mark, self.node))

@@ -14,7 +14,6 @@
 
 from functools import cmp_to_key
 import re
-import six
 
 
 STR_MASK = '*' * 8
@@ -45,7 +44,7 @@ def mask_string(unmasked, mask_list=None, replace_list=None):
     mask_list = mask_list or []
     replace_list = replace_list or []
 
-    if isinstance(unmasked, six.text_type):
+    if isinstance(unmasked, str):
         masked = unmasked.encode('utf-8')
     else:
         masked = unmasked

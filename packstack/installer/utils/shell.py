@@ -14,7 +14,6 @@
 
 import re
 import os
-import six
 import logging
 import subprocess
 
@@ -38,7 +37,7 @@ def execute(cmd, workdir=None, can_fail=True, mask_list=None,
     mask_list = mask_list or []
     repl_list = [("'", "'\\''")]
 
-    if not isinstance(cmd, six.string_types):
+    if not isinstance(cmd, str):
         import pipes
         masked = ' '.join((pipes.quote(i) for i in cmd))
     else:
@@ -55,9 +54,9 @@ def execute(cmd, workdir=None, can_fail=True, mask_list=None,
                             env=environ)
     out, err = proc.communicate()
 
-    if not isinstance(out, six.text_type):
+    if not isinstance(out, str):
         out = out.decode('utf-8')
-    if not isinstance(err, six.text_type):
+    if not isinstance(err, str):
         err = err.decode('utf-8')
     masked_out = mask_string(out, mask_list, repl_list)
     masked_err = mask_string(err, mask_list, repl_list)
@@ -115,9 +114,9 @@ class ScriptRunner(object):
         script = "function t(){ exit $? ; } \n trap t ERR \n %s" % script
 
         out, err = obj.communicate(script.encode('utf-8'))
-        if not isinstance(out, six.text_type):
+        if not isinstance(out, str):
             out = out.decode('utf-8')
-        if not isinstance(err, six.text_type):
+        if not isinstance(err, str):
             err = err.decode('utf-8')
         masked_out = mask_string(out, mask_list, repl_list)
         masked_err = mask_string(err, mask_list, repl_list)
