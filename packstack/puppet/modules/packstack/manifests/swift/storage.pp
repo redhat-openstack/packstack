@@ -1,11 +1,11 @@
 class packstack::swift::storage ()
 {
-    create_resources(packstack::firewall, hiera('FIREWALL_SWIFT_STORAGE_RULES', {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_SWIFT_STORAGE_RULES', undef, undef, {}))
 
     # install all swift storage servers together
     class { 'swift::storage::all':
       # looks like ipv6 address without brackets is required here
-      storage_local_net_ip => hiera('CONFIG_STORAGE_HOST'),
+      storage_local_net_ip => lookup('CONFIG_STORAGE_HOST'),
       require              => Class['swift'],
     }
 
@@ -19,21 +19,21 @@ class packstack::swift::storage ()
     }
 
     swift::ringsync{ ['account', 'container', 'object']:
-      ring_server => hiera('CONFIG_STORAGE_HOST_URL'),
+      ring_server => lookup('CONFIG_STORAGE_HOST_URL'),
       before      => Class['swift::storage::all'],
       require     => Class['swift'],
     }
 
-    if hiera('CONFIG_SWIFT_LOOPBACK') == 'y' {
+    if lookup('CONFIG_SWIFT_LOOPBACK') == 'y' {
       swift::storage::loopback { 'swiftloopback':
         base_dir     => '/srv/loopback-device',
         mnt_base_dir => '/srv/node',
         require      => Class['swift'],
-        fstype       => hiera('CONFIG_SWIFT_STORAGE_FSTYPE'),
-        seek         => hiera('CONFIG_SWIFT_STORAGE_SEEK'),
+        fstype       => lookup('CONFIG_SWIFT_STORAGE_FSTYPE'),
+        seek         => lookup('CONFIG_SWIFT_STORAGE_SEEK'),
       }
     }
     else {
-        create_resources(packstack::swift::fs, hiera('CONFIG_SWIFT_STORAGE_DEVICES', {}))
+        create_resources(packstack::swift::fs, lookup('CONFIG_SWIFT_STORAGE_DEVICES', undef, undef, {}))
     }
 }

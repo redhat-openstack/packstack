@@ -1,24 +1,24 @@
 class packstack::provision::tempest ()
 {
-    $provision_demo         = str2bool(hiera('CONFIG_PROVISION_DEMO'))
+    $provision_demo         = str2bool(lookup('CONFIG_PROVISION_DEMO'))
     if $provision_demo {
       $username             = 'demo'
-      $password             = hiera('CONFIG_KEYSTONE_DEMO_PW')
+      $password             = lookup('CONFIG_KEYSTONE_DEMO_PW')
       $project_name         = 'demo'
-      $floating_range       = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
+      $floating_range       = lookup('CONFIG_PROVISION_DEMO_FLOATRANGE')
     } else {
-      $username             = hiera('CONFIG_PROVISION_TEMPEST_USER')
-      $password             = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
+      $username             = lookup('CONFIG_PROVISION_TEMPEST_USER')
+      $password             = lookup('CONFIG_PROVISION_TEMPEST_USER_PW')
       $project_name         = 'tempest'
-      $floating_range       = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
+      $floating_range       = lookup('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
     }
 
     # Authentication/Keystone
-    $identity_uri          = regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'), 'v3', 'v2.0')
-    $identity_uri_v3       = regsubst(hiera('CONFIG_KEYSTONE_PUBLIC_URL'), 'v2.0', 'v3')
-    $auth_version          = regsubst(hiera('CONFIG_KEYSTONE_API_VERSION'), '.0', '')
-    $admin_username        = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
-    $admin_password        = hiera('CONFIG_KEYSTONE_ADMIN_PW')
+    $identity_uri          = regsubst(lookup('CONFIG_KEYSTONE_PUBLIC_URL'), 'v3', 'v2.0')
+    $identity_uri_v3       = regsubst(lookup('CONFIG_KEYSTONE_PUBLIC_URL'), 'v2.0', 'v3')
+    $auth_version          = regsubst(lookup('CONFIG_KEYSTONE_API_VERSION'), '.0', '')
+    $admin_username        = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
+    $admin_password        = lookup('CONFIG_KEYSTONE_ADMIN_PW')
     $admin_project_name    = 'admin'
     $admin_domain_name     = 'Default'
 
@@ -27,11 +27,11 @@ class packstack::provision::tempest ()
     $configure_networks        = true
 
     # Image
-    $image_ssh_user     = hiera('CONFIG_PROVISION_IMAGE_SSH_USER')
-    $image_name         = hiera('CONFIG_PROVISION_IMAGE_NAME')
-    $image_alt_ssh_user = hiera('CONFIG_PROVISION_IMAGE_SSH_USER')
-    $image_source       = hiera('CONFIG_PROVISION_IMAGE_URL')
-    $image_format       = hiera('CONFIG_PROVISION_IMAGE_FORMAT')
+    $image_ssh_user     = lookup('CONFIG_PROVISION_IMAGE_SSH_USER')
+    $image_name         = lookup('CONFIG_PROVISION_IMAGE_NAME')
+    $image_alt_ssh_user = lookup('CONFIG_PROVISION_IMAGE_SSH_USER')
+    $image_source       = lookup('CONFIG_PROVISION_IMAGE_URL')
+    $image_format       = lookup('CONFIG_PROVISION_IMAGE_FORMAT')
 
     # network name
     $public_network_name = 'public'
@@ -40,7 +40,7 @@ class packstack::provision::tempest ()
     $resize_available          = true
 
     $use_dynamic_credentials   = true
-    $dir_log                   = hiera('DIR_LOG')
+    $dir_log                   = lookup('DIR_LOG')
     $log_file                  = "${dir_log}/tempest.log"
     $use_stderr                = false
     $debug                     = true
@@ -48,20 +48,20 @@ class packstack::provision::tempest ()
 
     # Tempest
     $tempest_workspace    = '/var/lib/tempest'
-    $tempest_user          = hiera('CONFIG_PROVISION_TEMPEST_USER')
-    $tempest_password      = hiera('CONFIG_PROVISION_TEMPEST_USER_PW')
+    $tempest_user          = lookup('CONFIG_PROVISION_TEMPEST_USER')
+    $tempest_password      = lookup('CONFIG_PROVISION_TEMPEST_USER_PW')
 
-    $tempest_flavor_name = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_NAME')
+    $tempest_flavor_name = lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_NAME')
     $tempest_flavor_ref  = '42'
-    $tempest_flavor_ram  = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_RAM')
-    $tempest_flavor_disk = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_DISK')
-    $tempest_flavor_vcpus= hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_VCPUS')
+    $tempest_flavor_ram  = lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_RAM')
+    $tempest_flavor_disk = lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_DISK')
+    $tempest_flavor_vcpus= lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_VCPUS')
 
-    $tempest_flavor_alt_name = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_NAME')
+    $tempest_flavor_alt_name = lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_NAME')
     $tempest_flavor_alt_ref  = '84'
-    $tempest_flavor_alt_ram  = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_RAM')
-    $tempest_flavor_alt_disk = hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_DISK')
-    $tempest_flavor_alt_vcpus= hiera('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_VCPUS')
+    $tempest_flavor_alt_ram  = lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_RAM')
+    $tempest_flavor_alt_disk = lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_DISK')
+    $tempest_flavor_alt_vcpus= lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_VCPUS')
 
     nova_flavor { $tempest_flavor_name :
       ensure  => present,
@@ -81,21 +81,21 @@ class packstack::provision::tempest ()
     }
 
     # Service availability for testing based on configuration
-    $cinder_available     = str2bool(hiera('CONFIG_CINDER_INSTALL'))
-    $glance_available     = str2bool(hiera('CONFIG_GLANCE_INSTALL'))
-    $horizon_available    = str2bool(hiera('CONFIG_HORIZON_INSTALL'))
-    $nova_available       = str2bool(hiera('CONFIG_NOVA_INSTALL'))
-    $neutron_available    = str2bool(hiera('CONFIG_NEUTRON_INSTALL'))
-    $ceilometer_available = str2bool(hiera('CONFIG_CEILOMETER_INSTALL'))
-    $aodh_available       = str2bool(hiera('CONFIG_AODH_INSTALL'))
-    $trove_available      = str2bool(hiera('CONFIG_TROVE_INSTALL'))
-    $sahara_available     = str2bool(hiera('CONFIG_SAHARA_INSTALL'))
-    $heat_available       = str2bool(hiera('CONFIG_HEAT_INSTALL'))
-    $swift_available      = str2bool(hiera('CONFIG_SWIFT_INSTALL'))
-    $configure_tempest    = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
+    $cinder_available     = str2bool(lookup('CONFIG_CINDER_INSTALL'))
+    $glance_available     = str2bool(lookup('CONFIG_GLANCE_INSTALL'))
+    $horizon_available    = str2bool(lookup('CONFIG_HORIZON_INSTALL'))
+    $nova_available       = str2bool(lookup('CONFIG_NOVA_INSTALL'))
+    $neutron_available    = str2bool(lookup('CONFIG_NEUTRON_INSTALL'))
+    $ceilometer_available = str2bool(lookup('CONFIG_CEILOMETER_INSTALL'))
+    $aodh_available       = str2bool(lookup('CONFIG_AODH_INSTALL'))
+    $trove_available      = str2bool(lookup('CONFIG_TROVE_INSTALL'))
+    $sahara_available     = str2bool(lookup('CONFIG_SAHARA_INSTALL'))
+    $heat_available       = str2bool(lookup('CONFIG_HEAT_INSTALL'))
+    $swift_available      = str2bool(lookup('CONFIG_SWIFT_INSTALL'))
+    $configure_tempest    = str2bool(lookup('CONFIG_PROVISION_TEMPEST'))
 
     # Some API extensions as l3_agent_scheduler are not enabled by OVN plugin
-    $l2_agent  = hiera('CONFIG_NEUTRON_L2_AGENT')
+    $l2_agent  = lookup('CONFIG_NEUTRON_L2_AGENT')
     if $l2_agent == 'ovn' {
       $neutron_api_extensions = 'ext-gw-mode,binding,agent,external-net,quotas,provider,extraroute,router,extra_dhcp_opt,allowed-address-pairs,security-group,trunk'
     } else {

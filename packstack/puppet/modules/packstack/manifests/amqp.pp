@@ -1,6 +1,6 @@
 class packstack::amqp ()
 {
-  $amqp = hiera('CONFIG_AMQP_BACKEND')
+  $amqp = lookup('CONFIG_AMQP_BACKEND')
 
   case $amqp  {
     'rabbitmq': {

@@ -1,20 +1,20 @@
 class packstack::magnum ()
 {
-    create_resources(packstack::firewall, hiera('FIREWALL_MAGNUM_API_RULES', {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_MAGNUM_API_RULES', undef, undef, {}))
 
-    $magnum_cfg_magnum_db_pw = hiera('CONFIG_MAGNUM_DB_PW')
-    $magnum_cfg_magnum_mariadb_host = hiera('CONFIG_MARIADB_HOST_URL')
+    $magnum_cfg_magnum_db_pw = lookup('CONFIG_MAGNUM_DB_PW')
+    $magnum_cfg_magnum_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
     class { 'magnum::db':
       database_connection => "mysql+pymysql://magnum:${magnum_cfg_magnum_db_pw}@${magnum_cfg_magnum_mariadb_host}/magnum",
     }
 
-    $magnum_host = hiera('CONFIG_KEYSTONE_HOST_URL')
+    $magnum_host = lookup('CONFIG_KEYSTONE_HOST_URL')
     class { 'magnum::keystone::authtoken':
-      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
       auth_version         => 'v3',
       username             => 'magnum',
-      password             => hiera('CONFIG_MAGNUM_KS_PW'),
+      password             => lookup('CONFIG_MAGNUM_KS_PW'),
       auth_type            => 'password',
       memcached_servers    => "${magnum_host}:11211",
       project_name         => 'services'
@@ -22,8 +22,8 @@ class packstack::magnum ()
 
     class { 'magnum::keystone::keystone_auth':
       username            => 'magnum',
-      password            => hiera('CONFIG_MAGNUM_KS_PW'),
-      auth_url            => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password            => lookup('CONFIG_MAGNUM_KS_PW'),
+      auth_url            => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
       project_name        => 'services',
       user_domain_name    => 'Default',
       project_domain_name => 'Default',
@@ -41,7 +41,7 @@ class packstack::magnum ()
     }
 
     class { 'magnum::clients':
-      region_name => hiera('CONFIG_KEYSTONE_REGION')
+      region_name => lookup('CONFIG_KEYSTONE_REGION')
     }
 
     class { 'magnum::certificates':

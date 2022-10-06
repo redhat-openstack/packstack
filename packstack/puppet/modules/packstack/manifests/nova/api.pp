@@ -1,26 +1,26 @@
 class packstack::nova::api ()
 {
-    create_resources(packstack::firewall, hiera('FIREWALL_NOVA_API_RULES', {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_NOVA_API_RULES', undef, undef, {}))
 
-    $bind_host = hiera('CONFIG_IP_VERSION') ? {
+    $bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    $www_authenticate_uri = hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS')
-    $admin_password = hiera('CONFIG_NOVA_KS_PW')
+    $www_authenticate_uri = lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS')
+    $admin_password = lookup('CONFIG_NOVA_KS_PW')
 
     class { 'nova::keystone::authtoken':
       password             => $admin_password,
       www_authenticate_uri => $www_authenticate_uri,
-      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
-    if hiera('CONFIG_NOVA_PCI_ALIAS') == '' {
+    if lookup('CONFIG_NOVA_PCI_ALIAS') == '' {
       $pci_alias = $::os_service_default
     } else {
-      $pci_alias = hiera('CONFIG_NOVA_PCI_ALIAS')
+      $pci_alias = lookup('CONFIG_NOVA_PCI_ALIAS')
     }
 
     class { 'nova::pci':
@@ -32,26 +32,26 @@ class packstack::nova::api ()
       enabled                    => true,
       sync_db                    => false,
       sync_db_api                => false,
-      osapi_compute_workers      => hiera('CONFIG_SERVICE_WORKERS'),
-      allow_resize_to_same_host  => hiera('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
+      osapi_compute_workers      => lookup('CONFIG_SERVICE_WORKERS'),
+      allow_resize_to_same_host  => lookup('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
       nova_metadata_wsgi_enabled => true,
       service_name               => 'httpd',
     }
 
     class { 'nova::metadata':
-      neutron_metadata_proxy_shared_secret => hiera('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef),
+      neutron_metadata_proxy_shared_secret => lookup('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef, undef, undef),
     }
 
     class { 'nova::wsgi::apache_api':
       bind_host => $bind_host,
       ssl       => false,
-      workers   => hiera('CONFIG_SERVICE_WORKERS'),
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     class { 'nova::wsgi::apache_metadata':
       bind_host => $bind_host,
       ssl       => false,
-      workers   => hiera('CONFIG_SERVICE_WORKERS'),
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     class { 'nova::db::sync':
@@ -65,10 +65,10 @@ class packstack::nova::api ()
     class { 'nova::placement':
       auth_url    => $www_authenticate_uri,
       password    => $admin_password,
-      region_name => hiera('CONFIG_KEYSTONE_REGION'),
+      region_name => lookup('CONFIG_KEYSTONE_REGION'),
     }
 
-    $db_purge = hiera('CONFIG_NOVA_DB_PURGE_ENABLE')
+    $db_purge = lookup('CONFIG_NOVA_DB_PURGE_ENABLE')
     if $db_purge {
       class { 'nova::cron::archive_deleted_rows':
         hour        => '*/12',
@@ -78,7 +78,7 @@ class packstack::nova::api ()
 
     include nova::cell_v2::simple_setup
 
-    $manage_flavors = str2bool(hiera('CONFIG_NOVA_MANAGE_FLAVORS'))
+    $manage_flavors = str2bool(lookup('CONFIG_NOVA_MANAGE_FLAVORS'))
     if $manage_flavors {
       Class['::nova::api'] -> Nova_flavor<||>
       Class['::keystone'] -> Nova_flavor<||>

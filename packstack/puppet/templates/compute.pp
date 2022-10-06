@@ -1,6 +1,6 @@
 stage { "init": before  => Stage["main"] }
 
-Exec { timeout => hiera('DEFAULT_EXEC_TIMEOUT') }
+Exec { timeout => lookup('DEFAULT_EXEC_TIMEOUT') }
 Package { allow_virtual => true }
 
 class { 'packstack::prereqs':
@@ -9,13 +9,13 @@ class { 'packstack::prereqs':
 
 include firewall
 
-create_resources(sshkey, hiera('SSH_KEYS', {}))
+create_resources(sshkey, lookup('SSH_KEYS', undef, undef, {}))
 
-if hiera('CONFIG_NTP_SERVERS', '') != '' {
+if lookup('CONFIG_NTP_SERVERS', undef, undef, '') != '' {
   include 'packstack::chrony'
 }
 
-if hiera('CONFIG_CEILOMETER_INSTALL') == 'y' {
+if lookup('CONFIG_CEILOMETER_INSTALL') == 'y' {
   include 'packstack::nova::ceilometer::rabbitmq'
   include 'packstack::nova::ceilometer'
 }
@@ -24,29 +24,29 @@ include 'packstack::nova'
 include 'packstack::nova::common'
 include 'packstack::nova::compute'
 
-if hiera('CONFIG_VMWARE_BACKEND') == 'y' {
+if lookup('CONFIG_VMWARE_BACKEND') == 'y' {
   include 'packstack::nova::compute::vmware'
-} elsif hiera('CONFIG_IRONIC_INSTALL') == 'y' {
+} elsif lookup('CONFIG_IRONIC_INSTALL') == 'y' {
   include 'packstack::nova::compute::ironic'
 } else {
   include 'packstack::nova::compute::libvirt'
 }
 
-if hiera('CONFIG_CINDER_INSTALL') == 'y' {
+if lookup('CONFIG_CINDER_INSTALL') == 'y' {
   include 'openstacklib::iscsid'
 }
 
-if hiera('CONFIG_CINDER_INSTALL') == 'y' and
-   hiera('CONFIG_VMWARE_BACKEND') != 'y' {
-   if 'nfs' in hiera_array('CONFIG_CINDER_BACKEND') {
+if lookup('CONFIG_CINDER_INSTALL') == 'y' and
+   lookup('CONFIG_VMWARE_BACKEND') != 'y' {
+   if 'nfs' in lookup('CONFIG_CINDER_BACKEND', { merge => 'unique' }) {
     include 'packstack::nova::nfs'
    }
 }
 
-if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
+if lookup('CONFIG_NEUTRON_INSTALL') == 'y' {
   include 'packstack::nova::neutron'
   include 'packstack::neutron::rabbitmq'
-  case hiera('CONFIG_NEUTRON_L2_AGENT') {
+  case lookup('CONFIG_NEUTRON_L2_AGENT') {
     'openvswitch': { include 'packstack::neutron::ovs_agent' }
     'linuxbridge': { include 'packstack::neutron::lb_agent' }
     'ovn':         { include 'packstack::neutron::ovn_agent'
@@ -56,8 +56,8 @@ if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
   }
   include 'packstack::neutron::bridge'
 
-  if 'sriovnicswitch' in hiera_array('CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS') and
-     hiera ('CONFIG_NEUTRON_L2_AGENT') == 'openvswitch' {
+  if 'sriovnicswitch' in lookup('CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS', { merge => 'unique' }) and
+     lookup('CONFIG_NEUTRON_L2_AGENT') == 'openvswitch' {
     include 'packstack::neutron::sriov'
   }
 }

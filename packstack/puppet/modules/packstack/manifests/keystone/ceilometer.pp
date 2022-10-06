@@ -1,7 +1,7 @@
 class packstack::keystone::ceilometer ()
 {
     class { 'ceilometer::keystone::auth':
-      region       => hiera('CONFIG_KEYSTONE_REGION'),
-      password     => hiera('CONFIG_CEILOMETER_KS_PW'),
+      region       => lookup('CONFIG_KEYSTONE_REGION'),
+      password     => lookup('CONFIG_CEILOMETER_KS_PW'),
     }
 }

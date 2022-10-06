@@ -1,7 +1,7 @@
 class packstack::chrony ()
 {
-    $cfg_ntp_server_def = hiera('CONFIG_NTP_SERVER_DEF')
-    $cfg_ntp_servers    = hiera('CONFIG_NTP_SERVERS')
+    $cfg_ntp_server_def = lookup('CONFIG_NTP_SERVER_DEF')
+    $cfg_ntp_servers    = lookup('CONFIG_NTP_SERVERS')
 
     $config_content = "
     # Use public servers from the pool.ntp.org project.

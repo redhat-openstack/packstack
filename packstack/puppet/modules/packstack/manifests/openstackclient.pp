@@ -6,17 +6,17 @@ class packstack::openstackclient ()
 
     ensure_packages($clientlibs, {'ensure' => 'present'})
 
-    if hiera('CONFIG_MANILA_INSTALL') == 'y' {
+    if lookup('CONFIG_MANILA_INSTALL') == 'y' {
       ensure_packages(['/usr/bin/manila'], {'ensure' => 'present'})
     }
 
-    $ost_cl_keystone_admin_username = hiera('CONFIG_KEYSTONE_ADMIN_USERNAME')
-    $ost_cl_keystone_admin_pw       = hiera('CONFIG_KEYSTONE_ADMIN_PW')
-    $ost_cl_ctrl_keystone_url       = hiera('CONFIG_KEYSTONE_PUBLIC_URL')
-    $ost_cl_keystone_region         = hiera('CONFIG_KEYSTONE_REGION')
-    $ost_cl_keystone_demo_pw        = hiera('CONFIG_KEYSTONE_DEMO_PW')
+    $ost_cl_keystone_admin_username = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
+    $ost_cl_keystone_admin_pw       = lookup('CONFIG_KEYSTONE_ADMIN_PW')
+    $ost_cl_ctrl_keystone_url       = lookup('CONFIG_KEYSTONE_PUBLIC_URL')
+    $ost_cl_keystone_region         = lookup('CONFIG_KEYSTONE_REGION')
+    $ost_cl_keystone_demo_pw        = lookup('CONFIG_KEYSTONE_DEMO_PW')
 
-    $config_keystone_api_version = hiera('CONFIG_KEYSTONE_API_VERSION')
+    $config_keystone_api_version = lookup('CONFIG_KEYSTONE_API_VERSION')
     if $config_keystone_api_version =~ /^v(\d+).*$/ {
       # we need to force integer here
       $int_api_version = 0 + $1
@@ -52,7 +52,7 @@ export OS_IDENTITY_API_VERSION=${int_api_version}
       content => $rcadmin_content,
     }
 
-    if hiera('CONFIG_PROVISION_DEMO') == 'y' {
+    if lookup('CONFIG_PROVISION_DEMO') == 'y' {
       $demo_common_content = "unset OS_SERVICE_TOKEN
 export OS_USERNAME=demo
 export OS_PASSWORD='${ost_cl_keystone_demo_pw}'
@@ -81,12 +81,12 @@ export OS_IDENTITY_API_VERSION=${int_api_version}
       }
     }
 
-    if hiera('NO_ROOT_USER_ALLINONE') == true {
-      $ost_cl_home_dir = hiera('HOME_DIR')
+    if lookup('NO_ROOT_USER_ALLINONE') == true {
+      $ost_cl_home_dir = lookup('HOME_DIR')
       file { "${ost_cl_home_dir}/keystonerc_admin":
         ensure  => file,
-        owner   => hiera('NO_ROOT_USER'),
-        group   => hiera('NO_ROOT_GROUP'),
+        owner   => lookup('NO_ROOT_USER'),
+        group   => lookup('NO_ROOT_GROUP'),
         mode    => '0600',
         content => $rcadmin_content,
       }

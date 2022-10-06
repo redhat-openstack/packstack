@@ -1,20 +1,20 @@
 class packstack::manila ()
 {
-    create_resources(packstack::firewall, hiera('FIREWALL_MANILA_API_RULES', {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_MANILA_API_RULES', undef, undef, {}))
 
     manila_config {
-      'DEFAULT/glance_host': value => hiera('CONFIG_STORAGE_HOST_URL');
+      'DEFAULT/glance_host': value => lookup('CONFIG_STORAGE_HOST_URL');
     }
 
-    $bind_host = hiera('CONFIG_IP_VERSION') ? {
+    $bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
     class { 'manila::keystone::authtoken':
-      password             => hiera('CONFIG_MANILA_KS_PW'),
-      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL'),
+      password             => lookup('CONFIG_MANILA_KS_PW'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
     }
 
     class { 'manila::api':
@@ -28,6 +28,6 @@ class packstack::manila ()
     }
 
     class { 'manila::backends':
-      enabled_share_backends => hiera('CONFIG_MANILA_BACKEND'),
+      enabled_share_backends => lookup('CONFIG_MANILA_BACKEND'),
     }
 }

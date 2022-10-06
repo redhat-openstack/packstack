@@ -1,24 +1,24 @@
 class packstack::provision::bridge ()
 {
-    $provision_neutron_br    = str2bool(hiera('CONFIG_NEUTRON_INSTALL'))
-    $setup_ovs_bridge        = str2bool(hiera('CONFIG_PROVISION_OVS_BRIDGE'))
-    $public_bridge_name      = hiera('CONFIG_NEUTRON_L3_EXT_BRIDGE', 'br-ex')
-    $provision_tempest_br    = str2bool(hiera('CONFIG_PROVISION_TEMPEST'))
-    $provision_demo_br       = str2bool(hiera('CONFIG_PROVISION_DEMO'))
+    $provision_neutron_br    = str2bool(lookup('CONFIG_NEUTRON_INSTALL'))
+    $setup_ovs_bridge        = str2bool(lookup('CONFIG_PROVISION_OVS_BRIDGE'))
+    $public_bridge_name      = lookup('CONFIG_NEUTRON_L3_EXT_BRIDGE', undef, undef, 'br-ex')
+    $provision_tempest_br    = str2bool(lookup('CONFIG_PROVISION_TEMPEST'))
+    $provision_demo_br       = str2bool(lookup('CONFIG_PROVISION_DEMO'))
 
-    $neutron_user_password   = hiera('CONFIG_NEUTRON_KS_PW')
+    $neutron_user_password   = lookup('CONFIG_NEUTRON_KS_PW')
 
     if $provision_demo_br {
-      $floating_range_br = hiera('CONFIG_PROVISION_DEMO_FLOATRANGE')
+      $floating_range_br = lookup('CONFIG_PROVISION_DEMO_FLOATRANGE')
     } elsif $provision_tempest_br {
-      $floating_range_br = hiera('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
+      $floating_range_br = lookup('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
     }
 
     class { 'neutron::keystone::authtoken':
       username             => 'neutron',
       password             => $neutron_user_password,
-      www_authenticate_uri => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      auth_url             => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
       project_name         => 'services',
     }
 

@@ -1,6 +1,6 @@
 stage { "init": before  => Stage["main"] }
 
-Exec { timeout => hiera('DEFAULT_EXEC_TIMEOUT') }
+Exec { timeout => lookup('DEFAULT_EXEC_TIMEOUT') }
 Package { allow_virtual => true }
 
 class { 'packstack::prereqs':
@@ -9,38 +9,38 @@ class { 'packstack::prereqs':
 
 include firewall
 
-if hiera('CONFIG_NTP_SERVERS', '') != '' {
+if lookup('CONFIG_NTP_SERVERS', undef, undef, '') != '' {
   include 'packstack::chrony'
 }
 
-if hiera('CONFIG_NEUTRON_INSTALL') == 'y' {
+if lookup('CONFIG_NEUTRON_INSTALL') == 'y' {
   include 'packstack::neutron::rabbitmq'
 
-  if hiera('CONFIG_NEUTRON_VPNAAS') == 'y' {
+  if lookup('CONFIG_NEUTRON_VPNAAS') == 'y' {
     include 'packstack::neutron::vpnaas'
   }
-  if hiera('CONFIG_NEUTRON_L2_AGENT') != 'ovn' {
+  if lookup('CONFIG_NEUTRON_L2_AGENT') != 'ovn' {
     include 'packstack::neutron::l3'
   }
-  if hiera('CONFIG_NEUTRON_OVS_BRIDGE_CREATE') == 'y' {
+  if lookup('CONFIG_NEUTRON_OVS_BRIDGE_CREATE') == 'y' {
     include 'packstack::neutron::ovs_bridge'
   }
 
-  case hiera('CONFIG_NEUTRON_L2_AGENT') {
+  case lookup('CONFIG_NEUTRON_L2_AGENT') {
     'openvswitch': { include 'packstack::neutron::ovs_agent' }
     'linuxbridge': { include 'packstack::neutron::lb_agent' }
     'ovn':         { include 'packstack::neutron::ovn_agent' }
     default:       { include 'packstack::neutron::ovs_agent' }
   }
   include 'packstack::neutron::bridge'
-  if hiera('CONFIG_NEUTRON_L2_AGENT') != 'ovn' {
+  if lookup('CONFIG_NEUTRON_L2_AGENT') != 'ovn' {
     include 'packstack::neutron::dhcp'
     include 'packstack::neutron::metadata'
   }
-  if hiera('CONFIG_NEUTRON_METERING_AGENT_INSTALL') == 'y' {
+  if lookup('CONFIG_NEUTRON_METERING_AGENT_INSTALL') == 'y' {
     include 'packstack::neutron::metering'
   }
-  if hiera('CONFIG_PROVISION_DEMO') == 'y' or hiera('CONFIG_PROVISION_TEMPEST') == 'y' {
+  if lookup('CONFIG_PROVISION_DEMO') == 'y' or lookup('CONFIG_PROVISION_TEMPEST') == 'y' {
     include 'packstack::provision::bridge'
   }
 }

@@ -1,20 +1,20 @@
 class packstack::aodh ()
 {
-    create_resources(packstack::firewall, hiera('FIREWALL_AODH_RULES', {}))
+    create_resources(packstack::firewall, lookup('FIREWALL_AODH_RULES', undef, undef, {}))
 
-    $config_aodh_coordination_backend = hiera('CONFIG_CEILOMETER_COORDINATION_BACKEND')
+    $config_aodh_coordination_backend = lookup('CONFIG_CEILOMETER_COORDINATION_BACKEND')
 
     if $config_aodh_coordination_backend == 'redis' {
-      $redis_host = hiera('CONFIG_REDIS_HOST_URL')
-      $redis_port = hiera('CONFIG_REDIS_PORT')
+      $redis_host = lookup('CONFIG_REDIS_HOST_URL')
+      $redis_port = lookup('CONFIG_REDIS_PORT')
       $coordination_url = "redis://${redis_host}:${redis_port}"
     } else {
       $coordination_url = ''
     }
 
     class { 'aodh::keystone::authtoken':
-      password => hiera('CONFIG_AODH_KS_PW'),
-      auth_url => hiera('CONFIG_KEYSTONE_ADMIN_URL'),
+      password => lookup('CONFIG_AODH_KS_PW'),
+      auth_url => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     class { 'aodh::api':
@@ -24,14 +24,14 @@ class packstack::aodh ()
     }
 
     class { 'aodh::wsgi::apache':
-      workers => hiera('CONFIG_SERVICE_WORKERS'),
+      workers => lookup('CONFIG_SERVICE_WORKERS'),
       ssl     => false
     }
 
     class { 'aodh::service_credentials':
-      password    => hiera('CONFIG_AODH_KS_PW'),
-      auth_url    => hiera('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      region_name => hiera('CONFIG_KEYSTONE_REGION'),
+      password    => lookup('CONFIG_AODH_KS_PW'),
+      auth_url    => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      region_name => lookup('CONFIG_KEYSTONE_REGION'),
     }
     class { 'aodh::coordination':
       backend_url => $coordination_url,

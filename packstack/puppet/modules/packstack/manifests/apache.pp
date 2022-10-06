@@ -15,7 +15,7 @@ class packstack::apache ()
       }
     }
 
-    if hiera('CONFIG_HORIZON_SSL')  == 'y' {
+    if lookup('CONFIG_HORIZON_SSL') == 'y' {
       ensure_packages(['mod_ssl'], {'ensure' => 'present'})
       Package['mod_ssl'] -> Class['apache']
     }

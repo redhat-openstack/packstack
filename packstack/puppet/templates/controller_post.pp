@@ -1,6 +1,6 @@
 stage { "init": before  => Stage["main"] }
 
-Exec { timeout => hiera('DEFAULT_EXEC_TIMEOUT') }
+Exec { timeout => lookup('DEFAULT_EXEC_TIMEOUT') }
 Package { allow_virtual => true }
 
 class { 'packstack::prereqs':
