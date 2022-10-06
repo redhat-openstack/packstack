@@ -100,10 +100,6 @@ mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
   :ref => 'main'
 
-mod 'certmonger',
-  :git => 'https://github.com/rcritten/puppet-certmonger',
-  :ref => 'master'
-
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
   :ref => 'main'
