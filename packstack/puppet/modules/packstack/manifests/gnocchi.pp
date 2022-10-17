@@ -8,6 +8,7 @@ class packstack::gnocchi ()
       $redis_host = hiera('CONFIG_REDIS_HOST_URL')
       $redis_port = hiera('CONFIG_REDIS_PORT')
       $coordination_url = "redis://${redis_host}:${redis_port}"
+      Service<| name == 'redis' |> -> Service<| name == 'gnocchi-metricd' |>
     } else {
       $coordination_url = ''
     }
