@@ -171,13 +171,7 @@ def create_manifest(config, messages):
                           ssl_cert_file)
 
     fw_details = dict()
-    key = "ceilometer_api"
-    fw_details.setdefault(key, {})
-    fw_details[key]['host'] = "ALL"
-    fw_details[key]['service_name'] = "ceilometer-api"
-    fw_details[key]['chain'] = "INPUT"
-    fw_details[key]['ports'] = ['8777']
-    fw_details[key]['proto'] = "tcp"
+    # NOTE(tkajinam): ceilometer has no API service now
     config['FIREWALL_CEILOMETER_RULES'] = fw_details
 
 
