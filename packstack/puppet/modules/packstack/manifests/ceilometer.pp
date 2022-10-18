@@ -17,6 +17,7 @@ class packstack::ceilometer ()
       $redis_host = lookup('CONFIG_REDIS_HOST_URL')
       $redis_port = lookup('CONFIG_REDIS_PORT')
       $coordination_url = "redis://${redis_host}:${redis_port}"
+      Service<| title == 'redis' |> -> Anchor['ceilometer::service::begin']
 
       ensure_packages('python-redis', {
         name   => "python${pyvers}-redis",
