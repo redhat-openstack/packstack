@@ -28,15 +28,9 @@ class packstack::ceilometer ()
 
     include ceilometer
 
-    exec {'ceilometer-db-upgrade':
-      command   => 'ceilometer-upgrade',
-      path      => ['/usr/bin', '/usr/sbin'],
-      try_sleep => 10,
-      tries     => 20
-    }
+    include ceilometer::db::sync
 
-    Keystone::Resource::Service_identity<||> -> Exec['ceilometer-db-upgrade']
-      ~> Service['ceilometer-agent-notification']
+    Keystone::Resource::Service_identity<||> -> Anchor['ceilometer::dbsync::begin']
 
     class { 'ceilometer::agent::notification':
       manage_event_pipeline     => true,
