@@ -38,7 +38,6 @@ class packstack::keystone ()
       token_provider      => $keystone_token_provider_str,
       enable_fernet_setup => true,
       service_name        => 'httpd',
-      enable_ssl          => $keystone_use_ssl,
       default_domain      => 'Default',
     }
 
