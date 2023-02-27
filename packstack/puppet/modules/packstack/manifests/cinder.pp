@@ -42,6 +42,11 @@ class packstack::cinder ()
 
     class { 'cinder::client': }
 
+    class { 'cinder::nova':
+      password => lookup('CONFIG_NOVA_KS_PW'),
+      auth_url => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
+    }
+
     $cinder_keystone_admin_username = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
     $cinder_keystone_admin_password = lookup('CONFIG_KEYSTONE_ADMIN_PW')
     $cinder_keystone_auth_url = lookup('CONFIG_KEYSTONE_PUBLIC_URL')
