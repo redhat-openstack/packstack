@@ -8,13 +8,13 @@ class packstack::provision ()
     if $provision_demo {
       $username             = 'demo'
       $password             = lookup('CONFIG_KEYSTONE_DEMO_PW')
-      $tenant_name          = 'demo'
+      $project_name         = 'demo'
       $floating_range       = lookup('CONFIG_PROVISION_DEMO_FLOATRANGE')
       $allocation_pools     = lookup('CONFIG_PROVISION_DEMO_ALLOCATION_POOLS')
     } elsif $provision_tempest {
       $username             = lookup('CONFIG_PROVISION_TEMPEST_USER')
       $password             = lookup('CONFIG_PROVISION_TEMPEST_USER_PW')
-      $tenant_name          = 'tempest'
+      $project_name         = 'tempest'
       $floating_range       = lookup('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
       $allocation_pools     = []
       if (empty($username) or empty($password)) {
@@ -26,8 +26,8 @@ class packstack::provision ()
     if $provision_demo or $provision_tempest {
 
       # Keystone
-      $admin_tenant_name = 'admin'
-      keystone_tenant { $tenant_name:
+      $admin_project_name = 'admin'
+      keystone_tenant { $project_name:
         ensure      => present,
         enabled     => true,
         description => 'default tenant',
@@ -40,12 +40,12 @@ class packstack::provision ()
       }
 
       if $heat_available {
-        keystone_user_role { "${username}@${tenant_name}":
+        keystone_user_role { "${username}@${project_name}":
           ensure => present,
           roles  => ['_member_', 'heat_stack_owner'],
         }
       } else {
-        keystone_user_role { "${username}@${tenant_name}":
+        keystone_user_role { "${username}@${project_name}":
           ensure => present,
           roles  => ['_member_'],
         }
@@ -66,7 +66,7 @@ class packstack::provision ()
         neutron_network { $public_network_name:
           ensure                    => present,
           router_external           => true,
-          tenant_name               => $admin_tenant_name,
+          project_name              => $admin_project_name,
           provider_network_type     => 'flat',
           provider_physical_network => $public_physnet,
         }
@@ -76,22 +76,22 @@ class packstack::provision ()
           allocation_pools => $allocation_pools,
           enable_dhcp      => false,
           network_name     => $public_network_name,
-          tenant_name      => $admin_tenant_name,
+          project_name     => $admin_project_name,
         }
         neutron_network { $private_network_name:
-          ensure      => present,
-          tenant_name => $tenant_name,
+          ensure       => present,
+          project_name => $project_name,
         }
         neutron_subnet { $private_subnet_name:
-          ensure       => present,
-          cidr         => $fixed_range,
-          network_name => $private_network_name,
-          tenant_name  => $tenant_name,
+          ensure        => present,
+          cidr          => $fixed_range,
+          network_name  => $private_network_name,
+          project_name  => $project_name,
         }
         # Tenant-owned router - assumes network namespace isolation
         neutron_router { $router_name:
           ensure               => present,
-          tenant_name          => $tenant_name,
+          project_name         => $project_name,
           gateway_network_name => $public_network_name,
           # A neutron_router resource must explicitly declare a dependency on
           # the first subnet of the gateway network.
