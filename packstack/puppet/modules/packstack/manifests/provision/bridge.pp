@@ -43,14 +43,14 @@ class packstack::provision::bridge ()
       if $public_bridge_name != '' {
         firewall { '000 forward out':
           chain    => 'FORWARD',
-          action   => 'accept',
+          jump     => 'accept',
           outiface => $public_bridge_name,
           proto    => 'all',
         }
 
         firewall { '000 forward in':
           chain   => 'FORWARD',
-          action  => 'accept',
+          jump    => 'accept',
           iniface => $public_bridge_name,
           proto   => 'all',
         }

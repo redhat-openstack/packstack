@@ -67,7 +67,7 @@ class packstack::horizon ()
     firewall { "001 horizon ${firewall_port} incoming":
       proto  => 'tcp',
       dport  => [$firewall_port],
-      action => 'accept',
+      jump   => 'accept',
     }
 
     if str2bool($::selinux) {
