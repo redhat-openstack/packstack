@@ -344,8 +344,8 @@ def initConfig(controller):
              "PROMPT": ("Enter a comma separated ordered list of networking "
                         "mechanism driver entrypoints"),
              "OPTION_LIST": ["logger", "test", "linuxbridge", "openvswitch",
-                             "hyperv", "ncs", "arista", "cisco_nexus",
-                             "mlnx", "l2population", "sriovnicswitch", "ovn"],
+                             "arista", "mlnx", "l2population",
+                             "sriovnicswitch", "ovn"],
              "VALIDATORS": [validators.validate_multi_options],
              "DEFAULT_VALUE": "ovn",
              "MASK_INPUT": False,
