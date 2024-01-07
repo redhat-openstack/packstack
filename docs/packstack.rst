@@ -72,9 +72,6 @@ Global Options
 **CONFIG_MAGNUM_INSTALL**
     Specify 'y' to install OpenStack Container Infrastructure Management Service (magnum). ['y', 'n']
 
-**CONFIG_SAHARA_INSTALL**
-    Specify 'y' to install OpenStack Data Processing (sahara). In case of sahara installation packstack also installs heat.['y', 'n']
-
 **CONFIG_TROVE_INSTALL**
     Specify 'y' to install OpenStack Database (trove) ['y', 'n']
 
@@ -169,9 +166,6 @@ Global unsupported options
 
 **CONFIG_STORAGE_HOST**
     (Unsupported!) Server on which to install OpenStack services specific to storage servers such as Image or Block Storage services.
-
-**CONFIG_SAHARA_HOST**
-    (Unsupported!) Server on which to install OpenStack services specific to OpenStack Data Processing (sahara).
 
 Server Prepare Configs
 -----------------------
@@ -1070,15 +1064,6 @@ Gnocchi Config parameters
 **CONFIG_GNOCCHI_KS_PW**
     Password to use for Gnocchi to authenticate with the Identity service.
 
-
-Sahara Config parameters
-------------------------
-
-**CONFIG_SAHARA_DB_PW**
-    Password to use for OpenStack Data Processing (sahara) to access the database.
-
-**CONFIG_SAHARA_KS_PW**
-    Password to use for OpenStack Data Processing to authenticate with the Identity service.
 
 Trove config parameters
 -----------------------

@@ -89,7 +89,6 @@ class packstack::provision::tempest ()
     $ceilometer_available = str2bool(lookup('CONFIG_CEILOMETER_INSTALL'))
     $aodh_available       = str2bool(lookup('CONFIG_AODH_INSTALL'))
     $trove_available      = str2bool(lookup('CONFIG_TROVE_INSTALL'))
-    $sahara_available     = str2bool(lookup('CONFIG_SAHARA_INSTALL'))
     $heat_available       = str2bool(lookup('CONFIG_HEAT_INSTALL'))
     $swift_available      = str2bool(lookup('CONFIG_SWIFT_INSTALL'))
     $configure_tempest    = str2bool(lookup('CONFIG_PROVISION_TEMPEST'))
@@ -143,7 +142,6 @@ class packstack::provision::tempest ()
       public_network_name       => $public_network_name,
       public_router_id          => $public_router_id,
       resize_available          => $resize_available,
-      sahara_available          => $sahara_available,
       ssh_key_type              => $ssh_key_type,
       swift_available           => $swift_available,
       tempest_workspace         => $tempest_workspace,

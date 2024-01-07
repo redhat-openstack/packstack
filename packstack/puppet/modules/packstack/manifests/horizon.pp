@@ -52,10 +52,6 @@ class packstack::horizon ()
       ensure_packages(['openstack-trove-ui'], {'ensure' => 'present'})
     }
 
-    if lookup('CONFIG_SAHARA_INSTALL') == 'y' {
-      ensure_packages(['openstack-sahara-ui'], {'ensure' => 'present'})
-    }
-
     if lookup('CONFIG_HEAT_INSTALL') == 'y' {
       ensure_packages(['openstack-heat-ui'], {'ensure' => 'present'})
     }

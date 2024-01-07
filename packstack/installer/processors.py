@@ -125,8 +125,6 @@ def process_password(param, param_name, config=None):
 
 
 def process_heat(param, param_name, config=None):
-    if config["CONFIG_SAHARA_INSTALL"] == 'y':
-        param = 'y'
     return param
 
 

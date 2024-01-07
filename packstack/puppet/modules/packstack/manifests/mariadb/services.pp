@@ -108,15 +108,6 @@ class packstack::mariadb::services ()
         }
     }
 
-    if lookup('CONFIG_SAHARA_INSTALL') == 'y' {
-        class { 'sahara::db::mysql':
-          password      => lookup('CONFIG_SAHARA_DB_PW'),
-          host          => '%',
-          allowed_hosts => '%',
-        }
-
-    }
-
     if lookup('CONFIG_TROVE_INSTALL') == 'y' {
         class { 'trove::db::mysql':
             password      => lookup('CONFIG_TROVE_DB_PW'),

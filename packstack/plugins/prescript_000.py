@@ -231,21 +231,6 @@ def initConfig(controller):
              "NEED_CONFIRM": False,
              "CONDITION": False},
 
-            {"CMD_OPTION": "os-sahara-install",
-             "PROMPT": (
-                 "Should Packstack install OpenStack Clustering (Sahara)."
-                 " If yes it'll also install Heat."
-             ),
-             "OPTION_LIST": ["y", "n"],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "n",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": "CONFIG_SAHARA_INSTALL",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
             {"CMD_OPTION": "os-heat-install",
              "PROMPT": (
                  "Should Packstack install OpenStack Orchestration (Heat)"
@@ -510,18 +495,6 @@ def initConfig(controller):
             {"CONF_NAME": "CONFIG_STORAGE_HOST",
              "CMD_OPTION": "os-storage-host",
              "PROMPT": "Enter the host for the storage services",
-             "OPTION_LIST": [],
-             "VALIDATORS": [validators.validate_ssh],
-             "DEFAULT_VALUE": utils.get_localhost_ip(),
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-
-            {"CONF_NAME": "CONFIG_SAHARA_HOST",
-             "CMD_OPTION": "os-sahara-host",
-             "PROMPT": "Enter the host for the Sahara",
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_ssh],
              "DEFAULT_VALUE": utils.get_localhost_ip(),
