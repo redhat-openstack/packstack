@@ -149,11 +149,11 @@ def copy_puppet_modules(config, messages):
                            'firewall', 'glance', 'gnocchi', 'heat', 'horizon',
                            'inifile', 'ironic', 'keystone', 'magnum', 'manila',
                            'memcached', 'mysql', 'neutron', 'nova', 'nssdb',
-                           'openstack', 'openstacklib', 'oslo', 'ovn',
-                           'packstack', 'placement', 'rabbitmq', 'redis',
-                           'remote', 'rsync', 'sahara', 'ssh', 'stdlib',
-                           'swift', 'sysctl', 'systemd', 'tempest', 'trove',
-                           'vcsrepo', 'vswitch', 'xinetd'))
+                           'openstacklib', 'oslo', 'ovn', 'packstack',
+                           'placement', 'rabbitmq', 'redis', 'remote', 'rsync',
+                           'sahara', 'ssh', 'stdlib', 'swift', 'sysctl',
+                           'systemd', 'tempest', 'trove', 'vcsrepo', 'vswitch',
+                           'xinetd'))
 
     # write puppet manifest to disk
     manifestfiles.writeManifests()
