@@ -204,7 +204,7 @@ rm -rf /tmp/cirros
 mkdir /tmp/cirros
 
 export CIRROS_ARCH="$(uname -p)"
-export CIRROS_VERSION="0.5.1"
+export CIRROS_VERSION=${CIRROS_VERSION:-"0.6.2"}
 
 if [ -f ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz ]; then
     tar -xzvf ~/cache/files/cirros-$CIRROS_VERSION-$CIRROS_ARCH-uec.tar.gz -C /tmp/cirros/
