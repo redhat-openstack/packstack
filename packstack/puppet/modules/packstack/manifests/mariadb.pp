@@ -39,6 +39,7 @@ class packstack::mariadb ()
           'wsrep_cluster_name'     => 'galera_cluster',
           'wsrep_sst_method'       => 'rsync',
           'wsrep_sst_auth'         => "root:${mysql_root_password}",
+          'ssl-disable'            => true,
         },
       },
     }
