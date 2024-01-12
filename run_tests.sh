@@ -17,7 +17,7 @@ export PATH=$PATH:/usr/local/sbin:/usr/sbin
 
 SCENARIO=${SCENARIO:-scenario001}
 
-BRANCH=master
+BRANCH=stable/wallaby
 
 # Find OS version and release
 source /etc/os-release
@@ -278,8 +278,15 @@ if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 8 ]; then
       $SUDO gem install r10k
   else
-      $SUDO gem install gettext -v 3.2.9 --no-ri --no-rdoc
-      $SUDO gem install r10k -v 2.6.4 --no-ri --no-rdoc
+    cat <<EOF >/tmp/Gemfile
+source 'http://rubygems.org'
+gem 'fast_gettext', '<1.2.0'
+gem 'gettext', '< 3.3.0'
+gem 'multipart-post', '<2.2.0'
+gem 'semantic_puppet', '<1.1.0'
+gem 'r10k', '= 2.6.4'
+EOF
+    $SUDO gem install -g /tmp/Gemfile
   fi
   # make sure there is no puppet module pre-installed
   $SUDO rm -rf "${PUPPETFILE_DIR:?}/"*
