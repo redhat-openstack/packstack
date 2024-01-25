@@ -154,7 +154,7 @@ mod 'ssh',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => 'v6.6.0'
+  :ref => 'v8.1.0'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
