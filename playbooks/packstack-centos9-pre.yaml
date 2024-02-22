@@ -27,3 +27,10 @@
         chdir: '{{ ansible_user_dir }}/workspace'
       become: true
       environment: '{{ zuul }}'
+
+    # mariadb-10.11 is broken https://issues.redhat.com/browse/RDO-241
+    - name: Temporary disable mariadb module
+      shell: "sudo dnf module disable -y mariadb"
+      when: ansible_distribution == "CentOS" and ansible_distribution_major_version == "9"
+      become: true
+      changed_when: False
