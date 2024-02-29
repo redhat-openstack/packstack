@@ -176,27 +176,16 @@ $SUDO $PKG_MGR -y install puppet \
 OS_NAME=$(facter operatingsystem)
 OS_VERSION=$(facter operatingsystemmajrelease)
 
-if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
-    $SUDO $PKG_MGR -y install python3-setuptools \
-                              python3-devel \
-                              python3-wheel \
-                              python3-pyyaml
-else
-    $SUDO $PKG_MGR -y install python-setuptools \
-                              python-devel \
-                              yum-plugin-priorities
-fi
+$SUDO $PKG_MGR -y install python3-setuptools \
+                          python3-devel \
+                          python3-wheel \
+                          python3-pyyaml
 
 # Don't assume pip is installed
 which pip3 && PIP=pip3
 if [ -z $PIP ]; then
-    if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 7 ]; then
-        $SUDO $PKG_MGR -y install python3-pip python3-wheel
-        PIP=pip3
-    else
-        which pip || $SUDO easy_install pip
-        PIP=pip
-    fi
+    $SUDO $PKG_MGR -y install python3-pip python3-wheel
+    PIP=pip3
 fi
 
 # Try to use pre-cached cirros images, if available, otherwise download them
@@ -282,12 +271,7 @@ if [ "${INSTALL_FROM_SOURCE}" = true ]; then
   fi
   export PUPPETFILE_DIR=/usr/share/openstack-puppet/modules
   export GEM_HOME=/tmp/packstackgems
-  if ([ "$OS_NAME" = "RedHat" ] || [ "$OS_NAME" = "CentOS" ]) && [ $OS_VERSION -gt 8 ]; then
-      $SUDO gem install r10k
-  else
-      $SUDO gem install gettext -v 3.2.9 --no-ri --no-rdoc
-      $SUDO gem install r10k -v 2.6.4 --no-ri --no-rdoc
-  fi
+  $SUDO gem install r10k
   # make sure there is no puppet module pre-installed
   $SUDO rm -rf "${PUPPETFILE_DIR:?}/"*
   install_modules
