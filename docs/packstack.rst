@@ -770,7 +770,7 @@ Neutron ML2 plugin config
     Comma-separated, ordered list of network types to allocate as tenant networks. The 'local' value is only useful for single-box testing and provides no connectivity between hosts. ['local', 'vlan', 'gre', 'vxlan', 'geneve']
 
 **CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS**
-    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'linuxbridge', 'openvswitch', 'hyperv', 'ncs', 'arista', 'cisco_nexus', 'mlnx', 'l2population', 'sriovnicswitch', 'ovn']
+    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'linuxbridge', 'openvswitch', 'arista', 'mlnx', 'l2population', 'sriovnicswitch', 'ovn']
 
 **CONFIG_NEUTRON_ML2_FLAT_NETWORKS**
     Comma-separated list of physical_network names with which flat networks can be created. Use * to allow flat networks with arbitrary physical_network names.
