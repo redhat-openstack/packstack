@@ -21,7 +21,6 @@
       - openstack/puppet-manila
       - openstack/puppet-neutron
       - openstack/puppet-nova
-      - openstack/puppet-openstack_extras
       - openstack/puppet-openstacklib
       - openstack/puppet-oslo
       - openstack/puppet-ovn
