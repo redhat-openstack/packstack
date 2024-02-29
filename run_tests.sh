@@ -17,7 +17,7 @@ export PATH=$PATH:/usr/local/sbin:/usr/sbin
 
 SCENARIO=${SCENARIO:-scenario001}
 
-BRANCH=stable/yoga
+BRANCH=unmaintained/yoga
 
 # Find OS version and release
 source /etc/os-release

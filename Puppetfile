@@ -4,95 +4,95 @@ moduledir '/usr/share/openstack-puppet/modules'
 
 mod 'aodh',
   :git => 'https://github.com/openstack/puppet-aodh',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'ceilometer',
   :git => 'https://github.com/openstack/puppet-ceilometer',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'cinder',
   :git => 'https://github.com/openstack/puppet-cinder',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'glance',
   :git => 'https://github.com/openstack/puppet-glance',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'gnocchi',
   :git => 'https://github.com/openstack/puppet-gnocchi',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'magnum',
   :git => 'https://github.com/openstack/puppet-magnum',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'horizon',
   :git => 'https://github.com/openstack/puppet-horizon',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'ironic',
   :git => 'https://github.com/openstack/puppet-ironic',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'keystone',
   :git => 'https://github.com/openstack/puppet-keystone',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'manila',
   :git => 'https://github.com/openstack/puppet-manila',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'neutron',
   :git => 'https://github.com/openstack/puppet-neutron',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'nova',
   :git => 'https://github.com/openstack/puppet-nova',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'openstack_extras',
   :git => 'https://github.com/openstack/puppet-openstack_extras',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'openstacklib',
   :git => 'https://github.com/openstack/puppet-openstacklib',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'oslo',
   :git => 'https://github.com/openstack/puppet-oslo',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'ovn',
   :git => 'https://github.com/openstack/puppet-ovn',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'placement',
   :git => 'https://github.com/openstack/puppet-placement',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'sahara',
   :git => 'https://github.com/openstack/puppet-sahara',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'swift',
   :git => 'https://github.com/openstack/puppet-swift',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'tempest',
   :git => 'https://github.com/openstack/puppet-tempest',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'trove',
   :git => 'https://github.com/openstack/puppet-trove',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 mod 'vswitch',
   :git => 'https://github.com/openstack/puppet-vswitch',
-  :ref => 'stable/yoga'
+  :ref => 'unmaintained/yoga'
 
 ## Non-OpenStack modules
 
