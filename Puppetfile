@@ -162,5 +162,5 @@ mod 'vcsrepo',
 
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',
-  :ref => 'master'
+  :ref => 'main'
 
