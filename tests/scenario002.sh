@@ -12,7 +12,6 @@ echo -e "Generating packstack config for:
 - nova
 - neutron (ovs+vxlan)
 - swift
-- sahara
 - trove
 - tempest (regex: 'smoke dashboard')"
 echo "tempest will run if packstack's installation completes successfully."
@@ -39,7 +38,6 @@ $SUDO packstack ${ADDITIONAL_ARGS} \
           --os-neutron-ml2-type-drivers="vxlan,flat" \
           --os-neutron-ml2-tenant-network-types="vxlan" \
           --os-neutron-vpnaas-install=n \
-          --os-sahara-install=y \
           --os-trove-install=y \
           --nova-libvirt-virt-type=qemu \
           --provision-image-url="/tmp/cirros/cirros-$CIRROS_VERSION-$CIRROS_ARCH-disk.img" \

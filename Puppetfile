@@ -70,10 +70,6 @@ mod 'placement',
   :git => 'https://github.com/openstack/puppet-placement',
   :ref => 'master'
 
-mod 'sahara',
-  :git => 'https://github.com/openstack/puppet-sahara',
-  :ref => 'master'
-
 mod 'swift',
   :git => 'https://github.com/openstack/puppet-swift',
   :ref => 'master'

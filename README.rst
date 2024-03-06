@@ -250,7 +250,6 @@ aodh           X                                   X
 gnocchi        X                                   X
 heat                                               X
 swift          X                       X          
-sahara                                 X          
 trove                                  X          
 horizon                    X                      
 manila                     X                      

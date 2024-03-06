@@ -413,37 +413,6 @@ class packstack::mariadb::services_remote () {
 
     }
 
-    if lookup('CONFIG_SAHARA_INSTALL') == 'y' {
-        remote_database { 'sahara':
-          ensure      => 'present',
-          charset     => 'utf8',
-          db_host     => lookup('CONFIG_MARIADB_HOST'),
-          db_user     => lookup('CONFIG_MARIADB_USER'),
-          db_password => lookup('CONFIG_MARIADB_PW'),
-          provider    => 'mysql',
-        }
-
-        $sahara_cfg_sahara_db_pw = lookup('CONFIG_SAHARA_DB_PW')
-
-        remote_database_user { 'sahara@%':
-          password_hash => mysql_password($sahara_cfg_sahara_db_pw),
-          db_host       => lookup('CONFIG_MARIADB_HOST'),
-          db_user       => lookup('CONFIG_MARIADB_USER'),
-          db_password   => lookup('CONFIG_MARIADB_PW'),
-          provider      => 'mysql',
-          require       => Remote_database['sahara'],
-        }
-
-        remote_database_grant { 'sahara@%/sahara':
-          privileges  => 'all',
-          db_host     => lookup('CONFIG_MARIADB_HOST'),
-          db_user     => lookup('CONFIG_MARIADB_USER'),
-          db_password => lookup('CONFIG_MARIADB_PW'),
-          provider    => 'mysql',
-          require     => Remote_database_user['sahara@%'],
-        }
-    }
-
     if lookup('CONFIG_TROVE_INSTALL') == 'y' {
         remote_database { 'trove':
           ensure      => 'present',

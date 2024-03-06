@@ -1,0 +1,5 @@
+---
+upgrade:
+  - |
+    Sahara support has been removed because the sahara project is no longer
+    maintained.

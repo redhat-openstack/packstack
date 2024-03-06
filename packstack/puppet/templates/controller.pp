@@ -189,12 +189,3 @@ if lookup('CONFIG_TROVE_INSTALL') == 'y' {
   include 'packstack::trove::rabbitmq'
   include 'packstack::trove'
 }
-
-if lookup('CONFIG_SAHARA_INSTALL') == 'y' {
-  include 'packstack::keystone::sahara'
-  include 'packstack::sahara::rabbitmq'
-  include 'packstack::sahara'
-  if lookup('CONFIG_CEILOMETER_INSTALL') == 'y' {
-    include 'packstack::sahara::ceilometer'
-  }
-}
