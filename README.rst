@@ -284,3 +284,10 @@ You can also choose to disable repository management entirely:
    <setup your own custom repositories here>
    export MANAGE_REPOS="false"
    ./run_tests.sh
+
+Reporting Bugs
+--------------
+
+Bugs for packstack are tracked in the "packstack" component of the [RDO Jira board](https://issues.redhat.com/issues/?jql=project+%3D+RDO+AND+component+%3D+packstack).
+If you find issues, you can create an issue on that board and provide the relevant information to describe your problem.
+
