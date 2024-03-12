@@ -1,0 +1,16 @@
+puppetlabs/puppetlabs-apache
+puppetlabs/puppetlabs-concat
+puppetlabs/puppetlabs-firewall
+puppetlabs/puppetlabs-inifile
+saz/puppet-memcached
+puppetlabs/puppetlabs-mysql
+rcritten/puppet-nssdb,2ed2a2df59bbeaf9cf628e1a4a499476842282fd
+voxpupuli/puppet-rabbitmq
+voxpupuli/puppet-redis
+paramite/puppet-remote,7420908328b832f4b20e1eba44bcccd926da8faa
+puppetlabs/puppetlabs-rsync
+puppetlabs/puppetlabs-stdlib
+duritong/puppet-sysctl,847ec1c07ed3e231a48d8816971c0bd4afe7a72b
+voxpupuli/puppet-systemd
+puppetlabs/puppetlabs-vcsrepo
+puppetlabs/puppetlabs-xinetd
