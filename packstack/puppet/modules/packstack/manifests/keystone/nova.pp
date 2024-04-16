@@ -7,6 +7,7 @@ class packstack::keystone::nova ()
 
 
     class { 'nova::keystone::auth':
+      roles        => ['admin', 'service'],
       region       => lookup('CONFIG_KEYSTONE_REGION'),
       password     => lookup('CONFIG_NOVA_KS_PW'),
       public_url   => $nova_url,
