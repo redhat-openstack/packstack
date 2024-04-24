@@ -34,7 +34,6 @@ class packstack::nova::api ()
       sync_db_api                => false,
       osapi_compute_workers      => lookup('CONFIG_SERVICE_WORKERS'),
       allow_resize_to_same_host  => lookup('CONFIG_NOVA_ALLOW_RESIZE_TO_SAME'),
-      nova_metadata_wsgi_enabled => true,
       service_name               => 'httpd',
     }
 
