@@ -17,7 +17,7 @@ class packstack::trove ()
       debug => lookup('CONFIG_DEBUG_MODE'),
     }
 
-    class { 'trove::api::service_credentials':
+    class { 'trove::service_credentials':
       password => lookup('CONFIG_TROVE_KS_PW'),
       auth_url => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }
