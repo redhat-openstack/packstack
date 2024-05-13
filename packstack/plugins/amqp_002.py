@@ -92,29 +92,6 @@ def initConfig(controller):
     controller.addGroup(group, params)
 
     params = [
-        {"CMD_OPTION": "amqp-nss-certdb-pw",
-         "PROMPT": "Enter the password for NSS certificate database",
-         "OPTION_LIST": [],
-         "VALIDATORS": [validators.validate_not_empty],
-         "DEFAULT_VALUE": "PW_PLACEHOLDER",
-         "PROCESSORS": [processors.process_password],
-         "MASK_INPUT": True,
-         "LOOSE_VALIDATION": True,
-         "CONF_NAME": "CONFIG_AMQP_NSS_CERTDB_PW",
-         "USE_DEFAULT": False,
-         "NEED_CONFIRM": True,
-         "CONDITION": False},
-    ]
-    update_params_usage(basedefs.PACKSTACK_DOC, params, sectioned=False)
-    group = {"GROUP_NAME": "AMQPSSL",
-             "DESCRIPTION": "AMQP Config SSL parameters",
-             "PRE_CONDITION": "CONFIG_AMQP_ENABLE_SSL",
-             "PRE_CONDITION_MATCH": "y",
-             "POST_CONDITION": False,
-             "POST_CONDITION_MATCH": True}
-    controller.addGroup(group, params)
-
-    params = [
         {"CMD_OPTION": "amqp-auth-user",
          "PROMPT": "Enter the user for amqp authentication",
          "OPTION_LIST": [],
