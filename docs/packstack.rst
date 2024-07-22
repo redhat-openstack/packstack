@@ -318,7 +318,7 @@ Keystone Config parameters
     Password to use for the Identity service 'demo' user.
 
 **CONFIG_KEYSTONE_API_VERSION**
-    Identity service API version string. ['v2.0', 'v3']
+    Identity service API version string. ['v3']
 
 **CONFIG_KEYSTONE_TOKEN_FORMAT**
     Identity service token format (FERNET). Since Rocky, only FERNET is supported. ['FERNET']

@@ -14,9 +14,8 @@ class packstack::provision::tempest ()
     }
 
     # Authentication/Keystone
-    $identity_uri          = regsubst(lookup('CONFIG_KEYSTONE_PUBLIC_URL'), 'v3', 'v2.0')
-    $identity_uri_v3       = regsubst(lookup('CONFIG_KEYSTONE_PUBLIC_URL'), 'v2.0', 'v3')
-    $auth_version          = regsubst(lookup('CONFIG_KEYSTONE_API_VERSION'), '.0', '')
+    $identity_uri_v3       = lookup('CONFIG_KEYSTONE_PUBLIC_URL')
+    $auth_version          = lookup('CONFIG_KEYSTONE_API_VERSION')
     $admin_username        = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
     $admin_password        = lookup('CONFIG_KEYSTONE_ADMIN_PW')
     $admin_project_name    = 'admin'
@@ -128,7 +127,6 @@ class packstack::provision::tempest ()
       glance_available          => $glance_available,
       heat_available            => $heat_available,
       horizon_available         => $horizon_available,
-      identity_uri              => $identity_uri,
       identity_uri_v3           => $identity_uri_v3,
       image_alt_ssh_user        => $image_alt_ssh_user,
       image_name_alt            => $image_name,
