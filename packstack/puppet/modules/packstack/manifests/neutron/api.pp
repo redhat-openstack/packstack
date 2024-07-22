@@ -28,7 +28,6 @@ class packstack::neutron::api ()
       api_workers           => lookup('CONFIG_SERVICE_WORKERS'),
       rpc_workers           => lookup('CONFIG_SERVICE_WORKERS'),
       service_providers     => lookup('SERVICE_PROVIDERS', { merge => 'unique' }),
-      ensure_vpnaas_package => $neutron_vpnaas_enabled,
     }
 
     file { '/etc/neutron/api-paste.ini':
