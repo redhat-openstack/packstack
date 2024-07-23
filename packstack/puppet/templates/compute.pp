@@ -43,21 +43,19 @@ if lookup('CONFIG_CINDER_INSTALL') == 'y' and
    }
 }
 
-if lookup('CONFIG_NEUTRON_INSTALL') == 'y' {
-  include 'packstack::nova::neutron'
-  include 'packstack::neutron::rabbitmq'
-  case lookup('CONFIG_NEUTRON_L2_AGENT') {
-    'openvswitch': { include 'packstack::neutron::ovs_agent' }
-    'linuxbridge': { include 'packstack::neutron::lb_agent' }
-    'ovn':         { include 'packstack::neutron::ovn_agent'
-                     include 'packstack::neutron::ovn_metadata'
-                   }
-    default:       { include 'packstack::neutron::ovs_agent' }
-  }
-  include 'packstack::neutron::bridge'
+include 'packstack::nova::neutron'
+include 'packstack::neutron::rabbitmq'
+case lookup('CONFIG_NEUTRON_L2_AGENT') {
+  'openvswitch': { include 'packstack::neutron::ovs_agent' }
+  'linuxbridge': { include 'packstack::neutron::lb_agent' }
+  'ovn':         { include 'packstack::neutron::ovn_agent'
+                   include 'packstack::neutron::ovn_metadata'
+                 }
+  default:       { include 'packstack::neutron::ovs_agent' }
+}
+include 'packstack::neutron::bridge'
 
-  if 'sriovnicswitch' in lookup('CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS', { merge => 'unique' }) and
-     lookup('CONFIG_NEUTRON_L2_AGENT') == 'openvswitch' {
-    include 'packstack::neutron::sriov'
-  }
+if 'sriovnicswitch' in lookup('CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS', { merge => 'unique' }) and
+   lookup('CONFIG_NEUTRON_L2_AGENT') == 'openvswitch' {
+  include 'packstack::neutron::sriov'
 }

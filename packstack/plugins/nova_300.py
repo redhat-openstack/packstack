@@ -232,11 +232,6 @@ def initSequences(controller):
     if controller.CONF['CONFIG_NOVA_INSTALL'] != 'y':
         return
 
-    if controller.CONF['CONFIG_NEUTRON_INSTALL'] == 'y':
-        network_title = ('Preparing OpenStack Network-related '
-                         'Nova entries')
-        network_function = create_neutron_manifest
-
     novaapisteps = [
         {'title': 'Preparing Nova API entries',
          'functions': [create_api_manifest]},
@@ -250,8 +245,8 @@ def initSequences(controller):
          'functions': [create_sched_manifest]},
         {'title': 'Preparing Nova VNC Proxy entries',
          'functions': [create_vncproxy_manifest]},
-        {'title': network_title,
-         'functions': [network_function]},
+        {'title': 'Preparing OpenStack Network-related Nova entries',
+         'functions': [create_neutron_manifest]},
         {'title': 'Preparing Nova Common entries',
          'functions': [create_common_manifest]},
     ]
@@ -449,8 +444,6 @@ def create_vncproxy_manifest(config, messages):
 def create_common_manifest(config, messages):
     global compute_hosts, network_hosts
 
-    network_type = (config['CONFIG_NEUTRON_INSTALL'] == "y" and
-                    'neutron' or 'nova')
     network_multi = len(network_hosts) > 1
     dbacces_hosts = set([config.get('CONFIG_CONTROLLER_HOST')])
     dbacces_hosts |= network_hosts
@@ -475,14 +468,7 @@ def create_common_manifest(config, messages):
         else:
             config['CONFIG_NOVA_SQL_CONN_NOPW'] = sqlconn
 
-        # for nova-network in multihost mode each compute host is metadata
-        # host otherwise we use api host
-        if (network_type == 'nova' and network_multi and
-                host in compute_hosts):
-            metadata = host
-        else:
-            metadata = config['CONFIG_CONTROLLER_HOST']
-        config['CONFIG_NOVA_METADATA_HOST'] = metadata
+        config['CONFIG_NOVA_METADATA_HOST'] = config['CONFIG_CONTROLLER_HOST']
 
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         nova_hosts = compute_hosts

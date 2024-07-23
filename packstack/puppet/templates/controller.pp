@@ -77,9 +77,7 @@ if lookup('CONFIG_NOVA_INSTALL') == 'y' {
     include 'packstack::nova::sched'
   }
   include 'packstack::nova::vncproxy'
-  if lookup('CONFIG_NEUTRON_INSTALL') == 'y' {
-    include 'packstack::nova::neutron'
-  }
+  include 'packstack::nova::neutron'
   include 'packstack::placement'
 }
 
