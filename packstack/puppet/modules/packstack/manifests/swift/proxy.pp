@@ -106,7 +106,7 @@ class packstack::swift::proxy ()
     }
 
     class { 'swift::proxy::keystone':
-      operator_roles => ['admin', 'SwiftOperator', '_member_'],
+      operator_roles => ['admin', 'SwiftOperator', 'member'],
     }
 
     class { 'swift::proxy::authtoken':

@@ -46,16 +46,9 @@ class packstack::keystone ()
       ssl     => $keystone_use_ssl
     }
 
-    $username = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
-
-    # Ensure the default _member_ role is present
-    keystone_role { '_member_':
-      ensure => present,
-    }
-
     class { 'keystone::bootstrap':
       password     => lookup('CONFIG_KEYSTONE_ADMIN_PW'),
-      username     => $username,
+      username     => lookup('CONFIG_KEYSTONE_ADMIN_USERNAME'),
       email        => lookup('CONFIG_KEYSTONE_ADMIN_EMAIL'),
       project_name => 'admin',
       role_name    => 'admin',

@@ -41,7 +41,7 @@ class packstack::provision ()
 
       keystone_user_role { "${username}@${project_name}":
         ensure => present,
-        roles  => ['_member_'],
+        roles  => ['member'],
       }
 
       ## Neutron
