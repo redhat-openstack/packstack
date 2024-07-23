@@ -53,11 +53,6 @@ class packstack::nova::compute ()
       }
     }
 
-    nova_config{
-      'DEFAULT/volume_api_class':
-        value => 'nova.volume.cinder.API';
-    }
-
     if ($::fqdn == '' or $::fqdn =~ /localhost/) {
       # For cases where FQDNs have not been correctly set
       $vncproxy_server = choose_my_ip(lookup('HOST_LIST'))
