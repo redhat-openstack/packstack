@@ -100,14 +100,10 @@ class packstack::provision::tempest ()
       $neutron_api_extensions = undef
     }
 
-    if versioncmp($::operatingsystemmajrelease, '9') >= 0 {
-      # NOTE(tkajinam): The latest openssl in c9s repo doesn't accept SHA1 by
-      #                 default, which is causing ssh with rsa keys to fail.
-      #                 See bug 1962507 for details.
-      $ssh_key_type = 'ecdsa'
-    } else {
-      $ssh_key_type = 'rsa'
-    }
+    # NOTE(tkajinam): The latest openssl in c9s repo doesn't accept SHA1 by
+    #                 default, which is causing ssh with rsa keys to fail.
+    #                 See bug 1962507 for details.
+    $ssh_key_type = 'ecdsa'
 
     class { 'tempest':
       admin_domain_name         => $admin_domain_name,
