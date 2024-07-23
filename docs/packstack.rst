@@ -266,12 +266,6 @@ AMQP Config parameters
 **CONFIG_AMQP_ENABLE_AUTH**
     Specify 'y' to enable authentication for the AMQP service. ['y', 'n']
 
-AMQP Config SSL parameters
---------------------------
-
-**CONFIG_AMQP_NSS_CERTDB_PW**
-    Password for the NSS certificate database of the AMQP service.
-
 AMQP Config Authentication parameters
 -------------------------------------
 
