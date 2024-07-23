@@ -39,16 +39,9 @@ class packstack::provision ()
         password => $password,
       }
 
-      if $heat_available {
-        keystone_user_role { "${username}@${project_name}":
-          ensure => present,
-          roles  => ['_member_', 'heat_stack_owner'],
-        }
-      } else {
-        keystone_user_role { "${username}@${project_name}":
-          ensure => present,
-          roles  => ['_member_'],
-        }
+      keystone_user_role { "${username}@${project_name}":
+        ensure => present,
+        roles  => ['_member_'],
       }
 
       ## Neutron
