@@ -39,14 +39,17 @@ class packstack::mariadb ()
       require => Class['mysql::server'],
     }
 
-    if ($::fqdn != '' and $::fqdn != 'localhost') {
-      mysql_user { [ "root@${::fqdn}", "@${::fqdn}"]:
+    $fqdn = $facts['networking']['fqdn']
+    $hostname = $facts['networking']['hostname']
+
+    if ($fqdn != '' and $fqdn != 'localhost') {
+      mysql_user { [ "root@${fqdn}", "@${fqdn}"]:
         ensure  => 'absent',
         require => Class['mysql::server'],
       }
     }
-    if ($::fqdn != $::hostname and $::hostname != 'localhost') {
-      mysql_user { ["root@${::hostname}", "@${::hostname}"]:
+    if ($fqdn != $hostname and $hostname != 'localhost') {
+      mysql_user { ["root@${hostname}", "@${hostname}"]:
         ensure  => 'absent',
         require => Class['mysql::server'],
       }

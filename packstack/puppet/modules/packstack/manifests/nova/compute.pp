@@ -53,11 +53,11 @@ class packstack::nova::compute ()
       }
     }
 
-    if ($::fqdn == '' or $::fqdn =~ /localhost/) {
+    if ($facts['networking']['fqdn'] == '' or $facts['networking']['fqdn'] =~ /localhost/) {
       # For cases where FQDNs have not been correctly set
       $vncproxy_server = choose_my_ip(lookup('HOST_LIST'))
     } else {
-      $vncproxy_server = $::fqdn
+      $vncproxy_server = $facts['networking']['fqdn']
     }
 
     if lookup('CONFIG_CEILOMETER_INSTALL') == 'y' {

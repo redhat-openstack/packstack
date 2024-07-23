@@ -18,13 +18,13 @@ class packstack::nova::api ()
     }
 
     if lookup('CONFIG_NOVA_PCI_ALIAS') == '' {
-      $pci_alias = $::os_service_default
+      $pci_alias = $facts['os_service_default']
     } else {
       $pci_alias = lookup('CONFIG_NOVA_PCI_ALIAS')
     }
 
     class { 'nova::pci':
-      aliases                              => $pci_alias,
+      aliases => $pci_alias,
     }
 
     class { 'nova::api':

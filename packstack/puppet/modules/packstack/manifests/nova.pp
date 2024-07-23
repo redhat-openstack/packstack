@@ -42,7 +42,7 @@ class packstack::nova ()
     }
 
     if lookup('CONFIG_NEUTRON_L2_AGENT') == 'ovn' {
-      $novahost = $::fqdn
+      $novahost = $facts['networking']['fqdn']
     } else {
       $novahost = undef
     }

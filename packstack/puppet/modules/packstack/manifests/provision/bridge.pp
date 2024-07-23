@@ -34,7 +34,7 @@ class packstack::provision::bridge ()
         chain    => 'POSTROUTING',
         jump     => 'MASQUERADE',
         source   => $floating_range_br,
-        outiface => $::gateway_device,
+        outiface => $facts['gateway_device'],
         table    => 'nat',
         proto    => 'all',
       }

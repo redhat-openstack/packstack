@@ -50,7 +50,7 @@ class packstack::neutron::ovn_agent ()
       ovn_bridge_mappings       => $bridge_mappings,
       bridge_interface_mappings => $bridge_uplinks,
       ovn_encap_ip              => force_ip($localip),
-      hostname                  => $::fqdn,
+      hostname                  => $facts['networking']['fqdn'],
       ovn_cms_options           => 'enable-chassis-as-gw',
     }
 }
