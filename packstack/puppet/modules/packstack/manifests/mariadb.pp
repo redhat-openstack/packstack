@@ -4,17 +4,6 @@ class packstack::mariadb ()
     create_resources(packstack::firewall, lookup('FIREWALL_MARIADB_RULES', undef, undef, {}))
     $max_connections = lookup('CONFIG_SERVICE_WORKERS') * 128
 
-    if ($::mariadb_provides_galera) {
-      # Since mariadb 10.1 galera is included in main mariadb
-      $mariadb_package_name = 'mariadb-server-galera'
-      $mariadb_present      = 'present'
-    } else  {
-      # Package mariadb-server conflicts with mariadb-server-galera
-      $mariadb_package_name = 'mariadb-server-galera'
-      $mariadb_present      = 'absent'
-    }
-    ensure_packages(['mariadb-server'], {'ensure' => $mariadb_present})
-
     $bind_address = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
@@ -24,10 +13,9 @@ class packstack::mariadb ()
     $mysql_root_password = lookup('CONFIG_MARIADB_PW')
 
     class { 'mysql::server':
-      package_name     => $mariadb_package_name,
+      package_name     => 'mariadb-server-galera',
       restart          => true,
       root_password    => $mysql_root_password,
-      require          => Package['mariadb-server'],
       override_options => {
         'mysqld' => {
           'bind_address'           => $bind_address,
