@@ -14,10 +14,6 @@ class packstack::cinder ()
       default:     { $default_volume_type = 'iscsi' }
     }
 
-    cinder_config {
-      'DEFAULT/glance_host': value => lookup('CONFIG_STORAGE_HOST_URL');
-    }
-
     $bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
@@ -42,15 +38,12 @@ class packstack::cinder ()
 
     class { 'cinder::client': }
 
+    class { 'cinder::glance': }
+
     class { 'cinder::nova':
       password => lookup('CONFIG_NOVA_KS_PW'),
       auth_url => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
-
-    $cinder_keystone_admin_username = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
-    $cinder_keystone_admin_password = lookup('CONFIG_KEYSTONE_ADMIN_PW')
-    $cinder_keystone_auth_url = lookup('CONFIG_KEYSTONE_PUBLIC_URL')
-    $cinder_keystone_api = lookup('CONFIG_KEYSTONE_API_VERSION')
 
     class { 'cinder::backends':
       enabled_backends => lookup('CONFIG_CINDER_BACKEND', { merge => 'unique' }),
