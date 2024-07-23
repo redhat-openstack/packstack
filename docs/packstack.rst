@@ -52,7 +52,7 @@ Global Options
     Specify 'y' to install OpenStack Compute (nova). ['y', 'n']
 
 **CONFIG_NEUTRON_INSTALL**
-    Specify 'y' to install OpenStack Networking (neutron) ['y']
+    Specify 'y' to install OpenStack Networking (neutron) ['y', 'n']
 
 **CONFIG_HORIZON_INSTALL**
     Specify 'y' to install OpenStack Dashboard (horizon). ['y', 'n']
