@@ -22,7 +22,6 @@ class packstack::horizon ()
       keystone_default_role => '_member_',
       server_aliases        => [lookup('CONFIG_CONTROLLER_HOST'), $facts['networking']['fqdn'], 'localhost'],
       allowed_hosts         => '*',
-      hypervisor_options    => {'can_set_mount_point' => false, },
       django_debug          => $is_django_debug,
       django_session_engine => 'django.contrib.sessions.backends.cache',
       cache_backend         => 'django.core.cache.backends.memcached.MemcachedCache',
