@@ -33,8 +33,7 @@ class packstack::horizon ()
       ssl_ca                => lookup('CONFIG_HORIZON_SSL_CACERT', undef, undef, undef),
       ssl_verify_client     => 'optional',
       neutron_options       => {
-        'enable_vpn'      => lookup('CONFIG_HORIZON_NEUTRON_VPN'),
-        'enable_lb'       => lookup('CONFIG_HORIZON_NEUTRON_LB'),
+        'enable_vpn' => lookup('CONFIG_HORIZON_NEUTRON_VPN'),
       },
     }
 

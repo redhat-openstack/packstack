@@ -192,7 +192,6 @@ def create_manifest(config, messages):
                 "/etc/httpd/conf.d/ssl.conf on %s to use a CA signed cert."
                 % (utils.COLORS['red'], utils.COLORS['nocolor'], horizon_host))
 
-    config["CONFIG_HORIZON_NEUTRON_LB"] = False
     config["CONFIG_HORIZON_NEUTRON_VPN"] = False
 
     if config['CONFIG_NEUTRON_INSTALL'] == 'y':
