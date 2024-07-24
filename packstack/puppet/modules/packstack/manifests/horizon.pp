@@ -25,7 +25,7 @@ class packstack::horizon ()
       hypervisor_options    => {'can_set_mount_point' => false, },
       django_debug          => $is_django_debug,
       django_session_engine => 'django.contrib.sessions.backends.cache',
-      cache_backend         => 'django.core.cache.backends.memcached.MemcachedCache',
+      cache_backend         => 'django.core.cache.backends.memcached.PyMemcacheCache',
       cache_server_ip       => '127.0.0.1',
       cache_server_port     => '11211',
       file_upload_temp_dir  => '/var/tmp',
