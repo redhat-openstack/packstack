@@ -98,6 +98,8 @@ function get_config_and_logs {
         '/var/log/gnocchi'
         '/etc/rabbitmq/'
         '/var/log/rabbitmq'
+        '/etc/redis'
+        '/var/log/redis'
         '/etc/my.cnf.d'
         '/var/log/mariadb'
         '/etc/httpd/conf.d/'
