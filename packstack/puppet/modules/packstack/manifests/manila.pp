@@ -2,10 +2,6 @@ class packstack::manila ()
 {
     create_resources(packstack::firewall, lookup('FIREWALL_MANILA_API_RULES', undef, undef, {}))
 
-    manila_config {
-      'DEFAULT/glance_host': value => lookup('CONFIG_STORAGE_HOST_URL');
-    }
-
     $bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
