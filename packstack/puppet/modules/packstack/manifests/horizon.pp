@@ -1,8 +1,8 @@
 class packstack::horizon ()
 {
-    $is_django_debug = lookup('CONFIG_DEBUG_MODE') ? {
-      true  => 'True',
-      false => 'False',
+    $log_level = lookup('CONFIG_DEBUG_MODE') ? {
+      true    => 'DEBUG',
+      default => 'INFO',
     }
 
     $bind_host = lookup('CONFIG_IP_VERSION') ? {
@@ -12,8 +12,8 @@ class packstack::horizon ()
     }
 
     $horizon_ssl = lookup('CONFIG_HORIZON_SSL') ? {
-      'y' => true,
-      'n' => false,
+      'y'     => true,
+      default => false,
     }
 
     class { 'horizon':
@@ -21,7 +21,6 @@ class packstack::horizon ()
       keystone_url          => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
       server_aliases        => [lookup('CONFIG_CONTROLLER_HOST'), $facts['networking']['fqdn'], 'localhost'],
       allowed_hosts         => '*',
-      django_debug          => $is_django_debug,
       django_session_engine => 'django.contrib.sessions.backends.cache',
       cache_backend         => 'django.core.cache.backends.memcached.PyMemcacheCache',
       cache_server_ip       => '127.0.0.1',
@@ -32,6 +31,8 @@ class packstack::horizon ()
       ssl_key               => lookup('CONFIG_HORIZON_SSL_KEY', undef, undef, undef),
       ssl_ca                => lookup('CONFIG_HORIZON_SSL_CACERT', undef, undef, undef),
       ssl_verify_client     => 'optional',
+      log_level             => $log_level,
+      django_log_level      => 'INFO',
       neutron_options       => {
         'enable_vpn' => lookup('CONFIG_HORIZON_NEUTRON_VPN'),
       },
