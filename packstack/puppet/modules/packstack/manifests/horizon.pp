@@ -38,19 +38,19 @@ class packstack::horizon ()
     }
 
     if lookup('CONFIG_MAGNUM_INSTALL') == 'y' {
-      ensure_packages(['openstack-magnum-ui'], {'ensure' => 'present'})
+      horizon::dashboard { 'magnum': }
     }
 
     if lookup('CONFIG_IRONIC_INSTALL') == 'y' {
-      ensure_packages(['openstack-ironic-ui'], {'ensure' => 'present'})
+      include horizon::dashboards::ironic
     }
 
     if lookup('CONFIG_TROVE_INSTALL') == 'y' {
-      ensure_packages(['openstack-trove-ui'], {'ensure' => 'present'})
+      horizon::dashboard { 'trove': }
     }
 
     if lookup('CONFIG_HEAT_INSTALL') == 'y' {
-      ensure_packages(['openstack-heat-ui'], {'ensure' => 'present'})
+      include horizon::dashboards::heat
     }
 
     include packstack::memcached
