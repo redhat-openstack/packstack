@@ -53,6 +53,10 @@ class packstack::horizon ()
       include horizon::dashboards::heat
     }
 
+    if lookup('CONFIG_MANILA_INSTALL') == 'y' {
+      include horizon::dashboards::manila
+    }
+
     include packstack::memcached
 
     $firewall_port = lookup('CONFIG_HORIZON_PORT')
