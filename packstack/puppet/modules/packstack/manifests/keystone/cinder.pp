@@ -8,6 +8,7 @@ class packstack::keystone::cinder ()
     class { 'cinder::keystone::auth':
       region          => lookup('CONFIG_KEYSTONE_REGION'),
       password        => lookup('CONFIG_CINDER_KS_PW'),
+      roles           => ['admin', 'service'],
       public_url_v3   => "${cinder_url}/v3",
       internal_url_v3 => "${cinder_url}/v3",
       admin_url_v3    => "${cinder_url}/v3",

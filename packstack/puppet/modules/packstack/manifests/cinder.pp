@@ -46,6 +46,12 @@ class packstack::cinder ()
       auth_url  => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
+    class { 'cinder::keystone::service_user':
+      send_service_user_token => true,
+      password                => lookup('CONFIG_CINDER_KS_PW'),
+      auth_url                => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
+    }
+
     class { 'cinder::backends':
       enabled_backends => lookup('CONFIG_CINDER_BACKEND', { merge => 'unique' }),
     }

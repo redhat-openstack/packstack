@@ -84,11 +84,9 @@ class packstack::nova ()
       key                     => $key,
     }
 
-    $admin_password = lookup('CONFIG_NOVA_KS_PW')
-
     class { 'nova::keystone::service_user':
       send_service_user_token => true,
-      password                => $admin_password,
+      password                => lookup('CONFIG_NOVA_KS_PW'),
       auth_url                => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
