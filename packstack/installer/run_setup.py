@@ -98,8 +98,8 @@ def _getInputFromUser(param):
                     message.write(param.PROMPT)
 
                     val_list = param.VALIDATORS or []
-                    if(validators.validate_regexp not in val_list
-                       and param.OPTION_LIST):
+                    if (validators.validate_regexp not in val_list
+                            and param.OPTION_LIST):
                         message.write(" [%s]" % "|".join(param.OPTION_LIST))
 
                     if param.DEFAULT_VALUE:
