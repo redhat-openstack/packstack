@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import re
-import os
 import logging
+import os
+import re
+import shlex
 import subprocess
 
 from ..exceptions import ExecuteRuntimeError
@@ -38,8 +39,7 @@ def execute(cmd, workdir=None, can_fail=True, mask_list=None,
     repl_list = [("'", "'\\''")]
 
     if not isinstance(cmd, str):
-        import pipes
-        masked = ' '.join((pipes.quote(i) for i in cmd))
+        masked = ' '.join((shlex.quote(i) for i in cmd))
     else:
         masked = cmd
 
