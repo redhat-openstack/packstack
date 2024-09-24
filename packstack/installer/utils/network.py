@@ -119,7 +119,7 @@ def is_ipv4(host):
 
 
 def force_ip(host, allow_localhost=False):
-    if not(is_ipv6(host) or is_ipv4(host)):
+    if not (is_ipv6(host) or is_ipv4(host)):
         host = host2ip(host, allow_localhost=allow_localhost)
     return host
 

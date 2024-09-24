@@ -19,8 +19,7 @@
 Test cases for packstack.installer.core.arch module.
 """
 
-import mock
-
+from unittest import mock
 from unittest import TestCase
 
 from packstack.installer.core import arch
