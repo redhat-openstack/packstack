@@ -15,10 +15,15 @@
 """
 Plugin responsible for managing SSL options
 """
+import datetime
 import os
-
-from OpenSSL import crypto
 from socket import gethostname
+
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography import x509
+from cryptography.x509 import oid
 
 from packstack.installer import basedefs
 from packstack.installer import utils
@@ -207,7 +212,7 @@ def initSequences(controller):
 
 def create_self_signed_cert(config, messages):
     """
-    OpenSSL wrapper to create selfsigned CA.
+    Generate selfsigned CA.
     """
 
     # for now hardcoded place for landing CACert file on servers
@@ -239,55 +244,82 @@ def create_self_signed_cert(config, messages):
     KEY_FILE = config['CONFIG_SSL_CACERT_KEY_FILE'] = (
         '%s/keys/selfcert.crt' % config['CONFIG_SSL_CERT_DIR']
     )
-    if not os.path.exists(CERT_FILE) or not os.path.exists(KEY_FILE):
-        # create a key pair
-        k = crypto.PKey()
-        k.generate_key(crypto.TYPE_RSA, 4096)
 
-        # create a self-signed cert
-        mail = config['CONFIG_SSL_CERT_SUBJECT_MAIL']
-        cert = crypto.X509()
-        subject = cert.get_subject()
-        subject.C = config['CONFIG_SSL_CERT_SUBJECT_C']
-        subject.ST = config['CONFIG_SSL_CERT_SUBJECT_ST']
-        subject.L = config['CONFIG_SSL_CERT_SUBJECT_L']
-        subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']     # noqa: E741
-        subject.OU = config['CONFIG_SSL_CERT_SUBJECT_OU']
-        subject.CN = config['CONFIG_SSL_CERT_SUBJECT_CN']
-        subject.emailAddress = mail
-        cert.set_serial_number(1000)
-        cert.gmtime_adj_notBefore(0)
-        cert.gmtime_adj_notAfter(10 * 365 * 24 * 60 * 60)
-        cert.set_issuer(cert.get_subject())
-        cert.set_pubkey(k)
+    if os.path.exists(CERT_FILE) and os.path.exists(KEY_FILE):
+        return
 
-        # CA extensions
-        cert.add_extensions([
-            crypto.X509Extension("basicConstraints".encode('ascii'), False,
-                                 "CA:TRUE".encode('ascii')),
-            crypto.X509Extension("keyUsage".encode('ascii'), False,
-                                 "keyCertSign, cRLSign".encode('ascii')),
-            crypto.X509Extension("subjectKeyIdentifier".encode('ascii'), False,
-                                 "hash".encode('ascii'),
-                                 subject=cert),
-        ])
+    # create a key pair
+    key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=4096,
+    )
 
-        cert.add_extensions([
-            crypto.X509Extension(
-                "authorityKeyIdentifier".encode('ascii'), False,
-                "keyid:always".encode('ascii'), issuer=cert)
-        ])
+    subject = issuer = x509.Name([
+        x509.NameAttribute(oid.NameOID.COUNTRY_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_C']),
+        x509.NameAttribute(oid.NameOID.STATE_OR_PROVINCE_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_ST']),
+        x509.NameAttribute(oid.NameOID.LOCALITY_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_L']),
+        x509.NameAttribute(oid.NameOID. ORGANIZATION_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_O']),
+        x509.NameAttribute(oid.NameOID. ORGANIZATIONAL_UNIT_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_OU']),
+        x509.NameAttribute(oid.NameOID.COMMON_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_CN']),
+        x509.NameAttribute(oid.NameOID.EMAIL_ADDRESS,
+                           config['CONFIG_SSL_CERT_SUBJECT_MAIL']),
+    ])
+    cert = x509.CertificateBuilder().subject_name(
+        subject
+    ).issuer_name(
+        issuer
+    ).public_key(
+        key.public_key()
+    ).serial_number(
+        x509.random_serial_number()
+    ).not_valid_before(
+        datetime.datetime.now(datetime.timezone.utc)
+    ).not_valid_after(
+        datetime.datetime.now(datetime.timezone.utc) +
+        datetime.timedelta(days=3650)
+    ).add_extension(
+        x509.BasicConstraints(ca=True, path_length=None),
+        critical=False,
+    ).add_extension(
+        x509.KeyUsage(
+            digital_signature=False,
+            content_commitment=False,
+            key_encipherment=False,
+            data_encipherment=False,
+            key_agreement=False,
+            key_cert_sign=True,
+            crl_sign=True,
+            encipher_only=False,
+            decipher_only=False,
+        ),
+        critical=False,
+    ).add_extension(
+        x509.SubjectKeyIdentifier.from_public_key(key.public_key()),
+        critical=False,
+    ).add_extension(
+        x509.AuthorityKeyIdentifier.from_issuer_public_key(key.public_key()),
+        critical=False,
+    ).sign(key, hashes.SHA256())
 
-        cert.sign(k, 'sha256')
+    with open(CERT_FILE, 'wb') as certfile:
+        certfile.write(cert.public_bytes(serialization.Encoding.PEM))
 
-        open((CERT_FILE), "w").write(
-            crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode())
-        open((KEY_FILE), "w").write(
-            crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode())
+    with open(KEY_FILE, 'wb') as keyfile:
+        keyfile.write(key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption()
+        ))
 
-        messages.append(
-            "%sNOTE%s : A selfsigned CA certificate was generated to be used "
-            "for ssl, you should still change it do subordinate CA cert. In "
-            "any case please save the contents of %s."
-            % (utils.COLORS['red'], utils.COLORS['nocolor'],
-                config['CONFIG_SSL_CERT_DIR']))
+    messages.append(
+        "%sNOTE%s : A selfsigned CA certificate was generated to be used "
+        "for ssl, you should still change it do subordinate CA cert. In "
+        "any case please save the contents of %s."
+        % (utils.COLORS['red'], utils.COLORS['nocolor'],
+            config['CONFIG_SSL_CERT_DIR']))

@@ -11,11 +11,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import datetime
 import os
 import yaml
 
-from OpenSSL import crypto
-from time import time
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography import x509
+from cryptography.x509 import oid
+
 from packstack.installer import basedefs
 from packstack.installer import utils
 from packstack.installer.setup_controller import Controller
@@ -93,64 +98,97 @@ def generateHieraDataFile():
 
 def generate_ssl_cert(config, host, service, ssl_key_file, ssl_cert_file):
     """
-    Wrapper on top of openssl
+    Generate SSL certificate
     """
     # We have to check whether the certificate already exists
     cert_dir = os.path.join(config['CONFIG_SSL_CERT_DIR'], 'certs')
     local_cert_name = host + os.path.basename(ssl_cert_file)
     local_cert_path = os.path.join(cert_dir, local_cert_name)
-    if not os.path.exists(local_cert_path):
-        ca_file = open(config['CONFIG_SSL_CACERT_FILE'], 'rt').read()
-        ca_key_file = open(config['CONFIG_SSL_CACERT_KEY_FILE'], 'rt').read()
-        ca_key = crypto.load_privatekey(crypto.FILETYPE_PEM, ca_key_file)
-        ca = crypto.load_certificate(crypto.FILETYPE_PEM, ca_file)
+    if os.path.exists(local_cert_path):
+        return
 
-        k = crypto.PKey()
-        k.generate_key(crypto.TYPE_RSA, 4096)
-        mail = config['CONFIG_SSL_CERT_SUBJECT_MAIL']
-        hostinfo = config['HOST_DETAILS'][host]
-        fqdn = hostinfo['fqdn']
-        cert = crypto.X509()
-        subject = cert.get_subject()
-        subject.C = config['CONFIG_SSL_CERT_SUBJECT_C']
-        subject.ST = config['CONFIG_SSL_CERT_SUBJECT_ST']
-        subject.L = config['CONFIG_SSL_CERT_SUBJECT_L']
-        subject.O = config['CONFIG_SSL_CERT_SUBJECT_O']      # noqa: E741
-        subject.OU = config['CONFIG_SSL_CERT_SUBJECT_OU']
-        cn = "%s/%s" % (service, fqdn)
-        # if subject.CN is more than 64 chars long, cert creation will fail
-        if len(cn) > 64:
-            cn = cn[0:63]
-        subject.CN = cn
-        subject.emailAddress = mail
+    with open(config['CONFIG_SSL_CACERT_FILE'], 'rb') as cacert_file:
+        ca_cert = x509.load_pem_x509_certificate(cacert_file.read())
 
-        cert.add_extensions([
-            crypto.X509Extension(
-                "keyUsage".encode('ascii'),
-                False,
-                "nonRepudiation,digitalSignature,keyEncipherment".encode('ascii')),
-            crypto.X509Extension(
-                "extendedKeyUsage".encode('ascii'),
-                False,
-                "clientAuth,serverAuth".encode('ascii')),
-        ])
+    with open(config['CONFIG_SSL_CACERT_KEY_FILE'], 'rb') as ca_key_file:
+        ca_key = serialization.load_pem_private_key(ca_key_file.read(),
+                                                    password=None)
 
-        cert.gmtime_adj_notBefore(0)
-        cert.gmtime_adj_notAfter(315360000)
-        cert.set_issuer(ca.get_subject())
-        cert.set_pubkey(k)
-        serial = int(time())
-        cert.set_serial_number(serial)
-        cert.sign(ca_key, 'sha256')
+    # create a key pair
+    key = rsa.generate_private_key(
+        public_exponent=65537,
+        key_size=4096,
+    )
 
-        final_cert = crypto.dump_certificate(crypto.FILETYPE_PEM, cert)
-        final_key = crypto.dump_privatekey(crypto.FILETYPE_PEM, k)
-        deliver_ssl_file(ca_file, config['CONFIG_SSL_CACERT'], host)
-        deliver_ssl_file(final_cert.decode(), ssl_cert_file, host)
-        deliver_ssl_file(final_key.decode(), ssl_key_file, host)
+    hostinfo = config['HOST_DETAILS'][host]
+    fqdn = hostinfo['fqdn']
+    cn = "%s/%s" % (service, fqdn)
+    # if subject.CN is more than 64 chars long, cert creation will fail
+    if len(cn) > 64:
+        cn = cn[0:63]
 
-        with open(local_cert_path, 'w') as f:
-            f.write(final_cert.decode())
+    subject = x509.Name([
+        x509.NameAttribute(oid.NameOID.COUNTRY_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_C']),
+        x509.NameAttribute(oid.NameOID.STATE_OR_PROVINCE_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_ST']),
+        x509.NameAttribute(oid.NameOID.LOCALITY_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_L']),
+        x509.NameAttribute(oid.NameOID. ORGANIZATION_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_O']),
+        x509.NameAttribute(oid.NameOID. ORGANIZATIONAL_UNIT_NAME,
+                           config['CONFIG_SSL_CERT_SUBJECT_OU']),
+        x509.NameAttribute(oid.NameOID.COMMON_NAME, cn),
+        x509.NameAttribute(oid.NameOID.EMAIL_ADDRESS,
+                           config['CONFIG_SSL_CERT_SUBJECT_MAIL']),
+    ])
+    cert = x509.CertificateBuilder().subject_name(
+        subject
+    ).issuer_name(
+        ca_cert.subject
+    ).public_key(
+        key.public_key()
+    ).serial_number(
+        x509.random_serial_number()
+    ).not_valid_before(
+        datetime.datetime.now(datetime.timezone.utc)
+    ).not_valid_after(
+        datetime.datetime.now(datetime.timezone.utc) +
+        datetime.timedelta(days=3650)
+    ).add_extension(
+        x509.KeyUsage(
+            digital_signature=True,
+            content_commitment=True,
+            key_encipherment=True,
+            data_encipherment=False,
+            key_agreement=False,
+            key_cert_sign=False,
+            crl_sign=False,
+            encipher_only=False,
+            decipher_only=False,
+        ),
+        critical=False,
+    ).add_extension(
+        x509.ExtendedKeyUsage([
+            x509.ExtendedKeyUsageOID.CLIENT_AUTH,
+            x509.ExtendedKeyUsageOID.SERVER_AUTH,
+        ]),
+        critical=False,
+    ).sign(ca_key, hashes.SHA256())
+
+    final_cacert = ca_cert.public_bytes(serialization.Encoding.PEM)
+    final_cert = cert.public_bytes(serialization.Encoding.PEM)
+    final_key = key.private_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PrivateFormat.TraditionalOpenSSL,
+        encryption_algorithm=serialization.NoEncryption()
+    )
+    deliver_ssl_file(final_cacert.decode(), config['CONFIG_SSL_CACERT'], host)
+    deliver_ssl_file(final_cert.decode(), ssl_cert_file, host)
+    deliver_ssl_file(final_key.decode(), ssl_key_file, host)
+
+    with open(local_cert_path, 'wb') as f:
+        f.write(final_cert)
 
 
 def deliver_ssl_file(content, path, host):
