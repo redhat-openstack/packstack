@@ -17,6 +17,7 @@
 
 import os
 import shutil
+import tarfile
 import tempfile
 from unittest import TestCase
 

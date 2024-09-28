@@ -112,7 +112,7 @@ def _getInputFromUser(param):
                     if (param.MASK_INPUT):
                         userInput = getpass.getpass("%s :" % (param.PROMPT))
                     else:
-                        userInput = raw_input(message.read())
+                        userInput = input(message.read())
                 else:
                     userInput = commandLineValues[param.CONF_NAME]
                 # If DEFAULT_VALUE is set and user did not input anything
@@ -191,7 +191,7 @@ def _askYesNo(question=None):
         message.write(askString)
         message.seek(0)
 
-        raw = raw_input(message.read())
+        raw = input(message.read())
         if not len(raw):
             continue
 

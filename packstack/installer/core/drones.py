@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import shutil
 import stat
 import uuid
 import time
@@ -40,7 +41,7 @@ class SshTarballTransferMixin(object):
                       "tar -C %(res_dir)s -xpzf %(pack_dest)s" % args)
         try:
             script.execute()
-        except ScriptRuntimeError as ex:
+        except utils.ScriptRuntimeError as ex:
             # TO-DO: change to appropriate exception
             raise RuntimeError('Failed to copy resources to node %s. '
                                'Reason: %s' % (node, ex))
