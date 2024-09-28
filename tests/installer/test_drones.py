@@ -22,20 +22,12 @@ import tempfile
 from unittest import TestCase
 
 from ..test_base import PackstackTestCaseMixin
-from packstack.installer.core.drones import *
+from packstack.installer.core import drones
 
 
 class SshTarballTransferMixinTestCase(PackstackTestCaseMixin, TestCase):
     def setUp(self):
         # Creating a temp directory that can be used by tests
-        self.tempdir = tempfile.mkdtemp()
-
-    def tearDown(self):
-        # remove the temp directory
-        # shutil.rmtree(self.tempdir)
-        pass
-
-    def setUp(self):
         self.tempdir = tempfile.mkdtemp()
         # prepare resource files
         res1path = os.path.join(self.tempdir, 'res1.txt')
@@ -56,7 +48,7 @@ class SshTarballTransferMixinTestCase(PackstackTestCaseMixin, TestCase):
         with open(rec2path, 'w') as f:
             f.write('recipe two')
         # prepare class
-        self.mixin = SshTarballTransferMixin()
+        self.mixin = drones.SshTarballTransferMixin()
         self.mixin.node = '127.0.0.1'
         self.mixin.resource_dir = os.path.join(self.tempdir, 'remote')
         self.mixin.recipe_dir = os.path.join(self.tempdir, 'remote',
@@ -70,6 +62,11 @@ class SshTarballTransferMixinTestCase(PackstackTestCaseMixin, TestCase):
         for i in (self.mixin.resource_dir, self.mixin.recipe_dir,
                   self.mixin.local_tmpdir, self.mixin.remote_tmpdir):
             os.mkdir(i)
+
+    def tearDown(self):
+        # remove the temp directory
+        # shutil.rmtree(self.tempdir)
+        pass
 
     def test_tarball_packing(self):
         """
@@ -126,7 +123,7 @@ class SshTarballTransferMixinTestCase(PackstackTestCaseMixin, TestCase):
     '''
 
 
-class FakeDroneObserver(DroneObserver):
+class FakeDroneObserver(drones.DroneObserver):
     def __init__(self, *args, **kwargs):
         super(FakeDroneObserver, self).__init__(*args, **kwargs)
         self.log = []
@@ -153,7 +150,7 @@ class FakeDroneObserver(DroneObserver):
         self.log.append('finished:%s' % recipe)
 
 
-class FakeDrone(Drone):
+class FakeDrone(drones.Drone):
     def __init__(self, *args, **kwargs):
         super(FakeDrone, self).__init__(*args, **kwargs)
         self.log = []

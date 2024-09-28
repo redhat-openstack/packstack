@@ -16,7 +16,6 @@
 Installs and configures Nova
 """
 
-import distro
 import os
 import socket
 
@@ -38,13 +37,6 @@ PLUGIN_NAME_COLORED = utils.color_text(PLUGIN_NAME, 'blue')
 
 
 def initConfig(controller):
-    if distro.linux_distribution()[0] == "Fedora":
-        primary_netif = "em1"
-        secondary_netif = "em2"
-    else:
-        primary_netif = "eth0"
-        secondary_netif = "eth1"
-
     nova_params = {
         "NOVA": [
             {"CMD_OPTION": 'nova-db-purge-enable',
@@ -392,7 +384,7 @@ def create_compute_manifest(config, messages):
                 )
                 ssl_host = config['CONFIG_CONTROLLER_HOST']
                 service = 'ceilometer'
-                generate_ssl_cert(config, host, service, ssl_key_file,
+                generate_ssl_cert(config, ssl_host, service, ssl_key_file,
                                   ssl_cert_file)
 
         fw_details = dict()
@@ -444,7 +436,6 @@ def create_vncproxy_manifest(config, messages):
 def create_common_manifest(config, messages):
     global compute_hosts, network_hosts
 
-    network_multi = len(network_hosts) > 1
     dbacces_hosts = set([config.get('CONFIG_CONTROLLER_HOST')])
     dbacces_hosts |= network_hosts
 

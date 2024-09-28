@@ -15,10 +15,10 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
-import shutil
-import tempfile
-import subprocess
 import logging
+import shutil
+import subprocess
+import tempfile
 
 
 LOG = logging.getLogger(__name__)
@@ -122,8 +122,7 @@ class PackstackTestCaseMixin(object):
                        'Second has %s' % (f, s))
         self.assertEqual(f, s, msg=_msg)
 
-        _msg = msg or ('Given lists differ:\n%(list1)s'
-                       '\n%(list2)s' % locals())
+        _msg = msg or f'Given lists differ:\n{list1}\n{list2}'
         for i in list1:
             if i not in list2:
                 raise AssertionError(_msg)
@@ -134,8 +133,7 @@ class PackstackTestCaseMixin(object):
                        'Second has %s' % (f, s))
         self.assertEqual(f, s, msg=_msg)
 
-        _msg = msg or ('Given lists differ:\n%(list1)s'
-                       '\n%(list2)s' % locals())
+        _msg = msg or f'Given lists differ:\n{list1}\n{list2}'
         for index, item in enumerate(list1):
             if item != list2[index]:
                 raise AssertionError(_msg)

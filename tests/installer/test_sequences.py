@@ -20,7 +20,7 @@ import sys
 from unittest import TestCase
 
 from packstack.installer import utils
-from packstack.installer.core.sequences import *
+from packstack.installer.core import sequences
 
 from ..test_base import PackstackTestCaseMixin
 
@@ -43,7 +43,7 @@ class StepTestCase(PackstackTestCaseMixin, TestCase):
             if 'test' not in config:
                 raise AssertionError('Missing config value.')
 
-        step = Step('test', func, title='Running test')
+        step = sequences.Step('test', func, title='Running test')
         step.run(config={'test': 'test'})
         contents = sys.stdout.getvalue()
 
@@ -66,8 +66,8 @@ class SequenceTestCase(PackstackTestCaseMixin, TestCase):
                       {'name': '3', 'function': lambda x, y: True,
                        'title': 'Step 3'}]
 
-        self.seq = Sequence('test', self.steps, condition='test',
-                            cond_match='test')
+        self.seq = sequences.Sequence('test', self.steps, condition='test',
+                                      cond_match='test')
 
     def tearDown(self):
         super(SequenceTestCase, self).tearDown()

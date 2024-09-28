@@ -16,10 +16,10 @@
 Contains all core validation functions.
 """
 
+import logging
 import os
 import re
 import socket
-import logging
 
 from . import utils
 

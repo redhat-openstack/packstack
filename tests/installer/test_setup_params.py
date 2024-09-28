@@ -22,7 +22,7 @@ Test cases for packstack.installer.core.parameters module.
 from unittest import TestCase
 
 from ..test_base import PackstackTestCaseMixin
-from packstack.installer.core.parameters import *
+from packstack.installer.core import parameters
 
 
 class ParameterTestCase(PackstackTestCaseMixin, TestCase):
@@ -48,7 +48,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
         Test packstack.installer.core.parameters.Parameter
         initialization
         """
-        param = Parameter(self.data)
+        param = parameters.Parameter(self.data)
         for key, value in self.data.items():
             self.assertEqual(getattr(param, key), value)
 
@@ -56,7 +56,7 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
         """
         Test packstack.installer.core.parameters.Parameter default value
         """
-        param = Parameter()
+        param = parameters.Parameter()
         self.assertIsNone(param.PROCESSORS)
 
 
@@ -79,7 +79,7 @@ class GroupTestCase(PackstackTestCaseMixin, TestCase):
         """
         Test packstack.installer.core.parameters.Group initialization
         """
-        group = Group(attributes=self.attrs, parameters=self.params)
+        group = parameters.Group(attributes=self.attrs, parameters=self.params)
         for key, value in self.attrs.items():
             self.assertEqual(getattr(group, key), value)
         for param in self.params:
@@ -89,8 +89,8 @@ class GroupTestCase(PackstackTestCaseMixin, TestCase):
         """
         Test packstack.installer.core.parameters.Group search method
         """
-        group = Group(attributes=self.attrs, parameters=self.params)
+        group = parameters.Group(attributes=self.attrs, parameters=self.params)
         param_list = group.search('PROMPT', 'find_me')
         self.assertEqual(len(param_list), 1)
-        self.assertIsInstance(param_list[0], Parameter)
+        self.assertIsInstance(param_list[0], parameters.Parameter)
         self.assertEqual(param_list[0].CONF_NAME, 'CONFIG_MARIADB_HOST')

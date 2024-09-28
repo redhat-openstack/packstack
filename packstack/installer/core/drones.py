@@ -12,14 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import os
 import shutil
 import stat
-import uuid
-import time
-import logging
 import tarfile
 import tempfile
+import time
+import uuid
 
 from .. import utils
 
@@ -347,8 +347,8 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
         super(PackstackDrone, self).init_node()
         server = utils.ScriptRunner(self.node)
         for pkg in ("puppet", "openssh-clients", "tar"):
-            server.append("rpm -q --whatprovides %(pkg)s || "
-                          "yum install -y %(pkg)s" % locals())
+            server.append(f"rpm -q --whatprovides {pkg} || "
+                          f"yum install -y {pkg}")
         server.execute()
 
     def add_resource(self, path, resource_type=None):
@@ -373,7 +373,7 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
             local.execute(log=False)
             # if we got to this point the puppet apply has finished
             return True
-        except utils.ScriptRuntimeError as e:
+        except utils.ScriptRuntimeError:
             # the test raises an exception if the file doesn't exist yet
             return False
 
@@ -402,9 +402,9 @@ class PackstackDrone(SshTarballTransferMixin, Drone):
         rdir = self.resource_dir
         mdir = self._module_dir
         server.append(
-            "( flock %(rdir)s/ps.lock "
-            "puppet apply %(loglevel)s --modulepath %(mdir)s "
-            "%(recipe)s > %(running)s 2>&1 < /dev/null; "
-            "mv %(running)s %(finished)s ) "
-            "> /dev/null 2>&1 < /dev/null &" % locals())
+            f"( flock {rdir}/ps.lock "
+            f"puppet apply {loglevel} --modulepath {mdir} "
+            f"{recipe} > {running} 2>&1 < /dev/null; "
+            f"mv {running} {finished} ) "
+            "> /dev/null 2>&1 < /dev/null &")
         server.execute()

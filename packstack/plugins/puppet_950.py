@@ -16,9 +16,9 @@
 Installs and configures Puppet
 """
 
-import sys
 import logging
 import os
+import sys
 import time
 
 from packstack.installer import utils

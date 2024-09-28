@@ -142,7 +142,6 @@ def create_manifest(config, messages):
 
     proto = "http"
     config["CONFIG_HORIZON_PORT"] = 80
-    sslmanifestdata = ''
     if config["CONFIG_HORIZON_SSL"] == 'y':
         config["CONFIG_HORIZON_PORT"] = 443
         proto = "https"

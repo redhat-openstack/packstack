@@ -19,7 +19,8 @@ import os
 import shutil
 import tempfile
 from unittest import TestCase
-from packstack.installer.validators import *
+from packstack.installer import exceptions
+from packstack.installer import validators
 
 from ..test_base import PackstackTestCaseMixin
 
@@ -34,73 +35,87 @@ class ValidatorsTestCase(PackstackTestCaseMixin, TestCase):
         shutil.rmtree(self.tempdir)
 
     def test_validate_integer(self):
-        """Test packstack.installer.validators.validate_integer."""
-        validate_integer('1')
-        self.assertRaises(ParamValidationError, validate_integer, 'test')
+        """Test validate_integer."""
+        validators.validate_integer('1')
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_integer, 'test')
 
     def test_validate_regexp(self):
-        """Test packstack.installer.validators.validate_regexp."""
-        validate_regexp('Test_123', options=[r'\w'])
-        self.assertRaises(ParamValidationError, validate_regexp,
-                          '!#$%', options=[r'\w'])
+        """Test validate_regexp."""
+        validators.validate_regexp('Test_123', options=[r'\w'])
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_regexp, '!#$%', options=[r'\w'])
 
     def test_validate_port(self):
-        """Test packstack.installer.validators.validate_port."""
-        validate_port('666')
-        self.assertRaises(ParamValidationError, validate_port, 'test')
-        self.assertRaises(ParamValidationError, validate_port, '-3')
+        """Test validate_port."""
+        validators.validate_port('666')
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_port, 'test')
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_port, '-3')
 
     def test_validate_not_empty(self):
-        """Test packstack.installer.validators.validate_not_empty."""
-        validate_not_empty('test')
-        validate_not_empty(False)
-        self.assertRaises(ParamValidationError, validate_not_empty, '')
-        self.assertRaises(ParamValidationError, validate_not_empty, [])
-        self.assertRaises(ParamValidationError, validate_not_empty, {})
+        """Test validate_not_empty."""
+        validators.validate_not_empty('test')
+        validators.validate_not_empty(False)
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_not_empty, '')
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_not_empty, [])
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_not_empty, {})
 
     def test_validate_options(self):
-        """Test packstack.installer.validators.validate_options."""
-        validate_options('a', options=['a', 'b'])
-        validate_options('b', options=['a', 'b'])
-        self.assertRaises(ParamValidationError, validate_options,
-                          'c', options=['a', 'b'])
+        """Test validate_options."""
+        validators.validate_options('a', options=['a', 'b'])
+        validators.validate_options('b', options=['a', 'b'])
+        self.assertRaises(
+            exceptions.ParamValidationError,
+            validators.validate_options, 'c', options=['a', 'b'])
 
     def test_validate_ip(self):
-        """Test packstack.installer.validators.validate_ip."""
-        validate_ip('127.0.0.1')
-        validate_ip('::1')
-        self.assertRaises(ParamValidationError, validate_ip, 'test')
+        """Test validate_ip."""
+        validators.validate_ip('127.0.0.1')
+        validators.validate_ip('::1')
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_ip, 'test')
 
     def test_validate_file(self):
-        """Test packstack.installer.validators.validate_file."""
+        """Test validate_file."""
         dname = os.path.join(self.tempdir, '.test_validate_file')
         bad_name = os.path.join(self.tempdir, '.me_no/exists')
         os.mkdir(dname)
-        validate_writeable_directory(dname)
-        self.assertRaises(ParamValidationError, validate_writeable_directory, bad_name)
+        validators.validate_writeable_directory(dname)
+        self.assertRaises(
+            exceptions.ParamValidationError,
+            validators.validate_writeable_directory, bad_name)
 
     def test_validate_writeable_directory(self):
-        """Test packstack.installer.validators.validate_writeable_directory."""
-        fname = os.path.join(self.tempdir, '.test_validate_writeable_directory')
+        """Test validate_writeable_directory."""
+        fname = os.path.join(
+            self.tempdir, '.test_validate_writeable_directory')
         bad_name = os.path.join(self.tempdir, '.me_no_exists')
         with open(fname, 'w') as f:
             f.write('test')
-        validate_file(fname)
-        self.assertRaises(ParamValidationError, validate_file, bad_name)
+        validators.validate_file(fname)
+        self.assertRaises(
+            exceptions.ParamValidationError,
+            validators.validate_file, bad_name)
 
     def test_validate_ping(self):
-        """Test packstack.installer.validators.validate_ping."""
+        """Test validate_ping."""
         # ping to broadcast fails
-        self.assertRaises(ParamValidationError, validate_ping,
-                          '255.255.255.255')
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_ping, '255.255.255.255')
 
     def test_validate_ssh(self):
-        """Test packstack.installer.validators.validate_ssh."""
+        """Test validate_ssh."""
         # ssh to broadcast fails
-        self.assertRaises(ParamValidationError, validate_ssh,
-                          '255.255.255.255')
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_ssh, '255.255.255.255')
 
     def test_validate_float(self):
-        """Test packstack.installer.validators.validate_float."""
-        validate_float('5.3')
-        self.assertRaises(ParamValidationError, validate_float, 'test')
+        """Test validate_float."""
+        validators.validate_float('5.3')
+        self.assertRaises(exceptions.ParamValidationError,
+                          validators.validate_float, 'test')

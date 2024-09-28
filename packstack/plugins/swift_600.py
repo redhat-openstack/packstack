@@ -16,9 +16,9 @@
 Installs and configures Swift
 """
 
+import netaddr
 import re
 import uuid
-import netaddr
 
 from packstack.installer import basedefs
 from packstack.installer import validators
@@ -262,7 +262,6 @@ def create_builder_manifest(config, messages):
          ('SWIFT_RING_ACCOUNT_DEVICES', 'ring_account_device', 6002)]):
         swift_dev_details = dict()
         host = utils.force_ip(config['CONFIG_STORAGE_HOST_URL'])
-        fstype = config["CONFIG_SWIFT_STORAGE_FSTYPE"]
         for device in devices:
             devicename = device['device_name']
             key = "dev_%s_%s" % (host, devicename)

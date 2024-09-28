@@ -17,11 +17,10 @@ Plugin responsible for setting OpenStack global options
 """
 
 import distro
+import glob
+import logging
 import os
 import re
-import logging
-import glob
-import os
 import uuid
 
 from packstack.installer import basedefs
@@ -936,15 +935,15 @@ def run_rhn_reg(host, server_url, username=None, password=None,
     Registers given host to given RHN Satellite server. To successfully
     register either activation_key or username/password is required.
     """
-    logging.debug('Setting RHN Satellite server: %s.' % locals())
+    logging.debug('Setting RHN Satellite server: %s.' % server_url)
 
     mask = []
     cmd = ['/usr/sbin/rhnreg_ks']
     server = utils.ScriptRunner(host)
 
     # check satellite server url
-    server_url = (server_url.rstrip('/').endswith('/XMLRPC')
-                  and server_url or '%s/XMLRPC' % server_url)
+    server_url = (server_url.rstrip('/').endswith('/XMLRPC') and
+                  server_url or '%s/XMLRPC' % server_url)
     cmd.extend(['--serverUrl', server_url])
 
     if activation_key:
@@ -964,10 +963,9 @@ def run_rhn_reg(host, server_url, username=None, password=None,
         location = "/etc/sysconfig/rhn/%s" % os.path.basename(cacert)
         if not os.path.isfile(location):
             logging.debug('Downloading cacert from %s.' % server_url)
-            wget_cmd = ('ls %(location)s &> /dev/null && echo -n "" || '
+            wget_cmd = (f'ls {location} &> /dev/null && echo -n "" || '
                         'wget -nd --no-check-certificate --timeout=30 '
-                        '--tries=3 -O "%(location)s" "%(cacert)s"' %
-                        locals())
+                        f'--tries=3 -O "{location}" "{cacert}"')
             server.append(wget_cmd)
         cmd.extend(['--sslCACert', location])
 
@@ -1002,13 +1000,13 @@ def run_rhsm_reg(host, username, password, optional=False, proxy_server=None,
 
     # configure proxy if it is necessary
     if proxy_server:
-        cmd = ('subscription-manager config '
-               '--server.proxy_hostname=%(proxy_server)s '
-               '--server.proxy_port=%(proxy_port)s')
+        cmd = ['subscription-manager', 'config',
+               f'--server.proxy_hostname={proxy_server}',
+               f'--server.proxy_port={proxy_port}']
         if proxy_user:
-            cmd += (' --server.proxy_user=%(proxy_user)s '
-                    '--server.proxy_password=%(proxy_password)s')
-        server.append(cmd % locals())
+            cmd += [f'--server.proxy_user={proxy_user}',
+                    f'--server.proxy_password={proxy_password}']
+        server.append(cmd.join(' '))
 
     if sat6_server:
         # Register to Satellite 6 host
@@ -1064,14 +1062,12 @@ def manage_centos_release_openstack(host, config):
     if not match:
         # No CentOS Cloud SIG repo, so we don't need to continue
         return
-    branch, version, release = match.group('branch'), match.group('version'), match.group('release')
-    package_name = ("centos-release-openstack-%(branch)s-%(version)s-"
-                    "%(release)s" % locals())
+    branch = match.group('branch')
 
     server = utils.ScriptRunner(host)
-    server.append("(rpm -q 'centos-release-openstack-%(branch)s' ||"
-                  " yum -y install centos-release-openstack-%(branch)s) || true"
-                  % locals())
+    server.append(
+        f"(rpm -q 'centos-release-openstack-{branch}' ||"
+        f" yum -y install centos-release-openstack-{branch}) || true")
 
     try:
         server.execute()
@@ -1100,13 +1096,12 @@ def manage_rdo(host, config):
         dist_tag = '.el9s'
     else:
         dist_tag = ''
-    rdo_url = ("https://www.rdoproject.org/repos/openstack-%(version)s/"
-               "rdo-release-%(version)s%(dist_tag)s.rpm" % locals())
+    rdo_url = (f"https://www.rdoproject.org/repos/openstack-{version}/"
+               f"rdo-release-{version}{dist_tag}.rpm")
 
     server = utils.ScriptRunner(host)
-    server.append("(rpm -q 'rdo-release-%(version)s' ||"
-                  " yum install -y --nogpg %(rdo_url)s) || true"
-                  % locals())
+    server.append(f"(rpm -q 'rdo-release-{version}' ||"
+                  f" yum install -y --nogpg {rdo_url}) || true")
     try:
         server.execute()
     except exceptions.ScriptRuntimeError as ex:
@@ -1115,11 +1110,11 @@ def manage_rdo(host, config):
 
     reponame = 'openstack-%s' % version
     server.clear()
-    server.append('yum-config-manager --enable %(reponame)s' % locals())
+    server.append('yum-config-manager --enable %s' % reponame)
 
     if config['CONFIG_ENABLE_RDO_TESTING'] == 'y':
-        server.append('yum-config-manager --disable %(reponame)s' % locals())
-        server.append('yum-config-manager --enable %(reponame)s-testing' % locals())
+        server.append('yum-config-manager --disable %s' % reponame)
+        server.append('yum-config-manager --enable %s-testing' % reponame)
 
     rc, out = server.execute()
     match = re.search(r'enabled\s*=\s*(1|True)', out)
@@ -1167,7 +1162,7 @@ def choose_ip_version(config, messages):
 
 def install_keys_on_host(hostname, sshkeydata):
     server = utils.ScriptRunner(hostname)
-    # TODO replace all that with ssh-copy-id
+    # TODO(tbd) replace all that with ssh-copy-id
     server.append("mkdir -p ~/.ssh")
     server.append("chmod 500 ~/.ssh")
     server.append("grep '%s' ~/.ssh/authorized_keys > /dev/null 2>&1 || "
@@ -1324,11 +1319,10 @@ def server_prep(config, messages):
         if CONFIG_REPO:
             for i, repourl in enumerate(CONFIG_REPO.split(',')):
                 reponame = 'packstack_%d' % i
-                server.append('echo "[%(reponame)s]\nname=%(reponame)s\n'
-                              'baseurl=%(repourl)s\nenabled=1\n'
+                server.append(f'echo "[{reponame}]\nname={reponame}\n'
+                              f'baseurl={repourl}\nenabled=1\n'
                               'priority=1\ngpgcheck=0"'
-                              ' > /etc/yum.repos.d/%(reponame)s.repo'
-                              % locals())
+                              f' > /etc/yum.repos.d/{reponame}.repo')
 
         server.append("yum clean metadata")
         server.execute()

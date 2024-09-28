@@ -649,15 +649,15 @@ def check_netapp_7modeiscsi_options(config):
 
 def check_netapp_7mode_fc_options(config):
     return (check_netapp_options(config) and
-            config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "ontap_7mode"
-            and config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == "fc")
+            config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "ontap_7mode" and
+            config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] == "fc")
 
 
 def check_netapp_vserver_options(config):
-    return (check_netapp_options(config) and
-            config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "ontap_cluster"
-            and config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] in
-            ['nfs', 'iscsi'])
+    return (
+        check_netapp_options(config) and
+        config['CONFIG_CINDER_NETAPP_STORAGE_FAMILY'] == "ontap_cluster" and
+        config['CONFIG_CINDER_NETAPP_STORAGE_PROTOCOL'] in ['nfs', 'iscsi'])
 
 
 def check_netapp_eseries_options(config):

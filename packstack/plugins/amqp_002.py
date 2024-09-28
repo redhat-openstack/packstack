@@ -138,7 +138,6 @@ def initSequences(controller):
 # ------------------------ step functions -------------------------
 
 def create_manifest(config, messages):
-    server = utils.ScriptRunner(config['CONFIG_AMQP_HOST'])
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         config['CONFIG_AMQP_SSL_ENABLED'] = True
         config['CONFIG_AMQP_PROTOCOL'] = 'ssl'
@@ -147,9 +146,7 @@ def create_manifest(config, messages):
         service = 'AMQP'
         ssl_key_file = '/etc/pki/tls/private/ssl_amqp.key'
         ssl_cert_file = '/etc/pki/tls/certs/ssl_amqp.crt'
-        cacert = config['CONFIG_AMQP_SSL_CACERT_FILE'] = (
-            config['CONFIG_SSL_CACERT']
-        )
+        config['CONFIG_AMQP_SSL_CACERT_FILE'] = config['CONFIG_SSL_CACERT']
         generate_ssl_cert(config, amqp_host, service, ssl_key_file,
                           ssl_cert_file)
     else:

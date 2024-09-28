@@ -15,6 +15,7 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 
+import distro
 import os
 import shutil
 import subprocess
@@ -26,7 +27,6 @@ from packstack.modules import puppet
 from packstack.installer import basedefs
 from packstack.installer import run_setup
 from packstack.installer import validators
-from packstack.plugins.nova_300 import distro
 
 from ..test_base import FakePopen
 from ..test_base import PackstackTestCaseMixin

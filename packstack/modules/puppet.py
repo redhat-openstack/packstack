@@ -19,7 +19,7 @@ import re
 from packstack.installer.exceptions import PuppetError
 
 
-# TODO: Fill logger name when logging system will be refactored
+# TODO(tbd): Fill logger name when logging system will be refactored
 logger = logging.getLogger()
 
 re_color = re.compile(r'\x1b.*?\d\dm')

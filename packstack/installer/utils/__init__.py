@@ -14,19 +14,19 @@
 
 from .datastructures import SortedDict
 from .decorators import retry
+from .network import device_from_ip
+from .network import force_ip
 from .network import get_localhost_ip
 from .network import host2ip
-from .network import force_ip
-from .network import device_from_ip
 from .shell import execute
 from .shell import ScriptRunner
-from .shortcuts import host_iter
-from .shortcuts import hosts
 from .shortcuts import get_current_user
 from .shortcuts import get_current_username
+from .shortcuts import host_iter
+from .shortcuts import hosts
 from .shortcuts import split_hosts
-from .strings import COLORS
 from .strings import color_text
+from .strings import COLORS
 from .strings import mask_string
 from .strings import state_format
 from .strings import state_message
@@ -34,8 +34,8 @@ from .strings import state_message
 
 __all__ = ('SortedDict',
            'retry',
-           'get_localhost_ip', 'host2ip', 'force_ip', 'device_from_ip',
+           'device_from_ip', 'force_ip', 'get_localhost_ip', 'host2ip',
            'ScriptRunner', 'execute',
-           'host_iter', 'hosts', 'get_current_user', 'get_current_username',
-           'split_hosts', 'COLORS', 'color_text', 'mask_string',
+           'get_current_user', 'get_current_username', 'host_iter', 'hosts',
+           'split_hosts', 'color_text', 'COLORS', 'mask_string',
            'state_format', 'state_message')

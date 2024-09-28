@@ -22,7 +22,7 @@ import sys
 import tempfile
 
 import packstack
-from .utils import get_current_user
+from packstack.installer.utils import get_current_user
 
 
 APP_NAME = "Packstack"
@@ -59,7 +59,7 @@ finally:
     if uid != 0 and os.getuid() == 0:
         try:
             os.chown(PACKSTACK_VAR_DIR, uid, gid)
-        except Exception as ex:
+        except Exception:
             print('Unable to change owner of %s. Please fix ownership '
                   'manually and try again.' % PACKSTACK_VAR_DIR)
             sys.exit(1)

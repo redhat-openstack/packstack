@@ -16,14 +16,14 @@ import copy
 import datetime
 from functools import cmp_to_key
 import getpass
+import io
 import logging
-from io import StringIO
 import os
 import re
 import sys
+import textwrap
 import traceback
 import types
-import textwrap
 
 from optparse import OptionGroup
 from optparse import OptionParser
@@ -44,7 +44,7 @@ controller = Controller()
 commandLineValues = {}
 
 # List to hold all values to be masked in logging (i.e. passwords and sensitive data)
-# TODO: read default values from conf_param?
+# TODO(tbd): read default values from conf_param?
 masked_value_set = set()
 tmpfiles = []
 
@@ -94,12 +94,12 @@ def _getInputFromUser(param):
             while loop:
                 # If the value was not supplied by the command line flags
                 if param.CONF_NAME not in commandLineValues:
-                    message = StringIO()
+                    message = io.StringIO()
                     message.write(param.PROMPT)
 
                     val_list = param.VALIDATORS or []
-                    if (validators.validate_regexp not in val_list
-                            and param.OPTION_LIST):
+                    if (validators.validate_regexp not in val_list and
+                            param.OPTION_LIST):
                         message.write(" [%s]" % "|".join(param.OPTION_LIST))
 
                     if param.DEFAULT_VALUE:
@@ -182,7 +182,7 @@ def input_param(param):
 
 
 def _askYesNo(question=None):
-    message = StringIO()
+    message = io.StringIO()
 
     while True:
         askString = "\r%s? (yes|no): " % (question)
@@ -365,18 +365,17 @@ def _loadParamFromFile(config, section, param_name):
             if value is None:
                 value = val
             if value != val:
-                raise ValueError('Parameter %(param_name)s deprecates '
-                                 'following parameters:\n%(deprecated)s.\n'
-                                 'Please either use parameter %(param_name)s '
+                raise ValueError(f'Parameter {param_name} deprecates '
+                                 f'following parameters:\n{deprecated}.\n'
+                                 f'Please either use parameter {param_name} '
                                  'or use same value for all deprecated '
-                                 'parameters.' % locals())
+                                 'parameters.')
         if deprecated and value is not None:
             controller.MESSAGES.append('Deprecated parameter has been used '
                                        'in answer file. Please use parameter '
-                                       '%(param_name)s next time. This '
+                                       f'{param_name} next time. This '
                                        'parameter deprecates following '
-                                       'parameters: %(deprecated)s.'
-                                       % locals())
+                                       f'parameters: {deprecated}.')
         if value is None:
             # Let's use default value if we have one
             value = getattr(param, 'DEFAULT_VALUE', None)
@@ -473,6 +472,7 @@ def _gettmpanswerfilepath():
         path = os.path.abspath(os.path.join(p, "tmp-packstack-answers-%s.txt" % ts))
         tmpfiles.append(path)
 
+    controller.MESSAGES.append(msg)
     return path
 
 
@@ -863,7 +863,6 @@ def initCmdLineParser():
         for param in group.parameters.itervalues():
             cmdOption = param.CMD_OPTION
             paramUsage = param.USAGE
-            optionsList = param.OPTION_LIST
             useDefault = param.USE_DEFAULT
 
             if not useDefault:
@@ -888,7 +887,6 @@ def printOptions():
         for param in group.parameters.itervalues():
             cmdOption = param.CONF_NAME
             paramUsage = param.USAGE
-            optionsList = param.OPTION_LIST or ""
             print("%s" % (("**%s**" % str(cmdOption)).ljust(30)))
             print("    %s" % paramUsage + "\n")
 
@@ -1003,8 +1001,7 @@ def main():
         logFile = initLogging(options.debug)
 
         # Parse parameters
-        runConfiguration = True
-        confFile = None
+        conf_file = None
 
         controller.CONF['DEFAULT_EXEC_TIMEOUT'] = options.timeout
         controller.CONF['DRY_RUN'] = options.dry_run
@@ -1047,12 +1044,13 @@ def main():
                     msg = ('Please do not set --default-password '
                            'when specifying an answer file.')
                     raise FlagValidationError(msg)
-                confFile = os.path.expanduser(options.answer_file)
-                if not os.path.exists(confFile):
-                    raise Exception(output_messages.ERR_NO_ANSWER_FILE % confFile)
+                conf_file = os.path.expanduser(options.answer_file)
+                if not os.path.exists(conf_file):
+                    raise Exception(output_messages.ERR_NO_ANSWER_FILE %
+                                    conf_file)
             else:
                 _set_command_line_values(options)
-            _main(options, confFile, logFile)
+            _main(options, conf_file, logFile)
 
     except FlagValidationError as ex:
         optParser.error(str(ex))

@@ -25,7 +25,7 @@ from unittest import TestCase
 
 from ..test_base import FakePopen
 from ..test_base import PackstackTestCaseMixin
-from packstack.installer.utils import *
+from packstack.installer import utils
 from packstack.installer.utils.strings import STR_MASK
 from packstack.installer.exceptions import ExecuteRuntimeError
 
@@ -46,17 +46,17 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
 
     def test_sorteddict(self):
         """Test packstack.installer.utils.datastructures.SortedDict."""
-        sdict = SortedDict()
+        sdict = utils.SortedDict()
         sdict['1'] = 1
         sdict['2'] = 2
-        sdict.update(SortedDict([('3', 3), ('4', 4), ('5', 5)]))
+        sdict.update(utils.SortedDict([('3', 3), ('4', 4), ('5', 5)]))
         self.assertListEqual(sdict.keys(), ['1', '2', '3', '4', '5'])
         self.assertListEqual(sdict.values(), [1, 2, 3, 4, 5])
 
     def test_retry(self):
         """Test packstack.installer.utils.decorators.retry."""
 
-        @retry(count=3, delay=0, retry_on=ValueError)
+        @utils.retry(count=3, delay=0, retry_on=ValueError)
         def test_sum():
             global cnt
             cnt += 1
@@ -74,44 +74,44 @@ class ParameterTestCase(PackstackTestCaseMixin, TestCase):
 
     def test_network(self):
         """Test packstack.installer.utils.network functions."""
-        self.assertIn(host2ip('localhost', allow_localhost=True),
+        self.assertIn(utils.host2ip('localhost', allow_localhost=True),
                       ['127.0.0.1', '::1'])
 
     def test_shell(self):
         """Test packstack.installer.utils.shell functions."""
-        rc, out = execute(['echo', 'this is test'])
+        rc, out = utils.execute(['echo', 'this is test'])
         self.assertEqual(out.strip(), 'this is test')
-        rc, out = execute('echo "this is test"', use_shell=True)
+        rc, out = utils.execute('echo "this is test"', use_shell=True)
         self.assertEqual(out.strip(), 'this is test')
         try:
-            execute('echo "mask the password" && exit 1',
-                    use_shell=True, mask_list=['password'])
+            utils.execute('echo "mask the password" && exit 1',
+                          use_shell=True, mask_list=['password'])
             raise AssertionError('Masked execution failed.')
         except ExecuteRuntimeError as ex:
             should_be = ('Failed to execute command, stdout: mask the %s\n\n'
                          'stderr: ' % STR_MASK)
             self.assertEqual(str(ex), should_be)
 
-        script = ScriptRunner()
+        script = utils.ScriptRunner()
         script.append('echo "this is test"')
         rc, out = script.execute()
         self.assertEqual(out.strip(), 'this is test')
 
     def test_strings(self):
         """Test packstack.installer.utils.strings functions."""
-        self.assertEqual(color_text('test text', 'red'),
+        self.assertEqual(utils.color_text('test text', 'red'),
                          '\033[0;31mtest text\033[0m')
-        self.assertEqual(mask_string('test text', mask_list=['text']),
+        self.assertEqual(utils.mask_string('test text', mask_list=['text']),
                          'test %s' % STR_MASK)
-        masked = mask_string("test '\\''text'\\''",
-                             mask_list=["'text'"],
-                             replace_list=[("'", "'\\''")])
+        masked = utils.mask_string("test '\\''text'\\''",
+                                   mask_list=["'text'"],
+                                   replace_list=[("'", "'\\''")])
         self.assertEqual(masked, 'test %s' % STR_MASK)
 
     def test_shortcuts(self):
         """Test packstack.installer.utils.shortcuts functions."""
         conf = {"A_HOST": "1.1.1.1", "B_HOSTS": "2.2.2.2,1.1.1.1",
                 "C_HOSTS": "3.3.3.3/vdc"}
-        hostlist = list(hosts(conf))
+        hostlist = list(utils.hosts(conf))
         hostlist.sort()
         self.assertEqual(['1.1.1.1', '2.2.2.2', '3.3.3.3'], hostlist)

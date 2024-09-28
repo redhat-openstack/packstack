@@ -522,21 +522,23 @@ def initSequences(controller):
                                'Please set CONFIG_NEUTRON_INSTALL=y')
         return
 
+    has_ovs = 'openvswitch' in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
+    has_ovn = 'ovn' in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
+    has_lb = 'linuxbridge' in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
+
     if config['CONFIG_IRONIC_INSTALL'] == 'y':
         config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS'] += ', flat'
         config['CONFIG_NEUTRON_ML2_TENANT_NETWORK_TYPES'] += ', flat'
-        if 'openvswitch' not in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']:
+        if not has_ovs:
             config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += ', openvswitch'
         config['CONFIG_NEUTRON_ML2_FLAT_NETWORKS'] = 'extnet'
 
     if use_ml2_with_sriovnicswitch(config):
-        if ('openvswitch' not in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
-                and 'linuxbridge' not in
-                config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']):
+        if (not has_ovs) and (not has_lb):
             config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += ', openvswitch'
 
     if use_ml2_with_ovn(config):
-        if ('ovn' not in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']):
+        if not has_ovn:
             config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] = 'ovn'
         # OVN only supports geneve encapsulation
         if ('geneve' not in config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS']):
@@ -567,8 +569,7 @@ def initSequences(controller):
         ovn_external = 'CONFIG_NEUTRON_OVN_EXTERNAL_PHYSNET'
         config[ovs_external] = config[ovn_external]
     elif use_ml2_with_ovs(config):
-        if ('openvswitch' not in config[
-                'CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']):
+        if not has_ovs:
             config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] = 'openvswitch'
 
     plugin_db = 'neutron'
@@ -739,8 +740,6 @@ def create_manifests(config, messages):
 
     config['FIREWALL_DRIVER'] = ("neutron.agent.linux.iptables_firewall."
                                  "OVSHybridIptablesFirewallDriver")
-
-    plugin_manifest = 'neutron_ml2_plugin'
 
     if config['CONFIG_AMQP_ENABLE_SSL'] == 'y':
         ssl_cert_file = config['CONFIG_NEUTRON_SSL_CERT'] = (
@@ -939,9 +938,7 @@ def create_l2_agent_manifests(config, messages):
         config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES_COMPUTE"] = []
         no_local_types = set(ovs_type) & set(['gre', 'vxlan', 'vlan', 'flat'])
         no_tunnel_types = set(ovs_type) & set(['vlan', 'flat'])
-    elif agent == "linuxbridge":
-        host_var = 'CONFIG_NEUTRON_LB_HOST'
-    else:
+    elif agent != "linuxbridge":
         raise KeyError("Unknown layer2 agent")
 
     for host in network_hosts | compute_hosts:
@@ -950,8 +947,7 @@ def create_l2_agent_manifests(config, messages):
         # only required if vlan or flat are enabled.
         if (
             agent in ["openvswitch", "ovn"] and (
-                (host in network_hosts and no_local_types)
-                or no_tunnel_types)
+                (host in network_hosts and no_local_types) or no_tunnel_types)
         ):
             if config['CONFIG_USE_SUBNETS'] == 'y':
                 iface_arr = [

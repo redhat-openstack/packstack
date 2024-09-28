@@ -16,8 +16,8 @@
 Base class for steps & sequences
 """
 
-import sys
 import logging
+import sys
 import traceback
 
 from .. import utils
@@ -48,7 +48,7 @@ class Step(object):
         # execute and report state
         try:
             self.function(config, messages)
-        except Exception as ex:
+        except Exception:
             logger.debug(traceback.format_exc())
             state = utils.state_message(self.title, 'ERROR', 'red')
             sys.stdout.write('%s\n' % state)
