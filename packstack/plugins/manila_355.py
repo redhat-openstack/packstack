@@ -297,7 +297,7 @@ def initConfig(controller):
         "MANILANETWORK": [
             {"CMD_OPTION": "manila-network-type",
              "PROMPT": ("Enter a network type"),
-             "OPTION_LIST": ['neutron', 'nova-network', 'standalone'],
+             "OPTION_LIST": ['neutron', 'standalone'],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "neutron",
              "MASK_INPUT": False,
