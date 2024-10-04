@@ -655,7 +655,7 @@ Manila Network configuration
 ----------------------------
 
 **CONFIG_MANILA_NETWORK_TYPE**
-    Type of networking that the backend will use. A more detailed description of each option is available in the Manila docs. Defaults to 'neutron'. ['neutron', 'nova-network', 'standalone']
+    Type of networking that the backend will use. A more detailed description of each option is available in the Manila docs. Defaults to 'neutron'. ['neutron', 'standalone']
 
 Manila Standalone network configuration
 ---------------------------------------
