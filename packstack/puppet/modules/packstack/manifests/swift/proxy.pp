@@ -77,7 +77,6 @@ class packstack::swift::proxy ()
       'swift::proxy::gatekeeper',
       'swift::proxy::healthcheck',
       'swift::proxy::proxy_logging',
-      'swift::proxy::cache',
       'swift::proxy::listing_formats',
       'swift::proxy::tempurl',
       'swift::proxy::crossdomain',
@@ -89,6 +88,14 @@ class packstack::swift::proxy ()
       'swift::proxy::slo',
       'swift::proxy::dlo',
     ]: }
+
+    $memcache_servers = lookup('CONFIG_IP_VERSION') ? {
+      'ipv6'  => ['[::1]:11211'],
+      default => ['127.0.0.1:11211'],
+    }
+    class {'swift::proxy::cache':
+      memcache_servers => $memcache_servers,
+    }
 
     class { 'swift::proxy::bulk':
       max_containers_per_extraction => 10000,
@@ -120,5 +127,7 @@ class packstack::swift::proxy ()
       allow_versioned_writes => true,
     }
 
-    class { 'swift::objectexpirer': }
+    class { 'swift::objectexpirer':
+      memcache_servers => $memcache_servers,
+    }
 }
