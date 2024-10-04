@@ -28,7 +28,6 @@ class packstack::gnocchi ()
     class { 'gnocchi::keystone::authtoken':
       www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
-      auth_version         => lookup('CONFIG_KEYSTONE_API_VERSION'),
       password             => lookup('CONFIG_GNOCCHI_KS_PW')
     }
 

@@ -8,12 +8,11 @@ class packstack::nova::api ()
       # TO-DO(mmagr): Add IPv6 support when hostnames are used
     }
 
-    $www_authenticate_uri = lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS')
     $admin_password = lookup('CONFIG_NOVA_KS_PW')
 
     class { 'nova::keystone::authtoken':
       password             => $admin_password,
-      www_authenticate_uri => $www_authenticate_uri,
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
@@ -62,7 +61,7 @@ class packstack::nova::api ()
     }
 
     class { 'nova::placement':
-      auth_url    => $www_authenticate_uri,
+      auth_url    => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
       password    => $admin_password,
       region_name => lookup('CONFIG_KEYSTONE_REGION'),
     }

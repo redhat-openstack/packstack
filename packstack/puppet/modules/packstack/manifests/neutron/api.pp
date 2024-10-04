@@ -11,11 +11,9 @@ class packstack::neutron::api ()
     $neutron_vpnaas_enabled  = str2bool(lookup('CONFIG_NEUTRON_VPNAAS'))
 
     class { 'neutron::keystone::authtoken':
-      username             => 'neutron',
       password             => $neutron_user_password,
       www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
-      project_name         => 'services',
     }
 
     class { 'neutron::db':

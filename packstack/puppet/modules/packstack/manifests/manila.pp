@@ -10,7 +10,8 @@ class packstack::manila ()
 
     class { 'manila::keystone::authtoken':
       password             => lookup('CONFIG_MANILA_KS_PW'),
-      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     class { 'manila::api':

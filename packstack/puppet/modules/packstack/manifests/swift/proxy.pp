@@ -110,11 +110,9 @@ class packstack::swift::proxy ()
     }
 
     class { 'swift::proxy::authtoken':
-      username             => 'swift',
-      project_name         => 'services',
       password             => lookup('CONFIG_SWIFT_KS_PW'),
       # assume that the controller host is the swift api server
-      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 

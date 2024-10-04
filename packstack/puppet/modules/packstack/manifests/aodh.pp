@@ -14,8 +14,9 @@ class packstack::aodh ()
     }
 
     class { 'aodh::keystone::authtoken':
-      password => lookup('CONFIG_AODH_KS_PW'),
-      auth_url => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
+      password             => lookup('CONFIG_AODH_KS_PW'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     class { 'aodh::api':
