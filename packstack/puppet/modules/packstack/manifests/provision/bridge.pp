@@ -14,14 +14,6 @@ class packstack::provision::bridge ()
       $floating_range_br = lookup('CONFIG_PROVISION_TEMPEST_FLOATRANGE')
     }
 
-    class { 'neutron::keystone::authtoken':
-      username             => 'neutron',
-      password             => $neutron_user_password,
-      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
-      auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
-      project_name         => 'services',
-    }
-
     if $provision_neutron_br and $setup_ovs_bridge {
       Neutron_config<||> -> Neutron_l3_ovs_bridge['demo_bridge']
       neutron_l3_ovs_bridge { 'demo_bridge':

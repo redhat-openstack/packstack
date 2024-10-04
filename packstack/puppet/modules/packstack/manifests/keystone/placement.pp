@@ -7,8 +7,6 @@ class packstack::keystone::placement ()
 
     class { 'placement::keystone::authtoken':
       password             => lookup('CONFIG_NOVA_KS_PW'),
-      user_domain_name     => 'Default',
-      project_domain_name  => 'Default',
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
       www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
     }

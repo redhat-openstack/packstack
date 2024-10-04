@@ -35,7 +35,7 @@ class packstack::heat::rabbitmq ()
     }
     class { 'heat::keystone::authtoken':
       password             => lookup('CONFIG_HEAT_KS_PW'),
-      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 

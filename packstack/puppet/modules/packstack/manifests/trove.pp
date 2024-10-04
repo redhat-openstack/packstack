@@ -9,8 +9,9 @@ class packstack::trove ()
     }
 
     class { 'trove::keystone::authtoken':
-      password => lookup('CONFIG_TROVE_KS_PW'),
-      auth_url => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      password             => lookup('CONFIG_TROVE_KS_PW'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
+      auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     class { 'trove::logging':

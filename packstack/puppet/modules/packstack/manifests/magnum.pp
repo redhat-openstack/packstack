@@ -12,12 +12,7 @@ class packstack::magnum ()
     class { 'magnum::keystone::authtoken':
       www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
-      auth_version         => 'v3',
-      username             => 'magnum',
       password             => lookup('CONFIG_MAGNUM_KS_PW'),
-      auth_type            => 'password',
-      memcached_servers    => "${magnum_host}:11211",
-      project_name         => 'services'
     }
 
     class { 'magnum::keystone::keystone_auth':

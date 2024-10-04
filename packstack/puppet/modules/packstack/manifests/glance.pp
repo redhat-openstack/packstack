@@ -19,7 +19,7 @@ class packstack::glance ()
     }
 
     class { 'glance::api::authtoken':
-      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
+      www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
       password             => lookup('CONFIG_GLANCE_KS_PW'),
     }
