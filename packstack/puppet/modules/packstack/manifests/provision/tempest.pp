@@ -15,7 +15,6 @@ class packstack::provision::tempest ()
 
     # Authentication/Keystone
     $identity_uri_v3       = lookup('CONFIG_KEYSTONE_PUBLIC_URL')
-    $auth_version          = lookup('CONFIG_KEYSTONE_API_VERSION')
     $admin_username        = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
     $admin_password        = lookup('CONFIG_KEYSTONE_ADMIN_PW')
     $admin_project_name    = 'admin'
@@ -112,7 +111,6 @@ class packstack::provision::tempest ()
       admin_username            => $admin_username,
       use_dynamic_credentials   => $use_dynamic_credentials,
       aodh_available            => $aodh_available,
-      auth_version              => $auth_version,
       ceilometer_available      => $ceilometer_available,
       cinder_available          => $cinder_available,
       configure_images          => $configure_images,
