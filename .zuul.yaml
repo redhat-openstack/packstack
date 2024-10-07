@@ -35,8 +35,8 @@
     parent: packstack-base
     vars:
       selinux_enforcing: "false"
-      delorean: "https://trunk.rdoproject.org/centos9-master/puppet-passed-ci/delorean.repo"
-      delorean_deps: "https://trunk.rdoproject.org/centos9-master/delorean-deps.repo"
+      delorean: "https://trunk.rdoproject.org/centos9-dalmatian/puppet-passed-ci/delorean.repo"
+      delorean_deps: "https://trunk.rdoproject.org/centos9-dalmatian/delorean-deps.repo"
     pre-run: playbooks/packstack-centos9-pre.yaml
     nodeset:
       nodes:
@@ -49,8 +49,8 @@
     parent: packstack-base
     vars:
       selinux_enforcing: "false"
-      delorean: "https://trunk.rdoproject.org/centos9-master/puppet-passed-ci/delorean.repo"
-      delorean_deps: "https://trunk.rdoproject.org/centos9-master/delorean-deps.repo"
+      delorean: "https://trunk.rdoproject.org/centos9-dalmatian/puppet-passed-ci/delorean.repo"
+      delorean_deps: "https://trunk.rdoproject.org/centos9-dalmatian/delorean-deps.repo"
     pre-run: playbooks/packstack-centos9-pre.yaml
     post-run: playbooks/packstack-post-compute.yaml
     nodeset:
