@@ -6,11 +6,11 @@ class packstack::cinder ()
     $cinder_backends = lookup('CONFIG_CINDER_BACKEND', { merge => 'unique' })
 
     case $cinder_backends[0] {
-      'lvm':       { $default_volume_type = 'iscsi' }
+      'lvm':       { $default_volume_type = 'lvm' }
       'nfs':       { $default_volume_type = 'nfs' }
       'netapp':    { $default_volume_type = 'netapp' }
       'solidfire': { $default_volume_type = 'solidfire' }
-      default:     { $default_volume_type = 'iscsi' }
+      default:     { $default_volume_type = 'lvm' }
     }
 
     $bind_host = lookup('CONFIG_IP_VERSION') ? {

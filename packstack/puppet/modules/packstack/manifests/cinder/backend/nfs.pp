@@ -7,10 +7,6 @@ class packstack::cinder::backend::nfs ()
       require              => Package['nfs-utils'],
       nfs_shares_config    => '/etc/cinder/nfs_shares.conf',
       nfs_snapshot_support => true,
-    }
-
-    cinder_type { 'nfs':
-      ensure     => present,
-      properties => {'volume_backend_name' => 'nfs'},
+      manage_volume_type   => true,
     }
 }

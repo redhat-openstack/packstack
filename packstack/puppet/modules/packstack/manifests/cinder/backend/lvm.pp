@@ -67,13 +67,9 @@ RequiredBy=openstack-cinder-volume.service",
     }
 
     cinder::backend::iscsi { 'lvm':
-      target_ip_address => lookup('CONFIG_STORAGE_HOST_URL'),
-      require           => Package['lvm2'],
-      volume_group      => $cinder_volume_name,
-    }
-
-    cinder_type { 'iscsi':
-      ensure     => present,
-      properties => {'volume_backend_name' => 'lvm'},
+      target_ip_address  => lookup('CONFIG_STORAGE_HOST_URL'),
+      require            => Package['lvm2'],
+      volume_group       => $cinder_volume_name,
+      manage_volume_type => true,
     }
 }
