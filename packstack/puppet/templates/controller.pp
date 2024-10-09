@@ -52,7 +52,6 @@ if lookup('CONFIG_CINDER_INSTALL') == 'y' {
   case $cinder_backends[0] {
     'lvm':       { include 'packstack::cinder::backend::lvm' }
     'nfs':       { include 'packstack::cinder::backend::nfs' }
-    'vmdk':      { include 'packstack::cinder::backend::vmdk' }
     'netapp':    { include 'packstack::cinder::backend::netapp' }
     'solidfire': { include 'packstack::cinder::backend::solidfire' }
     default:     { include 'packstack::cinder::backend::lvm' }

@@ -8,7 +8,6 @@ class packstack::cinder ()
     case $cinder_backends[0] {
       'lvm':       { $default_volume_type = 'iscsi' }
       'nfs':       { $default_volume_type = 'nfs' }
-      'vmdk':      { $default_volume_type = 'vmdk' }
       'netapp':    { $default_volume_type = 'netapp' }
       'solidfire': { $default_volume_type = 'solidfire' }
       default:     { $default_volume_type = 'iscsi' }

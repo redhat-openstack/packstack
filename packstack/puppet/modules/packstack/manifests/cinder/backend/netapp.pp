@@ -127,7 +127,7 @@ class packstack::cinder::backend::netapp ()
 
     cinder_type { $netapp_backend_name:
       ensure     => present,
-      properties => ["volume_backend_name=${netapp_backend_name}"],
+      properties => {'volume_backend_name' => $netapp_backend_name},
       require    => Class['cinder::api'],
     }
 }

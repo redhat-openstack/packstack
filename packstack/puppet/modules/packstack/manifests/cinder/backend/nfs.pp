@@ -11,7 +11,7 @@ class packstack::cinder::backend::nfs ()
 
     cinder_type { 'nfs':
       ensure     => present,
-      properties => ['volume_backend_name=nfs'],
+      properties => {'volume_backend_name' => 'nfs'},
       require    => Class['cinder::api'],
     }
 }

@@ -85,8 +85,7 @@ def initConfig(controller):
 
             {"CMD_OPTION": "cinder-backend",
              "PROMPT": "Enter the Cinder backend to be configured",
-             "OPTION_LIST": ["lvm", "nfs", "vmdk", "netapp",
-                             "solidfire"],
+             "OPTION_LIST": ["lvm", "nfs", "netapp", "solidfire"],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "lvm",
              "MASK_INPUT": False,
