@@ -1,3 +1,5 @@
+# Auto-generated Puppetfile for Packstack project
+
 moduledir '/usr/share/openstack-puppet/modules'
 
 ## OpenStack modules
@@ -26,10 +28,6 @@ mod 'heat',
   :git => 'https://github.com/openstack/puppet-heat',
   :ref => 'master'
 
-mod 'magnum',
-  :git => 'https://github.com/openstack/puppet-magnum',
-  :ref => 'master'
-
 mod 'horizon',
   :git => 'https://github.com/openstack/puppet-horizon',
   :ref => 'master'
@@ -40,6 +38,10 @@ mod 'ironic',
 
 mod 'keystone',
   :git => 'https://github.com/openstack/puppet-keystone',
+  :ref => 'master'
+
+mod 'magnum',
+  :git => 'https://github.com/openstack/puppet-magnum',
   :ref => 'master'
 
 mod 'manila',
@@ -90,69 +92,65 @@ mod 'vswitch',
 
 mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
-  :ref => 'main'
+  :ref => 'v12.1.0'
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
-  :ref => 'main'
+  :ref => 'v9.0.2'
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
-  :ref => 'main'
+  :ref => 'v8.1.0'
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
-  :ref => 'main'
+  :ref => 'v6.1.1'
 
 mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached',
-  :ref => 'master'
+  :ref => 'v9.0.0'
 
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
-  :ref => 'main'
+  :ref => 'v16.0.0'
 
 mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
-  :ref => 'master'
+  :ref => '2ed2a2df59bbeaf9cf628e1a4a499476842282fd'
 
 mod 'rabbitmq',
   :git => 'https://github.com/voxpupuli/puppet-rabbitmq',
-  :ref => 'master'
+  :ref => 'v13.7.0'
 
 mod 'redis',
-  :git => 'https://github.com/arioch/puppet-redis',
-  :ref => 'master'
+  :git => 'https://github.com/voxpupuli/puppet-redis',
+  :ref => 'v11.0.0'
 
 mod 'remote',
   :git => 'https://github.com/paramite/puppet-remote',
-  :ref => 'master'
+  :ref => '7420908328b832f4b20e1eba44bcccd926da8faa'
 
 mod 'rsync',
   :git => 'https://github.com/puppetlabs/puppetlabs-rsync',
-  :ref => 'main'
-
-mod 'ssh',
-  :git => 'https://github.com/saz/puppet-ssh',
-  :ref => 'master'
+  :ref => '1.2.0'
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => 'main'
+  :ref => 'v9.6.0'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
-  :ref => 'master'
+  :ref => '847ec1c07ed3e231a48d8816971c0bd4afe7a72b'
 
 mod 'systemd',
   :git => 'https://github.com/voxpupuli/puppet-systemd',
-  :ref => 'master'
+  :ref => 'v7.1.0'
 
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
-  :ref => 'main'
+  :ref => 'v6.1.0'
 
 mod 'xinetd',
   :git => 'https://github.com/puppetlabs/puppetlabs-xinetd',
-  :ref => 'main'
+  :ref => 'v3.4.1'
 
