@@ -171,6 +171,7 @@
       jobs:
         - openstack-tox-pep8
         - openstack-tox-py39
+        - openstack-tox-py312
         - build-openstack-releasenotes:
             vars:
               sphinx_python: python3
@@ -182,6 +183,7 @@
       jobs:
         - openstack-tox-pep8
         - openstack-tox-py39
+        - openstack-tox-py312
         - build-openstack-releasenotes:
             vars:
               sphinx_python: python3
