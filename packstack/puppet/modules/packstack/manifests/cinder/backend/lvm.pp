@@ -75,6 +75,5 @@ RequiredBy=openstack-cinder-volume.service",
     cinder_type { 'iscsi':
       ensure     => present,
       properties => {'volume_backend_name' => 'lvm'},
-      require    => Class['cinder::api'],
     }
 }

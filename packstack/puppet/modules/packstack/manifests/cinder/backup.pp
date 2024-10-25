@@ -8,6 +8,4 @@ class packstack::cinder::backup ()
       backup_swift_url          => "http://${cinder_backup_conf_ctrl_host}:8080/v1/AUTH_",
       backup_swift_service_auth => true
     }
-
-    Class['cinder::api'] ~> Service['cinder-backup']
 }

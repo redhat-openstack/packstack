@@ -15,6 +15,5 @@ class packstack::cinder::backend::solidfire ()
     cinder_type { $solidfire_backend_name:
       ensure     => present,
       properties => {'volume_backend_name' => $solidfire_backend_name },
-      require    => Class['cinder::api'],
     }
 }
