@@ -22,7 +22,7 @@ class packstack::manila::backend::generic ()
       disk   => '1',
       vcpus  => '1',
     }
-    -> manila::backend::service_instance{ 'generic':
+    manila::backend::service_instance{ 'generic':
       service_image_location     => lookup('CONFIG_MANILA_SERVICE_IMAGE_LOCATION'),
       service_instance_user      => lookup('CONFIG_MANILA_SERVICE_INSTANCE_USER'),
       service_instance_password  => lookup('CONFIG_MANILA_SERVICE_INSTANCE_PASSWORD'),
