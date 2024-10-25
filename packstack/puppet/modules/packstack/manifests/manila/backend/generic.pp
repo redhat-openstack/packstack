@@ -16,12 +16,11 @@ class packstack::manila::backend::generic ()
     $keystone_url   = lookup('CONFIG_KEYSTONE_PUBLIC_URL')
 
     nova_flavor { 'm1.manila':
-      ensure  => present,
-      id      => '66',
-      ram     => '512',
-      disk    => '1',
-      vcpus   => '1',
-      require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
+      ensure => present,
+      id     => '66',
+      ram    => '512',
+      disk   => '1',
+      vcpus  => '1',
     }
     -> manila::backend::service_instance{ 'generic':
       service_image_location     => lookup('CONFIG_MANILA_SERVICE_IMAGE_LOCATION'),

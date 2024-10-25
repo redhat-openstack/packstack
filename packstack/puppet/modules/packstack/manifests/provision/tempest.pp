@@ -62,20 +62,18 @@ class packstack::provision::tempest ()
     $tempest_flavor_alt_vcpus= lookup('CONFIG_PROVISION_TEMPEST_FLAVOR_ALT_VCPUS')
 
     nova_flavor { $tempest_flavor_name :
-      ensure  => present,
-      id      => $tempest_flavor_ref,
-      ram     => $tempest_flavor_ram,
-      disk    => $tempest_flavor_disk,
-      vcpus   => $tempest_flavor_vcpus,
-      require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
+      ensure => present,
+      id     => $tempest_flavor_ref,
+      ram    => $tempest_flavor_ram,
+      disk   => $tempest_flavor_disk,
+      vcpus  => $tempest_flavor_vcpus,
     }
     nova_flavor { $tempest_flavor_alt_name :
-      ensure  => present,
-      id      => $tempest_flavor_alt_ref,
-      ram     => $tempest_flavor_alt_ram,
-      disk    => $tempest_flavor_alt_disk,
-      vcpus   => $tempest_flavor_alt_vcpus,
-      require => [ Class['::nova::api'], Class['::nova::keystone::auth'] ],
+      ensure => present,
+      id     => $tempest_flavor_alt_ref,
+      ram    => $tempest_flavor_alt_ram,
+      disk   => $tempest_flavor_alt_disk,
+      vcpus  => $tempest_flavor_alt_vcpus,
     }
 
     # Service availability for testing based on configuration
