@@ -26,9 +26,12 @@ class packstack::cinder ()
     }
 
     class { 'cinder::api':
-      bind_host           => $bind_host,
-      service_workers     => lookup('CONFIG_SERVICE_WORKERS'),
+      service_name        => 'httpd',
       default_volume_type => $default_volume_type,
+    }
+    class { 'cinder::wsgi::apache':
+      bind_host => $bind_host,
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     class { 'cinder::scheduler': }
