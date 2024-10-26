@@ -33,11 +33,10 @@ class packstack::glance ()
     }
 
     class { 'glance::api':
-      bind_host           => $bind_host,
-      pipeline            => 'keystone',
-      workers             => lookup('CONFIG_SERVICE_WORKERS'),
-      enabled_backends    => ["${default_store}:${default_store}", "http:http"],
-      default_backend     => $default_store,
+      bind_host        => $bind_host,
+      workers          => lookup('CONFIG_SERVICE_WORKERS'),
+      enabled_backends => ["${default_store}:${default_store}", "http:http"],
+      default_backend  => $default_store,
     }
 
     glance::backend::multistore::http { 'http': }
