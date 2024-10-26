@@ -2,9 +2,6 @@ class packstack::keystone ()
 {
     create_resources(packstack::firewall, lookup('FIREWALL_KEYSTONE_RULES', undef, undef, {}))
 
-    $keystone_use_ssl = false
-    $keystone_cfg_ks_db_pw = lookup('CONFIG_KEYSTONE_DB_PW')
-    $keystone_cfg_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
     $keystone_token_provider_str = downcase(lookup('CONFIG_KEYSTONE_TOKEN_FORMAT'))
     $keystone_url = regsubst(regsubst(lookup('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
     $keystone_admin_url = lookup('CONFIG_KEYSTONE_ADMIN_URL')
@@ -31,7 +28,13 @@ class packstack::keystone ()
     }
 
     class { 'keystone::db':
-      database_connection => "mysql+pymysql://keystone_admin:${keystone_cfg_ks_db_pw}@${keystone_cfg_mariadb_host}/keystone",
+      database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'keystone_admin',
+        'password' => lookup('CONFIG_KEYSTONE_DB_PW'),
+        'database' => 'keystone',
+      })
     }
 
     class { 'keystone':
@@ -43,7 +46,6 @@ class packstack::keystone ()
 
     class { 'keystone::wsgi::apache':
       workers => lookup('CONFIG_SERVICE_WORKERS'),
-      ssl     => $keystone_use_ssl
     }
 
     class { 'keystone::bootstrap':

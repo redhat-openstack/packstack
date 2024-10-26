@@ -21,15 +21,18 @@ class packstack::manila::rabbitmq ()
     }
     Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'manila-service' |>
 
-    $db_pw = lookup('CONFIG_MANILA_DB_PW')
-    $mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
-
     class { 'manila::logging':
       debug => lookup('CONFIG_DEBUG_MODE'),
     }
 
     class { 'manila::db':
-      database_connection => "mysql+pymysql://manila:${db_pw}@${mariadb_host}/manila",
+      database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'manila',
+        'password' => lookup('CONFIG_MANILA_DB_PW'),
+        'database' => 'manila',
+      })
     }
 
     class { 'manila':

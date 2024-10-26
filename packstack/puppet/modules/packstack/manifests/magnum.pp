@@ -2,10 +2,14 @@ class packstack::magnum ()
 {
     create_resources(packstack::firewall, lookup('FIREWALL_MAGNUM_API_RULES', undef, undef, {}))
 
-    $magnum_cfg_magnum_db_pw = lookup('CONFIG_MAGNUM_DB_PW')
-    $magnum_cfg_magnum_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
     class { 'magnum::db':
-      database_connection => "mysql+pymysql://magnum:${magnum_cfg_magnum_db_pw}@${magnum_cfg_magnum_mariadb_host}/magnum",
+      database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'magnum',
+        'password' => lookup('CONFIG_MAGNUM_DB_PW'),
+        'database' => 'magnum',
+      })
     }
 
     $magnum_host = lookup('CONFIG_KEYSTONE_HOST_URL')

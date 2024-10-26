@@ -7,12 +7,14 @@ class packstack::ceilometer ()
     $config_gnocchi_host = lookup('CONFIG_KEYSTONE_HOST_URL')
 
     if $config_ceilometer_coordination_backend == 'redis' {
-      $redis_host = lookup('CONFIG_REDIS_HOST_URL')
-      $redis_port = lookup('CONFIG_REDIS_PORT')
-      $coordination_url = "redis://${redis_host}:${redis_port}"
+      $coordination_url = os_url({
+        'scheme' => 'redis',
+        'host'   => lookup('CONFIG_REDIS_HOST_URL'),
+        'port'   => lookup('CONFIG_REDIS_PORT'),
+      })
       Service<| title == 'redis' |> -> Anchor['ceilometer::service::begin']
     } else {
-      $coordination_url = ''
+      $coordination_url = undef
     }
 
     include ceilometer
