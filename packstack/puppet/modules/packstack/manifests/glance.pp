@@ -33,10 +33,13 @@ class packstack::glance ()
     }
 
     class { 'glance::api':
-      bind_host        => $bind_host,
-      workers          => lookup('CONFIG_SERVICE_WORKERS'),
+      service_name     => 'httpd',
       enabled_backends => ["${default_store}:${default_store}", "http:http"],
       default_backend  => $default_store,
+    }
+    class { 'glance::wsgi::apache':
+      bind_host => $bind_host,
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     glance::backend::multistore::http { 'http': }
