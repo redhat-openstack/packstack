@@ -24,9 +24,18 @@ class packstack::magnum ()
       project_domain_name => 'Default',
     }
 
+    $bind_host = lookup('CONFIG_IP_VERSION') ? {
+      'ipv6'  => '::0',
+      default => '0.0.0.0',
+      # TO-DO(mmagr): Add IPv6 support when hostnames are used
+    }
+
     class { 'magnum::api':
-      enabled => true,
-      host    => '0.0.0.0'
+      service_name => 'httpd',
+    }
+    class { 'magnum::wsgi::apache':
+      bind_host => $bind_host,
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     class { 'magnum::conductor':
