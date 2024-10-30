@@ -24,11 +24,10 @@ class packstack::trove ()
     }
 
     class { 'trove::api':
+      service_name => 'httpd',
+    }
+    class { 'trove::wsgi::apache':
       bind_host => $bind_host,
-      enabled   => true,
-      cert_file => false,
-      key_file  => false,
-      ca_file   => false,
       workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
