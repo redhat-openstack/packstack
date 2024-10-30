@@ -2,11 +2,19 @@ class packstack::heat ()
 {
     create_resources(packstack::firewall, lookup('FIREWALL_HEAT_RULES', undef, undef, {}))
 
-    class { 'heat::api':
-      workers => lookup('CONFIG_SERVICE_WORKERS'),
+    $bind_host = lookup('CONFIG_IP_VERSION') ? {
+      'ipv6'  => '::0',
+      default => '0.0.0.0',
     }
 
-    $keystone_admin = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
+    class { 'heat::api':
+      service_name => 'httpd',
+    }
+    class { 'heat::wsgi::apache_api':
+      bind_host => $bind_host,
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
+    }
+
     $heat_cfg_ctrl_host = lookup('CONFIG_KEYSTONE_HOST_URL')
 
     class { 'heat::engine':

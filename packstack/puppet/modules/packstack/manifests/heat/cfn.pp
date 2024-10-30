@@ -2,8 +2,17 @@ class packstack::heat::cfn ()
 {
     create_resources(packstack::firewall, lookup('FIREWALL_HEAT_CFN_RULES', undef, undef, {}))
 
+    $bind_host = lookup('CONFIG_IP_VERSION') ? {
+      'ipv6'  => '::0',
+      default => '0.0.0.0',
+    }
+
     class { 'heat::api_cfn':
-      workers => lookup('CONFIG_SERVICE_WORKERS'),
+      service_name => 'httpd',
+    }
+    class { 'heat::wsgi::apache_api_cfn':
+      bind_host => $bind_host,
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     $heat_cfn_cfg_ctrl_host = lookup('CONFIG_KEYSTONE_HOST_URL')
