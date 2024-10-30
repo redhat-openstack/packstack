@@ -28,14 +28,7 @@ class packstack::neutron::api ()
       service_providers     => lookup('SERVICE_PROVIDERS', { merge => 'unique' }),
     }
 
-    file { '/etc/neutron/api-paste.ini':
-      ensure => file,
-      mode   => '0640',
-    }
-
     if $neutron_vpnaas_enabled {
       class { 'neutron::services::vpnaas': }
     }
-
-    Class['::neutron::server'] -> File['/etc/neutron/api-paste.ini']
 }
