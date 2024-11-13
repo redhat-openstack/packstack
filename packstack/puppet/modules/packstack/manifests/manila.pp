@@ -15,7 +15,11 @@ class packstack::manila ()
     }
 
     class { 'manila::api':
-      bind_host          => $bind_host,
+      service_name => 'httpd',
+    }
+    class { 'manila::wsgi::apache':
+      bind_host => $bind_host,
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     class { 'manila::scheduler':
