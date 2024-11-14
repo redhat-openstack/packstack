@@ -1,9 +1,5 @@
 class packstack::trove::rabbitmq ()
 {
-    $trove_rabmq_cfg_trove_db_pw = lookup('CONFIG_TROVE_DB_PW')
-    $trove_rabmq_cfg_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
-    $trove_rabmq_cfg_controller_host = lookup('CONFIG_KEYSTONE_HOST_URL')
-
     $kombu_ssl_ca_certs = lookup('CONFIG_AMQP_SSL_CACERT_FILE', undef, undef, undef)
     $kombu_ssl_keyfile = lookup('CONFIG_TROVE_SSL_KEY', undef, undef, undef)
     $kombu_ssl_certfile = lookup('CONFIG_TROVE_SSL_CERT', undef, undef, undef)
@@ -25,7 +21,13 @@ class packstack::trove::rabbitmq ()
     Service<| name == 'rabbitmq-server' |> -> Service<| tag == 'trove-service' |>
 
     class { 'trove::db':
-      database_connection => "mysql+pymysql://trove:${trove_rabmq_cfg_trove_db_pw}@${trove_rabmq_cfg_mariadb_host}/trove",
+      database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'trove',
+        'password' => lookup('CONFIG_TROVE_DB_PW'),
+        'database' => 'trove',
+      })
     }
 
     class { 'trove':

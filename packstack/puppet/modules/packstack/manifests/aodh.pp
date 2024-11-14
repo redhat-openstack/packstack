@@ -5,12 +5,14 @@ class packstack::aodh ()
     $config_aodh_coordination_backend = lookup('CONFIG_CEILOMETER_COORDINATION_BACKEND')
 
     if $config_aodh_coordination_backend == 'redis' {
-      $redis_host = lookup('CONFIG_REDIS_HOST_URL')
-      $redis_port = lookup('CONFIG_REDIS_PORT')
-      $coordination_url = "redis://${redis_host}:${redis_port}"
+      $coordination_url = os_url({
+        'scheme' => 'redis',
+        'host'   => lookup('CONFIG_REDIS_HOST_URL'),
+        'port'   => lookup('CONFIG_REDIS_PORT'),
+      })
       Service<| title == 'redis' |> -> Anchor['aodh::service::begin']
     } else {
-      $coordination_url = ''
+      $coordination_url = undef
     }
 
     class { 'aodh::keystone::authtoken':

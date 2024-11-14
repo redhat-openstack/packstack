@@ -1,14 +1,15 @@
 class packstack::swift::ceilometer ()
 {
-    $rabbit_host = lookup('CONFIG_AMQP_HOST_URL')
-    $rabbit_port = lookup('CONFIG_AMQP_CLIENTS_PORT')
-    $rabbit_userid = lookup('CONFIG_AMQP_AUTH_USER')
-    $rabbit_password = lookup('CONFIG_AMQP_AUTH_PASSWORD')
-
     Service<| name == 'rabbitmq-server' |> -> Service['swift-proxy-server']
 
     class { 'swift::proxy::ceilometer':
-      default_transport_url => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
+      default_transport_url => os_transport_url({
+        'transport' => 'rabbit',
+        'host'      => lookup('CONFIG_AMQP_HOST_URL'),
+        'port'      => lookup('CONFIG_AMQP_CLIENTS_PORT'),
+        'username'  => lookup('CONFIG_AMQP_AUTH_USER'),
+        'password'  => lookup('CONFIG_AMQP_AUTH_PASSWORD')
+      }),
       topic                 => 'notifications',
       control_exchange      => 'swift',
       driver                => 'messaging',

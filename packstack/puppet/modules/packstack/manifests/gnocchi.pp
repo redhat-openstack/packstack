@@ -5,16 +5,15 @@ class packstack::gnocchi ()
     $config_gnocchi_coordination_backend = lookup('CONFIG_CEILOMETER_COORDINATION_BACKEND')
 
     if $config_gnocchi_coordination_backend == 'redis' {
-      $redis_host = hiera('CONFIG_REDIS_HOST_URL')
-      $redis_port = hiera('CONFIG_REDIS_PORT')
-      $coordination_url = "redis://${redis_host}:${redis_port}"
+      $coordination_url = os_url({
+        'scheme' => 'redis',
+        'host'   => lookup('CONFIG_REDIS_HOST_URL'),
+        'port'   => lookup('CONFIG_REDIS_PORT'),
+      })
       Service<| title == 'redis' |> -> Anchor['gnocchi::service::begin']
     } else {
-      $coordination_url = ''
+      $coordination_url = uhdef
     }
-
-    $gnocchi_cfg_db_pw = lookup('CONFIG_GNOCCHI_DB_PW')
-    $gnocchi_cfg_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
 
     class { 'gnocchi::wsgi::apache':
       workers => lookup('CONFIG_SERVICE_WORKERS'),
@@ -32,7 +31,14 @@ class packstack::gnocchi ()
     }
 
     class { 'gnocchi::db':
-      database_connection => "mysql+pymysql://gnocchi:${gnocchi_cfg_db_pw}@${gnocchi_cfg_mariadb_host}/gnocchi?charset=utf8",
+      database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'gnocchi',
+        'password' => lookup('CONFIG_GNOCCHI_DB_PW'),
+        'database' => 'gnocchi',
+        'charset'  => 'utf8',
+      })
     }
 
     class { 'gnocchi::api':

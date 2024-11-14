@@ -2,22 +2,22 @@ class packstack::neutron::api ()
 {
     create_resources(packstack::firewall, lookup('FIREWALL_NEUTRON_SERVER_RULES', undef, undef, {}))
 
-    $neutron_db_host         = lookup('CONFIG_MARIADB_HOST_URL')
-    $neutron_db_name         = lookup('CONFIG_NEUTRON_L2_DBNAME')
-    $neutron_db_user         = 'neutron'
-    $neutron_db_password     = lookup('CONFIG_NEUTRON_DB_PW')
-    $neutron_sql_connection  = "mysql+pymysql://${neutron_db_user}:${neutron_db_password}@${neutron_db_host}/${neutron_db_name}"
-    $neutron_user_password   = lookup('CONFIG_NEUTRON_KS_PW')
-    $neutron_vpnaas_enabled  = str2bool(lookup('CONFIG_NEUTRON_VPNAAS'))
+    $neutron_vpnaas_enabled = str2bool(lookup('CONFIG_NEUTRON_VPNAAS'))
 
     class { 'neutron::keystone::authtoken':
-      password             => $neutron_user_password,
+      password             => lookup('CONFIG_NEUTRON_KS_PW'),
       www_authenticate_uri => lookup('CONFIG_KEYSTONE_PUBLIC_URL_VERSIONLESS'),
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     class { 'neutron::db':
-      database_connection   => $neutron_sql_connection,
+      database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'neutron',
+        'password' => lookup('CONFIG_NEUTRON_DB_PW'),
+        'database' => lookup('CONFIG_NEUTRON_L2_DBNAME'),
+      })
     }
 
     class { 'neutron::server':

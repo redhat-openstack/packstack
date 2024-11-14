@@ -1,22 +1,13 @@
 class packstack::nova ()
 {
-    $nova_db_pw = lookup('CONFIG_NOVA_DB_PW')
-    $nova_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
-
-    $rabbit_host = lookup('CONFIG_AMQP_HOST_URL')
-    $rabbit_port = lookup('CONFIG_AMQP_CLIENTS_PORT')
-    $rabbit_userid = lookup('CONFIG_AMQP_AUTH_USER')
-    $rabbit_password = lookup('CONFIG_AMQP_AUTH_PASSWORD')
-
     $private_key = {
       'type' => lookup('NOVA_MIGRATION_KEY_TYPE'),
-      key  => lookup('NOVA_MIGRATION_KEY_SECRET'),
+      'key'  => lookup('NOVA_MIGRATION_KEY_SECRET'),
     }
     $public_key = {
       'type' => lookup('NOVA_MIGRATION_KEY_TYPE'),
-      key  => lookup('NOVA_MIGRATION_KEY_PUBLIC'),
+      'key'  => lookup('NOVA_MIGRATION_KEY_PUBLIC'),
     }
-
 
     $kombu_ssl_ca_certs = lookup('CONFIG_AMQP_SSL_CACERT_FILE', undef, undef, undef)
     $kombu_ssl_keyfile = lookup('CONFIG_NOVA_SSL_KEY', undef, undef, undef)
@@ -62,12 +53,30 @@ class packstack::nova ()
     }
 
     class { 'nova::db':
-      database_connection     => "mysql+pymysql://nova:${nova_db_pw}@${nova_mariadb_host}/nova",
-      api_database_connection => "mysql+pymysql://nova_api:${nova_db_pw}@${nova_mariadb_host}/nova_api",
+      database_connection     => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'nova',
+        'password' => lookup('CONFIG_NOVA_DB_PW'),
+        'database' => 'nova',
+      }),
+      api_database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'nova_api',
+        'password' => lookup('CONFIG_NOVA_DB_PW'),
+        'database' => 'nova_api',
+      })
     }
 
     class { 'nova':
-      default_transport_url   => "rabbit://${rabbit_userid}:${rabbit_password}@${rabbit_host}:${rabbit_port}/",
+      default_transport_url => os_transport_url({
+        'transport' => 'rabbit',
+        'host'      => lookup('CONFIG_AMQP_HOST_URL'),
+        'port'      => lookup('CONFIG_AMQP_CLIENTS_PORT'),
+        'username'  => lookup('CONFIG_AMQP_AUTH_USER'),
+        'password'  => lookup('CONFIG_AMQP_AUTH_PASSWORD')
+      }),
       rabbit_use_ssl          => lookup('CONFIG_AMQP_SSL_ENABLED'),
       nova_public_key         => $public_key,
       nova_private_key        => $private_key,

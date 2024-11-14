@@ -1,7 +1,5 @@
 class packstack::placement ()
 {
-    $placement_db_pw = lookup('CONFIG_NOVA_DB_PW')
-    $placement_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
     $bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
       default => '0.0.0.0',
@@ -16,7 +14,13 @@ class packstack::placement ()
     }
 
     class { 'placement::db':
-      database_connection => "mysql+pymysql://placement:${placement_db_pw}@${placement_mariadb_host}/placement",
+      database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'placement',
+        'password' => lookup('CONFIG_NOVA_DB_PW'),
+        'database' => 'placement',
+      })
     }
 
     include placement::db::sync
