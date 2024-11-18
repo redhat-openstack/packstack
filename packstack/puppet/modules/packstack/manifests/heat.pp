@@ -15,6 +15,18 @@ class packstack::heat ()
       workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
+    $memcache_servers = lookup('CONFIG_IP_VERSION') ? {
+      'ipv6'  => ['[::1]:11211'],
+      default => ['127.0.0.1:11211'],
+    }
+    class {'heat::cache':
+      enabled          => true,
+      backend          => 'dogpile.cache.pymemcache',
+      memcache_servers => $memcache_servers,
+    }
+    include packstack::memcached
+    Class['memcached'] -> Anchor['heat::service::begin']
+
     $heat_cfg_ctrl_host = lookup('CONFIG_KEYSTONE_HOST_URL')
 
     class { 'heat::engine':
