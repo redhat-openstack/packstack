@@ -100,7 +100,7 @@ mod 'concat',
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
-  :ref => 'v8.1.1'
+  :ref => 'v8.1.3'
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
@@ -120,7 +120,7 @@ mod 'nssdb',
 
 mod 'rabbitmq',
   :git => 'https://github.com/voxpupuli/puppet-rabbitmq',
-  :ref => 'v13.7.0'
+  :ref => 'v14.0.0'
 
 mod 'redis',
   :git => 'https://github.com/voxpupuli/puppet-redis',
