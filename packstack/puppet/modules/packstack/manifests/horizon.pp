@@ -16,6 +16,12 @@ class packstack::horizon ()
       default => false,
     }
 
+    include packstack::memcached
+    $cache_server_ip = lookup('CONFIG_IP_VERSION') ? {
+      'ipv6'  => '::1',
+      default => '127.0.0.1',
+    }
+
     class { 'horizon':
       secret_key            => lookup('CONFIG_HORIZON_SECRET_KEY'),
       keystone_url          => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
@@ -23,7 +29,7 @@ class packstack::horizon ()
       allowed_hosts         => '*',
       django_session_engine => 'django.contrib.sessions.backends.cache',
       cache_backend         => 'django.core.cache.backends.memcached.PyMemcacheCache',
-      cache_server_ip       => '127.0.0.1',
+      cache_server_ip       => $cache_server_ip,
       cache_server_port     => '11211',
       file_upload_temp_dir  => '/var/tmp',
       listen_ssl            => $horizon_ssl,
@@ -57,8 +63,6 @@ class packstack::horizon ()
     if lookup('CONFIG_MANILA_INSTALL') == 'y' {
       include horizon::dashboards::manila
     }
-
-    include packstack::memcached
 
     $firewall_port = lookup('CONFIG_HORIZON_PORT')
 
