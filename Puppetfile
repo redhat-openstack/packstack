@@ -112,7 +112,7 @@ mod 'memcached',
 
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
-  :ref => 'v16.0.0'
+  :ref => 'v16.1.0'
 
 mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
@@ -120,7 +120,7 @@ mod 'nssdb',
 
 mod 'rabbitmq',
   :git => 'https://github.com/voxpupuli/puppet-rabbitmq',
-  :ref => 'v14.0.0'
+  :ref => 'v14.1.0'
 
 mod 'redis',
   :git => 'https://github.com/voxpupuli/puppet-redis',
