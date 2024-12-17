@@ -36,6 +36,7 @@ class packstack::nova::api ()
       service_name               => 'httpd',
     }
 
+    include packstack::nova::cache
     class { 'nova::metadata':
       neutron_metadata_proxy_shared_secret => lookup('CONFIG_NEUTRON_METADATA_PW_UNQUOTED', undef, undef, undef),
     }

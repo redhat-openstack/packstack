@@ -1,7 +1,7 @@
 class packstack::nova::sched ()
 {
+    include packstack::nova::cache
     include nova::scheduler::filter
-
     class { 'nova::scheduler':
       enabled => true,
     }
