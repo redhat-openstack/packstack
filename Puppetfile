@@ -96,7 +96,7 @@ mod 'apache',
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
-  :ref => 'v9.0.2'
+  :ref => 'v9.1.0'
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
@@ -104,7 +104,7 @@ mod 'firewall',
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
-  :ref => 'v6.1.1'
+  :ref => 'v6.2.0'
 
 mod 'memcached',
   :git => 'https://github.com/saz/puppet-memcached',
@@ -112,7 +112,7 @@ mod 'memcached',
 
 mod 'mysql',
   :git => 'https://github.com/puppetlabs/puppetlabs-mysql',
-  :ref => 'v16.1.0'
+  :ref => 'v16.2.0'
 
 mod 'nssdb',
   :git => 'https://github.com/rcritten/puppet-nssdb',
@@ -120,7 +120,7 @@ mod 'nssdb',
 
 mod 'rabbitmq',
   :git => 'https://github.com/voxpupuli/puppet-rabbitmq',
-  :ref => 'v14.1.0'
+  :ref => 'v14.2.0'
 
 mod 'redis',
   :git => 'https://github.com/voxpupuli/puppet-redis',
@@ -136,7 +136,7 @@ mod 'rsync',
 
 mod 'stdlib',
   :git => 'https://github.com/puppetlabs/puppetlabs-stdlib',
-  :ref => 'v9.6.0'
+  :ref => 'v9.7.0'
 
 mod 'sysctl',
   :git => 'https://github.com/duritong/puppet-sysctl',
