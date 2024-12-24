@@ -78,7 +78,9 @@ class packstack::swift::proxy ()
       'swift::proxy::healthcheck',
       'swift::proxy::proxy_logging',
       'swift::proxy::listing_formats',
+      'swift::proxy::bulk',
       'swift::proxy::tempurl',
+      'swift::proxy::ratelimit',
       'swift::proxy::crossdomain',
       'swift::proxy::formpost',
       'swift::proxy::staticweb',
@@ -95,21 +97,6 @@ class packstack::swift::proxy ()
     }
     class {'swift::proxy::cache':
       memcache_servers => $memcache_servers,
-    }
-
-    class { 'swift::proxy::bulk':
-      max_containers_per_extraction => 10000,
-      max_failed_extractions        => 1000,
-      max_deletes_per_request       => 10000,
-      yield_frequency               => 60,
-    }
-
-    class { 'swift::proxy::ratelimit':
-      clock_accuracy         => 1000,
-      max_sleep_time_seconds => 60,
-      log_sleep_time_seconds => 0,
-      rate_buffer_seconds    => 5,
-      account_ratelimit      => 0,
     }
 
     class { 'swift::proxy::keystone':
