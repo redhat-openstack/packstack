@@ -37,9 +37,6 @@ re_ignore = re.compile(
     # Puppet preloads a database_grant provider which fails if /root/.my.cnf
     # is missing, this is ok because it will be retried later if needed
     'Could not prefetch database_grant provider.*?\\.my\\.cnf|'
-    # Swift Puppet module tries to install swift-plugin-s3, there is no such
-    # package on RHEL, fixed in the upstream puppet module
-    'yum.*?install swift-plugin-s3|'
     # facter gives a weird NM error when it's disabled, due to
     # https://tickets.puppetlabs.com/browse/FACT-697
     'NetworkManager is not running|'
