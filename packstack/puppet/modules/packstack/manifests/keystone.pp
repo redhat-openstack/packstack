@@ -6,8 +6,6 @@ class packstack::keystone ()
     $keystone_url = regsubst(regsubst(lookup('CONFIG_KEYSTONE_PUBLIC_URL'),'/v2.0',''),'/v3','')
     $keystone_admin_url = lookup('CONFIG_KEYSTONE_ADMIN_URL')
 
-    class { 'keystone::client': }
-
     if lookup('CONFIG_KEYSTONE_FERNET_TOKEN_ROTATE_ENABLE', undef, undef, false) {
       class { 'keystone::cron::fernet_rotate':
         require     => Service['crond'],
