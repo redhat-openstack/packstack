@@ -124,7 +124,7 @@ mod 'rabbitmq',
 
 mod 'redis',
   :git => 'https://github.com/voxpupuli/puppet-redis',
-  :ref => 'v11.0.0'
+  :ref => 'v11.1.0'
 
 mod 'remote',
   :git => 'https://github.com/paramite/puppet-remote',
