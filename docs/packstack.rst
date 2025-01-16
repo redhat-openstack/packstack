@@ -106,7 +106,7 @@ Global Options
     Specify 'y' if you want to use unsupported parameters. This should be used only if you know what you are doing. Issues caused by using unsupported options will not be fixed before the next major release. ['y', 'n']
 
 **CONFIG_USE_SUBNETS**
-    Specify 'y' if you want to use subnet addresses (in CIDR format) instead of interface names in following options: CONFIG_NEUTRON_OVS_BRIDGE_IFACES, CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS, CONFIG_NEUTRON_OVS_TUNNEL_IF. This is useful for cases when interface names are not same on all installation hosts.
+    Specify 'y' if you want to use subnet addresses (in CIDR format) instead of interface names in following options: CONFIG_NEUTRON_OVS_BRIDGE_IFACES, CONFIG_NEUTRON_OVS_TUNNEL_IF. This is useful for cases when interface names are not same on all installation hosts.
 
 SSL setup
 ---------
@@ -737,7 +737,7 @@ Neutron config
     The password to use for OpenStack Networking to access the database.
 
 **CONFIG_NEUTRON_L3_EXT_BRIDGE**
-    The name of the Open vSwitch bridge (or empty for linuxbridge) for the OpenStack Networking L3 agent to use for external  traffic. Specify 'provider' if you intend to use a provider network to handle external traffic.
+    The name of the Open vSwitch bridge for the OpenStack Networking L3 agent to use for external  traffic. Specify 'provider' if you intend to use a provider network to handle external traffic.
 
 **CONFIG_NEUTRON_METADATA_PW**
     Password for the OpenStack Networking metadata agent.
@@ -758,7 +758,7 @@ Neutron ML2 plugin config
     Comma-separated, ordered list of network types to allocate as tenant networks. The 'local' value is only useful for single-box testing and provides no connectivity between hosts. ['local', 'vlan', 'gre', 'vxlan', 'geneve']
 
 **CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS**
-    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'linuxbridge', 'openvswitch', 'arista', 'mlnx', 'l2population', 'sriovnicswitch', 'ovn']
+    Comma-separated ordered list of networking mechanism driver entry points to be loaded from the neutron.ml2.mechanism_drivers namespace. ['logger', 'test', 'openvswitch', 'arista', 'mlnx', 'l2population', 'sriovnicswitch', 'ovn']
 
 **CONFIG_NEUTRON_ML2_FLAT_NETWORKS**
     Comma-separated list of physical_network names with which flat networks can be created. Use * to allow flat networks with arbitrary physical_network names.
@@ -780,13 +780,7 @@ Neutron ML2 plugin config
 
 
 **CONFIG_NEUTRON_L2_AGENT**
-    Name of the L2 agent to be used with OpenStack Networking. ['linuxbridge', 'openvswitch', 'ovn']
-
-Neutron LB agent config
------------------------
-
-**CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS**
-    Comma-separated list of interface mappings for the OpenStack Networking linuxbridge plugin. Each tuple in the list must be in the format <physical_network>:<net_interface>. Example: physnet1:eth1,physnet2:eth2,physnet3:eth3.
+    Name of the L2 agent to be used with OpenStack Networking. ['openvswitch', 'ovn']
 
 Neutron OVS agent config
 ------------------------

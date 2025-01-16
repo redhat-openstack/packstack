@@ -28,7 +28,6 @@ if lookup('CONFIG_NEUTRON_INSTALL') == 'y' {
 
   case lookup('CONFIG_NEUTRON_L2_AGENT') {
     'openvswitch': { include 'packstack::neutron::ovs_agent' }
-    'linuxbridge': { include 'packstack::neutron::lb_agent' }
     'ovn':         { include 'packstack::neutron::ovn_agent' }
     default:       { include 'packstack::neutron::ovs_agent' }
   }

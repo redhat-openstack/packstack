@@ -114,21 +114,6 @@ def initConfig(controller):
              "CONDITION": False},
         ],
 
-        "NEUTRON_LB_AGENT": [
-            {"CMD_OPTION": "os-neutron-lb-interface-mappings",
-             "PROMPT": ("Enter a comma separated list of interface mappings "
-                        "for the Neutron linuxbridge plugin"),
-             "OPTION_LIST": [],
-             "VALIDATORS": [],
-             "DEFAULT_VALUE": "",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": True,
-             "CONF_NAME": "CONFIG_NEUTRON_LB_INTERFACE_MAPPINGS",
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
-             "CONDITION": False},
-        ],
-
         "NEUTRON_OVS_AGENT": [
             {"CMD_OPTION": "os-neutron-ovs-bridge-mappings",
              "PROMPT": ("Enter a comma separated list of bridge mappings for "
@@ -342,7 +327,7 @@ def initConfig(controller):
              "CONF_NAME": "CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS",
              "PROMPT": ("Enter a comma separated ordered list of networking "
                         "mechanism driver entrypoints"),
-             "OPTION_LIST": ["logger", "test", "linuxbridge", "openvswitch",
+             "OPTION_LIST": ["logger", "test", "openvswitch",
                              "arista", "mlnx", "l2population",
                              "sriovnicswitch", "ovn"],
              "VALIDATORS": [validators.validate_multi_options],
@@ -423,7 +408,7 @@ def initConfig(controller):
             {"CMD_OPTION": "os-neutron-l2-agent",
              "PROMPT": ("Enter the name of the L2 agent to be used "
                         "with Neutron"),
-             "OPTION_LIST": ["linuxbridge", "openvswitch", "ovn"],
+             "OPTION_LIST": ["openvswitch", "ovn"],
              "VALIDATORS": [validators.validate_options],
              "DEFAULT_VALUE": "ovn",
              "MASK_INPUT": False,
@@ -462,13 +447,6 @@ def initConfig(controller):
         {"GROUP_NAME": "NEUTRON_ML2_PLUGIN",
          "DESCRIPTION": "Neutron ML2 plugin config",
          "PRE_CONDITION": neutron_install,
-         "PRE_CONDITION_MATCH": True,
-         "POST_CONDITION": False,
-         "POST_CONDITION_MATCH": True},
-
-        {"GROUP_NAME": "NEUTRON_LB_AGENT",
-         "DESCRIPTION": "Neutron LB agent config",
-         "PRE_CONDITION": use_ml2_with_linuxbridge,
          "PRE_CONDITION_MATCH": True,
          "POST_CONDITION": False,
          "POST_CONDITION_MATCH": True},
@@ -523,7 +501,6 @@ def initSequences(controller):
 
     has_ovs = 'openvswitch' in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
     has_ovn = 'ovn' in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
-    has_lb = 'linuxbridge' in config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS']
 
     if config['CONFIG_IRONIC_INSTALL'] == 'y':
         config['CONFIG_NEUTRON_ML2_TYPE_DRIVERS'] += ', flat'
@@ -533,7 +510,7 @@ def initSequences(controller):
         config['CONFIG_NEUTRON_ML2_FLAT_NETWORKS'] = 'extnet'
 
     if use_ml2_with_sriovnicswitch(config):
-        if (not has_ovs) and (not has_lb):
+        if not has_ovs:
             config['CONFIG_NEUTRON_ML2_MECHANISM_DRIVERS'] += ', openvswitch'
 
     if use_ml2_with_ovn(config):
@@ -623,12 +600,6 @@ def neutron_install(config):
     return config['CONFIG_NEUTRON_INSTALL'] == 'y'
 
 
-def use_ml2_with_linuxbridge(config):
-    ml2_used = (neutron_install(config) and
-                config["CONFIG_NEUTRON_L2_AGENT"] == 'linuxbridge')
-    return ml2_used
-
-
 def use_ml2_with_ovs(config):
     return (neutron_install(config) and
             config["CONFIG_NEUTRON_L2_AGENT"] == 'openvswitch')
@@ -675,8 +646,6 @@ def get_if_driver(config):
     agent = config['CONFIG_NEUTRON_L2_AGENT']
     if agent == "openvswitch":
         return 'neutron.agent.linux.interface.OVSInterfaceDriver'
-    elif agent == 'linuxbridge':
-        return 'neutron.agent.linux.interface.BridgeInterfaceDriver'
     else:
         # OVN does not provides a interface driver
         return ''
@@ -719,7 +688,7 @@ def create_manifests(config, messages):
     if use_ml2_with_ovn(config):
         service_plugins.append('ovn-router')
     else:
-        # ML2 uses the L3 Router service plugin to implement l3 agent for linuxbridge and ovs
+        # ML2 uses the L3 Router service plugin to implement l3 agent for ovs
         service_plugins.append('router')
 
     if config['CONFIG_NEUTRON_METERING_AGENT_INSTALL'] == 'y':
@@ -937,7 +906,7 @@ def create_l2_agent_manifests(config, messages):
         config["CONFIG_NEUTRON_OVS_BRIDGE_IFACES_COMPUTE"] = []
         no_local_types = set(ovs_type) & set(['gre', 'vxlan', 'vlan', 'flat'])
         no_tunnel_types = set(ovs_type) & set(['vlan', 'flat'])
-    elif agent != "linuxbridge":
+    else:
         raise KeyError("Unknown layer2 agent")
 
     for host in network_hosts | compute_hosts:
