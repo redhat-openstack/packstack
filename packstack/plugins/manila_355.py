@@ -259,8 +259,9 @@ def initConfig(controller):
              "PROMPT": ("Enter a service image location"),
              "OPTION_LIST": [],
              "VALIDATORS": [validators.validate_not_empty],
-             "DEFAULT_VALUE": 'https://www.dropbox.com/s/vi5oeh10q1qkckh/'
-                              'ubuntu_1204_nfs_cifs.qcow2',
+             "DEFAULT_VALUE": ('https://tarballs.opendev.org/openstack/'
+                               'manila-image-elements/images/'
+                               'manila-service-image-master.qcow2'),
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": False,
              "CONF_NAME": "CONFIG_MANILA_SERVICE_IMAGE_LOCATION",
