@@ -30,7 +30,7 @@ FILE_YUM_VERSION_LOCK = "/etc/yum/pluginconf.d/versionlock.list"
 
 PACKSTACK_SRC_DOC = os.path.realpath(
     os.path.join(os.path.abspath(
-        packstack.__path__[0]), '..', 'docs/packstack.rst'
+        packstack.__path__[0]), '..', 'docs/source/packstack.rst'
     )
 )
 if os.path.exists(PACKSTACK_SRC_DOC):
