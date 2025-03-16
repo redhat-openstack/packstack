@@ -54,7 +54,6 @@ class packstack::gnocchi ()
     class { 'gnocchi::statsd':
       resource_id         => '5e3fcbe2-7aab-475d-b42c-a440aa42e5ad',
       archive_policy_name => 'high',
-      flush_delay         => '10',
     }
 
     include gnocchi::client
