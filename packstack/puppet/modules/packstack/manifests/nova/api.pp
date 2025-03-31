@@ -16,11 +16,7 @@ class packstack::nova::api ()
       auth_url             => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
-    if lookup('CONFIG_NOVA_PCI_ALIAS') == '' {
-      $pci_alias = []
-    } else {
-      $pci_alias = lookup('CONFIG_NOVA_PCI_ALIAS')
-    }
+    $pci_alias = parsejson(lookup('CONFIG_NOVA_PCI_ALIAS'))
 
     class { 'nova::pci':
       aliases => $pci_alias,

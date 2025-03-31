@@ -167,7 +167,7 @@ def initConfig(controller):
                         "'name':'default'}, {...}] "),
              "OPTION_LIST": [],
              "VALIDATORS": [],
-             "DEFAULT_VALUE": "",
+             "DEFAULT_VALUE": "[]",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_NOVA_PCI_ALIAS",
@@ -182,7 +182,7 @@ def initConfig(controller):
                         "'name':'default'}, {...}]"),
              "OPTION_LIST": [],
              "VALIDATORS": [],
-             "DEFAULT_VALUE": "",
+             "DEFAULT_VALUE": "[]",
              "MASK_INPUT": False,
              "LOOSE_VALIDATION": True,
              "CONF_NAME": "CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST",
@@ -437,12 +437,6 @@ def create_common_manifest(config, messages):
 
     dbacces_hosts = set([config.get('CONFIG_CONTROLLER_HOST')])
     dbacces_hosts |= network_hosts
-
-    if config['CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST'] == '':
-        config['CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST'] = []
-
-    if config['CONFIG_NOVA_PCI_ALIAS'] == '':
-        config['CONFIG_NOVA_PCI_ALIAS'] = []
 
     for host in filtered_hosts(config):
         pw_in_sqlconn = False
