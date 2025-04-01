@@ -69,7 +69,7 @@ class packstack::nova::compute ()
     }
 
     class { 'nova::compute::pci':
-      passthrough => lookup('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST')
+      passthrough => parsejson(lookup('CONFIG_NOVA_PCI_PASSTHROUGH_WHITELIST'))
     }
 
     class { 'nova::compute':
