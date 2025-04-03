@@ -92,7 +92,7 @@ mod 'vswitch',
 
 mod 'apache',
   :git => 'https://github.com/puppetlabs/puppetlabs-apache',
-  :ref => 'v12.3.0'
+  :ref => 'v12.3.1'
 
 mod 'concat',
   :git => 'https://github.com/puppetlabs/puppetlabs-concat',
@@ -100,7 +100,7 @@ mod 'concat',
 
 mod 'firewall',
   :git => 'https://github.com/puppetlabs/puppetlabs-firewall',
-  :ref => 'v8.1.4'
+  :ref => 'v8.1.7'
 
 mod 'inifile',
   :git => 'https://github.com/puppetlabs/puppetlabs-inifile',
@@ -144,7 +144,7 @@ mod 'sysctl',
 
 mod 'systemd',
   :git => 'https://github.com/voxpupuli/puppet-systemd',
-  :ref => 'v8.1.0'
+  :ref => 'v8.2.0'
 
 mod 'vcsrepo',
   :git => 'https://github.com/puppetlabs/puppetlabs-vcsrepo',
